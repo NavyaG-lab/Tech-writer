@@ -24,17 +24,12 @@ Updates to historical facts (rendering them no longer true) are modeled as a pai
 We can traverse a t-value to get the transaction entity, and from the transaction entity we can get to the UTC timestamp and other metadata like `:audit/cid` or `:audit/user`.
 
 In the raw Datomic storage format, attribute names (and enum values) are not stored as strings, but rather as entity ids (longs), and these entity ids can be traversed using `:db/ident` to get to the human readable name of the attribute.
-
-## Glossary
-* `sabesp` - command line utility for interacting with data infra ([sample commands](cli_examples.md))
-* `correnteza` - always-on log extractor (Clojure service)
-* `aurora-jobs` - mesos job scheduler
-* `Airflow` - scheduler
-* `metapod` - keeps track of a containing transaction-id and some other metadata, including the path on S3 and the schema
-* `itaipu` - basically a DAG within a DAG, where we compute everything from raw -> contract -> dataset -> dimension / fact, declaring the dependencies as inputs to each SparkOp (aka dataset).
-* `capivara-clj` - runs after Itaipu to load data into Redshift
+ 
+## Correnteza overview [UPDATE REQUIRED]
+  * Always-on log extractor (Clojure service)
 
 ## Itaipu overview
+  * Basically a DAG within a DAG, where we compute everything from raw -> contract -> dataset -> dimension / fact, declaring the dependencies as inputs to each SparkOp (aka dataset).
   * Raw & contract - see: https://github.com/nubank/itaipu#structure
     * Converts from Datomic's data model to a tabular SQL data model (a subset of what Datomic is capable of)
     * Users generally access contracts as the lowest level of abstraction which already eliminates sharding-related fragmentation
@@ -53,29 +48,38 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
   * Workflow for building a new dataset
     * https://github.com/nubank/itaipu#creating-a-new-dataset
 
-## Metapod overview
-  * Where does it run, and what sort of data does it store?
+## Metapod overview [UPDATE REQUIRED]
+  * Keeps track of a containing transaction-id and some other metadata, including the path on S3 and the schema
   * Where transaction id comes from, and multiple transaction ids?
   * How is target date used?
 
-## Aurora jobs overview
-  * Dev workflow
+## Aurora jobs overview [UPDATE REQUIRED]
+  * aurora schedules mesos jobs
+  * aurora-jobs stores our job definitions
+  
+## Airflow overview [UPDATE REQUIRED]
+  * Scheduler (reads from aurora-jobs)
 
 ## Sabesp overview
-  * Examples of common commands for each environment
+  * Command line utility for interacting with data infra ([sample commands](cli_examples.md))
 
-## Capivara
-  * And all the different varas
-  * DeclaredSchema and the future of Capivara
+## Capivara-clj overview [UPDATE REQUIRED]
+  * Redshift data-loader (from avro files to populated Redshift tables)
+  * Runs during (reacting to finished datasets via SQS from Metapod) and after Itaipu (batch job to do the cutover once everything is ready)
 
-## Deployment pipeline
+## Deployment pipeline [UPDATE REQUIRED]
   * Environments (test, devel, prod)
   * Clusters (stable, test, dev, dev2, alpha) - only one DAG should be run per cluster at a time given naive resource management
   * Process for metapod (Cantareira Waves)
   * Process for aurora jobs, itaipu, etc (Dagao)
   * Dev workflow for go pipeline
 
-## Monitoring and caring for DAG runs
+## Monitoring run latency / cost [UPDATE REQUIRED]
+  * https://prod-grafana.nubank.com.br/dashboard/db/etl
+  
+## Metabase [UPDATE REQUIRED]
+
+## Monitoring and caring for DAG runs [UPDATE REQUIRED]
   * See: https://github.com/nubank/itaipu/wiki/Monitoring-the-Nightly-Run
   * Process for checking if a run failed and why (on test, on prod). When to use aurora vs. mesos
     * Splunk dashboard: https://nubank.splunkcloud.com/en-US/app/search/etl_monitoring
@@ -105,7 +109,7 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
     * Run this query: `select * from stl_load_errors order by starttime desc limit 100;`
   * Filtered runs
 
-## Permissions / accounts needed to contribute on data infra
+## Permissions / accounts needed to contribute on data infra [UPDATE REQUIRED]
   * IAM permissions (TODO: which are needed to do common squad tasks)
   * Quay.io permissions needed, and when to do direct quay.io builds
   * Databricks access
