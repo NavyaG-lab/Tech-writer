@@ -85,7 +85,7 @@ If you want to add, change or remove an attribute:
 ## Datasets, Dimensions, and Fact Tables Workflow
 
 Creating datasets:
-- [See quotes from Kimball on designing dimensional models here](https://github.com/nubank/itaipu/wiki/Kimball-Dimensional-Modeling-Principles)
+- [See quotes from Kimball on designing dimensional models here](dimensional_modeling/kimball.md)
 
 ### Databricks Approach
 

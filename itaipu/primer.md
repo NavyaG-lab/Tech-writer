@@ -55,9 +55,9 @@ Examples:
 - [consistent naming between primary keys and foreign keys](https://github.com/nubank/itaipu/pull/36/files#diff-6a9ae1da21068f4fad302be909a97b7dR20)
 
 The definition for any given contract is hardcoded first in a Clojure model (which generates a Datomic schema).  From these models, Scala classes are generated, and they are hardcoded both in production services and in Itaipu.
-* Model: https://github.com/nubank/credit-card-accounts/blob/master/src/accounts/models/account.clj#L44
-* Scala in production: https://github.com/nubank/credit-card-accounts/blob/master/resources/contract/credit_card_accounts/Accounts.scala
-* Scala in Itaipu: https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/contract/credit_card_accounts/Accounts.scala
+* [Credit Card Account Model Example](https://github.com/nubank/credit-card-accounts/blob/master/src/accounts/models/account.clj#L44)
+* [Generated Scala file for Credit Card Account in production](https://github.com/nubank/credit-card-accounts/blob/master/resources/contract/credit_card_accounts/Accounts.scala)
+* [Generated Scala file for Credit Card Account pasted in Itaipu](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/contract/credit_card_accounts/Accounts.scala)
 
 ### Dataset
 
