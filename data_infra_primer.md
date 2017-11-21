@@ -1,7 +1,7 @@
 # Data Infra Primer
 
 ## Big picture (updated quarterly)
-* 2017Q4: https://docs.google.com/document/d/1Mkl2EhJa6Zo3jAZBX5s_dWoEzMI9cd_yKIoQN9F48DY/edit?ts=5a0db010
+* [2017Q4](https://docs.google.com/document/d/1Mkl2EhJa6Zo3jAZBX5s_dWoEzMI9cd_yKIoQN9F48DY/edit?ts=5a0db010)
 
 ## Datomic Log overview
 
@@ -26,7 +26,7 @@ We can traverse a t-value to get the transaction entity, and from the transactio
 In the raw Datomic storage format, attribute names (and enum values) are not stored as strings, but rather as entity ids (longs), and these entity ids can be traversed using `:db/ident` to get to the human readable name of the attribute.
 
 ## Glossary
-* `sabesp` - command line utility for interacting with data infra ([sample commands](https://github.com/nubank/itaipu/wiki/Sabesp-CLI-usage-examples))
+* `sabesp` - command line utility for interacting with data infra ([sample commands](cli_examples.md))
 * `correnteza` - always-on log extractor (Clojure service)
 * `aurora-jobs` - mesos job scheduler
 * `Airflow` - scheduler
@@ -45,11 +45,9 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
   * Itaipu's mini-DAG
     * Because datasets depend on contracts and other datasets, this produces a directed acyclic dependency graph.  Confusingly, this is a mini-DAG.  The overall DAG is a superset of the Itaipu mini-DAG.
   * Dimensions & fact tables
-    * Kimball brainwashing: https://github.com/nubank/itaipu/wiki/Kimball-Dimensional-Modeling-Principles
+    * [Kimball principles](dimensional_modeling/kimball.md)
   * Unit testing approach
-    * Unit tests in Itaipu are designed to test any non-trivial transformation step in isolation.  Generally we do not test the entire SparkOp on a unit basis.  
-    * https://github.com/nubank/itaipu/wiki/Itaipu-Style-Guide-and-Troubleshooting#transform-test-granularity
-    * https://github.com/nubank/itaipu/wiki/Itaipu-Style-Guide-and-Troubleshooting#unit-test-style
+    * [Unit tests in Itaipu](styleguide.md#unit-test-style) are designed to [test any non-trivial transformation step in isolation](styleguide.md#transform-test-granularity).  Generally we do not test the entire SparkOp on a unit basis.  
   * Integration test
     * The Itaipu integration test is able to statically check the entire Itaipu mini-DAG and raise errors if there are any broken column references, incorrect type signatures, unconventional names, etc.  This allows us to catch errors sooner (which is important, because catching an error after the nightly run has been running for 5 hours is very high cost).
   * Workflow for building a new dataset

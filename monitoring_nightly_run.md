@@ -71,8 +71,8 @@ The dagão run failed. What can you do?
  5. Retry dagão
  6. If it still doesn't work, rollback to a version that worked and retry dagão.
 
-## Commonly ran commands
-[sabesp commands](https://github.com/nubank/itaipu/wiki/Sabesp-CLI-usage-examples)
+## Commonly run commands
+[common sabesp CLI commands](cli_examples.md)
 
 ## Schedule
 https://docs.google.com/a/nubank.com.br/spreadsheets/d/1Gmi2oyxzlMc-a4sgwx_r8W5S-708MmXmr1yLRN8BoLo/edit

@@ -120,7 +120,7 @@ sabesp --aurora-stack=cantareira-stable jobs create prod dagao \
 
 ### Retry a failed run of the dagao (using the same metapod transaction id to pick up where it left off) and start from a point in the dag
 
-In this example, just the things after generate manifest failed, and I wanted to run it again, so i start with the existing metapod-transaction by setting **"profile.metapod_transaction=<tx>"**, **"profile.start_from=<task>"** and to you need to start from a point that doesn't have parallel branch as explained in (https://github.com/snowplow/factotum/wiki#starting-from-an-arbitrary-point)[factotum-wiki], in this case i had to exclude some datasets from the dag, so i use the attribute **"profile.exclude=<dataset>,<dataset>"**.
+In this example, just the things after generate manifest failed, and I wanted to run it again, so i start with the existing metapod-transaction by setting **"profile.metapod_transaction=<tx>"**, **"profile.start_from=<task>"**.  In this case i had to exclude some datasets from the dag, so i use the attribute **"profile.exclude=<dataset>,<dataset>"**.
 
 ```shell
 sabesp --aurora-stack=cantareira-stable jobs create prod dagao \
