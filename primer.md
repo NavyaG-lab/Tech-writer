@@ -80,35 +80,8 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
 
 ## Metabase [UPDATE REQUIRED]
 
-## Monitoring and caring for DAG runs [UPDATE REQUIRED]
+## Monitoring and caring for DAG runs
   * See: [Monitoring the Nightly Run](monitoring_nightly_run.md)
-  * Process for checking if a run failed and why (on test, on prod). When to use aurora vs. mesos
-    * Splunk dashboard: https://nubank.splunkcloud.com/en-US/app/search/etl_monitoring
-    * Test
-      * Aurora: https://cantareira-test-mesos-master.nubank.com.br:8080/scheduler/jobs
-      * Mesos: https://cantareira-test-mesos-master.nubank.com.br
-    * Prod
-      * Aurora: https://cantareira-stable-mesos-master.nubank.com.br:8080/scheduler/jobs/prod/dagao
-      * Mesos: https://cantareira-stable-mesos-master.nubank.com.br
-    * Dev
-      * Dev 1
-        * Aurora: https://cantareira-dev-mesos-master.nubank.com.br:8080/
-        * Mesos: https://cantareira-dev-mesos-master.nubank.com.br
-      * Dev 2
-        * Aurora: https://cantareira-dev2-mesos-master.nubank.com.br:8080/
-        * Mesos: https://cantareira-dev2-mesos-master.nubank.com.br
-  * Process for who should restart what under what circumstances, and how
-  * When to scale up / down
-  * What to run only at night vs. what's ok during the day (e.g., redshift load on prod)
-  * What's critical to run and deliver by when (e.g., goldman sachs report)
-  * Debugging Redshift load failures
-    * When you see an error on Splunk like `- ERROR #XX000 Load into table 'temp_savings_accounts__savings_accounts' failed. Check 'stl_load_errors' system table for details. (addr="10.130.30.176:5439")`
-    * Use DataGrip to connect to Redshift
-      * Your credentials are stored on S3: `aws s3 cp s3://nu-secrets/redshift/your.name/credentials.json .`
-      * host: `cantareira-redshift.nubank.com.br`
-      * db: `etl`
-    * Run this query: `select * from stl_load_errors order by starttime desc limit 100;`
-  * Filtered runs
 
 ## Permissions / accounts needed to contribute on data infra [UPDATE REQUIRED]
   * IAM permissions (TODO: which are needed to do common squad tasks)
