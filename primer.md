@@ -25,7 +25,7 @@ Updates to historical facts (rendering them no longer true) are modeled as a pai
 We can traverse a t-value to get the transaction entity, and from the transaction entity we can get to the UTC timestamp and other metadata like `:audit/cid` or `:audit/user`.
 
 In the raw Datomic storage format, attribute names (and enum values) are not stored as strings, but rather as entity ids (longs), and these entity ids can be traversed using `:db/ident` to get to the human readable name of the attribute.
- 
+
 ## Correnteza overview [UPDATE REQUIRED]
   * Always-on log extractor (Clojure service)
 
@@ -43,7 +43,7 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
   * Dimensions & fact tables
     * [Kimball principles](dimensional_modeling/kimball.md)
   * Unit testing approach
-    * [Unit tests in Itaipu](styleguide.md#unit-test-style) are designed to [test any non-trivial transformation step in isolation](styleguide.md#transform-test-granularity).  Generally we do not test the entire SparkOp on a unit basis.  
+    * [Unit tests in Itaipu](styleguide.md#unit-test-style) are designed to [test any non-trivial transformation step in isolation](styleguide.md#transform-test-granularity).  Generally we do not test the entire SparkOp on a unit basis.
   * Integration test
     * The Itaipu integration test is able to statically check the entire Itaipu mini-DAG and raise errors if there are any broken column references, incorrect type signatures, unconventional names, etc.  This allows us to catch errors sooner (which is important, because catching an error after the nightly run has been running for 5 hours is very high cost).
   * Workflow for building a new dataset
@@ -57,7 +57,7 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
 ## Aurora jobs overview [UPDATE REQUIRED]
   * aurora schedules mesos jobs
   * aurora-jobs stores our job definitions
-  
+
 ## Airflow overview [UPDATE REQUIRED]
   * Scheduler (reads from aurora-jobs)
 
@@ -77,11 +77,11 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
 
 ## Monitoring run latency / cost [UPDATE REQUIRED]
   * https://prod-grafana.nubank.com.br/dashboard/db/etl
-  
+
 ## Metabase [UPDATE REQUIRED]
 
 ## Monitoring and caring for DAG runs [UPDATE REQUIRED]
-  * See: https://github.com/nubank/itaipu/wiki/Monitoring-the-Nightly-Run
+  * See: [Monitoring the Nightly Run](monitoring_nightly_run.md)
   * Process for checking if a run failed and why (on test, on prod). When to use aurora vs. mesos
     * Splunk dashboard: https://nubank.splunkcloud.com/en-US/app/search/etl_monitoring
     * Test
