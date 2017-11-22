@@ -27,7 +27,8 @@ We can traverse a t-value to get the transaction entity, and from the transactio
 In the raw Datomic storage format, attribute names (and enum values) are not stored as strings, but rather as entity ids (longs), and these entity ids can be traversed using `:db/ident` to get to the human readable name of the attribute.
 
 ## Correnteza overview [UPDATE REQUIRED]
-  * Always-on log extractor (Clojure service)
+  * Always-on Datomic log extractor (Clojure service).  Correnteza feeds the "data lake" with Datomic data extracted from lots of different Datomic databases across Nubank.
+  * Correnteza has a blacklist of databases that it DOES NOT extract that is stored on DynamoDB.  If a database is not on the blacklist, then it will be automatically discovered and extracted.
 
 ## Itaipu overview
   * Basically a DAG within a DAG, where we compute everything from raw -> contract -> dataset -> dimension / fact, declaring the dependencies as inputs to each SparkOp (aka dataset).
@@ -55,11 +56,18 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
   * How is target date used?
 
 ## Aurora jobs overview [UPDATE REQUIRED]
-  * aurora schedules mesos jobs
-  * aurora-jobs stores our job definitions
+  * [Aurora](http://aurora.apache.org/) is a resource manager that schedules and runs jobs across a [Mesos](http://mesos.apache.org/) cluster.  Some of the jobs that Aurora schedules use Spark (which tends to consume all of the resources on the machine it is running on), but other jobs are written in Python or other languages.
+  * [aurora-jobs](https://github.com/nubank/aurora-jobs) stores our job definitions
 
 ## Airflow overview [UPDATE REQUIRED]
-  * Scheduler (reads from aurora-jobs)
+  * Airflow is a platform to author, schedule, and monitor workflows.  We define our workflow (commonly referred to as  "the DAG" or "the Dagão").  Airflow configuration is done via Python code, and we keep our configuration code in [aurora-jobs](https://github.com/nubank/aurora-jobs/blob/master/airflow/main.py).  
+  * When a job is changed on `aurora-jobs`, we need to be careful about how we update the workflow on Airflow because Airflow does not have isolation between runs, so a change to the workflow could affect the *currently running* DAG accidentally if we are not careful.
+    1) `aurora-jobs` will build automatically on the Go Pipeline 
+    2) We need to manually publish the new version on the [Go Pipeline](https://go.nubank.com.br/go/pipelines/dagao/894/release/1).  Don't do this during an active DAG run.  
+    3) We need to click the "refresh" button on the `prod-dagao` DAG on Airflow in order to suck in the new configuration
+  * TODO: We need to come up with a safety mechanism to avoid borking a running DAG 
+  * [Airflow on Github](https://github.com/apache/incubator-airflow)
+  * [Nubank's Airflow server](https://airflow.nubank.com.br/admin/airflow/graph?dag_id=prod-dagao)
 
 ## Sabesp overview
   * Command line utility for interacting with data infra ([sample commands](cli_examples.md))
