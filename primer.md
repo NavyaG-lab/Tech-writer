@@ -49,11 +49,11 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
     * The Itaipu integration test is able to statically check the entire Itaipu mini-DAG and raise errors if there are any broken column references, incorrect type signatures, unconventional names, etc.  This allows us to catch errors sooner (which is important, because catching an error after the nightly run has been running for 5 hours is very high cost).
   * Workflow for building a new dataset
     * https://github.com/nubank/itaipu#creating-a-new-dataset
+  * TODO: How is target date used, and is it relevant for Itaipu?
 
 ## Metapod overview [UPDATE REQUIRED]
-  * Keeps track of a containing transaction-id and some other metadata, including the path on S3 and the schema
-  * Where transaction id comes from, and multiple transaction ids?
-  * How is target date used?
+  * Metapod is a Clojure service with a Datomic database that stores metadata about our data, including when any given dataset was computed, where is was stored on S3 (and with which partitions), the schema, which grouping "transaction" it is part of, etc.
+  * TODO: How is target date used, and is it relevant for Metapod?
 
 ## Aurora jobs overview [UPDATE REQUIRED]
   * [Aurora](http://aurora.apache.org/) is a resource manager that schedules and runs jobs across a [Mesos](http://mesos.apache.org/) cluster.  Some of the jobs that Aurora schedules use Spark (which tends to consume all of the resources on the machine it is running on), but other jobs are written in Python or other languages.
@@ -68,6 +68,7 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
   * TODO: We need to come up with a safety mechanism to avoid borking a running DAG 
   * [Airflow on Github](https://github.com/apache/incubator-airflow)
   * [Nubank's Airflow server](https://airflow.nubank.com.br/admin/airflow/graph?dag_id=prod-dagao)
+  * TODO: How is target date used, and is it relevant for Airflow?
 
 ## Sabesp overview
   * Command line utility for interacting with data infra ([sample commands](cli_examples.md))
@@ -90,6 +91,11 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
     * correnteza
   * TODO: dev workflow overview
 
+## Sonar overview
+  * Sonar is a static frontend (written in pure JavaScript) that interfaces with Metapod's GraphQL API to give visibility into the datasets that are tracked by Metapod.
+  * To access Sonar, you need to have `metapod-admin` scope, which you can request in #access-request channel on Slack.  The reason for this is that the same scope gives you access to run mutations via Metapod's GraphQL API (potentially destructive).  TODO: We can separate the query path from the mutation path in the future to relax this requirement.
+  * [Nubank's Sonar URL](https://backoffice.nubank.com.br/sonar-js/)
+
 ## Monitoring run latency / cost [UPDATE REQUIRED]
   * We currently store metrics on how much total CPU time it costs to compute each dataset in the DAG using InfluxDB, and we use Grafana to visualize the data stored there. 
   * [Our ETL-focused Grafana dashboard](https://prod-grafana.nubank.com.br/dashboard/db/etl)
@@ -105,9 +111,9 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
 ## Permissions / accounts needed to contribute on data infra [UPDATE REQUIRED]
   * IAM permissions (TODO: which are needed to do common squad tasks)
   * Quay.io permissions needed, and when to do direct quay.io builds
-  * Databricks access
+  * Databricks access - ask on #access-request channel on Slack
   * Datagrip license (or some other SQL client)
-  * Redshift user for etl@cantareira-redshift.nubank.com.br (or sao pedro superuser)
-  * Metabase admin
-  * CircleCI
-  * metapod-admin scope (ask on #access-request channel on Slack)
+  * Redshift user for etl@cantareira-redshift.nubank.com.br (or sao pedro superuser) (TODO: how are these users managed?)
+  * Metabase admin (TODO: what is this needed for, and how do we get it?)
+  * CircleCI - for building code on branches, such as the pull request build indicator on Itaipu.  Login with Github.
+  * metapod-admin scope - for accessing Sonar-JS (ask on #access-request channel on Slack)
