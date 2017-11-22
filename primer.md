@@ -91,7 +91,8 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
   * TODO: dev workflow overview
 
 ## Monitoring run latency / cost [UPDATE REQUIRED]
-  * https://prod-grafana.nubank.com.br/dashboard/db/etl
+  * We currently store metrics on how much total CPU time it costs to compute each dataset in the DAG using InfluxDB, and we use Grafana to visualize the data stored there. 
+  * [Our ETL-focused Grafana dashboard](https://prod-grafana.nubank.com.br/dashboard/db/etl)
 
 ## Metabase [UPDATE REQUIRED]
   * Metabase is an open source frontend for storing and visualizing data warehouse queries
