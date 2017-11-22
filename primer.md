@@ -87,6 +87,9 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
   * https://prod-grafana.nubank.com.br/dashboard/db/etl
 
 ## Metabase [UPDATE REQUIRED]
+  * Metabase is an open source frontend for storing and visualizing data warehouse queries
+  * [Nubank's Metabase server](https://metabase.nubank.com.br/)
+  * Metabase has a broad user base within Nubank and it is fairly easy for non-technical users to write queries and create charts.  Metabase is backed by a PostgreSQL database that stores questions (SQL) and other metadata about the schema of the data warehouse.  Metabase queries Redshift, our data warehouse.  All queries initiated from the Metabase UI have the `metabase` user.  
 
 ## Monitoring and caring for DAG runs
   * See: [Monitoring the Nightly Run](monitoring_nightly_run.md)
