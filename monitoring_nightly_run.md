@@ -6,9 +6,23 @@ We currently recompute all data sets (from scratch) every night at midnight UTC.
 
 The goal of monitoring the nightly run is to make sure that data is loaded into DataBricks and Redshift every day before the work day begins in Nubank's Sao Paulo HQ (before 08:30).  It is important to have the load finished before 08:30 in order to provide fresh data, but also because query performance is degraded while a load is happening on Redshift, so a late load hurts user experience even for querying stale data because most of the cluster CPU is spent on the data load will have bad query performance.
 
-When checking on the progress of the run, first check [Sonar](https://backoffice.nubank.com.br/sonar-js/).  Sonar gives visibility into the percent completion of the current run and the datasets that comprise it:
+When checking on the progress of the run, first check [Sonar](https://backoffice.nubank.com.br/sonar-js/). Sonar gives visibility into the percent completion of the current run and the datasets that comprise it.
 
 ![image](https://user-images.githubusercontent.com/726169/33069627-6b289992-ceb5-11e7-88ad-00cb29697356.png)
+
+To check Sonar, first get the Transaction ID for the run. The Transaction ID is an UUID that gets generated for every run, in order to logically group together datasets produced in a given run.
+
+1. In the DAG Graph view in Airflow, click on any task in the graph:
+
+![](https://user-images.githubusercontent.com/1674699/33117653-8510651a-cf69-11e7-9874-828feb890fe2.jpg)
+
+2. Choose "Rendered" to get the rendered view of the template that got applied to that task:
+
+![](https://user-images.githubusercontent.com/1674699/33117685-a7d94b0c-cf69-11e7-8926-673045e680b8.jpg)
+
+3. See `metapod_transaction` for the Transaction ID:
+
+![](https://user-images.githubusercontent.com/1674699/33117710-c440d8d2-cf69-11e7-9279-79d3030c5062.jpg)
 
 You can use it to get S3 paths (and DataBricks links to mount historical datasets based on Metapod data).
 
