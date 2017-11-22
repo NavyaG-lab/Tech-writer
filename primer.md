@@ -8,9 +8,9 @@
 
 ![Datomic Fact Structure](http://docs.datomic.com/entities-basics.png)
 
-Documentation: http://docs.datomic.com/log.html
+[Datomic Log Documentation](http://docs.datomic.com/log.html)
 
-A Datomic log has EAVT Tx Added structure
+A Datomic log has an `EAVT Tx Added` structure, which stands for:
 * E = entity (Alessandro)
 * A = attribute (Age)
 * V = value (27)
