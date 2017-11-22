@@ -4,7 +4,7 @@ We currently recompute all data sets (from scratch) every night at midnight UTC.
 
 ![image](https://user-images.githubusercontent.com/726169/33067668-2786662a-ceaf-11e7-89bb-14d787268c4b.png)
 
-The goal of monitoring the nightly run is to make sure that data is loaded into DataBricks and Redshift every day before the work day begins in Nubank's Sao Paulo HQ (before 08:30).  It is important to have the load finished before 08:30 in order to provide fresh data, but also because query performance is degraded while a load is happening on Redshift, so a late load hurts user experience even for querying stale data because most of the cluster CPU is spent on the data load will have bad query performance.
+The goal of monitoring the nightly run is to make sure that data is loaded into DataBricks and Redshift every day before the work day begins in Nubank's Sao Paulo HQ (before 08:30).  It is important to have the load finished before 08:30 in order to provide fresh data, but also because query performance is degraded while a load is happening on Redshift, so a late load hurts user experience even for querying stale data because most of the cluster CPU is spent on the data load will have bad query performance.  It is also important for finance related datasets to be computed every day, as the numbers in these reports have real implications for Nubank cashflow (especially related to the "FIDC" securitization vehicle).
 
 When checking on the progress of the run, first check [Sonar](https://backoffice.nubank.com.br/sonar-js/).  Sonar gives visibility into the percent completion of the current run and the datasets that comprise it:
 
