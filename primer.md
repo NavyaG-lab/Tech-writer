@@ -72,9 +72,10 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
 ## Sabesp overview
   * Command line utility for interacting with data infra ([sample commands](cli_examples.md))
 
-## Capivara-clj overview [UPDATE REQUIRED]
-  * Redshift data-loader (from avro files to populated Redshift tables)
-  * Runs during (reacting to finished datasets via SQS from Metapod) and after Itaipu (batch job to do the cutover once everything is ready)
+## Capivara-clj overview
+  * [Capivara](https://github.com/nubank/capivara) is a Redshift data-loader written in Clojure.  The -clj suffix is there to disambiguate from an older SQL runner project.
+  * We load Redshift from avro files that are computed by Itaipu.  While the default dataset storage format for Itaipu is Parquet, we use the "avroize" function to create a copy of the dataset in Avro format, because Redshift can load directly from Avro (and not from Parquet).
+  * Capivara runs simultaneously with Itaipu (reacting to committed datasets via SQS messages published by Metapod) and after Itaipu (batch job to do the cutover once everything is ready).  We use SQS for this reactive flow because Metapod is on our production stack (in AWS São Paulo) and Capivara runs in AWS US East (where Redshift runs).
 
 ## Deployment pipeline [UPDATE REQUIRED]
   * Environments (test, devel, prod)
