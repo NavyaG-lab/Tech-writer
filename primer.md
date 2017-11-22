@@ -29,6 +29,7 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
 ## Correnteza overview [UPDATE REQUIRED]
   * Always-on Datomic log extractor (Clojure service).  Correnteza feeds the "data lake" with Datomic data extracted from lots of different Datomic databases across Nubank.
   * Correnteza has a blacklist of databases that it DOES NOT extract that is stored on DynamoDB.  If a database is not on the blacklist, then it will be automatically discovered and extracted.
+  * At the moment, correnteza can only have a single EC2 instance running, as having more than one instance causes it to kill itself.  There is some WIP on common-zookeeper to enable more than one instance.
 
 ## Itaipu overview
   * Basically a DAG within a DAG, where we compute everything from raw -> contract -> dataset -> dimension / fact, declaring the dependencies as inputs to each SparkOp (aka dataset).
@@ -80,7 +81,7 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
 
 ## GO deployment pipeline overview [UPDATE REQUIRED]
   * We use [GoCD](https://www.gocd.org/) for continuous delivery build pipelines
-  * [Nubank's GoCD server](https://go.nubank.com.br/go/pipelines)
+  * [Nubank's GoCD server](https://go.nubank.com.br/go/pipelines) (requires VPN)
   * TODO: explain environments (test, devel, prod)
   * TODO: explain build and deploy process for:
     * metapod
@@ -94,7 +95,7 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
 ## Sonar overview
   * Sonar is a static frontend (written in pure JavaScript) that interfaces with Metapod's GraphQL API to give visibility into the datasets that are tracked by Metapod.
   * To access Sonar, you need to have `metapod-admin` scope, which you can request in #access-request channel on Slack.  The reason for this is that the same scope gives you access to run mutations via Metapod's GraphQL API (potentially destructive).  TODO: We can separate the query path from the mutation path in the future to relax this requirement.
-  * [Nubank's Sonar URL](https://backoffice.nubank.com.br/sonar-js/)
+  * [Nubank's Sonar URL](https://backoffice.nubank.com.br/sonar-js/) (requires VPN)
 
 ## Monitoring run latency / cost [UPDATE REQUIRED]
   * We currently store metrics on how much total CPU time it costs to compute each dataset in the DAG using InfluxDB, and we use Grafana to visualize the data stored there. 
@@ -102,7 +103,7 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
 
 ## Metabase [UPDATE REQUIRED]
   * Metabase is an open source frontend for storing and visualizing data warehouse queries
-  * [Nubank's Metabase server](https://metabase.nubank.com.br/)
+  * [Nubank's Metabase server](https://metabase.nubank.com.br/) (requires VPN)
   * Metabase has a broad user base within Nubank and it is fairly easy for non-technical users to write queries and create charts.  Metabase is backed by a PostgreSQL database that stores questions (SQL) and other metadata about the schema of the data warehouse.  Metabase queries Redshift, our data warehouse.  All queries initiated from the Metabase UI have the `metabase` user.  
 
 ## Monitoring and caring for DAG runs
