@@ -77,12 +77,18 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
   * We load Redshift from avro files that are computed by Itaipu.  While the default dataset storage format for Itaipu is Parquet, we use the "avroize" function to create a copy of the dataset in Avro format, because Redshift can load directly from Avro (and not from Parquet).
   * Capivara runs simultaneously with Itaipu (reacting to committed datasets via SQS messages published by Metapod) and after Itaipu (batch job to do the cutover once everything is ready).  We use SQS for this reactive flow because Metapod is on our production stack (in AWS São Paulo) and Capivara runs in AWS US East (where Redshift runs).
 
-## Deployment pipeline [UPDATE REQUIRED]
-  * Environments (test, devel, prod)
-  * Clusters (stable, test, dev, dev2, alpha) - only one DAG should be run per cluster at a time given naive resource management
-  * Process for metapod (Cantareira Waves)
-  * Process for aurora jobs, itaipu, etc (Dagao)
-  * Dev workflow for go pipeline
+## GO deployment pipeline overview [UPDATE REQUIRED]
+  * We use [GoCD](https://www.gocd.org/) for continuous delivery build pipelines
+  * [Nubank's GoCD server](https://go.nubank.com.br/go/pipelines)
+  * TODO: explain environments (test, devel, prod)
+  * TODO: explain build and deploy process for:
+    * metapod
+    * aurora-jobs
+    * capivara
+    * itaipu
+    * sabesp
+    * correnteza
+  * TODO: dev workflow overview
 
 ## Monitoring run latency / cost [UPDATE REQUIRED]
   * https://prod-grafana.nubank.com.br/dashboard/db/etl
