@@ -3,6 +3,8 @@
 ## Big picture
 * [Onboarding Berlin](https://docs.google.com/presentation/d/1GD-poZ9GpIVZypFKQ_g_evAgml0Pzio-jBJNgZ-D2MM/edit?ts=5a0566c5#slide=id.g2296c22905_0_0)
 * [2017Q4](https://docs.google.com/document/d/1Mkl2EhJa6Zo3jAZBX5s_dWoEzMI9cd_yKIoQN9F48DY/edit?ts=5a0db010)
+* [Architecture Decision Record](https://github.com/nubank/data-infra-adr)
+* [Post-mortems](https://github.com/nubank/morgue)
 
 ## Datomic Log overview
 
@@ -26,13 +28,14 @@ We can traverse a t-value to get the transaction entity, and from the transactio
 
 In the raw Datomic storage format, attribute names (and enum values) are not stored as strings, but rather as entity ids (longs), and these entity ids can be traversed using `:db/ident` to get to the human readable name of the attribute.
 
-## Correnteza overview [UPDATE REQUIRED]
+## Correnteza overview
   * Always-on Datomic log extractor (Clojure service).  Correnteza feeds the "data lake" with Datomic data extracted from lots of different Datomic databases across Nubank.
   * Correnteza has a blacklist of databases that it DOES NOT extract that is stored on DynamoDB.  If a database is not on the blacklist, then it will be automatically discovered and extracted.
-  * At the moment, correnteza can only have a single EC2 instance running, as having more than one instance causes it to kill itself.  There is some WIP on common-zookeeper to enable more than one instance.
+  * At the moment, correnteza can only have a single EC2 instance running, as having more than one instance causes it to kill itself.  There is some WIP on common-zookeeper to enable more than one instance.  The requirement to have a single instance also complicates our normal blue-green deployment process, because this causes multiple instances of a service (old version + new version) to be up simultaneously.  Fixing the restriction of having exactly 1 correnteza instance live will make it possible to treat correnteza deploys in a standard way (like any other service).
+  * See [service README](https://github.com/nubank/correnteza) for additional details
 
 ## Itaipu overview
-  * Basically a DAG within a DAG, where we compute everything from raw -> contract -> dataset -> dimension / fact, declaring the dependencies as inputs to each SparkOp (aka dataset).
+  * [Itaipu](https://github.com/nubank/itaipu) is where we compute data, including everything from raw -> contract -> dataset -> dimension / fact, declaring the dependencies as inputs to each SparkOp (aka dataset).  It's basically a mini-DAG within the broader Airflow DAG
   * Raw & contract - see: https://github.com/nubank/itaipu#structure
     * Converts from Datomic's data model to a tabular SQL data model (a subset of what Datomic is capable of)
     * Users generally access contracts as the lowest level of abstraction which already eliminates sharding-related fragmentation
@@ -53,8 +56,9 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
   * TODO: How is target date used, and is it relevant for Itaipu?
 
 ## Metapod overview [UPDATE REQUIRED]
-  * Metapod is a Clojure service with a Datomic database that stores metadata about our data, including when any given dataset was computed, where is was stored on S3 (and with which partitions), the schema, which grouping "transaction" it is part of, etc.
+  * [Metapod](https://github.com/nubank/metapod) is a Clojure service with a Datomic database that stores metadata about our data, including when any given dataset was computed, where is was stored on S3 (and with which partitions), the schema, which grouping "transaction" it is part of, etc.
   * TODO: How is target date used, and is it relevant for Metapod?
+  * TODO: How to retract a portion of a Metapod transaction to enable datasets to be recomputed (for intance, after a patch has been applied)?
 
 ## Aurora jobs overview [UPDATE REQUIRED]
   * [Aurora](http://aurora.apache.org/) is a resource manager that schedules and runs jobs across a [Mesos](http://mesos.apache.org/) cluster.  Some of the jobs that Aurora schedules use Spark (which tends to consume all of the resources on the machine it is running on), but other jobs are written in Python or other languages.
@@ -70,9 +74,12 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
   * [Airflow on Github](https://github.com/apache/incubator-airflow)
   * [Nubank's Airflow server](https://airflow.nubank.com.br/admin/airflow/graph?dag_id=prod-dagao)
   * TODO: How is target date used, and is it relevant for Airflow?
+  * TODO: How to retry a given node?
 
 ## Sabesp overview
   * Command line utility for interacting with data infra ([sample commands](cli_examples.md))
+  * The [`sabesp`](https://github.com/nubank/sabesp) command line utility is separate from the [`nu cli`](https://github.com/nubank/nucli) because `nu cli` is written in Bash, while `sabesp` is written in Python and we haven't done the work to make them interoperate. 
+  * Typically sabesp is called by other tools, like Airflow, but it can be run manually in a terminal, either for development or to address problems with a production run.
 
 ## Capivara-clj overview
   * [Capivara](https://github.com/nubank/capivara) is a Redshift data-loader written in Clojure.  The -clj suffix is there to disambiguate from an older SQL runner project.
@@ -82,6 +89,7 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
 ## GO deployment pipeline overview [UPDATE REQUIRED]
   * We use [GoCD](https://www.gocd.org/) for continuous delivery build pipelines
   * [Nubank's GoCD server](https://go.nubank.com.br/go/pipelines) (requires VPN)
+  * [Data Infra Environment on Go](https://go.nubank.com.br/go/environments/data-infra/show)
   * TODO: explain environments (test, devel, prod)
   * TODO: explain build and deploy process for:
     * metapod
@@ -93,21 +101,47 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
   * TODO: dev workflow overview
 
 ## Sonar overview
-  * Sonar is a static frontend (written in pure JavaScript) that interfaces with Metapod's GraphQL API to give visibility into the datasets that are tracked by Metapod.
+  * [Sonar](https://github.com/nubank/sonar-js) is a static frontend (written in pure JavaScript) that interfaces with Metapod's GraphQL API to give visibility into the datasets that are tracked by Metapod.
   * To access Sonar, you need to have `metapod-admin` scope, which you can request in #access-request channel on Slack.  The reason for this is that the same scope gives you access to run mutations via Metapod's GraphQL API (potentially destructive).  TODO: We can separate the query path from the mutation path in the future to relax this requirement.
   * [Nubank's Sonar URL](https://backoffice.nubank.com.br/sonar-js/) (requires VPN)
+  * You can access the sonar output for a given metapod transaction by placing the transaction id in the URL: https://backoffice.nubank.com.br/sonar-js/#/sonar-js/transactions/2d1a7d12-0023-5de5-a437-36409b45f4c2
 
 ## Monitoring run latency / cost [UPDATE REQUIRED]
   * We currently store metrics on how much total CPU time it costs to compute each dataset in the DAG using InfluxDB, and we use Grafana to visualize the data stored there. 
   * [Our ETL-focused Grafana dashboard](https://prod-grafana.nubank.com.br/dashboard/db/etl)
 
-## Metabase [UPDATE REQUIRED]
+## Metabase
   * Metabase is an open source frontend for storing and visualizing data warehouse queries
   * [Nubank's Metabase server](https://metabase.nubank.com.br/) (requires VPN)
   * Metabase has a broad user base within Nubank and it is fairly easy for non-technical users to write queries and create charts.  Metabase is backed by a PostgreSQL database that stores questions (SQL) and other metadata about the schema of the data warehouse.  Metabase queries Redshift, our data warehouse.  All queries initiated from the Metabase UI have the `metabase` user.  
 
+## Quay.io overview
+  * Nubank uses [Quay.io](https://quay.io/) as our Docker container image store
+  * Whenever we build a new version of a service, for example, a Go pipeline will build a Docker container and upload it to Quay.io.  The images uploaded to Quay.io are conventionally tagged with the first 7 characters of the Git commit SHA of the repository that generated the build.        
+  * When we deploy a new service version, the deploy code will get the relevant image from Quay.io via its tag
+  
+  ![image](https://user-images.githubusercontent.com/726169/33166019-0da97e96-d039-11e7-88b2-759e1013484d.png)
+  
 ## Monitoring and caring for DAG runs
   * See: [Monitoring the Nightly Run](monitoring_nightly_run.md)
+
+## Other relevant ETL repositories
+  * [common-etl-spec](https://github.com/nubank/common-etl-spec) - Repository of clojure specs shared across ETL-related services
+  * [metapod-client](https://github.com/nubank/metapod-client) - Clojure client library for communicating with the Metapod
+  * [metapod-client-python](https://github.com/nubank/metapod-client-python) - Python client library for communicating with Metapod
+  * [finance-reports](https://github.com/nubank/finance-reports) - Saving reports for third party partners to places where they can access them
+  * [curva-de-rio](https://github.com/nubank/curva-de-rio) - ETL ingester for non-Datomic data
+  * [tapir](https://github.com/nubank/tapir) - Batch data loader for the serving layer
+  * [conrado](https://github.com/nubank/conrado) - Serving layer production service
+  * [aqueduto](https://github.com/nubank/aqueduto) - Online machine learning models framework
+  
+## Relevant machine learning models
+  * [lusa](https://github.com/nubank/lusa) - Acquisition stage credit risk
+  * [charlotte](https://github.com/nubank/charlotte) - Acquisition stage credit limit
+  * [rataria](https://github.com/nubank/rataria) - Acquisition stage fraud
+  * [cronno](https://github.com/nubank/cronno-model) - Customer management spend
+  * [hyoga](https://github.com/nubank/hyoga-model) - Customer management risk
+  * [contextual](https://github.com/nubank/contextual) - Customer contact reason
 
 ## Permissions / accounts needed to contribute on data infra [UPDATE REQUIRED]
   * IAM permissions (TODO: which are needed to do common squad tasks)
