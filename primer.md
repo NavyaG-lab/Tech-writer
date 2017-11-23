@@ -106,6 +106,13 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
   * [Nubank's Metabase server](https://metabase.nubank.com.br/) (requires VPN)
   * Metabase has a broad user base within Nubank and it is fairly easy for non-technical users to write queries and create charts.  Metabase is backed by a PostgreSQL database that stores questions (SQL) and other metadata about the schema of the data warehouse.  Metabase queries Redshift, our data warehouse.  All queries initiated from the Metabase UI have the `metabase` user.  
 
+## Quay.io overview
+  * Nubank uses [Quay.io](https://quay.io/) as our Docker container image store
+  * Whenever we build a new version of a service, for example, a Go pipeline will build a Docker container and upload it to Quay.io.  The images uploaded to Quay.io are conventionally tagged with the first 7 characters of the Git commit SHA of the repository that generated the build.        
+  * When we deploy a new service version, the deploy code will get the relevant image from Quay.io via its tag
+  
+  ![image](https://user-images.githubusercontent.com/726169/33166019-0da97e96-d039-11e7-88b2-759e1013484d.png)
+  
 ## Monitoring and caring for DAG runs
   * See: [Monitoring the Nightly Run](monitoring_nightly_run.md)
 
