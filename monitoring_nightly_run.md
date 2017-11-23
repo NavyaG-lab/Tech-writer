@@ -12,6 +12,12 @@ When checking on the progress of the run, first check [Sonar](https://backoffice
 
 To check Sonar, first get the Transaction ID for the run. The Transaction ID is an UUID that gets generated for every run, in order to logically group together datasets produced in a given run.
 
+One way to get the Transaction ID is from the daily Slack notification posted in #guild-data-eng when the nightly run begins (see the Metapod transaction line):
+
+![image](https://user-images.githubusercontent.com/726169/33165581-a8d1169c-d037-11e7-9062-40d678b9800d.png)
+
+Alternatively, you can get the Transaction ID from the Airflow UI:
+
 1. In the DAG Graph view in Airflow, click on any task in the graph:
 
 ![](https://user-images.githubusercontent.com/1674699/33117653-8510651a-cf69-11e7-9874-828feb890fe2.jpg)
