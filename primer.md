@@ -3,6 +3,8 @@
 ## Big picture
 * [Onboarding Berlin](https://docs.google.com/presentation/d/1GD-poZ9GpIVZypFKQ_g_evAgml0Pzio-jBJNgZ-D2MM/edit?ts=5a0566c5#slide=id.g2296c22905_0_0)
 * [2017Q4](https://docs.google.com/document/d/1Mkl2EhJa6Zo3jAZBX5s_dWoEzMI9cd_yKIoQN9F48DY/edit?ts=5a0db010)
+* [Architecture Decision Record](https://github.com/nubank/data-infra-adr)
+* [Post-mortems](https://github.com/nubank/morgue)
 
 ## Datomic Log overview
 
@@ -25,11 +27,6 @@ Updates to historical facts (rendering them no longer true) are modeled as a pai
 We can traverse a t-value to get the transaction entity, and from the transaction entity we can get to the UTC timestamp and other metadata like `:audit/cid` or `:audit/user`.
 
 In the raw Datomic storage format, attribute names (and enum values) are not stored as strings, but rather as entity ids (longs), and these entity ids can be traversed using `:db/ident` to get to the human readable name of the attribute.
-
-## Relevant repositories
-  * [common-etl-spec](https://github.com/nubank/common-etl-spec) - Repository of clojure specs shared across ETL-related services
-  * [metapod-client](https://github.com/nubank/metapod-client) - Client library for communicating with the Metapod metadata service
-  * []
 
 ## Correnteza overview [UPDATE REQUIRED]
   * Always-on Datomic log extractor (Clojure service).  Correnteza feeds the "data lake" with Datomic data extracted from lots of different Datomic databases across Nubank.
@@ -126,6 +123,16 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
   
 ## Monitoring and caring for DAG runs
   * See: [Monitoring the Nightly Run](monitoring_nightly_run.md)
+
+## Other relevant repositories
+  * [common-etl-spec](https://github.com/nubank/common-etl-spec) - Repository of clojure specs shared across ETL-related services
+  * [metapod-client](https://github.com/nubank/metapod-client) - Clojure client library for communicating with the Metapod
+  * [metapod-client-python](https://github.com/nubank/metapod-client-python) - Python client library for communicating with Metapod
+  * [finance-reports](https://github.com/nubank/finance-reports) - Saving reports for third party partners to places where they can access them
+  * [curva-de-rio](https://github.com/nubank/curva-de-rio) - ETL ingester for non-Datomic data
+  * [tapir](https://github.com/nubank/tapir) - Batch data loader for the serving layer
+  * [conrado](https://github.com/nubank/conrado) - Serving layer production service
+  * [aqueduto](https://github.com/nubank/aqueduto) - Online machine learning models framework
 
 ## Permissions / accounts needed to contribute on data infra [UPDATE REQUIRED]
   * IAM permissions (TODO: which are needed to do common squad tasks)
