@@ -26,6 +26,11 @@ We can traverse a t-value to get the transaction entity, and from the transactio
 
 In the raw Datomic storage format, attribute names (and enum values) are not stored as strings, but rather as entity ids (longs), and these entity ids can be traversed using `:db/ident` to get to the human readable name of the attribute.
 
+## Relevant repositories
+  * [common-etl-spec](https://github.com/nubank/common-etl-spec) - Repository of clojure specs shared across ETL-related services
+  * [metapod-client](https://github.com/nubank/metapod-client) - Client library for communicating with the Metapod metadata service
+  * []
+
 ## Correnteza overview [UPDATE REQUIRED]
   * Always-on Datomic log extractor (Clojure service).  Correnteza feeds the "data lake" with Datomic data extracted from lots of different Datomic databases across Nubank.
   * Correnteza has a blacklist of databases that it DOES NOT extract that is stored on DynamoDB.  If a database is not on the blacklist, then it will be automatically discovered and extracted.
@@ -33,7 +38,7 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
   * See [service README](https://github.com/nubank/correnteza) for additional details
 
 ## Itaipu overview
-  * Basically a DAG within a DAG, where we compute everything from raw -> contract -> dataset -> dimension / fact, declaring the dependencies as inputs to each SparkOp (aka dataset).
+  * [Itaipu](https://github.com/nubank/itaipu) is where we compute data, including everything from raw -> contract -> dataset -> dimension / fact, declaring the dependencies as inputs to each SparkOp (aka dataset).  It's basically a mini-DAG within the broader Airflow DAG
   * Raw & contract - see: https://github.com/nubank/itaipu#structure
     * Converts from Datomic's data model to a tabular SQL data model (a subset of what Datomic is capable of)
     * Users generally access contracts as the lowest level of abstraction which already eliminates sharding-related fragmentation
@@ -54,8 +59,9 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
   * TODO: How is target date used, and is it relevant for Itaipu?
 
 ## Metapod overview [UPDATE REQUIRED]
-  * Metapod is a Clojure service with a Datomic database that stores metadata about our data, including when any given dataset was computed, where is was stored on S3 (and with which partitions), the schema, which grouping "transaction" it is part of, etc.
+  * [Metapod](https://github.com/nubank/metapod) is a Clojure service with a Datomic database that stores metadata about our data, including when any given dataset was computed, where is was stored on S3 (and with which partitions), the schema, which grouping "transaction" it is part of, etc.
   * TODO: How is target date used, and is it relevant for Metapod?
+  * TODO: How to retract a portion of a Metapod transaction to enable datasets to be recomputed (for intance, after a patch has been applied)?
 
 ## Aurora jobs overview [UPDATE REQUIRED]
   * [Aurora](http://aurora.apache.org/) is a resource manager that schedules and runs jobs across a [Mesos](http://mesos.apache.org/) cluster.  Some of the jobs that Aurora schedules use Spark (which tends to consume all of the resources on the machine it is running on), but other jobs are written in Python or other languages.
@@ -71,9 +77,12 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
   * [Airflow on Github](https://github.com/apache/incubator-airflow)
   * [Nubank's Airflow server](https://airflow.nubank.com.br/admin/airflow/graph?dag_id=prod-dagao)
   * TODO: How is target date used, and is it relevant for Airflow?
+  * TODO: How to retry a given node?
 
 ## Sabesp overview
   * Command line utility for interacting with data infra ([sample commands](cli_examples.md))
+  * The [`sabesp`](https://github.com/nubank/sabesp) command line utility is separate from the [`nu cli`](https://github.com/nubank/nucli) because `nu cli` is written in Bash, while `sabesp` is written in Python and we haven't done the work to make them interoperate. 
+  * Typically sabesp is called by other tools, like Airflow, but it can be run manually in a terminal, either for development or to address problems with a production run.
 
 ## Capivara-clj overview
   * [Capivara](https://github.com/nubank/capivara) is a Redshift data-loader written in Clojure.  The -clj suffix is there to disambiguate from an older SQL runner project.
@@ -94,9 +103,10 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
   * TODO: dev workflow overview
 
 ## Sonar overview
-  * Sonar is a static frontend (written in pure JavaScript) that interfaces with Metapod's GraphQL API to give visibility into the datasets that are tracked by Metapod.
+  * [Sonar](https://github.com/nubank/sonar-js) is a static frontend (written in pure JavaScript) that interfaces with Metapod's GraphQL API to give visibility into the datasets that are tracked by Metapod.
   * To access Sonar, you need to have `metapod-admin` scope, which you can request in #access-request channel on Slack.  The reason for this is that the same scope gives you access to run mutations via Metapod's GraphQL API (potentially destructive).  TODO: We can separate the query path from the mutation path in the future to relax this requirement.
   * [Nubank's Sonar URL](https://backoffice.nubank.com.br/sonar-js/) (requires VPN)
+  * You can access the sonar output for a given metapod transaction by placing the transaction id in the URL: https://backoffice.nubank.com.br/sonar-js/#/sonar-js/transactions/2d1a7d12-0023-5de5-a437-36409b45f4c2
 
 ## Monitoring run latency / cost [UPDATE REQUIRED]
   * We currently store metrics on how much total CPU time it costs to compute each dataset in the DAG using InfluxDB, and we use Grafana to visualize the data stored there. 
