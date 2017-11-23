@@ -28,7 +28,7 @@ We can traverse a t-value to get the transaction entity, and from the transactio
 
 In the raw Datomic storage format, attribute names (and enum values) are not stored as strings, but rather as entity ids (longs), and these entity ids can be traversed using `:db/ident` to get to the human readable name of the attribute.
 
-## Correnteza overview [UPDATE REQUIRED]
+## Correnteza overview
   * Always-on Datomic log extractor (Clojure service).  Correnteza feeds the "data lake" with Datomic data extracted from lots of different Datomic databases across Nubank.
   * Correnteza has a blacklist of databases that it DOES NOT extract that is stored on DynamoDB.  If a database is not on the blacklist, then it will be automatically discovered and extracted.
   * At the moment, correnteza can only have a single EC2 instance running, as having more than one instance causes it to kill itself.  There is some WIP on common-zookeeper to enable more than one instance.  The requirement to have a single instance also complicates our normal blue-green deployment process, because this causes multiple instances of a service (old version + new version) to be up simultaneously.  Fixing the restriction of having exactly 1 correnteza instance live will make it possible to treat correnteza deploys in a standard way (like any other service).
@@ -89,6 +89,7 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
 ## GO deployment pipeline overview [UPDATE REQUIRED]
   * We use [GoCD](https://www.gocd.org/) for continuous delivery build pipelines
   * [Nubank's GoCD server](https://go.nubank.com.br/go/pipelines) (requires VPN)
+  * [Data Infra Environment on Go](https://go.nubank.com.br/go/environments/data-infra/show)
   * TODO: explain environments (test, devel, prod)
   * TODO: explain build and deploy process for:
     * metapod
@@ -109,7 +110,7 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
   * We currently store metrics on how much total CPU time it costs to compute each dataset in the DAG using InfluxDB, and we use Grafana to visualize the data stored there. 
   * [Our ETL-focused Grafana dashboard](https://prod-grafana.nubank.com.br/dashboard/db/etl)
 
-## Metabase [UPDATE REQUIRED]
+## Metabase
   * Metabase is an open source frontend for storing and visualizing data warehouse queries
   * [Nubank's Metabase server](https://metabase.nubank.com.br/) (requires VPN)
   * Metabase has a broad user base within Nubank and it is fairly easy for non-technical users to write queries and create charts.  Metabase is backed by a PostgreSQL database that stores questions (SQL) and other metadata about the schema of the data warehouse.  Metabase queries Redshift, our data warehouse.  All queries initiated from the Metabase UI have the `metabase` user.  
@@ -124,7 +125,7 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
 ## Monitoring and caring for DAG runs
   * See: [Monitoring the Nightly Run](monitoring_nightly_run.md)
 
-## Other relevant repositories
+## Other relevant ETL repositories
   * [common-etl-spec](https://github.com/nubank/common-etl-spec) - Repository of clojure specs shared across ETL-related services
   * [metapod-client](https://github.com/nubank/metapod-client) - Clojure client library for communicating with the Metapod
   * [metapod-client-python](https://github.com/nubank/metapod-client-python) - Python client library for communicating with Metapod
@@ -133,6 +134,14 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
   * [tapir](https://github.com/nubank/tapir) - Batch data loader for the serving layer
   * [conrado](https://github.com/nubank/conrado) - Serving layer production service
   * [aqueduto](https://github.com/nubank/aqueduto) - Online machine learning models framework
+  
+## Relevant machine learning models
+  * [lusa](https://github.com/nubank/lusa) - Acquisition stage credit risk
+  * [charlotte](https://github.com/nubank/charlotte) - Acquisition stage credit limit
+  * [rataria](https://github.com/nubank/rataria) - Acquisition stage fraud
+  * [cronno](https://github.com/nubank/cronno-model) - Customer management spend
+  * [hyoga](https://github.com/nubank/hyoga-model) - Customer management risk
+  * [contextual](https://github.com/nubank/contextual) - Customer contact reason
 
 ## Permissions / accounts needed to contribute on data infra [UPDATE REQUIRED]
   * IAM permissions (TODO: which are needed to do common squad tasks)
