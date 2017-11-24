@@ -5,6 +5,7 @@
 * [2017Q4](https://docs.google.com/document/d/1Mkl2EhJa6Zo3jAZBX5s_dWoEzMI9cd_yKIoQN9F48DY/edit?ts=5a0db010)
 * [Architecture Decision Record](https://github.com/nubank/data-infra-adr)
 * [Post-mortems](https://github.com/nubank/morgue)
+* [Infrastructure Overivew](infrastructure/guide-to-the-runtime-environment.md)
 
 ## Datomic Log overview
 
@@ -75,6 +76,9 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
   * [Nubank's Airflow server](https://airflow.nubank.com.br/admin/airflow/graph?dag_id=prod-dagao)
   * TODO: How is target date used, and is it relevant for Airflow?
   * TODO: How to retry a given node?
+  
+  [How to deploy airflow?](infrastructure/guide-to-the-runtime-environment.md#Airflow)
+  
 
 ## Sabesp overview
   * Command line utility for interacting with data infra ([sample commands](cli_examples.md))
