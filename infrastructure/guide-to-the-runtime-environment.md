@@ -65,3 +65,10 @@ then you need to delete the old airflow
 
 `Airflow.delete!("x")`
 
+### Running tests for the Airflow DAGs
+
+Running the command below, will spin a environment similiar to the production one, and will run and check all tasks in the `main.py` dag.
+
+```
+./script/test integration
+```
