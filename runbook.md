@@ -64,7 +64,7 @@ Given this output, the dataset failed, also causing the dependent model to fail,
 
 ### Dealing with dataset failures
 
-If a dataset is erroring and causing an job node to fail on airflow, we can comment out the dataset from `itaipu` to stop it from failing in subsequent runs. Here is an [example PR that does this](https://github.com/nubank/itaipu/pull/1603). You will also want to clear downstream jobs that were marked as failures to allow them to run (see [Making downstream jobs run when an upstream job fails]).
+If a dataset is erroring and causing an job node to fail on airflow, we can comment out the dataset from `itaipu` to stop it from failing in subsequent runs. Here is an [example PR that does this](https://github.com/nubank/itaipu/pull/1603). You will also want to clear downstream jobs that were marked as failures to allow them to run (see [Making downstream jobs run when an upstream job fails](#making-downstream-jobs-run-when-an-upstream-job-fails)).
 
 ### Dealing with model failures
 
