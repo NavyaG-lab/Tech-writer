@@ -117,7 +117,15 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
 ## Metabase
   * Metabase is an open source frontend for storing and visualizing data warehouse queries
   * [Nubank's Metabase server](https://metabase.nubank.com.br/) (requires VPN)
-  * Metabase has a broad user base within Nubank and it is fairly easy for non-technical users to write queries and create charts.  Metabase is backed by a PostgreSQL database that stores questions (SQL) and other metadata about the schema of the data warehouse.  Metabase queries Redshift, our data warehouse.  All queries initiated from the Metabase UI have the `metabase` user.  
+  * Metabase has a broad user base within Nubank and it is fairly easy for non-technical users to write queries and create charts.  Metabase is backed by a PostgreSQL database that stores questions (SQL) and other metadata about the schema of the data warehouse.  Metabase queries Redshift, our data warehouse.  All queries initiated from the Metabase UI have the `metabase` user.
+  
+## Belo Monte
+_[TODO: add useful queries]_  
+The name for our Redshift cluster. The most used interface to it is Metabase, described above. For more info, see the [Wiki page about Belo Monte](https://wiki.nubank.com.br/index.php/Belo_Monte).
+
+To get access credentials, the path of least resistance for everyone involved is when the Data Infra engineer follows the guide on the wiki for normal nubankers (using IAM-based authentication). After that is set up, another Data Infra engineer can attach a password to the Redshift user that was created through the IAM path, in order to make it easier to use GUI tools like DataGrip.
+
+In Data Infra, we can use an admin user for administrative tasks (e.g. querying for load errors in the `stl_load_errors` table). Ask for another Data Infra engineer to get you the credentials for the admin user.
 
 ## Quay.io overview
   * Nubank uses [Quay.io](https://quay.io/) as our Docker container image store
