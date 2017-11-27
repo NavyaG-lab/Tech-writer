@@ -66,23 +66,23 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
   * [aurora-jobs](https://github.com/nubank/aurora-jobs) stores our job definitions
 
 ## Airflow overview [UPDATE REQUIRED]
-  * Airflow is a platform to author, schedule, and monitor workflows.  We define our workflow (commonly referred to as  "the DAG" or "the Dagão").  Airflow configuration is done via Python code, and we keep our configuration code in [aurora-jobs](https://github.com/nubank/aurora-jobs/blob/master/airflow/main.py).  
+  * Airflow is a platform to author, schedule, and monitor workflows.  We define our workflow (commonly referred to as  "the DAG" or "the Dagão").  Airflow configuration is done via Python code, and we keep our configuration code in [aurora-jobs](https://github.com/nubank/aurora-jobs/blob/master/airflow/main.py).
   * When a job is changed on `aurora-jobs`, we need to be careful about how we update the workflow on Airflow because Airflow does not have isolation between runs, so a change to the workflow could affect the *currently running* DAG accidentally if we are not careful.
-    1) `aurora-jobs` will build automatically on the Go Pipeline 
-    2) We need to manually publish the new version on the [Go Pipeline](https://go.nubank.com.br/go/pipelines/dagao/894/release/1).  Don't do this during an active DAG run.  
+    1) `aurora-jobs` will build automatically on the Go Pipeline
+    2) We need to manually publish the new version on the [Go Pipeline](https://go.nubank.com.br/go/pipelines/dagao/894/release/1).  Don't do this during an active DAG run.
     3) We need to click the "refresh" button on the `prod-dagao` DAG on Airflow in order to suck in the new configuration
-  * TODO: We need to come up with a safety mechanism to avoid borking a running DAG 
+  * TODO: We need to come up with a safety mechanism to avoid borking a running DAG
   * [Airflow on Github](https://github.com/apache/incubator-airflow)
   * [Nubank's Airflow server](https://airflow.nubank.com.br/admin/airflow/graph?dag_id=prod-dagao)
   * TODO: How is target date used, and is it relevant for Airflow?
   * TODO: How to retry a given node?
-  
+
   [How to deploy airflow?](infrastructure/guide-to-the-runtime-environment.md#Airflow)
-  
+
 
 ## Sabesp overview
   * Command line utility for interacting with data infra ([sample commands](cli_examples.md))
-  * The [`sabesp`](https://github.com/nubank/sabesp) command line utility is separate from the [`nu cli`](https://github.com/nubank/nucli) because `nu cli` is written in Bash, while `sabesp` is written in Python and we haven't done the work to make them interoperate. 
+  * The [`sabesp`](https://github.com/nubank/sabesp) command line utility is separate from the [`nu cli`](https://github.com/nubank/nucli) because `nu cli` is written in Bash, while `sabesp` is written in Python and we haven't done the work to make them interoperate.
   * Typically sabesp is called by other tools, like Airflow, but it can be run manually in a terminal, either for development or to address problems with a production run.
 
 ## Capivara-clj overview
@@ -111,16 +111,16 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
   * You can access the sonar output for a given metapod transaction by placing the transaction id in the URL: https://backoffice.nubank.com.br/sonar-js/#/sonar-js/transactions/2d1a7d12-0023-5de5-a437-36409b45f4c2
 
 ## Monitoring run latency / cost [UPDATE REQUIRED]
-  * We currently store metrics on how much total CPU time it costs to compute each dataset in the DAG using InfluxDB, and we use Grafana to visualize the data stored there. 
+  * We currently store metrics on how much total CPU time it costs to compute each dataset in the DAG using InfluxDB, and we use Grafana to visualize the data stored there.
   * [Our ETL-focused Grafana dashboard](https://prod-grafana.nubank.com.br/dashboard/db/etl)
 
 ## Metabase
   * Metabase is an open source frontend for storing and visualizing data warehouse queries
   * [Nubank's Metabase server](https://metabase.nubank.com.br/) (requires VPN)
   * Metabase has a broad user base within Nubank and it is fairly easy for non-technical users to write queries and create charts.  Metabase is backed by a PostgreSQL database that stores questions (SQL) and other metadata about the schema of the data warehouse.  Metabase queries Redshift, our data warehouse.  All queries initiated from the Metabase UI have the `metabase` user.
-  
+
 ## Belo Monte
-_[TODO: add useful queries]_  
+_[TODO: add useful queries]_
 The name for our Redshift cluster. The most used interface to it is Metabase, described above. For more info, see the [Wiki page about Belo Monte](https://wiki.nubank.com.br/index.php/Belo_Monte).
 
 To get access credentials, the path of least resistance for everyone involved is when the Data Infra engineer follows the guide on the wiki for normal nubankers (using IAM-based authentication). After that is set up, another Data Infra engineer can attach a password to the Redshift user that was created through the IAM path, in order to make it easier to use GUI tools like DataGrip.
@@ -129,11 +129,11 @@ In Data Infra, we can use an admin user for administrative tasks (e.g. querying 
 
 ## Quay.io overview
   * Nubank uses [Quay.io](https://quay.io/) as our Docker container image store
-  * Whenever we build a new version of a service, for example, a Go pipeline will build a Docker container and upload it to Quay.io.  The images uploaded to Quay.io are conventionally tagged with the first 7 characters of the Git commit SHA of the repository that generated the build.        
+  * Whenever we build a new version of a service, for example, a Go pipeline will build a Docker container and upload it to Quay.io.  The images uploaded to Quay.io are conventionally tagged with the first 7 characters of the Git commit SHA of the repository that generated the build.
   * When we deploy a new service version, the deploy code will get the relevant image from Quay.io via its tag
-  
+
   ![image](https://user-images.githubusercontent.com/726169/33166019-0da97e96-d039-11e7-88b2-759e1013484d.png)
-  
+
 ## Monitoring and caring for DAG runs
   * See: [Monitoring the Nightly Run](monitoring_nightly_run.md)
 
@@ -146,7 +146,7 @@ In Data Infra, we can use an admin user for administrative tasks (e.g. querying 
   * [tapir](https://github.com/nubank/tapir) - Batch data loader for the serving layer
   * [conrado](https://github.com/nubank/conrado) - Serving layer production service
   * [aqueduto](https://github.com/nubank/aqueduto) - Online machine learning models framework
-  
+
 ## Relevant machine learning models
   * [lusa](https://github.com/nubank/lusa) - Acquisition stage credit risk
   * [charlotte](https://github.com/nubank/charlotte) - Acquisition stage credit limit

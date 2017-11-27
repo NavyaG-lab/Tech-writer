@@ -10,6 +10,8 @@ When checking on the progress of the run, first check [Sonar](https://backoffice
 
 ![image](https://user-images.githubusercontent.com/726169/33069627-6b289992-ceb5-11e7-88ad-00cb29697356.png)
 
+## Finding the transaction id
+
 To check Sonar, first get the Transaction ID for the run. The Transaction ID is an UUID that gets generated for every run, in order to logically group together datasets produced in a given run. A nice shortcut for opening the transaction on Sonar is to click at the transaction id link posted by Airflow at 00:00 UTC on the `guild-data-eng` channel on slack.
 
 One way to get the Transaction ID is from the daily Slack notification posted in #guild-data-eng when the nightly run begins (see the Metapod transaction line):
@@ -31,6 +33,8 @@ Alternatively, you can get the Transaction ID from the Airflow UI:
 ![](https://user-images.githubusercontent.com/1674699/33117710-c440d8d2-cf69-11e7-9279-79d3030c5062.jpg)
 
 You can use it to get S3 paths (and DataBricks links to mount historical datasets based on Metapod data).
+
+## Airflow and accessing exceptions
 
 You should also check [Airflow](https://airflow.nubank.com.br/admin/airflow/graph?dag_id=prod-dagao) to get an overview of how the nightly run is proceeding.
 
@@ -56,10 +60,12 @@ We can see that the error is with the `temporary_fact_payment`, which is associa
 
 For Redshift load errors in general, we can use an SQL client (such as DataGrip) connected to `etl@cantareira-redshift.nubank.com.br` (see #access-request on Slack for credentials) to view what went wrong via the `stl_load_errors` table:
 
+```sql
 select *
 from stl_load_errors
 order by starttime desc
 limit 100;
+```
 
 ![image](https://user-images.githubusercontent.com/726169/33068823-c5bba744-ceb2-11e7-8757-6ba2b44c3a4c.png)
 
