@@ -160,7 +160,8 @@ In Data Infra, we can use an admin user for administrative tasks (e.g. querying 
   * Quay.io permissions needed, and when to do direct quay.io builds
   * Databricks access - ask on #access-request channel on Slack
   * Datagrip license (or some other SQL client)
-  * Redshift user for etl@cantareira-redshift.nubank.com.br (or sao pedro superuser) (TODO: how are these users managed?)
+  * Join user groups: `belomonte` and `analyst`
+  * Redshift user for etl@cantareira-redshift.nubank.com.br (or `sao_pedro` superuser) (TODO: how are these users managed?)
   * Metabase admin (TODO: what is this needed for, and how do we get it?)
   * CircleCI - for building code on branches, such as the pull request build indicator on Itaipu.  Login with Github.
   * metapod-admin scope - for accessing Sonar-JS (ask on #access-request channel on Slack)
