@@ -156,7 +156,8 @@ In Data Infra, we can use an admin user for administrative tasks (e.g. querying 
   * [contextual](https://github.com/nubank/contextual) - Customer contact reason
 
 ## Permissions / accounts needed to contribute on data infra [UPDATE REQUIRED]
-  * IAM permissions (TODO: which are needed to do common squad tasks)
+  * IAM permissions (groups) 
+    * `casual-dev data-access-ops data-infra-aurora-access eng infra-ops prod-eng data-infra belomonte`
   * Quay.io permissions needed, and when to do direct quay.io builds
   * Databricks access - ask on #access-request channel on Slack
   * Datagrip license (or some other SQL client)
