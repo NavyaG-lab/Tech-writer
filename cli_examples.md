@@ -8,7 +8,7 @@ Sabesp's repository: https://github.com/nubank/sabesp
 pip install -i https://pypi.nubank.com.br/pypi sabespcli
 ```
 
-Note: on MacOSX, you may need to `sudo` if you see `Permission denied`
+Note: to deal with potential `Permission denied` issues during package installation, you can either use `sudo` (not recommended) or use `virtualenv`
 
 ## Usage
 
