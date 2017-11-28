@@ -36,8 +36,8 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
   * See [service README](https://github.com/nubank/correnteza) for additional details
 
 ## Itaipu overview
-  * [Itaipu](https://github.com/nubank/itaipu) is where we compute data, including everything from raw -> contract -> dataset -> dimension / fact, declaring the dependencies as inputs to each SparkOp (aka dataset).  It's basically a mini-DAG within the broader Airflow DAG
-  * Raw & contract - see: https://github.com/nubank/itaipu#structure
+  * [Itaipu](https://github.com/nubank/itaipu) is where we compute data, including everything from raw -> contract -> dataset -> dimension / fact, declaring the dependencies as inputs to each SparkOp (aka dataset). It's basically a mini-DAG within the broader Airflow DAG
+  * Raw & contract - see: https://github.com/nubank/data-infra-docs/blob/master/itaipu/primer.md#structure
     * Converts from Datomic's data model to a tabular SQL data model (a subset of what Datomic is capable of)
     * Users generally access contracts as the lowest level of abstraction which already eliminates sharding-related fragmentation
   * Dataset (SparkOp)
