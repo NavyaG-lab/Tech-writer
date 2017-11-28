@@ -5,8 +5,8 @@ This repository is the canonical place to put all documentation related to how t
 ## Data Infra Overall
 * [Primer](primer.md)
 * [Monitoring the nightly run](monitoring_nightly_run.md)
-* [CLI usage examples / runbook](cli_examples.md)
 * [Runbook](runbook.md)
+* [CLI usage examples](cli_examples.md)
 
 ## Itaipu
   * [Primer](itaipu/primer.md)
