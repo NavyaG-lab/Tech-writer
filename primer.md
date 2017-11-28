@@ -76,10 +76,10 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
 [How to deploy airflow?](infrastructure/guide-to-the-runtime-environment.md#airflow)
 
 ### Deploying job changes to Airflow
-  * When a job is changed on `aurora-jobs`, we need to be careful about how we update the workflow on Airflow because Airflow does not have isolation between runs, so a change to the workflow could affect the *currently running* DAG accidentally if we are not careful.
-    1) `aurora-jobs` will build automatically on the Go Pipeline
-    2) We need to manually publish the new version on the [Go Pipeline](https://go.nubank.com.br/go/pipelines/dagao/894/release/1).  Don't do this during an active DAG run.
-    3) We need to click the "refresh" button on the `prod-dagao` DAG on Airflow in order to suck in the new configuration
+When a job is changed on `aurora-jobs`, we need to be careful about how we update the workflow on Airflow because Airflow does not have isolation between runs, so a change to the workflow could affect the *currently running* DAG accidentally if we are not careful.
+ 1) `aurora-jobs` will build automatically on the Go Pipeline
+ 2) We need to manually publish the new version on the [Go Pipeline](https://go.nubank.com.br/go/pipelines/dagao/894/release/1).  Don't do this during an active DAG run.
+ 3) We need to click the "refresh" button on the `prod-dagao` DAG on Airflow in order to suck in the new configuration
 
 ## Sabesp overview
   * Command line utility for interacting with data infra ([sample commands](cli_examples.md))
