@@ -1,11 +1,31 @@
 # Runbook
 
+* [Controlling aurora jobs via the CLI](#controlling-aurora-jobs-via-the-cli)
+* [Basic steps to handling Airflow DAG errors](#basic-steps-to-handling-airflow-dag-errors)
 * [Recover from non-critical model build failures](#recover-from-non-critical-model-build-failures)
   * [Determining if a dataset or model is business critical or can be fixed without time-pressure](#determining-if-a-dataset-or-model-is-business-critical-or-can-be-fixed-without-time-pressure)
   * [Determining if it was the dataset or model that failed](#determining-if-it-was-the-dataset-or-model-that-failed)
   * [Dealing with dataset failures](#dealing-with-dataset-failures)
   * [Dealing with model failures](#dealing-with-model-failures)
   * [Making downstream jobs run when an upstream job fails](#making-downstream-jobs-run-when-an-upstream-job-fails)
+
+## Controlling aurora jobs via the CLI
+
+[see sabesp cli examples](cli_examples.md)
+
+## Basic steps to handling Airflow DAG errors
+
+The dagão run failed. What can you do?
+
+- Check out for errors on the failed aurora tasks
+- Check out for recent commits and deploy on go, to check if they are related to that
+- If nothing seems obvious and you get lots of generic errors (reading non-existent files, network errors, etc), you should:
+ 1. Cycle all machines (eg `nu ser cycle mesos-on-demand --env cantareira --suffix stable --region us-east-1`)
+ 2. Get the transaction id from #guild-data-eng
+ 3. Retry rerunning the dagão with the same transaction (eg `sabesp --verbose --aurora-stack=cantareira-stable jobs create prod dagao --filename dagao "profile.metapod_transaction=$metapod_tx"`)
+ 4. If that fails, increase the cluster size (eg `sabesp --aurora-stack=cantareira-stable jobs create prod scale  --job-version "scale_cluster=4945885" MODE=on-demand N_NODES=$nodes SCALE_TIMEOUT=0`)
+ 5. Retry dagão
+ 6. If it still doesn't work, rollback to a version that worked and retry dagão.
 
 ## Recover from non-critical dataset/model build failures
 
@@ -22,7 +42,7 @@ If the model is a [`policy model`](https://github.com/nubank/aurora-jobs/blob/00
 
 ### Determining if it was the dataset or model that failed
 
-[Get the transaction id for the run](https://github.com/nubank/data-infra-docs/blob/master/monitoring_nightly_run.md#finding-the-transaction-id).
+Get the transaction id for the run ([here is how](https://github.com/nubank/data-infra-docs/blob/master/monitoring_nightly_run.md#finding-the-transaction-id)).
 Then find uncommitted "`datasets`" for that transaction by using [sonar](https://backoffice.nubank.com.br/sonar-js/#/sonar-js/graphiql) run this GraphQL query:
 
 ```
@@ -42,6 +62,9 @@ Which will output something like this:
   "data": {
     "transaction": {
       "datasets": [
+        ...
+        if the run is still going there will be lots of other entries here
+        ...
         {
           "name": "model/fx-model-avro"
         },
@@ -71,7 +94,7 @@ If a dataset is erroring and causing an job node to fail on airflow, we can comm
 Non-critical models can be removed from the DAG definition ([example PR here](https://github.com/nubank/aurora-jobs/pull/483)) so that it doesn't block future runs. The owner of the model can then fix it without blocking other models.
 
 Removing model will only take effect tomorrow, when in the next run is triggered.
-Hence, to get downstream jobs to build today, we can do some Airflow manipulations. Note that the failing model will show up as empty in those downstream jobs.
+Hence, to get downstream jobs to build today, we can do some Airflow manipulations. Note that the failing model will show up as empty in those downstream jobs. Lastly, be sure to [deploy job changes to airflow](primer.md#deploying-job-changes-to-airflow) once the current run finishes.
 
 ### Making downstream jobs run when an upstream job fails
 

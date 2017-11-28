@@ -83,19 +83,9 @@ Things that went wrong:
 - Itaipu can not complete because (early)
 - Redshift load failed (late)
 
-## Error Playbook
+## Dealing with DAG errors
 
-The dagão run failed. What can you do?
-
-- Check out for errors on the failed aurora tasks
-- Check out for recent commits and deploy on go, to check if they are related to that
-- If nothing seems obvious and you get lots of generic errors (reading non-existent files, network errors, etc), you should:
- 1. Cycle all machines (eg `nu ser cycle mesos-on-demand --env cantareira --suffix stable --region us-east-1`)
- 2. Get the transaction id from #guild-data-eng
- 3. Retry rerunning the dagão with the same transaction (eg `sabesp --verbose --aurora-stack=cantareira-stable jobs create prod dagao --filename dagao "profile.metapod_transaction=$metapod_tx"`)
- 4. If that fails, increase the cluster size (eg `sabesp --aurora-stack=cantareira-stable jobs create prod scale  --job-version "scale_cluster=4945885" MODE=on-demand N_NODES=$nodes SCALE_TIMEOUT=0`)
- 5. Retry dagão
- 6. If it still doesn't work, rollback to a version that worked and retry dagão.
+[see the runbook](runbook.md#basic-steps-to-handling-airflow-dag-errors)
 
 ## Legacy: Monitoring and caring for DAG runs [UPDATE REQUIRED]
   * Process for checking if a run failed and why (on test, on prod). When to use aurora vs. mesos
