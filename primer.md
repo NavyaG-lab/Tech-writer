@@ -53,7 +53,7 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
   * Integration test
     * The Itaipu integration test is able to statically check the entire Itaipu mini-DAG and raise errors if there are any broken column references, incorrect type signatures, unconventional names, etc.  This allows us to catch errors sooner (which is important, because catching an error after the nightly run has been running for 5 hours is very high cost).
   * Workflow for building a new dataset
-    * https://github.com/nubank/itaipu#creating-a-new-dataset
+    * https://github.com/nubank/data-infra-docs/blob/master/itaipu/workflow.md#creating-a-new-dataset
   * TODO: How is target date used, and is it relevant for Itaipu?
 
 ## Metapod overview [UPDATE REQUIRED]
