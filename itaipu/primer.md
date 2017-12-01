@@ -61,6 +61,8 @@ The definition for any given contract is hardcoded first in a Clojure model (whi
 
 ### Dataset
 
-A view of the data that will be used to make business decisions. Requires minimal transformations or calculations for
-the end user.
+Dataset is a table. Derived from the contract-level data, there is a need to have a alternative, better structured table to satisfy the needs of a customer (e.g. analyst). It's a view of the data, which can be used to make business decisions. Requires minimal transformations or calculations for the end user.
 
+Synonym: _materialized view_
+
+More specifically, it's usually a Parquet file on AWS S3.
