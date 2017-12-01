@@ -87,6 +87,11 @@ If you want to add, change or remove an attribute:
 Creating datasets:
 - [See quotes from Kimball on designing dimensional models here](dimensional_modeling/kimball.md)
 
+### Bus matrix
+
+Find the bus matrix WIP here (for the time being—until we find a better place):
+https://docs.google.com/spreadsheets/d/1K5IqTTT2L56QVRve-Q8eSl7IfQipBQb1u7hTELP4m3Q/edit#gid=0
+
 ### Databricks Approach
 
 There are some tips and useful commands, including templates to create datasets and tests, here:
@@ -289,12 +294,6 @@ itaipu unit and integration tests need to pass, and the version needs to be expl
 (https://go.nubank.com.br/go/tab/pipeline/history/itaipu and https://go.nubank.com.br/go/tab/pipeline/history/dagao).
 
 
-## Bus matrix
-
-Find the bus matrix WIP here (for the time being—until we find a better place):
-https://docs.google.com/spreadsheets/d/1K5IqTTT2L56QVRve-Q8eSl7IfQipBQb1u7hTELP4m3Q/edit#gid=0
-
-
 ## Other sources
 
 When you have a dataset that doesn't originate from a Datomic service and you
@@ -303,3 +302,25 @@ itaipu.  See `curva-de-rio`, `dataset-series`, and `StaticOp` for more informati
 
 Parquet files are mainly used for accessing data from Spark / Databricks. Avro files are used for loading into Redshift.
 
+## Bumping libraries on itaipu
+
+Since `itaipu` has code that runs on Spark, we need to keep in mind that some dependencies need to be excluded from packaging, as to not cause conflicts with dependencies that are already brought in by Spark into the classpath.
+
+Itaipu uses `common-etl` [(code)](https://github.com/nubank/common-etl), which carries over dependencies such as `jackson` and the AWS Java SDK. These libraries are also provided by Spark, pinned at a specific version, so in order to avoid conflicts, we need to do the following in itaipu's `build.sbt` [(code)](https://github.com/nubank/itaipu/blob/master/build.sbt#L44-L49):
+
+```
+  "common-etl" %% "common-etl" % "9.1.0" excludeAll(
+    ExclusionRule(organization="ch.qos.logback"),
+    ExclusionRule(organization="org.slf4j"),
+    ExclusionRule(organization="com.fasterxml.jackson.core"),
+    ExclusionRule(organization="com.fasterxml.jackson.dataformat"),
+    ExclusionRule(organization="com.fasterxml.jackson.databind")),
+```
+
+And then declare the appropriate dependency versions:
+```
+"com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.7.2",
+"org.slf4j" % "slf4j-log4j12" % "1.7.25",
+```
+
+To check which libraries are provided by our Spark runtime, and their versions, have a look at our Spark `pom.xml`: https://github.com/nubank/spark/blob/nubank-2.2.0/pom.xml
