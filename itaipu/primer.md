@@ -66,3 +66,7 @@ Dataset is a table. Derived from the contract-level data, there is a need to hav
 Synonym: _materialized view_
 
 More specifically, it's usually a Parquet file on AWS S3.
+
+#### How datasets are generated
+
+Via `SparkOp`. It's a function over some data. Itaipu allows a declarative definition of dependencies, and does scanning via static analysis (contract definitions) to create filtered runs.
