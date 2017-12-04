@@ -58,7 +58,7 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
 
 ## Metapod overview [UPDATE REQUIRED]
   * [Metapod](https://github.com/nubank/metapod) is a Clojure service with a Datomic database that stores metadata about our data, including when any given dataset was computed, where is was stored on S3 (and with which partitions), the schema, which grouping "transaction" it is part of, etc.
-  * Metapod is a normal service deployed in sa-east-1 (Sao Paulo) in production.  That means that after a pull request is merged to master, it will build and then go through the e2e flow to staging, and then to prod.
+  * Metapod is a normal service deployed in sa-east-1 (Sao Paulo) in production in the `global` prototype (as opposed to in a specific shard, for example).  That means that after a pull request is merged to master, it will build and then go through the e2e flow to staging, and then to prod.  You can check what version of metapod is deployed in production using `curl https://prod-global-metapod.nubank.com.br/api/version`, and you can see whether the service is healthy in real time at `http://prod-global-watchtower.nubank.com.br/#services-health`.
   * TODO: How is target date used, and is it relevant for Metapod?
   * TODO: How to retract a portion of a Metapod transaction to enable datasets to be recomputed (for intance, after a patch has been applied)?
 
