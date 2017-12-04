@@ -1,5 +1,6 @@
 # Runbook
 
+* [Hot-deploying rollbacks](#hot-deploying-rollbacks)
 * [Controlling aurora jobs via the CLI](#controlling-aurora-jobs-via-the-cli)
 * [Basic steps to handling Airflow DAG errors](#basic-steps-to-handling-airflow-dag-errors)
 * [Recover from non-critical model build failures](#recover-from-non-critical-model-build-failures)
@@ -8,6 +9,20 @@
   * [Dealing with dataset failures](#dealing-with-dataset-failures)
   * [Dealing with model failures](#dealing-with-model-failures)
   * [Making downstream jobs run when an upstream job fails](#making-downstream-jobs-run-when-an-upstream-job-fails)
+
+## Hot-deploying rollbacks
+
+If a buggy version gets depoyed of a service that lives in the non-data-infra production space (like `metapod`, `correnteza`, etc.), you can rollback to a stable version using [these deploy console instructions](https://wiki.nubank.com.br/index.php/Hot_deploying_a_service).
+You can also do this directly from `CloudFormation`:
+
+* Access `CloudFormation` and search for your service (say `metapod`)
+* Select the entry that looks something like `prod-global-k-metapod`. If your service doesn't live in `global` you will need to repeat the following steps for every shard it operates on.
+* Click `Update Stack` in the top right
+* On the `Select Template` page leave the default setting as `Use current template` and select `Next`
+* On the `Specify Details` page under parameters, find the prod environment with 0 instances (either `Blue` or `Green`), and update the version to the short SHA of the last non-buggy git commit that was built via Go. You can get this version by looking at the [service's build history on Go](https://go.nubank.com.br/go/tab/pipeline/history/metapod); each build should be the `build-number:full-commit-SHA`. This SHA can be cross-referenced with pull requests to find the desired point to go back to. The shortened SHA can be obtained via `git rev-parse --short 6c957ed851d82103e2b151b04aa8a5ede042c3c5`.
+* Click through the following pages confirming your stack changes.
+* After a few minutes check that the new version has spun up and is healthy. The hacky way to do this is to hit `nu ser curl GET global metapod --suffix k /api/version` several times (due to the load balancer) and see if you eventually get the right SHA.
+* Now you need to take down the buggy version. You can do this by going through the `Update Stack` process and setting the instance size for the buggy versions to 0. This will result in no down-time. If you don't care about having downtime (like if you are data-infra and everything is already gone to shit), you can can do an in-place update of version of the running stack. This will result in the running instances spinning down and a new ones being spun up with the new version, causing ~5min downtime.
 
 ## Controlling aurora jobs via the CLI
 
