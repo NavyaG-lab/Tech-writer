@@ -58,6 +58,7 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
 
 ## Metapod overview [UPDATE REQUIRED]
   * [Metapod](https://github.com/nubank/metapod) is a Clojure service with a Datomic database that stores metadata about our data, including when any given dataset was computed, where is was stored on S3 (and with which partitions), the schema, which grouping "transaction" it is part of, etc.
+  * Metapod is a normal service deployed in sa-east-1 (Sao Paulo) in production.  That means that after a pull request is merged to master, it will build and then go through the e2e flow to staging, and then to prod.
   * TODO: How is target date used, and is it relevant for Metapod?
   * TODO: How to retract a portion of a Metapod transaction to enable datasets to be recomputed (for intance, after a patch has been applied)?
 
@@ -72,6 +73,7 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
   * TODO: We need to come up with a safety mechanism to avoid borking a running DAG
   * TODO: How is target date used, and is it relevant for Airflow?
   * TODO: How to retry a given node?
+  * TODO: How to look at the run for a prior date if airflow borks
 
 [How to deploy airflow?](infrastructure/guide-to-the-runtime-environment.md#airflow)
 
