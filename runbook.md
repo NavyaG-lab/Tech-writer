@@ -15,6 +15,7 @@
 If a buggy version gets depoyed of a service that lives in the non-data-infra production space (like `metapod`, `correnteza`, etc.), you can rollback to a stable version using [these deploy console instructions](https://wiki.nubank.com.br/index.php/Hot_deploying_a_service).
 You can also do this directly from `CloudFormation`:
 
+* __Make sure there isn't a `to-prod` running and no stacks are being spun!__ The reasoning for this is [explained here](https://wiki.nubank.com.br/index.php/Hot_deploying_a_service)
 * Access `CloudFormation` and search for your service (say `metapod`)
 * Select the entry that looks something like `prod-global-k-metapod`. If your service doesn't live in `global` you will need to repeat the following steps for every shard it operates on.
 * Click `Update Stack` in the top right
