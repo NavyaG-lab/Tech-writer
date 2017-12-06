@@ -1,4 +1,3 @@
-
 # #Berlin Onboarding
 
 Welcome to [Nubank](https://nubank.com.br/) Berlin
@@ -11,7 +10,7 @@ ask **@gavin ** for a computer :)
 
 Good! You already have a computer, a Gmail and also a Slack account. Now it's time to get the other credentials you're going to need.
 
-First, you need to have an account on both [github.com](http://github.com) and [quay.io](http://quay.io) , then ask on the **#squad-infosec ** informing your nubank mail, your **git-hub** and quay.io **users** for the following accounts:
+First, you need to have an account on both [github.com](http://github.com) and [quay.io](http://quay.io) , then ask on the **#squad-infosec ** slack channel ** ** informing your nubank mail, your **GitHub** and quay.io **users** for the following accounts:
 
 - Splunk
 - Databricks
@@ -76,6 +75,8 @@ All done.
 
 # Nubank Core Infrastructure
 
+ **TODO: ** explain this better
+
 - Kafka
 - Datomic
 - Clojure
@@ -108,6 +109,7 @@ Nubank has a problem with dealing with bills, for some unknown reason it has bec
 - [ ]  Write a SparkOp with the definition of our dataset
 - [ ]  Run the SparkOp on Databricks
 - [ ]  Add the new dataset to Itaipu
+- [ ]  Writing Tests to the Dataset
 - [ ]  Build Itaipu locally
 - [ ]  Run it on a Cluster
 - [ ]  Query metapod to get the path were the dataset was written to
@@ -207,11 +209,13 @@ It's the core abstraction behind our data-plataform, the important things are:
 
  **Definition:** That's ** ** where the magic happens, the inputs above are going to get injected at runtime to this function in this **Map[String, Dataframe] ** so the name of your input is the key on the map and its Dataframe is the value.
 
+ **Format:** That's where you define which format you're going to get as output, in our case let's use [**Avro**](https://avro.apache.org/docs/1.2.0/) ** ** because it'll be easier to consume from the service side.
+
 So now import the **SparkOp ** trait on Databricks:
 
  `import common_etl.operators.SparkOp` 
 
-and create a new `class` that `extends` the `SparkOp` and implement the methods :)
+and create a new `object` that `extends` the `SparkOp` and implement the methods :)
 
 ---
 
@@ -229,9 +233,47 @@ Run it! And then query your dataset to see if everything is nice!
 
 ## Add the new dataset to Itaipu
 
+Now that you have a SparkOP ready is time to add it to Itaipu.
+
+Create a file on:
+
+ `itaipu/src/main/scala/etl/dataset/` With the name of your dataset `.scala` 
+
+If you do through intellij it already adds the package information for you. (Right click on the `dataset` directory > new > `Scala Class` 
+
+Then just paste the code there!
+
+Now, you need to add the dataset to the list of all SparkOps that are run by Itaipu. This dataset fits the catedory of "general dataset" so you add add it [**here**](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/dataset/package.scala#L23) **, ** all other lists of datasets can be found **[here](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/itaipu/Itaipu.scala#L46)** 
+
+To check if everything is right you can run: 
+
+ `sbt it:test` 
+
+On Itaipu we have the [ItaipuSchemaSpec](https://github.com/nubank/itaipu/blob/master/src/it/scala/etl/itaipu/ItaipuSchemaSpec.scala#L35) that runs all **SparkOps ** with fake data, and check if all inputs matches the expectation of Dataset. We can only to that due to Spark's lazy model, so we can effectively call the **definition** function ** ** with the expecte **d dataframes** as ** ** inputs, ** ** and check if all operation that you are doing ** ** can be done, like if the column that you're expecting from a input actually is there.
+
+More information about creating a new dataset [HERE](https://github.com/nubank/data-infra-docs/blob/master/itaipu/workflow.md#creating-a-new-dataset) : 
+
+---
+
+## Writing tests to the Dataset
+
+For writting test we use two libraries, [ScalaTest](http://www.scalatest.org/) and [SparkTestingBase](https://github.com/holdenk/spark-testing-base) .
+
+Fist create a class in the same package as your dataset, but changing from `main` to `test` and adding `Spec` to the end of the name.
+
+add the following extensions to you class 
+
+ `extends FlatSpec with NuDataFrameSuiteBase with Matchers` 
+
+And then is basically writing normal tests, for reference you can check the [BillingCyclesSpec](https://github.com/nubank/itaipu/blob/master/src/test/scala/etl/dataset/billing_cycles/BillingCyclesUnsafeSpec.scala#L11) 
+
+ [Running the tests](https://github.com/nubank/data-infra-docs/blob/master/itaipu/workflow.md#running-tests) 
+
 ---
 
 ## Build Itaipu locally
+
+Time to run this shit!
 
 ---
 
