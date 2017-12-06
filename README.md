@@ -7,6 +7,7 @@ This repository is the canonical place to put all documentation related to how t
 * [Monitoring the nightly run](monitoring_nightly_run.md)
 * [Runbook](runbook.md)
 * [CLI usage examples](cli_examples.md)
+* [Slack channel guide](squad/channels.md)
 
 ## Itaipu
   * [Primer](itaipu/primer.md)
