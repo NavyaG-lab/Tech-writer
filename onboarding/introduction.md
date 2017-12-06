@@ -89,7 +89,7 @@ The goal with this exercise is to make you familiar with Nubank's infra-structur
 
 ---
 
-First make sure you have access to [**databricks**](http://nubank.cloud.databricks.com), then there's this [Databricks Tutorial](https://docs.databricks.com/spark/latest/gentle-introduction/for-data-engineers.html](https://docs.databricks.com/spark/latest/gentle-introduction/for-data-engineers.html) , designed for giving you a introduction to Spark running on Databricks, open the tutorial and click on `copy this link to import this notebook!` and click on `Copy Notebook` . Go through the notebook and then come back here :)
+First make sure you have access to [**databricks**](http://nubank.cloud.databricks.com), then there's this [Databricks Tutorial](https://docs.databricks.com/spark/latest/gentle-introduction/for-data-engineers.html) , designed for giving you a introduction to Spark running on Databricks, open the tutorial and click on `copy this link to import this notebook!` and click on `Copy Notebook` . Go through the notebook and then come back here :)
 
 Now the fun begins.
 
@@ -251,6 +251,8 @@ To check if everything is right you can run:
 
 On Itaipu we have the [ItaipuSchemaSpec](https://github.com/nubank/itaipu/blob/master/src/it/scala/etl/itaipu/ItaipuSchemaSpec.scala#L35) that runs all **SparkOps** with fake data, and check if all inputs matches the expectation of Dataset. We can only to that due to Spark's lazy model, so we can effectively call the **definition** function with the expected **dataframes** as inputs, and check if all operation that you are doing can be done, like if the column that you're expecting from a input actually is there.
 
+**IMPORTANT**: We just want a sample of the data, otherwise adding it to kafka and datomic would take forever, so just add thi `.sample(false, 0.002)` to the end of your definition, this you give you around 50k records.
+
 More information about creating a new dataset [HERE](https://github.com/nubank/data-infra-docs/blob/master/itaipu/workflow.md#creating-a-new-dataset) : 
 
 ---
@@ -273,11 +275,47 @@ And then is basically writing normal tests, for reference you can check the [Bil
 
 ## Build Itaipu locally
 
-Time to run this shit!
+Time to run this it!
+
+We use Docker for basically running everything here at Nubank, so it's not a surprise that you'll need to build Itaipu's docker container.
+
+To do that just to:
+
+`$NU_HOME/deploy/bin/docker.sh build-and-push $(git rev-parse --short HEAD)`
+
+The docker.sh script is inside the `deploy` project, it's just a standard script for building docker images. It'll run the script `prepare.sh` (which will run `sbt assembly`) and then run `docker build .` then docker push using the name of your project as the name of the container. For itaipu it'll basically be `quay.io/nubank/nu-itaipu:{SHA}`
+
+Done, now we can run it.
 
 ---
 
 ## Run it on a Cluster
+
+Now it's where the real fun begins :)
+
+First, let's split the work in 4 parts.
+
+* Get used to `sabesp`
+* Scale the cluster
+* Run Itaipu
+* Downscale the cluster
+
+
+Sabesp is basically a wrap over the [`aurora-client`](http://aurora.apache.org/documentation/latest/reference/client-commands/) so we don't have to write a bunch of things manually and it make us able to specify which Aurora cluster do you want to run your command.
+
+Take a look at [cli-examples](../cli_examples.md) to get  a sense of how running sabesp commands look like.
+
+Now, we're going to use just a single command
+`sabesp --aurora-stack=cantareira-dev jobs create ... ... ...`
+Which translates to create a job on the `cantareira-dev` stack. All jobs definition are inside the (aurora-jobs)[github.com/nubank/aurora-jobs] project.
+
+If you don't have aurora-jobs cloned, please do it (inside the $NU_HOME directory), because sabesp you look for the definitions from there.
+
+#### 1. Scale the Cluster
+
+`sabesp --aurora-stack=cantareira-dev jobs create prod downscale-ec2-rodolfo SLAVE_TYPE=rodolfo NODE_COUNT=0 --job-version="scale_cluster=d749aa4" --filename scale-ec2 --check`
+
+
 
 ---
 
