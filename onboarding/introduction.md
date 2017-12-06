@@ -311,9 +311,24 @@ Which translates to create a job on the `cantareira-dev` stack. All jobs definit
 
 If you don't have aurora-jobs cloned, please do it (inside the $NU_HOME directory), because sabesp you look for the definitions from there.
 
+We need a suffix for scaling and running itaipu, so we can run Spark in a isolated set of instances, so when you see the placeholder /suffix/ just use the same value. When running dev-runs We usually use our names.
+
 #### 1. Scale the Cluster
 
-`sabesp --aurora-stack=cantareira-dev jobs create prod downscale-ec2-rodolfo SLAVE_TYPE=rodolfo NODE_COUNT=0 --job-version="scale_cluster=d749aa4" --filename scale-ec2 --check`
+`sabesp --aurora-stack=cantareira-dev jobs create prod scale-ec2-/suffix/ SLAVE_TYPE=/suffix/ NODE_COUNT=16 --job-version="scale_cluster=d749aa4" --filename scale-ec2 --check`
+
+This command basics translates to using the `scale-ec2` definition on aurora-jobs We're going to create the scale-up job that with 16 instances and using the version `d749aa4`, all those binds `VAR=value` translates to binds on the aurora-jobs those binds replace the moustaches `{{}}` in the file.
+
+#### 2. Run Itaipu
+
+Wow, it's a huge command, but for itaipu We need to set a bunch of parameters, eg: METAPOD_REPO=where i'm going to write this thing, CORES=how many cores is spark allowed to use, TARGET_DATE=When is this run happening. REFERENCE_DATE=what's the reference for the data being generated (usually is from yesterday). and so on.
+
+`sabesp --verbose --aurora-stack=cantareira-dev jobs create staging itaipu-/suffix/ --job-version="itaipu=$(git rev-parse HEAD --short)"  METAPOD_REPO=s3a://nu-spark-metapod-test TARGET_DATE=$(date --iso-8601) REFERENCE_DATE=$(date --iso-8601) DRIVER_MEMORY=26843545600 CORES=96 OPTIONS="filtered,dns" METAPOD_TRANSACTION=`uuidgen` METAPOD_ENVIRONMENT=prod SKIP_PLACEHOLDER_OPS="true" DATASETS="dataset/**THE_NAME_OF_YOUR_DATSET**" ITAIPU_SUFFIX=/suffix/ DRIVER_MEMORY_JAVA=22G --filename itaipu`
+
+
+#### 3. Scale down the Cluster
+
+`sabesp --aurora-stack=cantareira-dev jobs create prod downscale-ec2-/suffix/ SLAVE_TYPE=/suffix/ NODE_COUNT=0 --job-version="scale_cluster=/suffix/" --filename scale-ec2 --check`
 
 
 
