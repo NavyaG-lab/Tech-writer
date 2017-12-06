@@ -7,6 +7,24 @@
 * [Post-mortems](https://github.com/nubank/morgue)
 * [Infrastructure Overivew](infrastructure/guide-to-the-runtime-environment.md)
 
+## Languages/stack overview
+
+We currently use three different programming languages for most of our work, each of them with a certain purpose:
+
+* [Clojure](https://clojure.org/) is our main language, as usual for Nubank. All our services are written in Clojure, and we usually try to use it as much as we can. The [Learn Clojure](https://clojure.org/guides/learn/syntax) section of the documentation is a good starting point to know more about it.
+* [Scala](https://www.scala-lang.org/) is the language we use to write Spark data processing jobs in [itaipu](https://github.com/nubank/data-infra-docs/blob/master/primer.md#itaipu-overview). We decided to use Scala to be able to fully utilize all of Spark's capabilities without having to write many layers of translations between Scala and Clojure.
+* [Python](https://www.python.org/) is used mostly for small AWS snippets of code, working with our scheduler ([Airflow](https://github.com/nubank/data-infra-docs/blob/master/primer.md#airflow-overview)), our jobs framework ([Aurora](https://github.com/nubank/data-infra-docs/blob/master/primer.md#aurora-overview)) and our CLI ([sabesp](https://github.com/nubank/data-infra-docs/blob/master/primer.md#sabesp-overview)), as well as machine learning models.
+
+Some relevant pieces of our stack are:
+
+* [Datomic](http://www.datomic.com/), the main database used by Nubank as a whole, and the biggest source of incoming data.
+* [Apache Spark](https://spark.apache.org/), a distributed processing framework.
+* [Apache Aurora](https://airflow.apache.org/), a DAG scheduler.
+* [Apache Mesos](http://mesos.apache.org/), a cluster resource management framework.
+* [Apache Aurora](http://aurora.apache.org/), a Mesos framework for running services and jobs.
+* [Amazon Redshift](https://aws.amazon.com/redshift/), a managed data warehouse we use to allow the rest of Nubank to easily analyze our data.
+* [Metabase](https://www.metabase.com/), a dashboarding/visualization/BI front-end for Redshift.
+
 ## Datomic Log overview
 
 ![Datomic Fact Structure](http://docs.datomic.com/entities-basics.png)
