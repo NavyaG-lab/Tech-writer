@@ -139,7 +139,7 @@ So, let's look at the available tables on Databricks.
 
  `show tables from dataset` will list all the tables from the **dataset** schema
 
- `show tables from dataset like "fact*"` for the bills table we want to search for it in the **fact ** schema.
+ `show tables from dataset like "fact*"` for the bills table we want to search for it in the **fact** schema.
 
  `show tables from dataset like "dimension*"` for the customer table we want to look at the dimension tables.
 
@@ -147,7 +147,7 @@ So, lets figure out which is the table that we should use:
 
 ![](https://static.notion-static.com/1a39fc32ba514f7389624f1efda33b8f/Screenshot_2017-12-05_15-54-00.png)
 
-Running the command above gives you the **fact__billing_cycle ** as the only alternative
+Running the command above gives you the **fact__billing_cycle** as the only alternative
 
 So now let's look at it's data to see if it makes sense:
 
@@ -163,7 +163,7 @@ So now it's time to join both tables generate a new dataset. Do this using SQL.
 
 The schema of the dataset should be
 
- **customer_id,** **bill_id, bill_index, due_date, amount_on_bill** 
+ **customer_id, bill_id, bill_index, due_date, amount_on_bill** 
 
 If you don't remember much SQL, get a refresh [HERE](https://docs.databricks.com/spark/latest/spark-sql/language-manual/select.html) 
 
@@ -187,7 +187,7 @@ then you do the same thing for the customers table.
 
 Once you have both Dataframes, you need to change the SQL functions to SparkSQL functions, you can look up at the Documentation for:
 
- [Dataset](http://spark.apache.org/docs/latest/api/scala/index.html#org.apache.spark.sql.Dataset) (have all functions for when you have a Dataframe/Dataset and you do dataframe.function, **join ** and **select ** are here for example)
+ [Dataset](http://spark.apache.org/docs/latest/api/scala/index.html#org.apache.spark.sql.Dataset) (have all functions for when you have a Dataframe/Dataset and you do dataframe.function, **join** and **select** are there for example)
 
  [sql.functions](http://spark.apache.org/docs/latest/api/scala/index.html#org.apache.spark.sql.functions$) (this is where the aggregations and statistical functions are, as well as bunch of other helpful functions like ones related to dates)
 
