@@ -4,13 +4,13 @@ Welcome to [Nubank](https://nubank.com.br/) Berlin
 
 # Getting a computer
 
-ask **@gavin ** for a computer :)
+ask **@gavin** for a computer :)
 
 # Getting accounts
 
 Good! You already have a computer, a Gmail and also a Slack account. Now it's time to get the other credentials you're going to need.
 
-First, you need to have an account on both [github.com](http://github.com) and [quay.io](http://quay.io) , then ask on the **#squad-infosec ** slack channel ** ** informing your nubank mail, your **GitHub** and quay.io **users** for the following accounts:
+First, you need to have an account on both [github.com](http://github.com) and [quay.io](http://quay.io) , then ask on the **#squad-infosec** slack channel informing your nubank mail, your **GitHub** and quay.io **users** for the following accounts:
 
 - Splunk
 - Databricks
@@ -37,7 +37,7 @@ To validate the environment is working properly, you should clone a service repo
 
 Setting up **scala:** 
 
-Independently of your editor of choice, is always a good idea to default to IDEA when coding in **Scala,** ** ** download it here [https://www.jetbrains.com/idea/download/#section=linux](https://www.jetbrains.com/idea/download/#section=linux) , you can use the community edition, which is free and works for working with **scala** .
+Independently of your editor of choice, is always a good idea to default to IDEA when coding in **Scala,** download it here [https://www.jetbrains.com/idea/download/#section=linux](https://www.jetbrains.com/idea/download/#section=linux) , you can use the community edition, which is free and works for working with **scala** .
 
 After installing IDEA, let's set up our main project, [Itaipu](https://github.com/nubank/itaipu/) :
 
@@ -51,7 +51,7 @@ Importing Itaipu on IDEA:
 
   ![](https://static.notion-static.com/d90d9310dc1642249a992163f8d72c81/Screenshot_2017-12-01_11-58-00.png)
 
-2. Browse Repositories -> Type Scala in the search box, and install the **Scala Language ** plugin.
+2. Browse Repositories -> Type Scala in the search box, and install the **Scala Language** plugin.
 
   ![](https://static.notion-static.com/6224eb2fb911420bbafca0019e283e0a/Screenshot_2017-12-01_12-00-42.png)
 
@@ -64,7 +64,7 @@ Importing Itaipu on IDEA:
 
   ![](https://static.notion-static.com/c5d12ddcbd2f45c1a76f6a6515fe6526/Screenshot_2017-12-01_13-53-31.png)
 
-6. Select the Java SDK that is installed in your machine. If you don't have one, click in **NEW ** and select from your local machine.
+6. Select the Java SDK that is installed in your machine. If you don't have one, click in **NEW** and select from your local machine.
 
   ![](https://static.notion-static.com/7a4b466d0c1a4ce1be1bf78122f7abc0/Screenshot_2017-12-01_13-56-33.png)
 
@@ -75,7 +75,7 @@ All done.
 
 # Nubank Core Infrastructure
 
- **TODO: ** explain this better
+ **TODO:** explain this better
 
 - Kafka
 - Datomic
@@ -89,7 +89,7 @@ The goal with this exercise is to make you familiar with Nubank's infra-structur
 
 ---
 
-First make sure you have access to [**databricks**](http://nubank.cloud.databricks.com) **, ** then there's this [Databricks Tutorial](https://docs.databricks.com/spark/latest/gentle-introduction/for-data-engineers.html](https://docs.databricks.com/spark/latest/gentle-introduction/for-data-engineers.html) , designed for giving you a introduction to Spark running on Databricks, open the tutorial and click on `copy this link to import this notebook!` and click on `Copy Notebook` . Go through the notebook and then come back here :)
+First make sure you have access to [**databricks**](http://nubank.cloud.databricks.com), then there's this [Databricks Tutorial](https://docs.databricks.com/spark/latest/gentle-introduction/for-data-engineers.html](https://docs.databricks.com/spark/latest/gentle-introduction/for-data-engineers.html) , designed for giving you a introduction to Spark running on Databricks, open the tutorial and click on `copy this link to import this notebook!` and click on `Copy Notebook` . Go through the notebook and then come back here :)
 
 Now the fun begins.
 
@@ -205,11 +205,11 @@ It's the core abstraction behind our data-plataform, the important things are:
 
  **Name: ** You have to grant your dataset a name so others can useyour dataset as dependency
 
- **Inputs:** The ** ** list ** ** of inputs that you're going to need, you just need the name of them, and you can find which are the name of your dependencies by looking at its SparkOps
+ **Inputs:** The list of inputs that you're going to need, you just need the name of them, and you can find which are the name of your dependencies by looking at its SparkOps
 
- **Definition:** That's ** ** where the magic happens, the inputs above are going to get injected at runtime to this function in this **Map[String, Dataframe] ** so the name of your input is the key on the map and its Dataframe is the value.
+ **Definition:** That's ** ** where the magic happens, the inputs above are going to get injected at runtime to this function in this **Map[String, Dataframe]** so the name of your input is the key on the map and its Dataframe is the value.
 
- **Format:** That's where you define which format you're going to get as output, in our case let's use [**Avro**](https://avro.apache.org/docs/1.2.0/) ** ** because it'll be easier to consume from the service side.
+ **Format:** That's where you define which format you're going to get as output, in our case let's use [**Avro**](https://avro.apache.org/docs/1.2.0/) because it'll be easier to consume from the service side.
 
 So now import the **SparkOp ** trait on Databricks:
 
@@ -243,13 +243,13 @@ If you do through intellij it already adds the package information for you. (Rig
 
 Then just paste the code there!
 
-Now, you need to add the dataset to the list of all SparkOps that are run by Itaipu. This dataset fits the catedory of "general dataset" so you add add it [**here**](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/dataset/package.scala#L23) **, ** all other lists of datasets can be found **[here](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/itaipu/Itaipu.scala#L46)** 
+Now, you need to add the dataset to the list of all SparkOps that are run by Itaipu. This dataset fits the catedory of "general dataset" so you add add it [**here**](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/dataset/package.scala#L23), all other lists of datasets can be found **[here](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/itaipu/Itaipu.scala#L46)** 
 
 To check if everything is right you can run: 
 
  `sbt it:test` 
 
-On Itaipu we have the [ItaipuSchemaSpec](https://github.com/nubank/itaipu/blob/master/src/it/scala/etl/itaipu/ItaipuSchemaSpec.scala#L35) that runs all **SparkOps ** with fake data, and check if all inputs matches the expectation of Dataset. We can only to that due to Spark's lazy model, so we can effectively call the **definition** function ** ** with the expecte **d dataframes** as ** ** inputs, ** ** and check if all operation that you are doing ** ** can be done, like if the column that you're expecting from a input actually is there.
+On Itaipu we have the [ItaipuSchemaSpec](https://github.com/nubank/itaipu/blob/master/src/it/scala/etl/itaipu/ItaipuSchemaSpec.scala#L35) that runs all **SparkOps ** with fake data, and check if all inputs matches the expectation of Dataset. We can only to that due to Spark's lazy model, so we can effectively call the **definition** function with the expecte **d dataframes** as inputs, and check if all operation that you are doing can be done, like if the column that you're expecting from a input actually is there.
 
 More information about creating a new dataset [HERE](https://github.com/nubank/data-infra-docs/blob/master/itaipu/workflow.md#creating-a-new-dataset) : 
 
