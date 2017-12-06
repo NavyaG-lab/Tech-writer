@@ -15,7 +15,7 @@ We currently use three different programming languages for most of our work, eac
 * [Scala](https://www.scala-lang.org/) is the language we use to write Spark data processing jobs in [itaipu](https://github.com/nubank/data-infra-docs/blob/master/primer.md#itaipu-overview). We decided to use Scala to be able to fully utilize all of Spark's capabilities without having to write many layers of translations between Scala and Clojure.
 * [Python](https://www.python.org/) is used mostly for small AWS snippets of code, working with our scheduler ([Airflow](https://github.com/nubank/data-infra-docs/blob/master/primer.md#airflow-overview)), our jobs framework ([Aurora](https://github.com/nubank/data-infra-docs/blob/master/primer.md#aurora-overview)) and our CLI ([sabesp](https://github.com/nubank/data-infra-docs/blob/master/primer.md#sabesp-overview)), as well as machine learning models.
 
-Some relevant pieces of our stack are:
+Some of the external projects underlying our platform are:
 
 * [Datomic](http://www.datomic.com/), the main database used by Nubank as a whole, and the biggest source of incoming data.
 * [Apache Spark](https://spark.apache.org/), a distributed processing framework.
