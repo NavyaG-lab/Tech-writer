@@ -207,11 +207,11 @@ It's the core abstraction behind our data-plataform, the important things are:
 
  **Inputs:** The list of inputs that you're going to need, you just need the name of them, and you can find which are the name of your dependencies by looking at its SparkOps
 
- **Definition:** That's ** ** where the magic happens, the inputs above are going to get injected at runtime to this function in this **Map[String, Dataframe]** so the name of your input is the key on the map and its Dataframe is the value.
+ **Definition:** That's where the magic happens, the inputs above are going to get injected at runtime to this function in this **Map[String, Dataframe]** so the name of your input is the key on the map and its Dataframe is the value.
 
  **Format:** That's where you define which format you're going to get as output, in our case let's use [**Avro**](https://avro.apache.org/docs/1.2.0/) because it'll be easier to consume from the service side.
 
-So now import the **SparkOp ** trait on Databricks:
+So now import the **SparkOp** trait on Databricks:
 
  `import common_etl.operators.SparkOp` 
 
@@ -249,7 +249,7 @@ To check if everything is right you can run:
 
  `sbt it:test` 
 
-On Itaipu we have the [ItaipuSchemaSpec](https://github.com/nubank/itaipu/blob/master/src/it/scala/etl/itaipu/ItaipuSchemaSpec.scala#L35) that runs all **SparkOps ** with fake data, and check if all inputs matches the expectation of Dataset. We can only to that due to Spark's lazy model, so we can effectively call the **definition** function with the expecte **d dataframes** as inputs, and check if all operation that you are doing can be done, like if the column that you're expecting from a input actually is there.
+On Itaipu we have the [ItaipuSchemaSpec](https://github.com/nubank/itaipu/blob/master/src/it/scala/etl/itaipu/ItaipuSchemaSpec.scala#L35) that runs all **SparkOps ** with fake data, and check if all inputs matches the expectation of Dataset. We can only to that due to Spark's lazy model, so we can effectively call the **definition** function with the expected **dataframes** as inputs, and check if all operation that you are doing can be done, like if the column that you're expecting from a input actually is there.
 
 More information about creating a new dataset [HERE](https://github.com/nubank/data-infra-docs/blob/master/itaipu/workflow.md#creating-a-new-dataset) : 
 
