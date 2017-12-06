@@ -203,7 +203,7 @@ You're probably questioning WTF is a SparkOP :), you can look by yourself [HERE]
 
 It's the core abstraction behind our data-plataform, the important things are:
 
- **Name: ** You have to grant your dataset a name so others can useyour dataset as dependency
+ **Name:** You have to grant your dataset a name so others can useyour dataset as dependency
 
  **Inputs:** The list of inputs that you're going to need, you just need the name of them, and you can find which are the name of your dependencies by looking at its SparkOps
 
@@ -249,7 +249,7 @@ To check if everything is right you can run:
 
  `sbt it:test` 
 
-On Itaipu we have the [ItaipuSchemaSpec](https://github.com/nubank/itaipu/blob/master/src/it/scala/etl/itaipu/ItaipuSchemaSpec.scala#L35) that runs all **SparkOps ** with fake data, and check if all inputs matches the expectation of Dataset. We can only to that due to Spark's lazy model, so we can effectively call the **definition** function with the expected **dataframes** as inputs, and check if all operation that you are doing can be done, like if the column that you're expecting from a input actually is there.
+On Itaipu we have the [ItaipuSchemaSpec](https://github.com/nubank/itaipu/blob/master/src/it/scala/etl/itaipu/ItaipuSchemaSpec.scala#L35) that runs all **SparkOps** with fake data, and check if all inputs matches the expectation of Dataset. We can only to that due to Spark's lazy model, so we can effectively call the **definition** function with the expected **dataframes** as inputs, and check if all operation that you are doing can be done, like if the column that you're expecting from a input actually is there.
 
 More information about creating a new dataset [HERE](https://github.com/nubank/data-infra-docs/blob/master/itaipu/workflow.md#creating-a-new-dataset) : 
 
