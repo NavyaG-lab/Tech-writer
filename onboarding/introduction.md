@@ -123,8 +123,8 @@ Nubank has a problem with dealing with bills, for some unknown reason it has bec
 - [ ]  Creating a component to read the dataset files from S3
   - [ ]  Make a request to metapod to get the list of paths for the dataset written
   - [ ]  Read the avros from S3
-- [ ]  Create a **producer ** to publish each row of the dataset
-- [ ]  Create a **consumer ** to read the published messages and persist to datomic
+- [ ]  Create a **producer** to publish each row of the dataset
+- [ ]  Create a **consumer** to read the published messages and persist to datomic
 - [ ]  Create a graphql api for the Bill information
 
 ## Creating the Dataset
