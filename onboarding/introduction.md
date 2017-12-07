@@ -99,7 +99,7 @@ Go through that notebook and come back here :)
 
 ---
 
-Nubank has a problem with dealing with bills, for some unknown reason, it has become really difficult to query what's the due amount of past bills for a given customer. To solve this issue We want a new service to be created, that's going to read data produced by the ETL to build a cache and serve the data using a GraphQL API.
+Nubank has a problem with dealing with bills. For some unknown reason, it has become really difficult to query what is the due amount of past bills for a given customer. To solve this issue, we want to create a new service that will read data produced by the ETL, build a cache from it, and serve the data using a GraphQL API.
 
  **TODO - Creating the Dataset** 
 
@@ -135,7 +135,7 @@ Nubank has a problem with dealing with bills, for some unknown reason, it has be
 
  **Figure out which Datasets should we use to build the derivative dataset** 
 
-For this basically, you want information about, the customer and their bills. We organize our data-warehousing into facts and dimensions, using the terminology from [Kimball](https://github.com/nubank/data-infra-docs/blob/master/dimensional_modeling/kimball.md) 's DW books. 
+For this, basically you want information about the customer and their bills. We organize our data-warehousing into facts and dimensions, using the terminology from [Kimball's DW books](https://github.com/nubank/data-infra-docs/blob/master/dimensional_modeling/kimball.md). 
 
 So, let's look at the available tables on Databricks.
 
@@ -175,7 +175,7 @@ If you don't remember much SQL, get a refresh [HERE](https://docs.databricks.com
 
 Now you should have a nice SQL query that returns the data for our service.
 
-But... it's SQL and we shouldn't throw SQL out to other people have to read, because we're nice with each other.
+But... it's SQL and we shouldn't throw SQL out to other people have to read, because we're nice to each other.
 
 So let's transform that SQL query into Scala code!
 
@@ -261,23 +261,25 @@ More information about creating a new dataset [HERE](https://github.com/nubank/d
 
 ## Writing tests to the Dataset
 
-For writting test we use two libraries, [ScalaTest](http://www.scalatest.org/) and [SparkTestingBase](https://github.com/holdenk/spark-testing-base) .
+For writting tests we use two libraries, [ScalaTest](http://www.scalatest.org/) and [SparkTestingBase](https://github.com/holdenk/spark-testing-base) .
 
 Fist create a class in the same package as your dataset, but changing from `main` to `test` and adding `Spec` to the end of the name.
 
-add the following extensions to your class 
+Add the following extensions to your class:
 
- `extends FlatSpec with NuDataFrameSuiteBase with Matchers` 
+```scala
+extends FlatSpec with NuDataFrameSuiteBase with Matchers
+```
 
 And then is basically writing normal tests, for reference you can check the [BillingCyclesSpec](https://github.com/nubank/itaipu/blob/master/src/test/scala/etl/dataset/billing_cycles/BillingCyclesUnsafeSpec.scala#L11) 
 
- [Running the tests](https://github.com/nubank/data-infra-docs/blob/master/itaipu/workflow.md#running-tests) 
+[Running the tests](https://github.com/nubank/data-infra-docs/blob/master/itaipu/workflow.md#running-tests) 
 
 ---
 
 ## Build Itaipu locally
 
-Time to run this it!
+Time to run it!
 
 We use Docker for basically running everything here at Nubank, so it's not a surprise that you'll need to build Itaipu's docker container.
 
@@ -285,9 +287,9 @@ To do that just to:
 
 `$NU_HOME/deploy/bin/docker.sh build-and-push $(git rev-parse --short HEAD)`
 
-The docker.sh script is inside the `deploy` project, it's just a standard script for building docker images. It'll run the script `prepare.sh` (which will run `sbt assembly`) and then run `docker build .` then docker push using the name of your project as the name of the container. For Itaipu, it'll basically be `quay.io/nubank/nu-itaipu:{SHA}`
+The `docker.sh` script is inside the `deploy` project. It's a standard script for building docker images. It will run the script `prepare.sh` (which will run `sbt assembly`) and then run build and push the docker image using the name of your project as the name. e.g. for `itaipu`, it will be `quay.io/nubank/nu-itaipu:{SHA}`
 
-Done, now we can run it.
+Done, we can now run it!
 
 ---
 
