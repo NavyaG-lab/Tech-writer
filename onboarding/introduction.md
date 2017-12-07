@@ -418,6 +418,33 @@ Now you have all the information needed to query the dataset on databricks.
 
 ## Read the written dataset on Databricks to check it
 
+After you have the path for the dataset, let's read it on Databricks to check if everything is as expected.
+
+So, go back to you notebook and read it.
+
+For dealing with avros, we need to import one library:
+
+`import com.databricks.spark.avro._`
+
+and then read it.
+
+```
+val df = spark.read.avro("dbfs://mnt/your-path-without-s3://")
+df.count()
+display(df)
+```
+
+On Databricks we read from S3 through DBFS, the s3 buckets are mounted on `/mnt` you can see the buckets there by using the dbfs api.
+
+```
+%fs
+ls /mnt
+```
+
+
+
+
+
 ---
 
 PS: if you get stuck, you can get all steps done in [this](https://nubank.cloud.databricks.com/#notebook/138371) notebook, but, don't cheat :)
