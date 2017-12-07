@@ -365,9 +365,54 @@ There's a bunch of ways to get information about our dataset, the simplest way i
 Prod - https://backoffice.nubank.com.br/sonar-js/
 Staging - https://staging-backoffice.nubank.com.br/sonar-js/
 
-log in, and then find your transaction in the list of [transactions](https://backoffice.nubank.com.br/sonar-js/#/sonar-js/monitoring) "Monitoring" menu on the left side, click on it and search for the dataset.
+log in, and then find your transaction in the list of [transactions](https://backoffice.nubank.com.br/sonar-js/#/sonar-js/monitoring) "Monitoring" menu on the left side, click on it and search for the dataset, and there you can see all information about it.
 
 ![Transaction on Sonar](./images/sonar-tx.png)
+
+Other option is to use the GraphQL interface on Sonar and do a query.
+
+![Graphqi interface](./images/graphiql.png)
+
+Just open the menu and click on `GraphiQL`, it'll open the editor above.
+
+The query to get a specific dataset from a transaction is the one below:
+
+```
+query GetFilteredDataset($transactionId: ID, $datasetNames: [String]) {
+  transaction(transactionId: $transactionId) {
+    id
+    name
+    startedAt
+    committedAt
+    datasets(datasetNames: $datasetNames, committed: ONLY_COMMITTED) {
+      id
+      transactionId
+      name
+      partitions {
+        id
+      }
+      format
+      path
+      committedAt
+    }
+  }
+}
+```
+
+and You need to bind the query-parameters to the ones in the query like:
+```
+{
+	"transactionId": "b44c7bab-a90e-54ab-a029-5fc6594eefb5",
+	"datasetNames": [
+		"dataset-fact/credit-card-account-snapshot",
+		"dataset-fact/credit-card-account-snapshot-avro"
+	]
+}
+```
+
+![query using graphiql](./images/query-graphiql.png)
+
+Now you have all the information needed to query the dataset on databricks.
 
 ---
 
