@@ -89,9 +89,11 @@ The goal of this exercise is to make you familiar with Nubank's infra-structure,
 
 ---
 
-First make sure you have access to [**databricks**](http://nubank.cloud.databricks.com), then there's this [Databricks Tutorial](https://docs.databricks.com/spark/latest/gentle-introduction/for-data-engineers.html) , designed for giving you an introduction to Spark running on Databricks, open the tutorial and click on `copy this link to import this notebook!` and copy the URL, then, go to you directory on Databricks `Workspace -> Users -> Your User` and click on the arrow and on `Import` paste the URL there and import it. Go through the notebook and then come back here :)
+First make sure you have access to [**databricks**](http://nubank.cloud.databricks.com), then there's this [Databricks Tutorial](https://docs.databricks.com/spark/latest/gentle-introduction/for-data-engineers.html) , designed for giving you a introduction to Spark running on Databricks, open the tutorial and click on `copy this link to import this notebook!` and click on `Import Notebook`. Copy the URL, then import into [Databricks](https://nubank.cloud.databricks.com)
 
-Now the fun begins.
+![Import into Databricks](https://user-images.githubusercontent.com/1674699/33720480-594ffaec-db64-11e7-96b5-ec6a78a4cbae.png)
+
+Go through that notebook and come back here :)
 
 ## Statement
 
