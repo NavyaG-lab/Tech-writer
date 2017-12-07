@@ -319,22 +319,53 @@ We need a suffix for scaling and running itaipu, so we can run Spark in a isolat
 
 This command basics translates to using the `scale-ec2` definition on aurora-jobs We're going to create the scale-up job that with 16 instances and using the version `d749aa4`, all those binds `VAR=value` translates to binds on the aurora-jobs those binds replace the moustaches `{{}}` in the file.
 
+You can check if the instances are running in the AWS Console: https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:search=Name:cantareira-dev-mesos-on-demand-*;sort=instanceId
+
 #### 2. Run Itaipu
 
 Wow, it's a huge command, but for itaipu We need to set a bunch of parameters, eg: METAPOD_REPO=where i'm going to write this thing, CORES=how many cores is spark allowed to use, TARGET_DATE=When is this run happening. REFERENCE_DATE=what's the reference for the data being generated (usually is from yesterday). and so on.
 
-`sabesp --verbose --aurora-stack=cantareira-dev jobs create staging itaipu-/suffix/ --job-version="itaipu=$(git rev-parse HEAD --short)"  METAPOD_REPO=s3a://nu-spark-metapod-test TARGET_DATE=$(date --iso-8601) REFERENCE_DATE=$(date --iso-8601) DRIVER_MEMORY=26843545600 CORES=96 OPTIONS="filtered,dns" METAPOD_TRANSACTION=`uuidgen` METAPOD_ENVIRONMENT=prod SKIP_PLACEHOLDER_OPS="true" DATASETS="dataset/**THE_NAME_OF_YOUR_DATSET**" ITAIPU_SUFFIX=/suffix/ DRIVER_MEMORY_JAVA=22G --filename itaipu`
+d`sabesp --verbose --aurora-stack=cantareira-dev jobs create staging itaipu-/suffix/ --job-version="itaipu=$(git rev-parse HEAD --short)"  METAPOD_REPO=s3a://nu-spark-metapod-test TARGET_DATE=$(date --iso-8601) REFERENCE_DATE=$(date --iso-8601) DRIVER_MEMORY=26843545600 CORES=96 OPTIONS="filtered,dns" METAPOD_TRANSACTION=`uuidgen` METAPOD_ENVIRONMENT=prod SKIP_PLACEHOLDER_OPS="true" DATASETS="dataset/**THE_NAME_OF_YOUR_DATSET**" ITAIPU_SUFFIX=/suffix/ DRIVER_MEMORY_JAVA=22G --filename itaipu`
+
+All those variables could seem magical defined, but actually if you remove one of them sabesp is going to complain that an argument is missing :).
+
+And if you're scared of trying to run, you can add the `--dryrun` flag to sabesp, which will just inspect if everything is "right".
+
+You can check the status of your job on: https://cantareira-dev-mesos-cluster.nubank.com.br/scheduler/jobs/staging/itaipu-/suffix/, and if you click into the link on the IP address of the instance you'll see a link `spark-ui`, if you click there you'll see the `SparkUI` on which you can keep an eye on the execution process.
+
+
+To check if the job has finished you can look at the aurora-ui, or add the `--check` flag on sabesp so it'll away until the job has finished.
 
 
 #### 3. Scale down the Cluster
 
+After the job has finished, we need to scale down the cluster.
+
 `sabesp --aurora-stack=cantareira-dev jobs create prod downscale-ec2-/suffix/ SLAVE_TYPE=/suffix/ NODE_COUNT=0 --job-version="scale_cluster=/suffix/" --filename scale-ec2 --check`
 
 
+You can check if the instances are terminating in the AWS Console: https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:search=Name:cantareira-dev-mesos-on-demand-*;sort=instanceId
 
 ---
 
 ## Query metapod to get the path were the dataset was written to
+
+[`Metapod`](https://github.com/nubank/metapod) is the service on which We track the metadata about t he run. So it has all information related to:
+* Where the datasets were committed
+* What are the dataset's partitions
+* What's its schema
+* and so on.
+
+We can query metapod directly using its url, for our run we used the staging metapod, so it'll be accessible on: https://staging-global-metapod.nubank.com.br/
+
+
+**IMPORTANT** to do requests on Metapod you need the `metapod-admin` scope, ask on #access-request for this scope on both `prod` and `staging`
+
+There's a bunch of ways to get information about our dataset, the simplest way is to get it fror [sonar](https://github.com/nubank/sonar-js) which is the UI for metapod. You can access it on:
+Prod - https://backoffice.nubank.com.br/sonar-js/
+Staging - https://staging-backoffice.nubank.com.br/sonar-js/
+
+log in, and then find your transaction in the list of transactions, click on it and search for the dataset.
 
 ---
 
