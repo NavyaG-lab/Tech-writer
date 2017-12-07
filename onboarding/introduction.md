@@ -365,7 +365,9 @@ There's a bunch of ways to get information about our dataset, the simplest way i
 Prod - https://backoffice.nubank.com.br/sonar-js/
 Staging - https://staging-backoffice.nubank.com.br/sonar-js/
 
-log in, and then find your transaction in the list of transactions, click on it and search for the dataset.
+log in, and then find your transaction in the list of [transactions](https://backoffice.nubank.com.br/sonar-js/#/sonar-js/monitoring) "Monitoring" menu in the left side, click on it and search for the dataset.
+
+![Transaction on Sonar](./images/sonar-tx.png)
 
 ---
 
