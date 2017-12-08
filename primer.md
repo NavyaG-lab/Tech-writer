@@ -89,24 +89,27 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
     * `*-model` are a set of jobs to run Python machine learning models. Most of them are defined in [batch-models-python](https://github.com/nubank/batch-models-python), a project maintained by the data scientists.
 
 
-## Airflow overview [UPDATE REQUIRED]
-  * Airflow is a platform to author, schedule, and monitor workflows.  We define our workflow (commonly referred to as  "the DAG" or "the Dagão").  Airflow configuration is done via Python code, and we keep our configuration code in [aurora-jobs](https://github.com/nubank/aurora-jobs/blob/master/airflow/main.py).
-  * [Airflow on Github](https://github.com/apache/incubator-airflow)
-  * [Nubank's Airflow server](https://airflow.nubank.com.br/admin/airflow/graph?dag_id=prod-dagao)
-  * TODO: We need to come up with a safety mechanism to avoid borking a running DAG
-  * TODO: How is target date used, and is it relevant for Airflow?
-  * TODO: How to retry a given node?
-  * TODO: How to look at the run for a prior date if airflow borks
+## Airflow overview 
 
-[How to deploy airflow?](infrastructure/guide-to-the-runtime-environment.md#airflow)
+Airflow is the thing that actually trigger the run of our jobs. It's main abstraction is around the DAG (Directed Acyclic Graph), and what's nice about airflow is that all it's definition is in code, so no weird Json or even weirder format.
 
-### Deploying job changes to Airflow
+All code related to Airflow is a normal python code and is in aurora-jobs repo on the [airflow](https://github.com/nubank/aurora-jobs/tree/master/airflow) directory.
+
+
+More:
+* [Airflow DOCS on Creating a new DAG](https://airflow.apache.org/tutorial.html), Basically you need to create a python file, that has the definition of your DAG inside the airflow directory, then just follow the `Deploying job changes to Airflow`
+
+* [How to deploy airflow?](infrastructure/guide-to-the-runtime-environment.md#airflow)
+
+* **Deploying job changes to Airflow**:
 When a job is changed on `aurora-jobs`, we need to be careful about how we update the workflow on Airflow because Airflow does not have isolation between runs, so a change to the workflow could affect the *currently running* DAG accidentally if we are not careful.
- 1) The [`aurora-jobs` Go Pipeline](https://go.nubank.com.br/go/tab/pipeline/history/aurora-jobs) will build automatically
- 2) When the `aurora-jobs` pipeline completes it'll trigger the [`dagao` Go Pipeline](https://go.nubank.com.br/go/pipeline/history/dagao). This needs to be manually `release` in order for Airflow to have access to it.  *Don't do this during an active DAG run.*
+   1. The [`aurora-jobs` Go Pipeline](https://go.nubank.com.br/go/tab/pipeline/history/aurora-jobs) will build automatically
+   2. When the `aurora-jobs` pipeline completes it'll trigger the [`dagao` Go Pipeline](https://go.nubank.com.br/go/pipeline/history/dagao). This needs to be manually `release` in order for Airflow to have access to it.  *Don't do this during an active DAG run.*
  ![releasing dagao](images/release_dagao.png)
- 3) On the [Airflow admin page](https://airflow.nubank.com.br/admin/) we need to click the "refresh" button on the `config_downloader` DAG. This will make Airflow suck in the new configuration.
+   3. On the [Airflow admin page](https://airflow.nubank.com.br/admin/) we need to click the "refresh" button on the `config_downloader` DAG. This will make Airflow suck in the new configuration.
  ![refreshing airflow config](images/config_refresh.png)
+ 
+ * [Monitoring the run on Airflow](./monitoring_nightly_run.md)
 
 ## Sabesp overview
   * Command line utility for interacting with data infra ([sample commands](cli_examples.md))
@@ -184,7 +187,7 @@ In Data Infra, we can use an admin user for administrative tasks (e.g. querying 
   * [contextual](https://github.com/nubank/contextual) - Customer contact reason
   * [batch-models-python](https://github.com/nubank/batch-models-python) - Various experimental Python models
 
-## Permissions / accounts needed to contribute on data infra [UPDATE REQUIRED]
+## Permissions / accounts needed to contribute on data infra
   * IAM permissions (groups) 
     * `data-access-ops data-infra-aurora-access eng infra-ops prod-eng data-infra belomonte`
   * Quay.io permissions needed, and when to do direct quay.io builds
