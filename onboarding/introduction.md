@@ -83,11 +83,11 @@ You can find a bunch of relevant engineering links here:  [Onboarding](https://w
   - [Advanced book](https://pragprog.com/book/vmclojeco/clojure-applied)
 - [Service code organization (Ports & Adapters)](http://alistair.cockburn.us/Hexagonal+architecture)
   - [Main namespaces in a clojure service](https://wiki.nubank.com.br/index.php/Microservices)
-  - [Busquem conhecimento in portuguese](https://wiki.nubank.com.br/index.php/Busquem_Conhecimento#Ports_.26_Adapters)
+  - [Busquem conhecimento (Portuguese)](https://wiki.nubank.com.br/index.php/Busquem_Conhecimento#Ports_.26_Adapters)
 - [Kafka](http://kafka.apache.org/intro)
   - Kafka is a distributed streaming platform. We use it for async communication between services.
   - The main kafka abstraction we use is the topic. Services produce messages to topics and services consume messages from topics. Any number of services can produce to a topic and all the services that are consuming from this topic will receive this message.
-  - [Busqume conhecimento in portuguese](https://wiki.nubank.com.br/index.php/Busquem_Conhecimento#Kafka)
+  - [Busquem conhecimento (Portuguese)](https://wiki.nubank.com.br/index.php/Busquem_Conhecimento#Kafka)
 - [Datomic](http://docs.datomic.com/tutorial.html)
   - Datomic is a git like database. Information accumulates over time. Information is not forgotten as a side effect of acquiring new information.
   - [Intro to Datomic](https://www.youtube.com/watch?v=RKcqYZZ9RDY)
