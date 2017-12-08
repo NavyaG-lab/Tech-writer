@@ -55,5 +55,12 @@ These are Python services to support online machine learning models in productio
 ## Other projects
 
 - [sabesp](https://github.com/nubank/sabesp)
-- [datomic-backup-restore](https://github.com/nubank/datomic-backup-restore)\
+- [datomic-backup-restore](https://github.com/nubank/datomic-backup-restore)
 - [data-infra-adr](https://github.com/nubank/data-infra-adr)
+
+## Infrastructure
+
+- Mesos clusters (`stable`, `test`, `dev`, `dev2`)
+- Redshift clusters (`stable`, `dev2`)
+- Databricks
+- Airflow
