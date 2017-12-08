@@ -42,6 +42,7 @@ These are Python services to support online machine learning models in productio
 - [metapod-client](https://github.com/nubank/metapod-client)
 - [belomonte](https://github.com/nubank/belomonte)
 - [common-etl-python](https://github.com/nubank/common-etl-python)
+- [imordor](https://github.com/nubank/imordor)
 
 ## Daily batch-related projects
 
