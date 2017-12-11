@@ -14,3 +14,6 @@ This repository is the canonical place to put all documentation related to how t
   * [Styleguide](itaipu/styleguide.md)
   * [Workflow](itaipu/workflow.md)
 
+## Infrastructure
+  * [Inventory](infrastructure/inventory.md)
+  * [Guide to the runtime environment](infrastructure/guide-to-the-runtime-environment.md)
