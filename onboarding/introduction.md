@@ -268,7 +268,7 @@ To check if everything is right you can run:
 
 On Itaipu we have the [ItaipuSchemaSpec](https://github.com/nubank/itaipu/blob/master/src/it/scala/etl/itaipu/ItaipuSchemaSpec.scala#L35) that runs all **SparkOps** with fake data, and check if all inputs match the expectation. We can only to that due to Spark's lazy model, so we can effectively call the **definition** function with the expected **dataframes** as inputs, and check if all operation that you are doing can be done, like if the column that you're expecting from an input actually is there.
 
-**IMPORTANT**: We just want a sample of the data, otherwise adding it to Kafka and datomic would take forever, so just add the `.sample(false, 0.002)` to the end of your definition, this you give you around 50k records.
+**IMPORTANT**: We just want a sample of the data, otherwise adding it to Kafka and datomic would take forever, so just add the `.limit(10000)` to the end of your definition, this you give you 10k records.
 
 More information about creating a new dataset [HERE](https://github.com/nubank/data-infra-docs/blob/master/itaipu/workflow.md#creating-a-new-dataset) : 
 
