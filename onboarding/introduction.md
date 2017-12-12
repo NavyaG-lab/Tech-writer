@@ -334,11 +334,13 @@ We need a suffix for scaling and running itaipu, so we can run Spark in an isola
 
 #### 1. Scale the Cluster
 
-`sabesp --aurora-stack=cantareira-dev jobs create prod scale-ec2-/suffix/ SLAVE_TYPE=/suffix/ NODE_COUNT=16 INSTANCE_TYPE=m4.2xlarge --job-version="scale_cluster=21d67a5" --filename scale-ec2 --check`
+`sabesp --aurora-stack=cantareira-dev jobs create prod scale-ec2-/suffix/ SLAVE_TYPE=/suffix/ NODE_COUNT=100 INSTANCE_TYPE=m4.2xlarge --job-version="scale_cluster=21d67a5" --filename scale-ec2 --check`
 
 This command basic translates to using the `scale-ec2` definition on aurora-jobs We're going to create the scale-up job that with 16 instances and using the version `d749aa4`, all those binds `VAR=value` translates to binds on the aurora-jobs those binds replace the mustaches `{{}}` in the file.
 
 You can check if the instances are running on the AWS Console: https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:tag:Name=cantareira-dev-mesos-on-demand-;sort=instanceId
+
+**IMPORTANT** Don't forget to scale down (step 3) after you are done running Itaipu. Leaving the cluster up is very expensive.
 
 #### 2. Run Itaipu
 
@@ -353,7 +355,7 @@ METAPOD_REPO=s3a://nu-spark-metapod-test \
 TARGET_DATE=$(date --iso-8601) \
 REFERENCE_DATE=$(date --iso-8601) \
 DRIVER_MEMORY=26843545600 \
-CORES=96 \
+CORES=9999 \
 OPTIONS="filtered,dns" \
 METAPOD_TRANSACTION=$(uuidgen) \
 METAPOD_ENVIRONMENT=staging \
@@ -387,10 +389,10 @@ You can check if the instances are terminating in the AWS Console: https://conso
 
 ## Query metapod to get the path were the dataset was written to
 
-[`Metapod`](https://github.com/nubank/metapod) is the service on which We track the metadata about t he run. So it has all information related to:
-* Where the datasets were committed
-* What are the dataset's partitions
-* What's its schema
+[`Metapod`](https://github.com/nubank/metapod) is the service on which we track the metadata about t he run. So it has all information related to:
+* where the datasets were committed;
+* what are the dataset's partitions;
+* what's its schema;
 * and so on.
 
 We can query metapod directly using its URL, for our run we used the staging metapod, so it'll be accessible on: https://staging-global-metapod.nubank.com.br/
