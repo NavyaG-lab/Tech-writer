@@ -344,7 +344,25 @@ You can check if the instances are running on the AWS Console: https://console.a
 
 Wow, it's a huge command, but for Itaipu We need to set a bunch of parameters, eg: METAPOD_REPO=where I'm going to write this thing, CORES=how many cores is spark allowed to use, TARGET_DATE=When is this run happening. REFERENCE_DATE=what's the reference for the data being generated (usually is from yesterday). and so on.
 
-`sabesp --verbose --aurora-stack=cantareira-dev jobs create staging itaipu-/suffix/ --job-version="itaipu=$(git rev-parse --short HEAD)"  METAPOD_REPO=s3a://nu-spark-metapod-test TARGET_DATE=$(date --iso-8601) REFERENCE_DATE=$(date --iso-8601) DRIVER_MEMORY=26843545600 CORES=96 OPTIONS="filtered,dns" METAPOD_TRANSACTION=$(uuidgen) METAPOD_ENVIRONMENT=prod SKIP_PLACEHOLDER_OPS="true" DATASETS="dataset/**THE_NAME_OF_YOUR_DATSET**" ITAIPU_SUFFIX=/suffix/ DRIVER_MEMORY_JAVA=22G --filename itaipu`
+```
+sabesp --verbose --aurora-stack=cantareira-dev \
+jobs create staging itaipu-/suffix/ \
+--job-version="itaipu=$(git rev-parse --short HEAD)" \
+--filename itaipu \
+METAPOD_REPO=s3a://nu-spark-metapod-test \
+TARGET_DATE=$(date --iso-8601) \
+REFERENCE_DATE=$(date --iso-8601) \
+DRIVER_MEMORY=26843545600 \
+CORES=96 \
+OPTIONS="filtered,dns" \
+METAPOD_TRANSACTION=$(uuidgen) \
+METAPOD_ENVIRONMENT=staging \
+SKIP_PLACEHOLDER_OPS="true" \
+DATASETS="dataset/**THE_NAME_OF_YOUR_DATSET**" \
+ITAIPU_SUFFIX=/suffix/ \
+DRIVER_MEMORY_JAVA=22G
+```
+**Important**: Replace the `THE_NAME_OF_YOUR_DATSET` with the name attribute of your spark-op, and also replace the `/suffix/` with the same suffix that you used to upscale the cluster.
 
 All those variables could seem magical defined, but actually, if you remove one of them sabesp is going to complain that an argument is missing :).
 
