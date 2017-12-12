@@ -457,7 +457,7 @@ Now you have all the information needed to query the dataset on databricks.
 
 ## Read the written dataset on Databricks to check it
 
-After you have the path for the dataset, let's read it on Databricks to check if everything is as expected.
+After you get the path for the dataset from metapod (through the graphql at Sonar), let's read it on Databricks to check if everything is as expected.
 
 So, go back to you notebook and read it.
 
@@ -468,7 +468,7 @@ For dealing with avros, we need to import one library:
 and then read it.
 
 ```
-val df = spark.read.avro("dbfs://mnt/your-path-without-s3://")
+val df = spark.read.avro("dbfs:/mnt/your-path-without-s3://")
 df.count()
 display(df)
 ```
