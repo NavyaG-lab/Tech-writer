@@ -334,7 +334,7 @@ We need a suffix for scaling and running itaipu, so we can run Spark in an isola
 
 #### 1. Scale the Cluster
 
-`sabesp --aurora-stack=cantareira-dev jobs create prod scale-ec2-/suffix/ SLAVE_TYPE=/suffix/ NODE_COUNT=16 INSTANCE_TYPE=m4.2xlarge --job-version="scale_cluster=d749aa4" --filename scale-ec2 --check`
+`sabesp --aurora-stack=cantareira-dev jobs create prod scale-ec2-/suffix/ SLAVE_TYPE=/suffix/ NODE_COUNT=16 INSTANCE_TYPE=m4.2xlarge --job-version="scale_cluster=21d67a5" --filename scale-ec2 --check`
 
 This command basic translates to using the `scale-ec2` definition on aurora-jobs We're going to create the scale-up job that with 16 instances and using the version `d749aa4`, all those binds `VAR=value` translates to binds on the aurora-jobs those binds replace the mustaches `{{}}` in the file.
 
@@ -350,7 +350,7 @@ All those variables could seem magical defined, but actually, if you remove one 
 
 And if you're scared of trying to run, you can add the `--dryrun` flag to sabesp, which will just inspect if everything is "right".
 
-You can check the status of your job on https://cantareira-dev-mesos-cluster.nubank.com.br/scheduler/jobs/staging/itaipu-/suffix/, and if you click into the link on the IP address of the instance you'll see a link `spark-ui`, if you click there you'll see the `SparkUI` on which you can keep an eye on the execution process.
+You can check the status of your job on https://cantareira-dev-mesos-master.nubank.com.br/scheduler/jobs/staging/itaipu-/suffix/, and if you click into the link on the IP address of the instance you'll see a link `spark-ui`, if you click there you'll see the `SparkUI` on which you can keep an eye on the execution process.
 
 
 To check if the job has finished you can look at the aurora-ui, or add the `--check` flag on sabesp so it'll away until the job has finished.
@@ -360,10 +360,10 @@ To check if the job has finished you can look at the aurora-ui, or add the `--ch
 
 After the job has finished, we need to scale down the cluster.
 
-`sabesp --aurora-stack=cantareira-dev jobs create prod downscale-ec2-/suffix/ SLAVE_TYPE=/suffix/ NODE_COUNT=0 --job-version="scale_cluster=/suffix/" --filename scale-ec2 --check`
+`sabesp --aurora-stack=cantareira-dev jobs create prod downscale-ec2-/suffix/ SLAVE_TYPE=/suffix/ NODE_COUNT=0 --job-version="scale_cluster=21d67a5" --filename scale-ec2 --check`
 
 
-You can check if the instances are terminating in the AWS Console: https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:search=Name:cantareira-dev-mesos-on-demand-*;sort=instanceId
+You can check if the instances are terminating in the AWS Console: https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:tag:Name=cantareira-dev-mesos-on-demand-;sort=instanceId
 
 ---
 
