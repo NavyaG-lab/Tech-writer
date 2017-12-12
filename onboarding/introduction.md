@@ -334,17 +334,17 @@ We need a suffix for scaling and running itaipu, so we can run Spark in an isola
 
 #### 1. Scale the Cluster
 
-`sabesp --aurora-stack=cantareira-dev jobs create prod scale-ec2-/suffix/ SLAVE_TYPE=/suffix/ NODE_COUNT=16 --job-version="scale_cluster=d749aa4" --filename scale-ec2 --check`
+`sabesp --aurora-stack=cantareira-dev jobs create prod scale-ec2-/suffix/ SLAVE_TYPE=/suffix/ NODE_COUNT=16 INSTANCE_TYPE=m4.2xlarge --job-version="scale_cluster=d749aa4" --filename scale-ec2 --check`
 
 This command basic translates to using the `scale-ec2` definition on aurora-jobs We're going to create the scale-up job that with 16 instances and using the version `d749aa4`, all those binds `VAR=value` translates to binds on the aurora-jobs those binds replace the mustaches `{{}}` in the file.
 
-You can check if the instances are running on the AWS Console: https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:search=Name:cantareira-dev-mesos-on-demand-*;sort=instanceId
+You can check if the instances are running on the AWS Console: https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:tag:Name=cantareira-dev-mesos-on-demand-;sort=instanceId
 
 #### 2. Run Itaipu
 
 Wow, it's a huge command, but for Itaipu We need to set a bunch of parameters, eg: METAPOD_REPO=where I'm going to write this thing, CORES=how many cores is spark allowed to use, TARGET_DATE=When is this run happening. REFERENCE_DATE=what's the reference for the data being generated (usually is from yesterday). and so on.
 
-d`sabesp --verbose --aurora-stack=cantareira-dev jobs create staging itaipu-/suffix/ --job-version="itaipu=$(git rev-parse HEAD --short)"  METAPOD_REPO=s3a://nu-spark-metapod-test TARGET_DATE=$(date --iso-8601) REFERENCE_DATE=$(date --iso-8601) DRIVER_MEMORY=26843545600 CORES=96 OPTIONS="filtered,dns" METAPOD_TRANSACTION=`uuidgen` METAPOD_ENVIRONMENT=prod SKIP_PLACEHOLDER_OPS="true" DATASETS="dataset/**THE_NAME_OF_YOUR_DATSET**" ITAIPU_SUFFIX=/suffix/ DRIVER_MEMORY_JAVA=22G --filename itaipu`
+`sabesp --verbose --aurora-stack=cantareira-dev jobs create staging itaipu-/suffix/ --job-version="itaipu=$(git rev-parse --short HEAD)"  METAPOD_REPO=s3a://nu-spark-metapod-test TARGET_DATE=$(date --iso-8601) REFERENCE_DATE=$(date --iso-8601) DRIVER_MEMORY=26843545600 CORES=96 OPTIONS="filtered,dns" METAPOD_TRANSACTION=$(uuidgen) METAPOD_ENVIRONMENT=prod SKIP_PLACEHOLDER_OPS="true" DATASETS="dataset/**THE_NAME_OF_YOUR_DATSET**" ITAIPU_SUFFIX=/suffix/ DRIVER_MEMORY_JAVA=22G --filename itaipu`
 
 All those variables could seem magical defined, but actually, if you remove one of them sabesp is going to complain that an argument is missing :).
 
