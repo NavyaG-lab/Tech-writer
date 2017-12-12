@@ -108,6 +108,7 @@ When a job is changed on `aurora-jobs`, we need to be careful about how we updat
  ![releasing dagao](images/release_dagao.png)
    3. On the [Airflow admin page](https://airflow.nubank.com.br/admin/) we need to click the "refresh" button on the `config_downloader` DAG. This will make Airflow suck in the new configuration.
  ![refreshing airflow config](images/config_refresh.png)
+   4. Send a message on the #guild-data-eng channel on Slack telling everyone that you deployed a new DAG.
  
  * [Monitoring the run on Airflow](./monitoring_nightly_run.md)
 
