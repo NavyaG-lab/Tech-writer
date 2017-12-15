@@ -9,6 +9,8 @@
   * [Dealing with dataset failures](#dealing-with-dataset-failures)
   * [Dealing with model failures](#dealing-with-model-failures)
   * [Making downstream jobs run when an upstream job fails](#making-downstream-jobs-run-when-an-upstream-job-fails)
+* [Removing bad data from Metapod](#removing-bad-data-from-metapod)
+* [Dealing with Datomic self-destructs](#dealing-with-datomic-self-destructs)
 
 ## Hot-deploying rollbacks
 
