@@ -82,12 +82,13 @@ You can find a bunch of relevant engineering links here:  [Onboarding](https://w
   - [Free beginner book](https://www.braveclojure.com/clojure-for-the-brave-and-true/)
   - [Advanced book](https://pragprog.com/book/vmclojeco/clojure-applied)
 - [Service code organization (Ports & Adapters)](http://alistair.cockburn.us/Hexagonal+architecture)
+  - This [first PR](https://github.com/nubank/savings-accounts/pull/1/files?diff=unified) of this service might help visualize the code organization at Nubank' services
   - [Main namespaces in a clojure service](https://wiki.nubank.com.br/index.php/Microservices)
   - [Busquem conhecimento (Portuguese)](https://wiki.nubank.com.br/index.php/Busquem_Conhecimento#Ports_.26_Adapters)
 - [Kafka](http://kafka.apache.org/intro)
   - Kafka is a distributed streaming platform. We use it for async communication between services.
-  - The main kafka abstraction we use is the topic. Services produce messages to topics and services consume messages from topics. Any number of services can produce to a topic and all the services that are consuming from this topic will receive this message.
-  - [Busquem conhecimento (Portuguese)](https://wiki.nubank.com.br/index.php/Busquem_Conhecimento#Kafka)
+  - The main kafka abstraction we use is the topic. [Services produce](https://github.com/nubank/bleach/blob/master/src/bleach/diplomat/producer.clj) messages to topics and [services consume](https://github.com/nubank/bleach/blob/master/src/bleach/diplomat/consumer.clj) messages from topics. Any number of services can produce to a topic and all the services that are consuming from this topic will receive this message.
+  - [Busqume conhecimento in portuguese](https://wiki.nubank.com.br/index.php/Busquem_Conhecimento#Kafka)
 - [Datomic](http://docs.datomic.com/tutorial.html)
   - Datomic is a git like database. Information accumulates over time. Information is not forgotten as a side effect of acquiring new information.
   - [Intro to Datomic](https://www.youtube.com/watch?v=RKcqYZZ9RDY)
@@ -489,6 +490,67 @@ ls /mnt
 PS: if you get stuck, you can get all steps done in [this](https://nubank.cloud.databricks.com/#notebook/138371) notebook, but, don't cheat :)
 
 # Creating the Service to serve the data
+
+---
+
+## Generating a new service using the nu-service-template
+
+We usually use this [template](https://github.com/nubank/nu-service-template) for generating new services. You should create a `normal` service, and not a `global` one.
+After generating the code of your service run `nu certs gen service test <service-name>`. 
+After that your tests should be working. Run `lein nu-test` (this will run both midje and postman tests)
+
+---
+
+## Getting the avro partitions through the s3 component
+
+The library that we will use to read avro files requires the files to be saved on the machine, so before reading them we need to download them from s3.
+We'll use the [s3 component](https://github.com/nubank/common-db/blob/master/src/common_db/components/s3_store.clj) to discover the files and download them. This component implements mainly the [storage protocol](https://github.com/nubank/common-db/blob/master/src/common_db/protocols/storage.clj). Looking at the protocols the a component implement is the simplest way to have a big picture understanding of it.
+We'll add this component to the `base` fn on the `service.components` namespace of your service. Just take a look on how other components are added and do the same. The only dependency that your component needs is the `config` component.
+When creating the s3 component you can define the bucket it'll query. Pass the name of the bucket you got from metapod
+Congrats, you now have a s3 component. Now lets use it.
+In a repl (or a file that will be sent to a repl) start your system with `service.components/create-and-start-system!` (save it a def)
+This system is a map with all the components defined on the `service.components` namespace.
+Let's say your avro files are in the folder `s3://bucket/a/b/`. To list all the files you can simply do `(common-db.protocols.storage/list-objects (:s3 system) "a/b/")`
+Save all these files locally.
+
+---
+
+## Defining the inner representation of the entity
+
+We want to store all the entries on the avro files on datomic. For each line we'll store a new entry on datomic.
+To insert data on datomic we need a schema. To help us figure out a good inner schema we'll have a look on the schema of the avro files.
+To read avro files we'll use the library [abracad](https://github.com/damballa/abracad)
+Run `(seq (abracad.avro/data-file-reader file-name))` for any file that you saved locally
+Based on the entries you got running the last command you'll define an inner representation to your entity. Take a look at this [namespace](https://github.com/nubank/savings-accounts/blob/master/src/savings_accounts/models/savings_account.clj) to get an idea on how to create your model.
+The `id`s that you got on the avro files are all foreign keys, we need a primary key. We use uuid to do that and usually call them `name-of-entity/id`. This id will be generated by datomic when you insert the entity.
+After creating the schema of your schema add the skeleton on the namespace `service.db.datomic.config`
+
+---
+
+## Endpoint to trigger data consumption
+
+Now let's move away from the repl a bit to start to write the flow.
+We want an endpoint that only who has the `admin` scope can use. Add a new endpoint to the `service` namespace.
+This flow will get the files from s3 and produce a message to kafka, so in the handler triggered by the new endpoint we'll extract the s3 and producer component.
+To use the s3 component on the http handler we need to add it as a dependency to the webapp component(in the `service.components` namespace).
+This endpoint will call a `controller` function that will control the flow. All the deterministic without side effects functions go into a `logic` namespace, try to extract as many as these functions as possible.
+The flow will download the files from s3 and for each entry in all files it will produce a message on kafka
+
+---
+
+## Producing and consuming to kafka
+
+The namespaces responsible for producing and consuming messages to and from kafka are `service.diplomat.producer` and `service.diplomat.consumer` respectively. Take a look at `savings-accounts` to understand how they work.
+To produce a message we need to convert the data to a wire schema. We read the messages in the avro schema, now we need a function to convert it to a wire schema; this kind of functions live on namespaces under `service.adapters`.
+But before defining the adapting function we need to define the wire schema. Usually these schemas live on [common-schemata](https://github.com/nubank/common-schemata). But since this is a pet project we can define them under `service.models` (don't tell anybody I recommended that ;) )
+Now you write the function that avro-schema->wire-schema. These adapters functions are called on the edges (consumer, producer, https)
+Everytime you use a new topic you need to register it on `kafka_topics` in the `resources/service_config.json.base` file
+We'll consume the topic we just produced the messages (yes, it doesn't make a lot of sense in our case - it's just so you see producing/consuming of messages)
+
+---
+
+## Saving to datomic
+
 
 # Study materials
 
