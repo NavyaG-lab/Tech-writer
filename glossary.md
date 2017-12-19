@@ -2,6 +2,10 @@
 
 Work-in-progress, please add placeholders or info as you come across new terminology
 
+* [Data infrastructure terms](#data-infrastructure-terms)
+* [Microservice structure and hexagonal architecture terms](#microservice-structure-and-hexagonal-architecture-terms)
+* [General infrastructure terms](#general-infrastructure-terms)
+
 ## Data infrastructure terms
 
 ## Microservice structure and hexagonal architecture terms
@@ -66,3 +70,14 @@ JSON configuration file which is merged/overridden by the environment where the 
  * List of Kafka topics produced, consumed with other specific configuration
  * URL bookmarks for endpoint on other services (internal and external)
  * Components configuration: circuit breaker, datomic url/password/database, redis host and port...
+
+## General infrastructure terms
+
+### Prototype / Shard
+
+### Environment
+
+### Stack
+
+### Region
+
