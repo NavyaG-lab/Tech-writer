@@ -25,7 +25,7 @@ IAM roles are stored in a separate project [iam-policies](https://github.com/nub
 
 Policies for mesos are inside the Mesos [directory](https://github.com/nubank/iam-policies/blob/master/policies/mesos/).
 
-After you make a change, you need to deploy the changes, and to do that you need to use nucli.
+After you make a change, you need to deploy the changes via nucli:
 ```
 nu iam create roles stable mesos-fixed --env cantareira
 ```
