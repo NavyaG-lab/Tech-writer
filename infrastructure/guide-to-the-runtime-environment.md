@@ -25,11 +25,9 @@ IAM roles are stored in a separate project [iam-policies](https://github.com/nub
 
 Policies for mesos are inside the Mesos [directory](https://github.com/nubank/iam-policies/blob/master/policies/mesos/).
 
-After you make a change, you need to deploy the changes, to do that you need to call a manual command on deploy (that's because mesos is a service apart from the common services, and no one automated it's deploy), to do that do:
+After you make a change, you need to deploy the changes via nucli:
 ```
-[1] CANTAREIRA> stack = Stack.new(env: "cantareira", service: "mesos-fixed", prototype: nil, id: "stable")
-
-[1] CANTAREIRA> Roles.upsert_roles!(stack, false) 
+nu iam create roles stable mesos-fixed --env cantareira
 ```
 
 Done, now the iam-role for **mesos-fixed** in the stack **stable** is updated.
