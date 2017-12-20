@@ -89,7 +89,7 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
     * `*-model` are a set of jobs to run Python machine learning models. Most of them are defined in [batch-models-python](https://github.com/nubank/batch-models-python), a project maintained by the data scientists.
 
 
-## Airflow overview 
+## Airflow overview
 
 Airflow is the thing that actually trigger the run of our jobs. It's main abstraction is around the DAG (Directed Acyclic Graph), and what's nice about airflow is that all it's definition is in code, so no weird Json or even weirder format.
 
@@ -102,15 +102,51 @@ More:
 * [How to deploy airflow?](infrastructure/guide-to-the-runtime-environment.md#airflow)
 
 * **Deploying job changes to Airflow**:
-When a job is changed on `aurora-jobs`, we need to be careful about how we update the workflow on Airflow because Airflow does not have isolation between runs, so a change to the workflow could affect the *currently running* DAG accidentally if we are not careful.
+When a job is changed on [`aurora-jobs`](https://github.com/nubank/aurora-jobs), we need to be careful about how we update the workflow on Airflow because Airflow does not have isolation between runs, so a change to the workflow could affect the *currently running* DAG accidentally if we are not careful.
    1. The [`aurora-jobs` Go Pipeline](https://go.nubank.com.br/go/tab/pipeline/history/aurora-jobs) will build automatically
-   2. When the `aurora-jobs` pipeline completes it'll trigger the [`dagao` Go Pipeline](https://go.nubank.com.br/go/pipeline/history/dagao). This needs to be manually `release` in order for Airflow to have access to it.  *Don't do this during an active DAG run.*
- ![releasing dagao](images/release_dagao.png)
+   2. When the [`aurora-jobs`](https://github.com/nubank/aurora-jobs) pipeline
+ completes it'll trigger the [`dagao` Go
+ Pipeline](https://go.nubank.com.br/go/pipeline/history/dagao). The main test
+ that is run in this pipeline is called [`dry-run-tests`](#dry-run-tests). This needs to be
+ manually `release` in order for Airflow to have access to it.  *Don't do this
+ during an active DAG run.* ![releasing dagao](images/release_dagao.png)
    3. On the [Airflow admin page](https://airflow.nubank.com.br/admin/) we need to click the "refresh" button on the `config_downloader` DAG. This will make Airflow suck in the new configuration.
  ![refreshing airflow config](images/config_refresh.png)
    4. Send a message on the #guild-data-eng channel on Slack telling everyone that you deployed a new DAG.
- 
+
  * [Monitoring the run on Airflow](./monitoring_nightly_run.md)
+
+### Dry run tests
+
+The main thing that we want to test before deploying a new DAS to our Airflow
+instance is the integration between Airflow and Aurora. Airflow starts the
+Aurora jobs using sabesp, passing arguments as binds. The past has shown that
+bindings are a likely target for runtime failures. For instance, typos in one of
+the bindings on either the Airflow or the Aurora side, will result in a runtime
+failure (in the middle of the night).
+
+Fortunately we have an instrument that allows us to test the bindings between
+Airflow and Aurora jobs. This instrument is Sabesp's `--dryrun` flag. We use
+this flag, and only this flag, to distinguish production job instantiations from
+test ones.
+
+You can find the code for the dry run tests in the
+[`deploy-airflow`](https://github.nubank/deploy-airflow) repository. Instead of
+going through the topologically sorted DAG, it simply iterates through all the
+tasks that are present in the DAG. For every task that it finds, such as
+`itaipu-contracts`, it invocates Sabesp exactly like in production with the only
+exception being the dry run flag enabled (very simple--using xargs).
+
+The main pain point with this approach is that we have multiple nested docker
+containers during this test. Our CI instance, which is a Go Docker container,
+spawns the Airflow docker container, which spawns multiple Sabesp containers
+during the test (one for every SabespOperator task in the production DAG). This
+is an artifact of our move from factotum to Airflow (our testing worked
+differently in the past).
+
+Side note: obviously the docker in docker in docker approach is
+undesirable. Because of this, I think that this part of our architecture should
+be considered for a refactoring soon.
 
 ## Sabesp overview
   * Command line utility for interacting with data infra ([sample commands](cli_examples.md))
@@ -189,7 +225,7 @@ In Data Infra, we can use an admin user for administrative tasks (e.g. querying 
   * [batch-models-python](https://github.com/nubank/batch-models-python) - Various experimental Python models
 
 ## Permissions / accounts needed to contribute on data infra
-  * IAM permissions (groups) 
+  * IAM permissions (groups)
     * `data-access-ops data-infra-aurora-access eng infra-ops prod-eng data-infra belomonte`
   * Quay.io permissions needed, and when to do direct quay.io builds
   * Databricks access - ask on #access-request channel on Slack
