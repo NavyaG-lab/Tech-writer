@@ -58,10 +58,10 @@ contains read, write, and migration logic for persistent data. Most commonly you
 Initialization components for different environments (e.g. test, e2e, prod, staging...), encoding dependencies between them. Components (e.g. http client, datomic client, redis client) are used when certain logic needs to manage or depend on mutateable state. Components are made available to incoming diplomat handlers, for instance, handlers in http_in or consumers have access to things like the datomic or http components, and pass them down to the controller level for general use.
 
 ### `test/` unit-tests
-Unit-like tests written in mostly `Midje`, and at times `clojure.test`.
+Unit tests written in mostly `Midje`, and at times `clojure.test`.
 
 ### postman tests
-Integration tests inside the service. These tests are backed by `Midje` but adhere to a `world` centric model...
+Integration tests inside the service. These tests are backed by `Midje` but adhere to a `world` centric model. More details [here](https://github.com/nubank/common-test/#postman)
 
 ### resources/my-new-service_config.json.base
 JSON configuration file which is merged/overridden by the environment where the service is running (e2e, prod, staging). It generally contains:
