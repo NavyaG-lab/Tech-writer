@@ -247,6 +247,12 @@ Once you have your SparkOp done, you can use the function on [DatabricksHelpers]
 
 Run it! And then query your dataset to see if everything is nice!
 
+To make it easier to do the service exercise save the avro files to s3 once again (itaipu will do that, but we're doing it again in case anything goes wrong there). This will save the dataset on `s3://nu-spark-devel/onboarding/**schema**/`
+
+```
+spark.table("**schema**.the_name_of_dataset").write.avro("/mnt/nu-spark-devel/onboarding/**schema**/")
+```
+
 ---
 
 ## Add the new dataset to Itaipu
@@ -495,21 +501,42 @@ PS: if you get stuck, you can get all steps done in [this](https://nubank.cloud.
 
 ## Generating a new service using the nu-service-template
 
-We usually use this [template](https://github.com/nubank/nu-service-template) for generating new services. You should create a `normal` service, and not a `global` one.
+We usually use this [template](https://github.com/nubank/nu-service-template) 
+for generating new services. You should create a `normal` service, and not a 
+`global` one.
+
 After generating the code of your service run `nu certs gen service test <service-name>`. 
-After that your tests should be working. Run `lein nu-test` (this will run both midje and postman tests)
+This command doesn't work with dockerized `nu`, you can check if your `nu` 
+command is dockerized with `type nu` and `which nu`. If you have a dockerized 
+nucli run `unset nu`, this will unset the dockerized version in your current 
+terminal session.
+
+After that your tests should be working. Run `lein nu-test` (this will run both 
+midje and postman tests)
 
 ---
 
 ## Getting the avro partitions through the s3 component
 
-The library that we will use to read avro files requires the files to be saved on the machine, so before reading them we need to download them from s3.
+The library that we will use to read avro files requires the files to be saved 
+locally, so before reading the files we need to download them from s3.
 
-We'll use the [s3 component](https://github.com/nubank/common-db/blob/master/src/common_db/components/s3_store.clj) to discover the files and download them. This component implements mainly the [storage protocol](https://github.com/nubank/common-db/blob/master/src/common_db/protocols/storage.clj). Looking at the protocols the a component implement is the simplest way to have a big picture understanding of it.
+We'll use the [s3 component](https://github.com/nubank/common-db/blob/master/src/common_db/components/s3_store.clj)
+to discover and dowload the files. This component implements mainly the [storage protocol]
+(https://github.com/nubank/common-db/blob/master/src/common_db/protocols/storage.clj). 
+Looking at the protocols implemented by a component is the simplest way to have 
+a big picture understanding of it can do.
 
-We'll add this component to the `base` fn on the `service.components` namespace of your service. Just take a look on how other components are added and do the same. The only dependency that your component needs is the `config` component.
+We'll add this component to the `base` fn on the `service.components` namespace 
+of your service. Just take a look on how other components are added and do the 
+same. The only dependency that your component needs is the `config` component.
 
-When creating the s3 component you can define the bucket it'll query. Pass the name of the bucket you got from metapod
+This s3 component can be used to access only one bucket (the bucket is the first
+ part of an s3 uri after the `s3://`: `s3://bucket/folders/files`). One way to 
+define which bucket your component will use is add an entry on 
+`resources/service_config.json.base` with key `s3_bucket` and value 
+`nu-spark-devel` (which is the [bucket](https://github.com/nubank/data-infra-docs/blob/onboarding/onboarding/introduction.md#run-the-sparkop-on-databricks)
+ that we used to manually save the dataset on databricks)
 
 Congrats, you now have a s3 component. Now lets use it.
 
@@ -517,27 +544,34 @@ In a repl (or a file that will be sent to a repl) start your system with `servic
 
 This system is a map with all the components defined on the `service.components` namespace.
 
-Let's say your avro files are in the folder `s3://bucket/a/b/`. To list all the files you can simply do `(common-db.protocols.storage/list-objects (:s3 system) "a/b/")`
+To list all the files you can simply do `(common-db.protocols.storage/list-objects (:s3 system) "onboarding/**schema**/")`.
+ This s3 path was defined [here](https://github.com/nubank/data-infra-docs/blob/onboarding/onboarding/introduction.md#run-the-sparkop-on-databricks)
 
-Save all these files locally.
+Now you should write some code to caching locally all these files of a given s3 folder.
 
 ---
 
 ## Defining the inner representation of the entity
 
-We want to store all the entries on the avro files on datomic. For each line we'll store a new entry on datomic.
+We want to store all the entries on the avro files on datomic. For each line 
+we'll store a new entry on datomic. To insert data on datomic we need a schema. 
+To help us figure out a good inner schema we'll have a look on the schema of the
+ avro files. For reading avro files we'll use the library [abracad](https://github.com/damballa/abracad).
+You'll need to add this library as a dependency on your `project.clj` file and 
+restart your repl.
 
-To insert data on datomic we need a schema. To help us figure out a good inner schema we'll have a look on the schema of the avro files.
+Run `(seq (abracad.avro/data-file-reader file-name))` for any file that you 
+saved locally. This wil return all the record on a given avro file. Based on 
+these record you should define an inner representation to your entity. Take a 
+look at this [namespace](https://github.com/nubank/savings-accounts/blob/master/src/savings_accounts/models/savings_account.clj)
+ to get an idea on how to create your model.
 
-To read avro files we'll use the library [abracad](https://github.com/damballa/abracad)
+The `id`s that you got on the avro files are all foreign keys, but we also need 
+a primary key. We use uuid to do that and usually call them `name-of-entity/id`.
+ This id will be generated by datomic when you insert the entity.
 
-Run `(seq (abracad.avro/data-file-reader file-name))` for any file that you saved locally
-
-Based on the entries you got running the last command you'll define an inner representation to your entity. Take a look at this [namespace](https://github.com/nubank/savings-accounts/blob/master/src/savings_accounts/models/savings_account.clj) to get an idea on how to create your model.
-
-The `id`s that you got on the avro files are all foreign keys, we need a primary key. We use uuid to do that and usually call them `name-of-entity/id`. This id will be generated by datomic when you insert the entity.
-
-After creating the schema of your schema add the skeleton on the namespace `service.db.datomic.config`
+After creating the schema of your entity add the skeleton on the namespace 
+`service.db.datomic.config`
 
 ---
 
@@ -545,31 +579,52 @@ After creating the schema of your schema add the skeleton on the namespace `serv
 
 Now let's move away from the repl a bit to start to write the flow.
 
-We want an endpoint that only who has the `admin` scope can use. Add a new endpoint to the `service` namespace.
+We want an endpoint that only who has the `admin` scope can use. Add a new 
+endpoint to the `service` namespace. This endpoint should receive a json body
+with the s3 path associated with the key `s3-path`. To extract the body 
+parameters on your handler you need to extract the `:body-params` key in the 
+arg list of the `defhandler` (in the same level as the `:components` is)
 
-This flow will get the files from s3 and produce a message to kafka, so in the handler triggered by the new endpoint we'll extract the s3 and producer component.
+This flow will cache locally the files from s3 and produce messages to kafka. So
+ in the handler triggered by the new endpoint we'll extract the s3 and producer 
+component. But before using the s3 component on the http handler we need to add 
+it as a dependency to the webapp component(in the `service.components` 
+namespace). The producer already is a dependecy of this component.
 
-To use the s3 component on the http handler we need to add it as a dependency to the webapp component(in the `service.components` namespace).
+The endpoint you are creating will call a `controller` function that will 
+control the flow. All the deterministic and without side effects functions go 
+into a `logic` namespace, try to extract as many as these functions as possible.
 
-This endpoint will call a `controller` function that will control the flow. All the deterministic without side effects functions go into a `logic` namespace, try to extract as many as these functions as possible.
-
-The flow will download the files from s3 and for each entry in all files it will produce a message on kafka
+The flow will download the files from s3 and for each entry in all files it 
+will produce a message on kafka
 
 ---
 
 ## Producing and consuming to kafka
 
-The namespaces responsible for producing and consuming messages to and from kafka are `service.diplomat.producer` and `service.diplomat.consumer` respectively. Take a look at `savings-accounts` to understand how they work.
+The namespaces responsible for producing and consuming messages to and from 
+kafka are `service.diplomat.producer` and `service.diplomat.consumer`, 
+respectively. Take a look at `savings-accounts` to grasp how they work.
 
-To produce a message we need to convert the data to a wire schema. We read the messages in the avro schema, now we need a function to convert it to a wire schema; this kind of functions live on namespaces under `service.adapters`.
+To produce a message we need to convert the data to a wire schema. We are 
+reading the messages in the avro schema, so we need a function to convert this 
+avro in our a wire schema; this kind of functions live on namespaces under 
+`service.adapters`.
 
-But before defining the adapting function we need to define the wire schema. Usually these schemas live on [common-schemata](https://github.com/nubank/common-schemata). But since this is a pet project we can define them under `service.models` (don't tell anybody I recommended that ;) )
+But before defining the adapting function we need to define the wire schema. 
+Usually these schemas live on [common-schemata](https://github.com/nubank/common-schemata). 
+But since this is a pet project we can define them under `service.models` 
+(don't tell anybody I recommended that ;) )
 
-Now you write the function that avro-schema->wire-schema. These adapters functions are called on the edges (consumer, producer, https)
+Now you can write the function that avro-schema->wire-schema. These adapters 
+functions are called on the edges(consumer, producer, https), so we don't have 
+to deal with wire data inside our service.
 
-Everytime you use a new topic you need to register it on `kafka_topics` in the `resources/service_config.json.base` file
+Everytime you use a new topic you need to register it on `kafka_topics` in the 
+`resources/service_config.json.base` file.
 
-We'll consume the topic we just produced the messages (yes, it doesn't make a lot of sense in our case - it's just so you see producing/consuming of messages)
+We'll consume the topic we just produced the messages(yes, it doesn't make a lot
+ of sense in this case - it's just so you see producing/consuming of messages).
 
 ---
 
