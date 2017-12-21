@@ -83,7 +83,7 @@ You can find a bunch of relevant engineering links here:  [Onboarding](https://w
   - [Advanced book](https://pragprog.com/book/vmclojeco/clojure-applied)
 - [Service code organization (Ports & Adapters)](http://alistair.cockburn.us/Hexagonal+architecture)
   - This [first PR](https://github.com/nubank/savings-accounts/pull/1/files?diff=unified) of this service might help visualize the code organization at Nubank' services
-  - [Main namespaces in a clojure service](https://wiki.nubank.com.br/index.php/Microservices)
+  - [Microservice structure and hexagonal architecture terms](https://github.com/nubank/data-infra-docs/blob/master/glossary.md#microservice-structure-and-hexagonal-architecture-terms)
   - [Busquem conhecimento (Portuguese)](https://wiki.nubank.cofeedbacksm.br/index.php/Busquem_Conhecimento#Ports_.26_Adapters)
 - [Kafka](http://kafka.apache.org/intro)
   - Kafka is a distributed streaming platform. We use it for async communication between services.
@@ -138,12 +138,16 @@ Nubank has a problem with dealing with bills. For some unknown reason, it has be
 ---
 
 - [ ]  Generating a new service using the nu-service-template
-- [ ]  Creating a component to read the dataset files from S3
-  - [ ]  Make a request to metapod to get the list of paths for the dataset written
-  - [ ]  Read the avros from S3
-- [ ]  Create a **producer** to publish each row of the dataset
-- [ ]  Create a **consumer** to read the published messages and persist to datomic
-- [ ]  Create a graphql API for the Bill information
+- [ ]  Getting the avro partitions through the s3 component
+- [ ]  Defining the inner representation of the entity
+- [ ]  Endpoint to trigger data consumption
+- [ ]  Producing and consuming to kafka
+- [ ]  Saving to datomic
+- [ ]  Endpoint for getting the data
+- [ ]  Testing
+  - [ ]  Unit tests
+  - [ ]  Integration test
+- [ ]  Run the service locally
 
 ## Creating the Dataset
 
@@ -499,17 +503,27 @@ PS: if you get stuck, you can get all steps done in [this](https://nubank.cloud.
 
 ---
 
+Before starting you should read this glossary of our 
+[service architecture](https://github.com/nubank/data-infra-docs/blob/master/glossary.md#microservice-structure-and-hexagonal-architecture-terms)
+
+Best Nubank tool: adding `#nu/tapd` before an s-exp will print the value 
+returned by this s-exp everytime your code execute this s-exp. That's great for
+debugging or to just know WTH is going on in a piece of code. To add in the 
+middle of a thread macro (this print the value being passed in the thread macro 
+at a certain point) add `nu/tapd` (without the `#`)
+
+
 ## Generating a new service using the nu-service-template
 
 We usually use this [template](https://github.com/nubank/nu-service-template) 
 for generating new services. You should create a `normal` service, and not a 
 `global` one.
 
-After generating the code of your service run `nu certs gen service test <service-name>`. 
-This command doesn't work with dockerized `nu`, you can check if your `nu` 
-command is dockerized with `type nu` and `which nu`. If you have a dockerized 
-nucli run `unset nu`, this will unset the dockerized version in your current 
-terminal session.
+After generating the code of your service run 
+`nu certs gen service test <service-name>`. This command doesn't work with 
+dockerized `nu`, you can check if your `nu` command is dockerized with `type nu`
+ and `which nu`. If you have a dockerized nucli run `unset nu`, this will unset 
+the dockerized version in your current terminal session.
 
 After that your tests should be working. Run `lein nu-test` (this will run both 
 midje and postman tests)
@@ -521,7 +535,8 @@ midje and postman tests)
 The library that we will use to read avro files requires the files to be saved 
 locally, so before reading the files we need to download them from s3.
 
-We'll use the [s3 component](https://github.com/nubank/common-db/blob/master/src/common_db/components/s3_store.clj)
+We'll use the 
+[s3 component](https://github.com/nubank/common-db/blob/master/src/common_db/components/s3_store.clj)
 to discover and dowload the files. This component implements mainly the [storage protocol]
 (https://github.com/nubank/common-db/blob/master/src/common_db/protocols/storage.clj). 
 Looking at the protocols implemented by a component is the simplest way to have 
@@ -535,19 +550,25 @@ This s3 component can be used to access only one bucket (the bucket is the first
  part of an s3 uri after the `s3://`: `s3://bucket/folders/files`). One way to 
 define which bucket your component will use is add an entry on 
 `resources/service_config.json.base` with key `s3_bucket` and value 
-`nu-spark-devel` (which is the [bucket](https://github.com/nubank/data-infra-docs/blob/onboarding/onboarding/introduction.md#run-the-sparkop-on-databricks)
+`nu-spark-devel` (which is the 
+[bucket](https://github.com/nubank/data-infra-docs/blob/onboarding/onboarding/introduction.md#run-the-sparkop-on-databricks)
  that we used to manually save the dataset on databricks)
 
 Congrats, you now have a s3 component. Now lets use it.
 
-In a repl (or a file that will be sent to a repl) start your system with `service.components/create-and-start-system!` (save it a def)
+In a repl (or a file that will be sent to a repl) start your system with 
+`service.components/create-and-start-system!` (save it a def)
 
-This system is a map with all the components defined on the `service.components` namespace.
+This system is a map with all the components defined on the `service.components`
+ namespace.
 
-To list all the files you can simply do `(common-db.protocols.storage/list-objects (:s3 system) "onboarding/**schema**/")`.
- This s3 path was defined [here](https://github.com/nubank/data-infra-docs/blob/onboarding/onboarding/introduction.md#run-the-sparkop-on-databricks)
+To list all the files you can simply do 
+`(common-db.protocols.storage/list-objects (:s3 system) "onboarding/**schema**/")`.
+ This s3 path was defined 
+[here](https://github.com/nubank/data-infra-docs/blob/onboarding/onboarding/introduction.md#run-the-sparkop-on-databricks)
 
-Now you should write some code to caching locally all these files of a given s3 folder.
+Now you should write some code to caching locally all these files of a given s3 
+folder.
 
 ---
 
@@ -556,14 +577,15 @@ Now you should write some code to caching locally all these files of a given s3 
 We want to store all the entries on the avro files on datomic. For each line 
 we'll store a new entry on datomic. To insert data on datomic we need a schema. 
 To help us figure out a good inner schema we'll have a look on the schema of the
- avro files. For reading avro files we'll use the library [abracad](https://github.com/damballa/abracad).
-You'll need to add this library as a dependency on your `project.clj` file and 
-restart your repl.
+ avro files. For reading avro files we'll use the library 
+[abracad](https://github.com/damballa/abracad). You'll need to add this library 
+as a dependency on your `project.clj` file and restart your repl.
 
 Run `(seq (abracad.avro/data-file-reader file-name))` for any file that you 
 saved locally. This wil return all the record on a given avro file. Based on 
 these record you should define an inner representation to your entity. Take a 
-look at this [namespace](https://github.com/nubank/savings-accounts/blob/master/src/savings_accounts/models/savings_account.clj)
+look at this 
+[namespace](https://github.com/nubank/savings-accounts/blob/master/src/savings_accounts/models/savings_account.clj)
  to get an idea on how to create your model.
 
 The `id`s that you got on the avro files are all foreign keys, but we also need 
@@ -612,9 +634,10 @@ avro in our a wire schema; this kind of functions live on namespaces under
 `service.adapters`.
 
 But before defining the adapting function we need to define the wire schema. 
-Usually these schemas live on [common-schemata](https://github.com/nubank/common-schemata). 
-But since this is a pet project we can define them under `service.models` 
-(don't tell anybody I recommended that ;) )
+Usually these schemas live on 
+[common-schemata](https://github.com/nubank/common-schemata). But since this is 
+a pet project we can define them under `service.models` (don't tell anybody I 
+recommended that ;) )
 
 Now you can write the function that avro-schema->wire-schema. These adapters 
 functions are called on the edges(consumer, producer, https), so we don't have 
@@ -630,6 +653,149 @@ We'll consume the topic we just produced the messages(yes, it doesn't make a lot
 
 ## Saving to datomic
 
+When we consume the messages that we've produced they will be in the same format
+ we used to produce (obviously), that is a wire schema. We need an adapter 
+function to convert a wire schema to our inner schema. This function will be 
+called on the consumer.
+
+Now that we have an inner representation of the data we can send this data to a 
+controller function. This new flow is simpler, we just need to store the data on
+ datomic, the functions to do that are in namespaces under `service.db.datomic`.
+
+There is a little problem with this topic we are consuming. Our flow is not 
+idempotent. If we consume the message more than one time we will either insert 
+the record twice (with different ids) or it will throw an exception when 
+inserting the second time (if our inner schema has an unique field). For our 
+solution choose one the fields (the one that makes more sense for that) of the 
+schema and declare it as unique: just add `:unique true` to the schema. Now when
+ we consume the topic twice it will throw an exception. An ok way to avoid that 
+is to wrap the datomic insert function in a `try catch` statement, so the rest 
+of the code don't have to care about it.
+
+---
+
+## Endpoint for getting the data
+
+Now let's add a new endpoint for querying the data we inserted. We'll query 
+datomic using the id you made unique in the schema. The user will send this 
+id in the url path. Take a look 
+[here](https://github.com/nubank/savings-accounts/blob/master/src/savings_accounts/service.clj)
+ to see how this extracting looks like.
+
+When we extract data from the url we get just a string, and that's sad because 
+we need an `UUID`. Fortunately we have an pedestal interceptor that does this 
+conversion automatically for us. We just need to add it to the interceptor list 
+at the `services` namespace. Take a look in the link above to find this
+interceptor.
+
+You'll have to find another usefull interceptor now. We don't directly use the 
+datomic component to fetch data, we get a snapshot from the database using the 
+`common-datomic.db.db` fn and with this snapshot we query for data. There is a 
+interceptor that already gives the snapshot to the handler. The main advantage 
+of this approach is that it's automatically clear if an endpoint will change 
+anything in the database or just query it. Take a look in the link above to find
+ this interceptor.
+ 
+Remeber that you should use convert the data to a wire schema before replying 
+the request.
+
+---
+
+## Testing
+
+Even though running code in the repl is great, automated tests are even better. 
+We'll write two types of tests: unit(midje) and integration(postman) tests.
+
+Before going writing to many tests we should change a thing we did in the 
+beggining of this exercise. We added the s3 component to the base layer of 
+components, but hitting s3 for unit and [inner] integration tests is not very 
+good. Fortunatelly we have a mock component for s3. We can add this mock 
+component to run just when we are running local tests by adding a new entry in 
+the `test` fn on the `components` namespace. We just need to add the same name 
+we did in the `base` fn and now use the 
+[mock component](https://github.com/nubank/common-db/blob/master/src/common_db/components/mock_s3_store.clj).
+
+### Unit tests
+
+The tests files follow the same structure as the "real code", the two 
+differences are:
+- instead of being in the `src` folder they are in the `test` folder
+- the test files add the suffix `_test` in the end of the file name (and before 
+`.clj`). Also the namespace has a `-test` suffix.
+
+We should write tests for all functions in the `logic`, `adapters`, `datomic` 
+namespaces. If on the `service`, `consumer` and `producer` namespaces you are 
+doing anything out of the ordinary or are not felling very confortable about 
+some function you should also add tests to them.
+
+Use `s/with-fn-validation` every time that you can. Be aware that midje's 
+metaconstant break these validations. Also, ALWAYS test logic functions with 
+schema validation and no stubs or mocks.
+
+Controllers tests are a bit more controversial. Some people like to have them, 
+others think they should be avoided because they don't have a big upside and 
+require labor intensive work when the code is changed.
+
+### Integration test
+
+Take a look at this [postman test](https://github.com/nubank/savings-accounts/blob/master/postman/postman/account_creation.clj)
+to get familiarized to the way we write integration tests.
+
+The integration tests go in `postman/postman/` folder.
+
+You should add one postman test that will ensure that the whole flow is working:
+- caching locally and processing avro files
+- producing and consuming kafka messages
+- saving to datomic
+- receiving and answering http request
+- querying datomic
+
+Since you are using the mock component for s3 we should add some mock data there
+ so we have something to download from s3. This component is a regular s3 
+component, you can use the methods defined in the s3 protocol for saving data.
+For a better code organization you can separate this function to an auxiliary 
+namespace.
+
+For triggering an endpoint you can use the same functions as in `service-test`. 
+To see if a message was produced to kafka you can use the function 
+[log-messages](https://github.com/nubank/common-test/#kafka). Make sure you call 
+ `common-test.postman.helpers.kafka/clear-messages!` in the `aux/init` function.
+
+---
+
+## Run the service locally
+
+Before you run we should make some small changes to make the process a bit more 
+interesting:
+- comment the s3 mock component in the `test` environment. In this way your 
+service will use the `base` s3 component, which will actually hit Amazon's s3.
+- in the function that inserts the data on datomic do a `#nu/tapd` in the unique
+ field. This will give some visibility on the insertions and you can later use 
+these ids in the query endpoint.
+
+Running a service is pretty straight forward with 
+[nudev](https://github.com/nubank/nudev). First of all in this repo add your 
+service to the `UNFLAVORED` list on `nustart.d/nustart/lein_service.rb` (this is
+ related to the structure we're using in the `components.clj`).
+
+Before running any service you need to ensure the dependencies of the service 
+are up. Running `dev-env-compose up -d` on a terminal starts a Kafka, Datomic, 
+Redis and Zookeeper. To start your service run `dev-compose up -d service-name`.
+To see the logs run `dev-compose logs -f service-name`.
+
+If you don't see anything weird (no logs or stack traces) in the logs your 
+service is probably running ok. To make sure it's running do a 
+`curl localhost:port/api/version`. This should return `{"version":"MISSING"}`. 
+You can get the port by looking the `dev_port` in the 
+`resources/service_config.json.base` file.
+
+If everything goes fine you can hit the endpoint that consume the data from s3. 
+After that hit the endpoint to get the entity that was inserted.
+
+You finished it, but our princess is in another castle. Now you need to go to 
+the real world!.
+
+---
 
 # Study materials
 
