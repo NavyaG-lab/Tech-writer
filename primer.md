@@ -106,14 +106,13 @@ When a job is changed on [`aurora-jobs`](https://github.com/nubank/aurora-jobs),
    1. The [`aurora-jobs` Go Pipeline](https://go.nubank.com.br/go/tab/pipeline/history/aurora-jobs) will build automatically
    2. When the [`aurora-jobs`](https://github.com/nubank/aurora-jobs) pipeline
  completes it'll trigger the [`dagao` Go
- Pipeline](https://go.nubank.com.br/go/tab/pipeline/history/dagao). The main test
+ Pipeline](https://go.nubank.com.br/go/pipeline/history/dagao). The main test
  that is run in this pipeline is called [`dry-run-tests`](#dry-run-tests). This needs to be
  manually `release` in order for Airflow to have access to it.  *Don't do this
  during an active DAG run.* ![releasing dagao](images/release_dagao.png)
    3. On the [Airflow admin page](https://airflow.nubank.com.br/admin/) we need to click the "refresh" button on the `config_downloader` DAG. This will make Airflow suck in the new configuration.
  ![refreshing airflow config](images/config_refresh.png)
-   4. You can check that the configuration was loaded into airflow by clicking `config_downloader` and checking the base date has been updated to now-ish ![config_downloader details](images/airflow_check.png)
-   5. Send a message on the #guild-data-eng channel on Slack telling everyone that you deployed a new DAG.
+   4. Send a message on the #guild-data-eng channel on Slack telling everyone that you deployed a new DAG.
 
  * [Monitoring the run on Airflow](./monitoring_nightly_run.md)
 
@@ -163,14 +162,14 @@ be considered for a refactoring soon.
   * We use [GoCD](https://www.gocd.org/) for continuous delivery build pipelines
   * [Nubank's GoCD server](https://go.nubank.com.br/go/pipelines) (requires VPN)
   * [Data Infra Environment on Go](https://go.nubank.com.br/go/environments/data-infra/show)
-  * TODO: explain environments (test, devel, prod) [do it here](./glossary.md#general-infrastructure-terms)
+  * TODO: explain environments (test, devel, prod)
   * TODO: explain build and deploy process for:
     * metapod
     * aurora-jobs
     * capivara
     * itaipu
     * sabesp
-    * correnteza [see here](https://github.com/nubank/correnteza/#deploying)
+    * correnteza
   * TODO: dev workflow overview
 
 ## Sonar overview
@@ -179,9 +178,14 @@ be considered for a refactoring soon.
   * [Nubank's Sonar URL](https://backoffice.nubank.com.br/sonar-js/) (requires VPN)
   * You can access the sonar output for a given metapod transaction by placing the transaction id in the URL: https://backoffice.nubank.com.br/sonar-js/#/sonar-js/transactions/2d1a7d12-0023-5de5-a437-36409b45f4c2
 
-## Monitoring run latency / cost [UPDATE REQUIRED]
-  * We currently store metrics on how much total CPU time it costs to compute each dataset in the DAG using InfluxDB, and we use Grafana to visualize the data stored there.
-  * [Our ETL-focused Grafana dashboard](https://prod-grafana.nubank.com.br/dashboard/db/etl)
+## Monitoring run latency / cost
+  * We currently store metrics on how much total CPU time it costs to compute each dataset in the DAG using InfluxDB, and we use Grafana to visualize the data stored there. [Our ETL-focused Grafana dashboard](https://prod-grafana.nubank.com.br/dashboard/db/etl)
+  * We also have [another dashboard in Grafana](https://prod-grafana.nubank.com.br/dashboard/db/cantareira-cluster-status) tracking CPU, memory and disk utilization in the cluster.
+  * To monitor the costs in production, please consult [our dashboard in the AWS Cost Explorer](https://console.aws.amazon.com/cost-reports/home?#/custom?groupBy=TagKeyValue:Name&forecastTimeRangeOption=None&hasBlended=false&excludeRefund=true&excludeCredit=true&excludeRIUpfrontFees=true&excludeRIRecurringCharges=true&excludeOtherSubscriptionCosts=true&excludeSupportCharges=true&excludeTax=true&excludeTaggedResources=false&chartStyle=Stack&timeRangeOption=Custom&granularity=Daily&reportName=Mesos%20spend%20per%20job%20in%20production&reportType=CostUsage&isTemplate=false&startDate=2017-10-01&endDate=2017-12-15&filter=%5B%7B%22children%22:null,%22include%22:true,%22values%22:%5B%22us-east-1%22%5D,%22dimension%22:%22Region%22%7D,%7B%22children%22:%5B%7B%22children%22:null,%22include%22:true,%22values%22:%5B%22cantareira-stable-mesos-fixed%22,%22cantareira-stable-mesos-master%22,%22cantareira-stable-mesos-on-demand%22,%22cantareira-stable-mesos-on-demand-cache-test%22,%22cantareira-stable-mesos-on-demand-cache-test-new%22,%22cantareira-stable-mesos-on-demand-cache-test-small%22,%22cantareira-stable-mesos-on-demand-charlotte-v3-batch%22,%22cantareira-stable-mesos-on-demand-charlotte-v3-batch-model%22,%22cantareira-stable-mesos-on-demand-contextual-model%22,%22cantareira-stable-mesos-on-demand-contextual-model-model%22,%22cantareira-stable-mesos-on-demand-contracts%22,%22cantareira-stable-mesos-on-demand-cronno-model%22,%22cantareira-stable-mesos-on-demand-cronno-model-model%22,%22cantareira-stable-mesos-on-demand-cronno-v2%22,%22cantareira-stable-mesos-on-demand-cronno-v2-model%22,%22cantareira-stable-mesos-on-demand-dimensional-modeling%22,%22cantareira-stable-mesos-on-demand-finance%22,%22cantareira-stable-mesos-on-demand-fx-model%22,%22cantareira-stable-mesos-on-demand-fx-model-model%22,%22cantareira-stable-mesos-on-demand-hyoga-model%22,%22cantareira-stable-mesos-on-demand-hyoga-model-model%22,%22cantareira-stable-mesos-on-demand-hyoga2-model%22,%22cantareira-stable-mesos-on-demand-hyoga2-model-model%22,%22cantareira-stable-mesos-on-demand-lusa-survival-model%22,%22cantareira-stable-mesos-on-demand-lusa-survival-model-model%22,%22cantareira-stable-mesos-on-demand-lusa-v3-batch%22,%22cantareira-stable-mesos-on-demand-lusa-v3-batch-model%22,%22cantareira-stable-mesos-on-demand-mat-new%22,%22cantareira-stable-mesos-on-demand-midea%22,%22cantareira-stable-mesos-on-demand-model%22,%22cantareira-stable-mesos-on-demand-models%22,%22cantareira-stable-mesos-on-demand-policies%22,%22cantareira-stable-mesos-on-demand-quigon-model%22,%22cantareira-stable-mesos-on-demand-quigon-model-model%22,%22cantareira-stable-mesos-on-demand-rest%22,%22cantareira-stable-mesos-on-demand-salinger-model%22,%22cantareira-stable-mesos-on-demand-salinger-model-model%22,%22cantareira-stable-mesos-on-demand-snorlax-model%22,%22cantareira-stable-mesos-on-demand-snorlax-model-model%22%5D,%22dimension%22:%22Name%22%7D%5D,%22include%22:true,%22values%22:null,%22dimension%22:%22TagKeyValue%22%7D%5D&reportId=d74c9ef2-0a20-456a-8fd6-fdfce6b1bdce), which includes cost per cluster.
+  * There is currently no universal way of measuring the run total runtime, but two good proxy measurements are:
+    * Time taken to run the whole transaction, i.e. generate all datasets. That time can be measured on Sonar by using the transaction start and finish times.
+    * Time taken to between the start of the run and `itaipu-rest` to finish, can be seen on Airflow by mousing over the `itaipu-rest` node (the daily run starts at midnight UTC).
+  * To track our Dimensional Modeling SLA there is [a question on Metabase](https://metabase.nubank.com.br/question/5144) with the dimensional modeling deployment times. They have to finish before 10h30 a.m. UTC to be considered a success. The times shown on Metabase are already in UTC.
 
 ## Metabase
   * Metabase is an open source frontend for storing and visualizing data warehouse queries
