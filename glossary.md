@@ -10,6 +10,14 @@ Work-in-progress, please add placeholders or info as you come across new termino
 
 ## Microservice structure and hexagonal architecture terms
 
+### schemas
+At Nubank we've found it very useful to annotate functions with schemas, which offer runtime guarantees that the input and output of functions conform to specific structures.
+Generally we use [prismatic schema](https://github.com/plumatic/schema) (a.k.a. plumatic schema), but `clojure.spec` is becoming popular with some squads.
+Schema validation isn't turned on in production, but is enforced in postman and e2e tests. Validation can be enabled in unit tests via `schema.core/with-fn-validation`.
+
+Global schemas (a.k.a. wires) are stored in [`common-schemata`](https://github.com/nubank/common-schemata) and used to coordinate the structure of http and kafka data payloads.
+Internal schemas are generally generated from models ([for example](https://github.com/nubank/papers-please/blob/7a67b7f6e52ed949ca46cfc9f3d1b3cadb26f53e/src/papers_please/models/verification_request.clj#L23-L26)), but can be found in other places in a service.
+
 ### interceptors
 Middleware code that validates if the client can access that scope (have the right permissions, or that the payload they are sending is in the correct format or even if it has some specific key-value)
 
@@ -56,7 +64,7 @@ Models store persistently in datomic must be registered in `db/datomic/config.cl
 Contains read, write, and migration logic for persistent data. Most commonly you will see something of the form `db/datomic/<a-model>.clj` like `db/datomic/account.clj`, but there can also be other types of databases like `dynamodb` or `influx`.
 
 ### components.clj
-Initialization components for different environments (e.g. test, e2e, prod, staging...), encoding dependencies between them. Components (e.g. HTTP client, datomic client, redis client) are used when certain logic needs to manage or depend on mutateable state. Components are made available to incoming diplomat handlers, for instance, handlers in http_in or consumers have access to things like the datomic or HTTP components, and pass them down to the controller level for general use.
+Defines the service's [components](https://github.com/stuartsierra/component) for different environments (e.g. test, e2e, prod, staging...). Components (e.g. HTTP client, datomic client, redis client) are used when certain logic needs to manage or depend on mutateable state. Components are made available to incoming diplomat handlers, for instance, handlers in http_in or consumers have access to things like the datomic or HTTP components, and pass them down to the controller level for general use.
 
 ### `test/` unit-tests
 Unit tests written in mostly `Midje`, and at times `clojure.test`.
@@ -71,6 +79,8 @@ JSON configuration file which is merged/overridden by the environment where the 
  * List of Kafka topics produced, consumed with other specific configuration
  * URL bookmarks for endpoint on other services (internal and external)
  * Components configuration: circuit breaker, datomic url/password/database, redis host and port...
+
+### bookmarks
 
 ## General infrastructure terms
 
