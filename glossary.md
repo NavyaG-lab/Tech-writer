@@ -18,6 +18,10 @@ Schema validation isn't turned on in production, but is enforced in postman and 
 Global schemas (a.k.a. wires) are stored in [`common-schemata`](https://github.com/nubank/common-schemata) and used to coordinate the structure of http and kafka data payloads.
 Internal schemas are generally generated from models ([for example](https://github.com/nubank/papers-please/blob/7a67b7f6e52ed949ca46cfc9f3d1b3cadb26f53e/src/papers_please/models/verification_request.clj#L23-L26)), but can be found in other places in a service.
 
+### skeleton
+We rolled our own mechanism for generating schemas called 'skeletons'.
+This allows us to attach more data to schemas, like `:eg`,  `:doc`, `:unique`, and use those structures to produce both prismatic schemas and datomic schemas.
+
 ### interceptors
 Middleware code that validates if the client can access that scope (have the right permissions, or that the payload they are sending is in the correct format or even if it has some specific key-value)
 
