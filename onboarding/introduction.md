@@ -708,13 +708,16 @@ the request.
 Even though running code in the repl is great, automated tests are even better. 
 We'll write two types of tests: unit(midje) and integration(postman) tests.
 
-Before going writing to many tests we should change a thing we did in the 
-beggining of this exercise. We added the s3 component to the base layer of 
-components, but hitting s3 for unit and [inner] integration tests is not very 
-good. Fortunatelly we have a mock component for s3. We can add this mock 
-component to run just when we are running local tests by adding a new entry in 
-the `test` fn on the `components` namespace. We just need to add the same name 
-we did in the `base` fn and now use the 
+A good place to understand our way of writing is the README of our 
+[common-test](https://github.com/nubank/common-test)
+
+Before writing to many tests we should change a thing we did in the  beggining 
+of this exercise. We added the s3 component to the base layer of components, 
+but hitting s3 for unit and [inner] integration tests is not very good. 
+Fortunatelly we have a mock component for s3. We can add this mock component 
+to run just when we are running local tests by adding a new entry in the 
+`test` fn on the `components` namespace. We just need to add the same name we
+ did in the `base` fn and now use the 
 [mock component](https://github.com/nubank/common-db/blob/master/src/common_db/components/mock_s3_store.clj).
 
 ### Unit tests
