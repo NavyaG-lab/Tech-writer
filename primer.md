@@ -19,7 +19,7 @@ Some of the external projects underlying our platform are:
 
 * [Datomic](http://www.datomic.com/), the main database used by Nubank as a whole, and the biggest source of incoming data.
 * [Apache Spark](https://spark.apache.org/), a distributed processing framework.
-* [Apache Aurora](https://airflow.apache.org/), a DAG scheduler.
+* [Apache Aiflow](https://airflow.apache.org/), a DAG scheduler.
 * [Apache Mesos](http://mesos.apache.org/), a cluster resource management framework.
 * [Apache Aurora](http://aurora.apache.org/), a Mesos framework for running services and jobs.
 * [Amazon Redshift](https://aws.amazon.com/redshift/), a managed data warehouse we use to allow the rest of Nubank to easily analyze our data.
