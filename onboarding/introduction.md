@@ -527,8 +527,8 @@ dockerized `nu`, you can check if your `nu` command is dockerized with `type nu`
  and `which nu`. If you have a dockerized nucli run `unset nu`, this will unset 
 the dockerized version in your current terminal session.
 
-After that your tests should be working. Run `lein nu-test` (this will run both 
-midje and postman tests)
+After that your tests should be working. Run [`lein nu-test`](https://github.com/nubank/nu-test)
+(this will run both [midje unit tests](https://github.com/nubank/data-infra-docs/blob/master/glossary.md#test-unit-tests) and [postman integration tests](https://github.com/nubank/data-infra-docs/blob/master/glossary.md#postman-tests))
 
 ---
 
@@ -539,8 +539,7 @@ locally, so before reading the files we need to download them from s3.
 
 We'll use the 
 [s3 component](https://github.com/nubank/common-db/blob/master/src/common_db/components/s3_store.clj)
-to discover and dowload the files. This component implements mainly the [storage protocol]
-(https://github.com/nubank/common-db/blob/master/src/common_db/protocols/storage.clj). 
+to discover and dowload the files. This component implements mainly the [storage protocol](https://github.com/nubank/common-db/blob/master/src/common_db/protocols/storage.clj). 
 Looking at the protocols implemented by a component is the simplest way to have 
 a big picture understanding of it can do.
 
