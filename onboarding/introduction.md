@@ -600,7 +600,8 @@ After creating the model of your entity add the skeleton on the namespace
 
 ## Endpoint to trigger data consumption
 
-Now let's move away from the repl a bit to start to write the flow.
+Now let's move away from the repl a bit to start to write the main logic to
+serve the avro data to clients.
 
 We want an endpoint that only who has the `admin` scope can use. Add a new 
 endpoint to the `service` namespace. This endpoint should receive a json body
