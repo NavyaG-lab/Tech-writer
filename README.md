@@ -19,3 +19,8 @@ This repository is the canonical place to put all documentation related to how t
 ## Infrastructure
   * [Inventory](infrastructure/inventory.md)
   * [Guide to the runtime environment](infrastructure/guide-to-the-runtime-environment.md)
+
+## Onboarding
+  * [Introduction and setup](onboarding/introduction.md)
+  * [Exercise Part I: Creating a dataset](onboarding/dataset-exercise.md)
+  * [Exercise Part II: Creating a service to expose a dataset via API](onboarding/service-exercise.md)
