@@ -83,7 +83,7 @@ You can find a bunch of relevant engineering links here:  [Onboarding](https://w
   - [Advanced book](https://pragprog.com/book/vmclojeco/clojure-applied)
 - [Service code organization (Ports & Adapters)](http://alistair.cockburn.us/Hexagonal+architecture)
   - This [first PR](https://github.com/nubank/savings-accounts/pull/1/files?diff=unified) of this service might help visualize the code organization at Nubank' services
-  - [Microservice structure and hexagonal architecture terms](https://github.com/nubank/data-infra-docs/blob/master/glossary.md#microservice-structure-and-hexagonal-architecture-terms)
+  - [Microservice structure and hexagonal architecture terms](https://github.com/nubank/playbooks/blob/master/glossary.md#microservice-structure-and-hexagonal-architecture-terms)
   - [Busquem conhecimento (Portuguese)](https://wiki.nubank.cofeedbacksm.br/index.php/Busquem_Conhecimento#Ports_.26_Adapters)
 - [Kafka](http://kafka.apache.org/intro)
   - Kafka is a distributed streaming platform. We use it for async communication between services.
@@ -504,7 +504,7 @@ PS: if you get stuck, you can get all steps done in [this](https://nubank.cloud.
 ---
 
 Before starting you should read this glossary of our 
-[service architecture](https://github.com/nubank/data-infra-docs/blob/master/glossary.md#microservice-structure-and-hexagonal-architecture-terms)
+[service architecture](https://github.com/nubank/playbooks/blob/master/docs/glossary.md#microservice-structure-and-hexagonal-architecture-terms)
 
 Best Nubank tool: adding `#nu/tapd` before an s-exp will print the value 
 returned by this s-exp everytime your code execute this s-exp. That's great for
@@ -528,7 +528,7 @@ dockerized `nu`, you can check if your `nu` command is dockerized with `type nu`
 the dockerized version in your current terminal session.
 
 After that your tests should be working. Run [`lein nu-test`](https://github.com/nubank/nu-test)
-(this will run both [midje unit tests](https://github.com/nubank/data-infra-docs/blob/master/glossary.md#test-unit-tests) and [postman integration tests](https://github.com/nubank/data-infra-docs/blob/master/glossary.md#postman-tests))
+(this will run both [midje unit tests](https://github.com/nubank/playbooks/blob/master/glossary.md#test-unit-tests) and [postman integration tests](https://github.com/nubank/playbooks/blob/master/glossary.md#postman-tests))
 
 ---
 
@@ -539,7 +539,7 @@ locally, so before reading the files we need to download them from s3.
 
 We'll use the 
 [s3 component](https://github.com/nubank/common-db/blob/master/src/common_db/components/s3_store.clj)
-to discover and dowload the files ([component glossary term](https://github.com/nubank/data-infra-docs/blob/a6a1ccfe5038574df439529e7099c31bee7a04ca/glossary.md#componentsclj)). This component implements the [storage protocol](https://github.com/nubank/common-db/blob/master/src/common_db/protocols/storage.clj). 
+to discover and dowload the files ([component glossary term](https://github.com/nubank/playbooks/blob/master/glossary.md#componentsclj)). This component implements the [storage protocol](https://github.com/nubank/common-db/blob/master/src/common_db/protocols/storage.clj). 
 Looking at the protocols implemented by a component is the simplest way to have 
 a big picture understanding of it can do.
 
@@ -550,7 +550,7 @@ same. The only dependency that your s3 component will need is the [`config` comp
 This s3 component can be used to access only one bucket (the bucket is the first
  part of an s3 uri after the `s3://`: `s3://bucket/folders/files`). One way to 
 define which bucket your component will use is add an entry on 
-[`resources/service_config.json.base`](https://github.com/nubank/data-infra-docs/blob/a6a1ccfe5038574df439529e7099c31bee7a04ca/glossary.md#resourcesmy-new-service_configjsonbase) with key `s3_bucket` and value 
+[`resources/service_config.json.base`](https://github.com/nubank/playbooks/blob/master/glossary.md#resourcesmy-new-service_configjsonbase) with key `s3_bucket` and value 
 `nu-spark-devel` (which is the 
 [bucket](https://github.com/nubank/data-infra-docs/blob/onboarding/onboarding/introduction.md#run-the-sparkop-on-databricks)
  that we used to manually save the dataset on databricks)
@@ -576,7 +576,7 @@ folder.
 ## Defining the inner representation of the entity
 
 We want to store all the entries within the avro files on datomic. For each line 
-we'll store a new entry on datomic. To insert data on datomic we need a [database mode](https://github.com/nubank/data-infra-docs/blob/a6a1ccfe5038574df439529e7099c31bee7a04ca/glossary.md#models). 
+we'll store a new entry on datomic. To insert data on datomic we need a [database mode](https://github.com/nubank/playbooks/blob/master/glossary.md#models). 
 To help us figure out a good model let's look at the data contained in the
  avro files. For reading avro files we'll use the library 
 [abracad](https://github.com/damballa/abracad). You'll need to add this library 
