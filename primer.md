@@ -7,6 +7,24 @@
 * [Post-mortems](https://github.com/nubank/morgue)
 * [Infrastructure Overivew](infrastructure/guide-to-the-runtime-environment.md)
 
+## Languages/stack overview
+
+We currently use three different programming languages for most of our work, each of them with a certain purpose:
+
+* [Clojure](https://clojure.org/) is our main language, as usual for Nubank. All our services are written in Clojure, and we usually try to use it as much as we can. The [Learn Clojure](https://clojure.org/guides/learn/syntax) section of the documentation is a good starting point to know more about it.
+* [Scala](https://www.scala-lang.org/) is the language we use to write Spark data processing jobs in [itaipu](https://github.com/nubank/data-infra-docs/blob/master/primer.md#itaipu-overview). We decided to use Scala to be able to fully utilize all of Spark's capabilities without having to write many layers of translations between Scala and Clojure.
+* [Python](https://www.python.org/) is used mostly for small AWS snippets of code, working with our scheduler ([Airflow](https://github.com/nubank/data-infra-docs/blob/master/primer.md#airflow-overview)), our jobs framework ([Aurora](https://github.com/nubank/data-infra-docs/blob/master/primer.md#aurora-overview)) and our CLI ([sabesp](https://github.com/nubank/data-infra-docs/blob/master/primer.md#sabesp-overview)), as well as machine learning models.
+
+Some of the external projects underlying our platform are:
+
+* [Datomic](http://www.datomic.com/), the main database used by Nubank as a whole, and the biggest source of incoming data.
+* [Apache Spark](https://spark.apache.org/), a distributed processing framework.
+* [Apache Aiflow](https://airflow.apache.org/), a DAG scheduler.
+* [Apache Mesos](http://mesos.apache.org/), a cluster resource management framework.
+* [Apache Aurora](http://aurora.apache.org/), a Mesos framework for running services and jobs.
+* [Amazon Redshift](https://aws.amazon.com/redshift/), a managed data warehouse we use to allow the rest of Nubank to easily analyze our data.
+* [Metabase](https://www.metabase.com/), a dashboarding/visualization/BI front-end for Redshift.
+
 ## Datomic Log overview
 
 ![Datomic Fact Structure](http://docs.datomic.com/entities-basics.png)
@@ -56,34 +74,80 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
     * https://github.com/nubank/data-infra-docs/blob/master/itaipu/workflow.md#creating-a-new-dataset
   * TODO: How is target date used, and is it relevant for Itaipu?
 
-## Metapod overview [UPDATE REQUIRED]
+## Metapod overview
   * [Metapod](https://github.com/nubank/metapod) is a Clojure service with a Datomic database that stores metadata about our data, including when any given dataset was computed, where is was stored on S3 (and with which partitions), the schema, which grouping "transaction" it is part of, etc.
   * Metapod is a normal service deployed in sa-east-1 (Sao Paulo) in production in the `global` prototype (as opposed to in a specific shard, for example).  That means that after a pull request is merged to master, it will build and then go through the e2e flow to staging, and then to prod.  You can check what version of metapod is deployed in production using `curl https://prod-global-metapod.nubank.com.br/api/version`, and you can see whether the service is healthy in real time at `http://prod-global-watchtower.nubank.com.br/#services-health`.
-  * TODO: How is target date used, and is it relevant for Metapod?
-  * TODO: How to retract a portion of a Metapod transaction to enable datasets to be recomputed (for intance, after a patch has been applied)?
+  * To know how to retract portions of a Metapod transaction (for example, to recompute a dataset), [please consult the section on how to remove bad data from Metapod in the runbook.](https://github.com/nubank/data-infra-docs/blob/master/runbook.md#removing-bad-data-from-metapod)
 
-## Aurora jobs overview [UPDATE REQUIRED]
-  * [Aurora](http://aurora.apache.org/) is a resource manager that schedules and runs jobs across a [Mesos](http://mesos.apache.org/) cluster.  Some of the jobs that Aurora schedules use Spark (which tends to consume all of the resources on the machine it is running on), but other jobs are written in Python or other languages.
-  * [aurora-jobs](https://github.com/nubank/aurora-jobs) stores our job definitions
+## Aurora overview
+  * [Aurora](http://aurora.apache.org/) is a resource manager that schedules and runs jobs across a [Mesos](http://mesos.apache.org/) cluster.  All our jobs run inside Docker containers, so each job can execute arbitrary code written in separate languages/frameworks, as long as they are able to run on Linux.
+  * The job definitions are written as a `.aurora` files and stored in the [aurora-jobs](https://github.com/nubank/aurora-jobs/tree/master/jobs) repo. `.aurora` files are [Pystachio](https://github.com/wickman/pystachio) templates that generate Python code to define the jobs themselves. A good reference to start understanding how they are structured is [the official tutorial](http://aurora.apache.org/documentation/latest/reference/configuration-tutorial/).
+  * A short description of the jobs:
+    * `itaipu-*` jobs run Spark driver nodes to run datasets defined in [itaipu](#itaipu-overview). The Spark driver nodes talk directly to Mesos to get more resources, so only the driver node is managed via Aurora.
+    * `scale-ec2-*` and `downscale-ec2-*` jobs add more machines to the Mesos cluster to run other jobs. Since AWS charges us per second of running time per instance, we scale up separate pools of machines for each `itaipu` job and Python machine learning model to have better isolation and debugging. The code to scale up and down the instances is in a small Python project we wrote called [scale-cluster](https://github.com/nubank/scale-cluster).
+    * `capivara-clj` is a job to run [capivara-clj](#capivara-clj-overview), which loads datasets generated by Itaipu to Redshift.
+    * `*-model` are a set of jobs to run Python machine learning models. Most of them are defined in [batch-models-python](https://github.com/nubank/batch-models-python), a project maintained by the data scientists.
 
-## Airflow overview [UPDATE REQUIRED]
-  * Airflow is a platform to author, schedule, and monitor workflows.  We define our workflow (commonly referred to as  "the DAG" or "the Dagão").  Airflow configuration is done via Python code, and we keep our configuration code in [aurora-jobs](https://github.com/nubank/aurora-jobs/blob/master/airflow/main.py).
-  * [Airflow on Github](https://github.com/apache/incubator-airflow)
-  * [Nubank's Airflow server](https://airflow.nubank.com.br/admin/airflow/graph?dag_id=prod-dagao)
-  * TODO: We need to come up with a safety mechanism to avoid borking a running DAG
-  * TODO: How is target date used, and is it relevant for Airflow?
-  * TODO: How to retry a given node?
-  * TODO: How to look at the run for a prior date if airflow borks
 
-[How to deploy airflow?](infrastructure/guide-to-the-runtime-environment.md#airflow)
+## Airflow overview
 
-### Deploying job changes to Airflow
-When a job is changed on `aurora-jobs`, we need to be careful about how we update the workflow on Airflow because Airflow does not have isolation between runs, so a change to the workflow could affect the *currently running* DAG accidentally if we are not careful.
- 1) The [`aurora-jobs` Go Pipeline](https://go.nubank.com.br/go/tab/pipeline/history/aurora-jobs) will build automatically
- 2) When the `aurora-jobs` pipeline completes it'll trigger the [`dagao` Go Pipeline](https://go.nubank.com.br/go/pipeline/history/dagao). This needs to be manually `release` in order for Airflow to have access to it.  *Don't do this during an active DAG run.*
- ![releasing dagao](images/release_dagao.png)
- 3) On the [Airflow admin page](https://airflow.nubank.com.br/admin/) we need to click the "refresh" button on the `config_downloader` DAG. This will make Airflow suck in the new configuration.
+Airflow is the thing that actually trigger the run of our jobs. It's main abstraction is around the DAG (Directed Acyclic Graph), and what's nice about airflow is that all it's definition is in code, so no weird Json or even weirder format.
+
+All code related to Airflow is a normal python code and is in aurora-jobs repo on the [airflow](https://github.com/nubank/aurora-jobs/tree/master/airflow) directory.
+
+
+More:
+* [Airflow DOCS on Creating a new DAG](https://airflow.apache.org/tutorial.html), Basically you need to create a python file, that has the definition of your DAG inside the airflow directory, then just follow the `Deploying job changes to Airflow`
+
+* [How to deploy airflow?](infrastructure/guide-to-the-runtime-environment.md#airflow)
+
+* **Deploying job changes to Airflow**:
+When a job is changed on [`aurora-jobs`](https://github.com/nubank/aurora-jobs), we need to be careful about how we update the workflow on Airflow because Airflow does not have isolation between runs, so a change to the workflow could affect the *currently running* DAG accidentally if we are not careful.
+   1. The [`aurora-jobs` Go Pipeline](https://go.nubank.com.br/go/tab/pipeline/history/aurora-jobs) will build automatically
+   2. When the [`aurora-jobs`](https://github.com/nubank/aurora-jobs) pipeline
+ completes it'll trigger the [`dagao` Go
+ Pipeline](https://go.nubank.com.br/go/pipeline/history/dagao). The main test
+ that is run in this pipeline is called [`dry-run-tests`](#dry-run-tests). This needs to be
+ manually `release` in order for Airflow to have access to it.  *Don't do this
+ during an active DAG run.* ![releasing dagao](images/release_dagao.png)
+   3. On the [Airflow admin page](https://airflow.nubank.com.br/admin/) we need to click the "refresh" button on the `config_downloader` DAG. This will make Airflow suck in the new configuration.
  ![refreshing airflow config](images/config_refresh.png)
+   4. You can check that the configuration was loaded into airflow by clicking `config_downloader` and checking the base date has been updated to now-ish ![config_downloader details](images/airflow_check.png)
+   5. Send a message on the #guild-data-eng channel on Slack telling everyone that you deployed a new DAG.
+
+ * [Monitoring the run on Airflow](./monitoring_nightly_run.md)
+
+### Dry run tests
+
+The main thing that we want to test before deploying a new DAS to our Airflow
+instance is the integration between Airflow and Aurora. Airflow starts the
+Aurora jobs using sabesp, passing arguments as binds. The past has shown that
+bindings are a likely target for runtime failures. For instance, typos in one of
+the bindings on either the Airflow or the Aurora side, will result in a runtime
+failure (in the middle of the night).
+
+Fortunately we have an instrument that allows us to test the bindings between
+Airflow and Aurora jobs. This instrument is Sabesp's `--dryrun` flag. We use
+this flag, and only this flag, to distinguish production job instantiations from
+test ones.
+
+You can find the code for the dry run tests in the
+[`deploy-airflow`](https://github.nubank/deploy-airflow) repository. Instead of
+going through the topologically sorted DAG, it simply iterates through all the
+tasks that are present in the DAG. For every task that it finds, such as
+`itaipu-contracts`, it invocates Sabesp exactly like in production with the only
+exception being the dry run flag enabled (very simple--using xargs).
+
+The main pain point with this approach is that we have multiple nested docker
+containers during this test. Our CI instance, which is a Go Docker container,
+spawns the Airflow docker container, which spawns multiple Sabesp containers
+during the test (one for every SabespOperator task in the production DAG). This
+is an artifact of our move from factotum to Airflow (our testing worked
+differently in the past).
+
+Side note: obviously the docker in docker in docker approach is
+undesirable. Because of this, I think that this part of our architecture should
+be considered for a refactoring soon.
 
 ## Sabesp overview
   * Command line utility for interacting with data infra ([sample commands](cli_examples.md))
@@ -115,9 +179,14 @@ When a job is changed on `aurora-jobs`, we need to be careful about how we updat
   * [Nubank's Sonar URL](https://backoffice.nubank.com.br/sonar-js/) (requires VPN)
   * You can access the sonar output for a given metapod transaction by placing the transaction id in the URL: https://backoffice.nubank.com.br/sonar-js/#/sonar-js/transactions/2d1a7d12-0023-5de5-a437-36409b45f4c2
 
-## Monitoring run latency / cost [UPDATE REQUIRED]
-  * We currently store metrics on how much total CPU time it costs to compute each dataset in the DAG using InfluxDB, and we use Grafana to visualize the data stored there.
-  * [Our ETL-focused Grafana dashboard](https://prod-grafana.nubank.com.br/dashboard/db/etl)
+## Monitoring run latency / cost
+  * We currently store metrics on how much total CPU time it costs to compute each dataset in the DAG using InfluxDB, and we use Grafana to visualize the data stored there. [Our ETL-focused Grafana dashboard](https://prod-grafana.nubank.com.br/dashboard/db/etl)
+  * We also have [another dashboard in Grafana](https://prod-grafana.nubank.com.br/dashboard/db/cantareira-cluster-status) tracking CPU, memory and disk utilization in the cluster.
+  * To monitor the costs in production, please consult [our dashboard in the AWS Cost Explorer](https://console.aws.amazon.com/cost-reports/home?#/custom?groupBy=TagKeyValue:Name&forecastTimeRangeOption=None&hasBlended=false&excludeRefund=true&excludeCredit=true&excludeRIUpfrontFees=true&excludeRIRecurringCharges=true&excludeOtherSubscriptionCosts=true&excludeSupportCharges=true&excludeTax=true&excludeTaggedResources=false&chartStyle=Stack&timeRangeOption=Custom&granularity=Daily&reportName=Mesos%20spend%20per%20job%20in%20production&reportType=CostUsage&isTemplate=false&startDate=2017-10-01&endDate=2017-12-15&filter=%5B%7B%22children%22:null,%22include%22:true,%22values%22:%5B%22us-east-1%22%5D,%22dimension%22:%22Region%22%7D,%7B%22children%22:%5B%7B%22children%22:null,%22include%22:true,%22values%22:%5B%22cantareira-stable-mesos-fixed%22,%22cantareira-stable-mesos-master%22,%22cantareira-stable-mesos-on-demand%22,%22cantareira-stable-mesos-on-demand-cache-test%22,%22cantareira-stable-mesos-on-demand-cache-test-new%22,%22cantareira-stable-mesos-on-demand-cache-test-small%22,%22cantareira-stable-mesos-on-demand-charlotte-v3-batch%22,%22cantareira-stable-mesos-on-demand-charlotte-v3-batch-model%22,%22cantareira-stable-mesos-on-demand-contextual-model%22,%22cantareira-stable-mesos-on-demand-contextual-model-model%22,%22cantareira-stable-mesos-on-demand-contracts%22,%22cantareira-stable-mesos-on-demand-cronno-model%22,%22cantareira-stable-mesos-on-demand-cronno-model-model%22,%22cantareira-stable-mesos-on-demand-cronno-v2%22,%22cantareira-stable-mesos-on-demand-cronno-v2-model%22,%22cantareira-stable-mesos-on-demand-dimensional-modeling%22,%22cantareira-stable-mesos-on-demand-finance%22,%22cantareira-stable-mesos-on-demand-fx-model%22,%22cantareira-stable-mesos-on-demand-fx-model-model%22,%22cantareira-stable-mesos-on-demand-hyoga-model%22,%22cantareira-stable-mesos-on-demand-hyoga-model-model%22,%22cantareira-stable-mesos-on-demand-hyoga2-model%22,%22cantareira-stable-mesos-on-demand-hyoga2-model-model%22,%22cantareira-stable-mesos-on-demand-lusa-survival-model%22,%22cantareira-stable-mesos-on-demand-lusa-survival-model-model%22,%22cantareira-stable-mesos-on-demand-lusa-v3-batch%22,%22cantareira-stable-mesos-on-demand-lusa-v3-batch-model%22,%22cantareira-stable-mesos-on-demand-mat-new%22,%22cantareira-stable-mesos-on-demand-midea%22,%22cantareira-stable-mesos-on-demand-model%22,%22cantareira-stable-mesos-on-demand-models%22,%22cantareira-stable-mesos-on-demand-policies%22,%22cantareira-stable-mesos-on-demand-quigon-model%22,%22cantareira-stable-mesos-on-demand-quigon-model-model%22,%22cantareira-stable-mesos-on-demand-rest%22,%22cantareira-stable-mesos-on-demand-salinger-model%22,%22cantareira-stable-mesos-on-demand-salinger-model-model%22,%22cantareira-stable-mesos-on-demand-snorlax-model%22,%22cantareira-stable-mesos-on-demand-snorlax-model-model%22%5D,%22dimension%22:%22Name%22%7D%5D,%22include%22:true,%22values%22:null,%22dimension%22:%22TagKeyValue%22%7D%5D&reportId=d74c9ef2-0a20-456a-8fd6-fdfce6b1bdce), which includes cost per cluster.
+  * There is currently no universal way of measuring the run total runtime, but two good proxy measurements are:
+    * Time taken to run the whole transaction, i.e. generate all datasets. That time can be measured on Sonar by using the transaction start and finish times.
+    * Time taken to between the start of the run and `itaipu-rest` to finish, can be seen on Airflow by mousing over the `itaipu-rest` node (the daily run starts at midnight UTC).
+  * To track our Dimensional Modeling SLA there is [a question on Metabase](https://metabase.nubank.com.br/question/5144) with the dimensional modeling deployment times. They have to finish before 10h30 a.m. UTC to be considered a success. The times shown on Metabase are already in UTC.
 
 ## Metabase
   * Metabase is an open source frontend for storing and visualizing data warehouse queries
@@ -159,9 +228,10 @@ In Data Infra, we can use an admin user for administrative tasks (e.g. querying 
   * [cronno](https://github.com/nubank/cronno-model) - Customer management spend
   * [hyoga](https://github.com/nubank/hyoga-model) - Customer management risk
   * [contextual](https://github.com/nubank/contextual) - Customer contact reason
+  * [batch-models-python](https://github.com/nubank/batch-models-python) - Various experimental Python models
 
-## Permissions / accounts needed to contribute on data infra [UPDATE REQUIRED]
-  * IAM permissions (groups) 
+## Permissions / accounts needed to contribute on data infra
+  * IAM permissions (groups)
     * `data-access-ops data-infra-aurora-access eng infra-ops prod-eng data-infra belomonte`
   * Quay.io permissions needed, and when to do direct quay.io builds
   * Databricks access - ask on #access-request channel on Slack
