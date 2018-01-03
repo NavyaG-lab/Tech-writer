@@ -101,4 +101,4 @@ You can find a bunch of relevant engineering links here:  [Onboarding](https://w
 
 ## Data Infra's Onboarding Exercise
 
-The goal of this exercise is to make you familiar with Nubank's general and data infrastructures. The exercise is split up into two parts, first is ["Building a dataset"](dataset-exercise.md) and second comes ["Creating a service to serve datasets"](service-exercise.md).
+The goal of this exercise is to make you familiar with Nubank's general and data infrastructures. The exercise is split up into two parts, _Part I_ is ["Creating a dataset"](dataset-exercise.md) and _Part II_ is ["Creating a service to expose a dataset via API"](service-exercise.md).

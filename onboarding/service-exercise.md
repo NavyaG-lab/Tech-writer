@@ -1,6 +1,6 @@
-# Creating the Service to serve the data
+# Onboarding Exercise Part II: Creating a service to expose a dataset via API
 
-The goal of this exercise is to make you familiar with Nubank's general service infrastructure and how it integrates with data infrastructure specific technology. Your task is to build a Nubank microservice to serve data from the dataset you produced in __part I__: ["Building a dataset"](dataset-exercise.md)
+The goal of this exercise is to make you familiar with Nubank's general service infrastructure and how it integrates with data infrastructure specific technology. Your task is to build a Nubank microservice to serve data from the dataset you produced in _part I_: ["Creating a dataset"](dataset-exercise.md)
 
  **TODO - Creating the Service** 
 

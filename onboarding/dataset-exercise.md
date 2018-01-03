@@ -1,4 +1,4 @@
-# Exercise
+# Onboarding Exercise Part I: Creating a Dataset
 
 The goal of this exercise is to make you familiar with data-infra specific technologies. It's going to touch our core abstraction the [**SparkOp**](https://github.com/nubank/common-etl/blob/master/src/main/scala/common_etl/operator/SparkOp.scala) ** (short for spark operation) ** and guide you through how to write a new SparkOp, how to run it on Databricks and to consume it in a Clojure service.
 
@@ -381,4 +381,4 @@ PS: if you get stuck, you can get all steps done in [this](https://nubank.cloud.
 
 ## Next up
 
-__Part II__ of the exercise, ["Creating a service to serve datasets"](service-exercise.md), is building a Nubank microservice to serve data from the dataset you created in this page.
+_Part II_ of the exercise, ["Creating a service to expose a dataset via API"](service-exercise.md), is building a Nubank microservice to serve data from the dataset you created in this page.
