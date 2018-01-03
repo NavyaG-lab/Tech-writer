@@ -8,7 +8,8 @@ This repository is the canonical place to put all documentation related to how t
 * [Runbook](runbook.md)
 * [CLI usage examples](cli_examples.md)
 * [Slack channel guide](squad/channels.md)
-* [Glossary](glossary.md)
+* [Data Infra Glossary](glossary.md)
+* [General Glossary](https://github.com/nubank/playbooks/blob/master/docs/glossary.md)
 
 ## Itaipu
   * [Primer](itaipu/primer.md)
