@@ -100,7 +100,7 @@ folder.
 ## Defining the inner representation of the entity
 
 We want to store all the entries within the avro files on datomic. For each line 
-we'll store a new entry on datomic. To insert data on datomic we need a [database mode](https://github.com/nubank/playbooks/blob/master/glossary.md#models). 
+we'll store a new entry on datomic. To insert data on datomic we need a [database mode](https://github.com/nubank/data-infra-docs/blob/master/glossary.md#models). 
 To help us figure out a good model let's look at the data contained in the
  avro files. For reading avro files we'll use the library 
 [abracad](https://github.com/damballa/abracad). You'll need to add this library 
