@@ -135,9 +135,11 @@ Once you have your SparkOp done, you can use the function on [DatabricksHelpers]
 
 Run it! And then query your dataset to see if everything is nice!
 
-To make it easier to do the service exercise save the avro files to s3 once again (itaipu will do that, but we're doing it again in case anything goes wrong there). This will save the dataset on `s3://nu-spark-devel/onboarding/**schema**/`
+To make it easier to do the service exercise save the avro files to s3 once again (itaipu will do that, but we're doing it again in case anything goes wrong there). This will save the dataset on `s3://nu-spark-devel/onboarding/**schema**/`:
 
 ```
+import com.databricks.spark.avro._
+
 spark.table("**schema**.the_name_of_dataset").write.avro("/mnt/nu-spark-devel/onboarding/**schema**/")
 ```
 
