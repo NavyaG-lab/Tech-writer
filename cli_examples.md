@@ -18,62 +18,16 @@ example this command that tries to scale up a cluster and fails (because x is no
 sabesp --aurora-stack=cantareira-midea jobs create test scale MODE=try-spot N_NODES=x --check
 ```
 
-### Create Belo Monte users
-```shell
-sabesp utils create-user <username>
-```
-
-### Start a test run of the dagao:
-(The best way to do this is by triggering the Go pipeline, e.g.: https://go.nubank.com.br/go/pipelines/dagao/49/test/1)
+### Kill a specific job within the dagao run (itaipu for example):
 
 ```shell
-[TBD]
+sabesp --aurora-stack cantareira-stable jobs kill jobs prod itaipu-contracts
 ```
-
-### Kill a test run of the dagao:
-
-```shell
-sabesp --aurora-stack cantareira-test jobs kill dagao-47 test dagao-47
-```
-
-### Kill a specific job within the test dagao run (itaipu for example):
-
-```shell
-sabesp --aurora-stack cantareira-test jobs kill dagao-47 test itaipu
-```
-
-### Run the full dagao on the dev cluster (ensure nobody is using the dev cluster):
-
-```shell
-sabesp --aurora-stack cantareira-stable \
-  jobs create devel dagao --check \
-  METAPOD_REPO=s3a://nu-spark-metapod \
-  METAPOD_ENVIRONMENT=prod \
-  FINANCE_REPORT_PREFIX=s3://nu-fidc-prod/relatorios \
-  REPORT_PREFIX=s3://nu-reports \
-  LOG_PREFIX=s3a://nu-spark-us-east-1/db-dumps/ \
-  OUTPUT_PREFIX=s3a://nu-spark-us-east-1/data
-```
-
-### Run a special version of the dagao on the dev cluster, pointed at Metapod prod to load DataBricks and devel Redshift
-
-```shell
-sabesp --aurora-stack cantareira-stable \
-   jobs create devel dagao --check \
-   METAPOD_REPO=s3a://nu-spark-metapod \
-   METAPOD_ENVIRONMENT=prod \
-   REPORT_PREFIX=s3://nu-reports \
-   LOG_PREFIX=s3a://nu-spark-us-east-1/db-dumps/ \
-   OUTPUT_PREFIX=s3a://nu-spark-us-east-1/data \
-   "profile.das_path=s3://nu-spark-us-east-1/dags/test/dagao-135.json"
-```
-
-Note that this includes the Redshift load (into the devel Redshift cluster).
 
 ### Check the status of a job:
 
 ```shell
-[TBD]
+sabesp --aurora-stack cantareira-stable jobs status jobs prod itaipu-contracts
 ```
 
 ### Restart a job that has gotten into an infinite loop:
@@ -86,91 +40,15 @@ For an ad hoc run on devel:
 sabesp --aurora-stack cantareira-stable jobs restart jobs devel itaipu
 ```
 
-For a scheduled run on prod:
-
-```shell
-sabesp --aurora-stack cantareira-stable jobs restart scheduled prod itaipu
-```
-
 Running a specific job (not the full dagao)
 ```shell
-sabesp --aurora-stack=cantareira-stable jobs create prod key-integrity-vara OUTPUT_PREFIX=s3://nu-spark-us-east-1/data TARGET_DATE=2017-03-29 METAPOD_TRANSACTION=88f6c331-6505-4602-9adc-4b50cd35898f
+sabesp --aurora-stack=cantareira-stable jobs create prod capivara-clj
 ```
 
-### Cancel a run of the dagao:
+### Kill a job running from the dagao run:
 
 ```shell
-[TBD]
-```
-
-### Run a filtered version of the dagao on the dev2 cluster (ensure nobody is using the dev2 cluster):
-
-```shell
-[TBD]
-```
-
-### Retry a failed run of the dagao (using the same metapod transaction id to pick up where it left off)
-
-just add the **"profile.metapod_transaction=<tx>"** to the sabesp command.
-
-```shell
-sabesp --aurora-stack=cantareira-stable jobs create prod dagao \
-"profile.metapod_transaction=13303089-db42-4f7e-b47c-efecf2cc385e""
-```
-
-### Retry a failed run of the dagao (using the same metapod transaction id to pick up where it left off) and start from a point in the dag
-
-In this example, just the things after generate manifest failed, and I wanted to run it again, so i start with the existing metapod-transaction by setting **"profile.metapod_transaction=<tx>"**, **"profile.start_from=<task>"**.  In this case i had to exclude some datasets from the dag, so i use the attribute **"profile.exclude=<dataset>,<dataset>"**.
-
-```shell
-sabesp --aurora-stack=cantareira-stable jobs create prod dagao \
-"profile.metapod_transaction=13303089-db42-4f7e-b47c-efecf2cc385e" \
-"profile.start_from=generate-manifest" \
-"profile.exclude=credit-limit-dataset,reactive-limit-model,proactive-limit-model,copy-model-csvs,scale-down,sleeper,cronno-model,hyoga-model,dimensional-modeling-vara"
-```
-
-### Retry a single job (not the whole dagao) which requires 2 metapod transaction ids (only credit limit stuff)
-
-```shell
-sabesp --aurora-stack=cantareira-stable jobs create prod credit-limit-dataset OUTPUT_PREFIX=s3://nu-spark-us-east-1/data TARGET_DATE=2017-03-29 METAPOD_ENVIRONMENT=prod METAPOD_TRANSACTION=52f3a86d-b32b-4a37-aabb-85a55bf50304 METAPOD_REPO=s3a://nu-spark-metapod CREDIT_LIMIT_TRANSACTION=58dc66b6-1c21-4a12-9b37-d3b76b4045f0
-```
-
-Note that you need to hardcode the relevant commit SHA into your local aurora-jobs
-
-### Retry the dagao downstream of the credit-limit-dataset (inclusive), which requires 2 metapod transaction ids:
-
-```shell
-sabesp --aurora-stack=cantareira-stable jobs create prod dagao \
-"profile.metapod_transaction=52f3a86d-b32b-4a37-aabb-85a55bf50304" \
-"profile.start_from=credit-limit-dataset" \
-"profile.credit_limit_metapod_transaction=58dc66b6-1c21-4a12-9b37-d3b76b4045f0"
-```
-
-Note that you need to hardcode the relevant commit SHA into your local aurora-jobs
-
-### Schedule the dagao to run every day at a certain time:
-
-```shell
-[TBD]
-```
-
-### Deschedule a previously scheduled dagao run:
-
-```shell
-sabesp --aurora-stack cantareira-stable jobs kill scheduled prod dagao
-```
-
-### Kill an ad hoc dagao run on devel
-
-```shell
-sabesp --aurora-stack cantareira-stable jobs kill jobs devel dagao
-sabesp --aurora-stack cantareira-stable jobs kill jobs devel itaipu
-```
-
-### Kill a job running from the scheduled dagao run:
-
-```shell
-sabesp --aurora-stack cantareira-stable jobs kill scheduled prod hyoga-model
+sabesp --aurora-stack cantareira-stable jobs kill jobs prod hyoga-model
 ```
 
 ### Inspecting a metapod transaction
@@ -179,11 +57,36 @@ sabesp --aurora-stack cantareira-stable jobs kill scheduled prod hyoga-model
 sabesp metapod --env prod --token transaction get 9684e3c0-a961-45da-add2-17b3de5b513b | jq . | less
 ```
 
-### Starting the dagão of the current DAS by hand
+## Running Itaipu
+
+### Full run scaling the cluster up and down
 
 ```shell
-sabesp --aurora-stack cantareira-stable raw cron start aurora/scheduled/prod/dagao
+sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-metapod-test/ 216 --itaipu=4155f24b 
 ```
+
+### Full run scaling the cluster up and down and using the materialized log cache
+
+```shell
+sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-metapod-test/ 216 --itaipu=4155f24b  --use-cache
+```
+
+
+### Filtered run scaling the cluster up and down
+
+```shell
+sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-metapod-test/ 216 --itaipu=4155f24b  --filter-by-prefix contract 
+```
+
+
+### Filtered run scaling the without scaling up or down
+
+```shell
+sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-metapod-test/ 216 --itaipu=4155f24b  --filter-by-prefix contract --skip-scale-up --skip-scale-down
+```
+
+**for a full list of possible switches run `sabesp jobs itaipu --help`**
+
 
 ## Troubleshooting
 
