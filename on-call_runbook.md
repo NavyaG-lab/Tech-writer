@@ -1,8 +1,9 @@
-# On-Call Playbook
+# On-Call Runbook
 
 This document is a resource for engineers *on-call*.  The general layout of
 this document is Alert: Reasoning: Action(s).  All the alert entries here
-should be linked with the alerts being sent to our alerting platform.
+should be linked with the alerts being dispatched from our alerting platform.
+The ["ALERT"] string should be verbatim the same string that is dispatched.
 
 <hr>
 

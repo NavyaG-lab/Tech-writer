@@ -5,7 +5,8 @@ This repository is the canonical place to put all documentation related to how t
 ## Data Infra Overall
 * [Primer](primer.md)
 * [Monitoring the nightly run](monitoring_nightly_run.md)
-* [Runbook](runbook.md)
+* [On Call Runbook](on-call_runbook.md)
+* [Ops How To](ops_how_to.md)
 * [CLI usage examples](cli_examples.md)
 * [Slack channel guide](squad/channels.md)
 * [Data Infra Glossary](glossary.md)

@@ -69,7 +69,7 @@ limit 100;
 
 ![image](https://user-images.githubusercontent.com/726169/33068823-c5bba744-ceb2-11e7-8757-6ba2b44c3a4c.png)
 
-After understanding the error that occurred when loading (often a NULL value in a NON NULL column), you can dig deeper to understand how a NULL value could arise.  In this case, the next thing to check might be the source dataset where the problematic column came from to see if it is was also NULL upstream (for the rows with the data load). 
+After understanding the error that occurred when loading (often a NULL value in a NON NULL column), you can dig deeper to understand how a NULL value could arise.  In this case, the next thing to check might be the source dataset where the problematic column came from to see if it is was also NULL upstream (for the rows with the data load).
 
 You can use DataBricks to check on the source dataset:
 
@@ -85,7 +85,7 @@ Things that went wrong:
 
 ## Dealing with DAG errors
 
-[see the runbook](runbook.md#basic-steps-to-handling-airflow-dag-errors)
+[see the ops how to guide](ops_how_to.md#basic-steps-to-handling-airflow-dag-errors)
 
 ## Commonly run commands
 [common sabesp CLI commands](cli_examples.md)

@@ -1,4 +1,4 @@
-# Runbook
+# Operations HOWTO
 
 * [Hot-deploying rollbacks](#hot-deploying-rollbacks)
 * [Controlling aurora jobs via the CLI](#controlling-aurora-jobs-via-the-cli)
