@@ -24,13 +24,15 @@ The contribution margin dataset requires the following steps to be performed aft
 * `s3://nu-spark-us-east-1/non-datomic/static-datasets/matera-exports-csv/entity=nu_pag/report_date=20XX-XX-XX/NUPAG_ENTRIES_20XX.csv`
 * `s3://nu-spark-us-east-1/non-datomic/static-datasets/matera-exports-csv/entity=nu_pay/report_date=20XX-XX-XX/NUPAY_ENTRIES_20XX.csv`
 
-Replace `20XX-XX-XX` with today's date and `20XX` with the relevant year to which the data relates.  If there are additional legal entities than the four listed above, each legal entity should have its own file (and this documentation must be updated).
+  Replace `20XX-XX-XX` with today's date and `20XX` with the relevant year to which the data relates.  If there are additional legal entities than the four listed above, each legal entity should have its own file (and this documentation must be updated).
 
-Each file should conform to the [MateraExport row format](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/static/package.scala#L28).
+  Each file should conform to the [MateraExport row format](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/static/package.scala#L28).
 
 2) After all files have been added to `matera-exports-csv`, we need to convert them to parquet format to validate and ensure better reliability.
-
-Use the [Matera Exports Databricks Notebook](https://nubank.cloud.databricks.com/#notebook/102350) to convert from CSV to Parquet format.  In the notebook, replace 20XXXX with the current month (e.g., 201707).  You'll notice that this notebook prepares the actual parquet file as well as a test version.  The test version of the static file does not need to be updated with every Matera update.  The copy operation at the very end is commented to avoid accidentally running, but you'll need to run this command to actually update the files read by Itaipu.
+  * Use the [Matera Exports Databricks Notebook](https://nubank.cloud.databricks.com/#notebook/102350) to convert from CSV to Parquet format.  
+  * In the notebook, replace 20XXXX with the current month (e.g., 201707).  
+  * You'll notice that this notebook prepares the actual parquet file as well as a test version.  The test version of the static file does not need to be updated with every Matera update.  
+  * The copy operation at the very end is commented to avoid accidentally running, but you'll need to run this command to actually update the files read by Itaipu.
 
 
 ### HR Variable Headcount
