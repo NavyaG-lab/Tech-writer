@@ -32,7 +32,7 @@ The contribution margin dataset requires the following steps to be performed aft
   * Use the [Matera Exports Databricks Notebook](https://nubank.cloud.databricks.com/#notebook/102350) to convert from CSV to Parquet format.  
   * In the notebook, replace 20XXXX with the current month (e.g., 201707).  
   * You'll notice that this notebook prepares the actual parquet file as well as a test version.  The test version of the static file does not need to be updated with every Matera update.  
-  * The copy operation at the very end is commented to avoid accidentally running, but you'll need to run this command to actually update the files read by Itaipu.
+  * The AWS copy operations are commented because they should be run using the AWS command line interface from your terminal.
 
 
 ### HR Variable Headcount
