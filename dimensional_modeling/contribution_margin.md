@@ -19,10 +19,10 @@ The contribution margin dataset requires the following steps to be performed aft
 ### Matera Exports
 
 1) Export detailed data from our Matera ERP in CSV format - ask Bleise Cruz in finance.  The files should be uploaded as follows (one file per year per legal entity, historical years don't change):
-* s3://nu-spark-us-east-1/non-datomic/static-datasets/matera-exports-csv/entity=nu_eli/report_date=20XX-XX-XX/NUELI_ENTRIES_20XX.csv
-* s3://nu-spark-us-east-1/non-datomic/static-datasets/matera-exports-csv/entity=nu_fid/report_date=20XX-XX-XX/NUFID_ENTRIES_20XX.csv
-* s3://nu-spark-us-east-1/non-datomic/static-datasets/matera-exports-csv/entity=nu_pag/report_date=20XX-XX-XX/NUPAG_ENTRIES_20XX.csv
-* s3://nu-spark-us-east-1/non-datomic/static-datasets/matera-exports-csv/entity=nu_pay/report_date=20XX-XX-XX/NUPAY_ENTRIES_20XX.csv
+* `s3://nu-spark-us-east-1/non-datomic/static-datasets/matera-exports-csv/entity=nu_eli/report_date=20XX-XX-XX/NUELI_ENTRIES_20XX.csv`
+* `s3://nu-spark-us-east-1/non-datomic/static-datasets/matera-exports-csv/entity=nu_fid/report_date=20XX-XX-XX/NUFID_ENTRIES_20XX.csv`
+* `s3://nu-spark-us-east-1/non-datomic/static-datasets/matera-exports-csv/entity=nu_pag/report_date=20XX-XX-XX/NUPAG_ENTRIES_20XX.csv`
+* `s3://nu-spark-us-east-1/non-datomic/static-datasets/matera-exports-csv/entity=nu_pay/report_date=20XX-XX-XX/NUPAY_ENTRIES_20XX.csv`
 
 Replace `20XX-XX-XX` with today's date and `20XX` with the relevant year to which the data relates.  If there are additional legal entities than the four listed above, each legal entity should have its own file (and this documentation must be updated).
 
@@ -37,20 +37,19 @@ Use the [Matera Exports Databricks Notebook](https://nubank.cloud.databricks.com
 
 Ask the People & Culture squad for these inputs.
 
-  * Google sheet: https://docs.google.com/spreadsheets/d/17tDi9mdhn1cRH0PxpY6tvYi3LRkUZbfCEY6jX9AaTko/edit#gid=1349805219
-  * Format: https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/static/package.scala#L60
-  * Example: s3://nu-spark-us-east-1/non-datomic/static-datasets/hr-variable-headcount/report_date=2017-07-19/variable_headcount.csv
-  * Databricks: https://nubank.cloud.databricks.com/#notebook/91349
+  * [Google sheet](https://docs.google.com/spreadsheets/d/17tDi9mdhn1cRH0PxpY6tvYi3LRkUZbfCEY6jX9AaTko)
+  * [Format](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/static/package.scala#L60)
+  * Example: `s3://nu-spark-us-east-1/non-datomic/static-datasets/hr-variable-headcount/report_date=2017-07-19/variable_headcount.csv`
+  * [Databricks Workbook](https://nubank.cloud.databricks.com/#notebook/91349)
 
 
 ### HR Total Headcount
 
 Ask the People & Culture squad for these inputs.
 
-  * Google sheet: https://docs.google.com/spreadsheets/d/17tDi9mdhn1cRH0PxpY6tvYi3LRkUZbfCEY6jX9AaTko/edit#gid=1349805219
-  * Format: https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/static/package.scala#L67
+  * [Google sheet](https://docs.google.com/spreadsheets/d/17tDi9mdhn1cRH0PxpY6tvYi3LRkUZbfCEY6jX9AaTko)
+  * [Format](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/static/package.scala#L67)
   * Example: [NO GOOD EXAMPLE, WAS CONVERTED TO PARQUET, NO CSV]
-  * Databricks: [NONE]
 
 [TODO: just combine this with the variable headcount sheet so there is 1 update required]
 
@@ -59,31 +58,31 @@ Ask the People & Culture squad for these inputs.
 
 The Matera chart of accounts changes over time, but not as quickly as the data itself.  Nonetheless, it is always good to update the Matera Book Accounts as a matter of hygiene.  These are also exported from Matera.
 
-  * Format: https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/static/package.scala#L69
-  * Example: s3://nu-spark-us-east-1/non-datomic/static-datasets/matera-book-accounts/report_date=2017-07-20/accounts.csv
+  * [Format](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/static/package.scala#L69)
+  * Example: `s3://nu-spark-us-east-1/non-datomic/static-datasets/matera-book-accounts/report_date=2017-07-20/accounts.csv`
 
 
 ### Contribution Margin Finance Inputs
 
 Ask the FP&A squad to provide these inputs.
 
-  * Google sheet: https://docs.google.com/spreadsheets/d/17tDi9mdhn1cRH0PxpY6tvYi3LRkUZbfCEY6jX9AaTko/edit#gid=1349805219
-  * Format: https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/static/package.scala#L234
-  * Example: s3://nu-spark-us-east-1/non-datomic/static-datasets/contribution-margin-finance-inputs/report_date=2017-08-14/contribution_margin_finance_inputs.csv
+  * [Google sheet](https://docs.google.com/spreadsheets/d/17tDi9mdhn1cRH0PxpY6tvYi3LRkUZbfCEY6jX9AaTko)
+  * [Format](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/static/package.scala#L234)
+  * Example: `s3://nu-spark-us-east-1/non-datomic/static-datasets/contribution-margin-finance-inputs/report_date=2017-08-14/contribution_margin_finance_inputs.csv`
 
 
 ### Contribution Margin Collections Inputs
 
 Ask the collections squad to provide these inputs.
 
-  * Google sheet: https://docs.google.com/spreadsheets/d/17tDi9mdhn1cRH0PxpY6tvYi3LRkUZbfCEY6jX9AaTko/edit#gid=1349805219
-  * Format: https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/static/package.scala#L230
-  * Example: s3://nu-spark-us-east-1/non-datomic/static-datasets/contribution-margin-collections-inputs/report_date=2017-08-15/contribution_margin_collections_input.csv
+  * [Google sheet](https://docs.google.com/spreadsheets/d/17tDi9mdhn1cRH0PxpY6tvYi3LRkUZbfCEY6jX9AaTko)
+  * [Format](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/static/package.scala#L230)
+  * Example: `s3://nu-spark-us-east-1/non-datomic/static-datasets/contribution-margin-collections-inputs/report_date=2017-08-15/contribution_margin_collections_input.csv`
 
 
 ### VAMP
 
 This is a temporary static op for convenience in comparing ETL-based contribution margin numbers with the VAMP numbers, as VAMP remains the gold standard until we update VAMP to depend on ETL-based contribution margin as an input (as opposed to an alternative calculation methodology).  Note that this input file is subject to change as VAMP has been rapidly evolving.  Considered temporary.
 
-  * Format: https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/static/package.scala#L83
-  * Example: s3://nu-spark-us-east-1/non-datomic/static-datasets/vamp/report_date=2017-08-07/vamp.csv
+  * [Format](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/static/package.scala#L83)
+  * Example: `s3://nu-spark-us-east-1/non-datomic/static-datasets/vamp/report_date=2017-08-07/vamp.csv`
