@@ -25,3 +25,8 @@ This repository is the canonical place to put all documentation related to how t
   * [Introduction and setup](onboarding/introduction.md)
   * [Exercise Part I: Creating a dataset](onboarding/dataset-exercise.md)
   * [Exercise Part II: Creating a service to expose a dataset via API](onboarding/service-exercise.md)
+
+## Dimensional Modeling (Data Access)
+  * [Kimball on Dimensional Modeling Quotes](dimensional_modeling/kimball.md)
+  * [Contribution Margin (and how to update static inputs)](dimensional_modeling/contribution_margin.md)
+  
