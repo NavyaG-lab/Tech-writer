@@ -55,15 +55,6 @@ Ask the People & Culture squad for these inputs.
 
 [TODO: just combine this with the variable headcount sheet so there is 1 update required]
 
-
-### Matera Book Accounts
-
-The Matera chart of accounts changes over time, but not as quickly as the data itself.  Nonetheless, it is always good to update the Matera Book Accounts as a matter of hygiene.  These are also exported from Matera.
-
-  * [Format](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/static/package.scala#L69)
-  * Example: `s3://nu-spark-us-east-1/non-datomic/static-datasets/matera-book-accounts/report_date=2017-07-20/accounts.csv`
-
-
 ### Contribution Margin Finance Inputs
 
 Ask the FP&A squad to provide these inputs.
@@ -80,6 +71,11 @@ Ask the collections squad to provide these inputs.
   * [Google sheet](https://docs.google.com/spreadsheets/d/17tDi9mdhn1cRH0PxpY6tvYi3LRkUZbfCEY6jX9AaTko)
   * [Format](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/static/package.scala#L230)
   * Example: `s3://nu-spark-us-east-1/non-datomic/static-datasets/contribution-margin-collections-inputs/report_date=2017-08-15/contribution_margin_collections_input.csv`
+
+
+### Finance Chart of Accounts
+
+We keep our latest Matera chart of accounts in [Itaipu source code](https://github.com/nubank/itaipu/blob/master/src/main/resources/finance_chart_of_accounts.json) as a JSON file.  Check with the FP&A squad to confirm that they are keeping this up to date.  See the git committers for specific names.
 
 
 ### VAMP
