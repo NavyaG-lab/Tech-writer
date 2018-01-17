@@ -63,16 +63,6 @@ Ask the FP&A squad to provide these inputs.
   * [Format](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/static/package.scala#L234)
   * Example: `s3://nu-spark-us-east-1/non-datomic/static-datasets/contribution-margin-finance-inputs/report_date=2017-08-14/contribution_margin_finance_inputs.csv`
 
-
-### Contribution Margin Collections Inputs
-
-Ask the collections squad to provide these inputs.
-
-  * [Google sheet](https://docs.google.com/spreadsheets/d/17tDi9mdhn1cRH0PxpY6tvYi3LRkUZbfCEY6jX9AaTko)
-  * [Format](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/static/package.scala#L230)
-  * Example: `s3://nu-spark-us-east-1/non-datomic/static-datasets/contribution-margin-collections-inputs/report_date=2017-08-15/contribution_margin_collections_input.csv`
-
-
 ### Finance Chart of Accounts
 
 We keep our latest Matera chart of accounts in [Itaipu source code](https://github.com/nubank/itaipu/blob/master/src/main/resources/finance_chart_of_accounts.json) as a JSON file.  Check with the FP&A squad to confirm that they are keeping this up to date.  See the git committers for specific names.
