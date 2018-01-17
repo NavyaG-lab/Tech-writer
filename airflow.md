@@ -25,6 +25,13 @@ Sometimes a run hangs and you will want to manually stop it. Or a manual run is 
 3. Set the Dag Run _State_ to `failed`
 ![Set the DAG state](images/set-dag-run-as-failed.png)
 
+4. Kill manually all tasks left
+   1. Get the list of tasks that needs to be killed from the task list. Click the green 'running' circle in the `recent_tasks` tab, and filter by your dag, and by it's execution date.
+   ![Get the name of hanging tasks](images/filter-by-tasks.png)
+   
+   2. For each `task_id` execute the following command
+   `sabesp --aurora-stack=cantareira-stable jobs kill jobs prod {{task_name}}`
+
 ### Deploying job changes to Airflow
 When a job is changed on [`aurora-jobs`](https://github.com/nubank/aurora-jobs), we need to be careful about how we update the workflow on Airflow because Airflow does not have isolation between runs, so a change to the workflow could affect the *currently running* DAG accidentally if we are not careful.
    1. The [`aurora-jobs` Go Pipeline](https://go.nubank.com.br/go/tab/pipeline/history/aurora-jobs) will build automatically
