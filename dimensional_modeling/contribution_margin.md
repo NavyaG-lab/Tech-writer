@@ -26,6 +26,8 @@ The contribution margin dataset requires the following steps to be performed aft
 
   Replace `20XX-XX-XX` with today's date and `20XX` with the relevant year to which the data relates.  If there are additional legal entities than the four listed above, each legal entity should have its own file (and this documentation must be updated).
 
+  ENSURE THAT YOU DON'T HAVE MORE THAN ONE FILE FOR A GIVEN TIME PERIOD (EVEN WITH DIFFERENT REPORT DATE).  We are not currently filtering for the most recent report_date for a given post_date, so the entries will simply be duplicated and mess up the numbers.
+
   Each file should conform to the [MateraExport row format](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/static/package.scala#L28).
 
 2) After all files have been added to `matera-exports-csv`, we need to convert them to parquet format to validate and ensure better reliability.
@@ -35,25 +37,15 @@ The contribution margin dataset requires the following steps to be performed aft
   * The AWS copy operations are commented because they should be run using the AWS command line interface from your terminal.
 
 
-### HR Variable Headcount
+### HR Inputs
 
-Ask the People & Culture squad for these inputs.
+Ask the People & Culture squad for these inputs (or get them from the VAMP excel file).
 
   * [Google sheet](https://docs.google.com/spreadsheets/d/17tDi9mdhn1cRH0PxpY6tvYi3LRkUZbfCEY6jX9AaTko)
   * [Format](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/static/package.scala#L60)
-  * Example: `s3://nu-spark-us-east-1/non-datomic/static-datasets/hr-variable-headcount/report_date=2017-07-19/variable_headcount.csv`
-  * [Databricks Workbook](https://nubank.cloud.databricks.com/#notebook/91349)
+  * Example: `s3://nu-spark-us-east-1/non-datomic/static-datasets/contribution-margin-hr-inputs-csv/hr_input.csv`
+  * [Databricks Workbook](https://nubank.cloud.databricks.com/#notebook/152166)
 
-
-### HR Total Headcount
-
-Ask the People & Culture squad for these inputs.
-
-  * [Google sheet](https://docs.google.com/spreadsheets/d/17tDi9mdhn1cRH0PxpY6tvYi3LRkUZbfCEY6jX9AaTko)
-  * [Format](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/static/package.scala#L67)
-  * Example: [NO GOOD EXAMPLE, WAS CONVERTED TO PARQUET, NO CSV]
-
-[TODO: just combine this with the variable headcount sheet so there is 1 update required]
 
 ### Contribution Margin Finance Inputs
 
@@ -62,10 +54,6 @@ Ask the FP&A squad to provide these inputs.
   * [Google sheet](https://docs.google.com/spreadsheets/d/17tDi9mdhn1cRH0PxpY6tvYi3LRkUZbfCEY6jX9AaTko)
   * [Format](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/static/package.scala#L234)
   * Example: `s3://nu-spark-us-east-1/non-datomic/static-datasets/contribution-margin-finance-inputs/report_date=2017-08-14/contribution_margin_finance_inputs.csv`
-
-### Finance Chart of Accounts
-
-We keep our latest Matera chart of accounts in [Itaipu source code](https://github.com/nubank/itaipu/blob/master/src/main/resources/finance_chart_of_accounts.json) as a JSON file.  Check with the FP&A squad to confirm that they are keeping this up to date.  See the git committers for specific names.
 
 
 ### VAMP
