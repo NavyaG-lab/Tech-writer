@@ -1,5 +1,6 @@
 # Operations HOWTO
 
+* [Restart redshift cluster](#restart-redshift-cluster)
 * [Hot-deploying rollbacks](#hot-deploying-rollbacks)
 * [Controlling aurora jobs via the CLI](#controlling-aurora-jobs-via-the-cli)
 * [Basic steps to handling Airflow DAG errors](#basic-steps-to-handling-airflow-dag-errors)
@@ -11,6 +12,31 @@
   * [Making downstream jobs run when an upstream job fails](#making-downstream-jobs-run-when-an-upstream-job-fails)
 * [Removing bad data from Metapod](#removing-bad-data-from-metapod)
 * [Dealing with Datomic self-destructs](#dealing-with-datomic-self-destructs)
+
+## Restart redshift cluster
+
+When `capivara-clj` loads data into Redshift it creates temporary tables, loads the data into them, drops the old tables and renames the temp ones.
+This requires `capivara-clj` to get a lock on all tables to then be able to drop them.
+It will kill any open connections then run the commit transaction.
+There is a small chance that a query is made in between these two steps. This will cause `capivara-clj` to hang forever.
+The logs will indicate this by showing something like the following. It is hanging because it has a `0` in `wip-count` (what is left to do), so it has reached the drop/rename command.
+
+```
+2018-01-18T09:02:49.654Z [CAPIVARA:main] INFO capivara.components.redshift - {:line 124, :cid "DEFAULT", :log :killing-schema-query, :pid 19805, :username "sandrews"}
+2018-01-18T09:02:49.790Z [CAPIVARA:main] INFO capivara.components.redshift - {:line 91, :cid "DEFAULT", :log :execute-statement, :statement ["DROP SCHEMA IF EXISTS fact CASCADE"]}
+2018-01-18T09:03:01.133Z [CAPIVARA:main] INFO capivara.components.redshift - {:line 91, :cid "DEFAULT", :log :execute-statement, :statement ["DROP SCHEMA IF EXISTS dimension CASCADE"]}
+2018-01-18T09:03:06.077Z [CAPIVARA:async-dispatch-8] INFO capivara.components.progress - {:line 20, :cid "DEFAULT", :log :progress-reporter, :wip {}, :done-count 24, :wip-count 0, :transaction-info {:total-count 24, :transaction-id "556b5e98-60a1-5743-ad2e-da82d4798170", :target-date "2018-01-18"}}
+2018-01-18T09:03:36.077Z [CAPIVARA:async-dispatch-1] INFO capivara.components.progress - {:line 20, :cid "DEFAULT", :log :progress-reporter, :wip {}, :done-count 24, :wip-count 0, :transaction-info {:total-count 24, :transaction-id "556b5e98-60a1-5743-ad2e-da82d4798170", :target-date "2018-01-18"}}
+2018-01-18T09:04:06.078Z [CAPIVARA:async-dispatch-2] INFO capivara.components.progress - {:line 20, :cid "DEFAULT", :log :progress-reporter, :wip {}, :done-count 24, :wip-count 0, :transaction-info {:total-count 24, :transaction-id "556b5e98-60a1-5743-ad2e-da82d4798170", :target-date "2018-01-18"}}
+
+...
+```
+
+The easiest fix is to restart Redshift for `cantareira-k-redshift-redshiftcluster-...` via AWS ([here](https://console.aws.amazon.com/redshift/home?region=us-east-1#cluster-list:))
+
+Other way, if you have superuser access (e.g. `sao_pedro`), is to run `pg_terminate_backend( pid )` on the appropriate transaction `pid`s ([details here](https://docs.aws.amazon.com/redshift/latest/dg/PG_TERMINATE_BACKEND.html))
+
+NOTE: this issue can be addressed by fixing `capivara` to have a timeout to the transaction and retrying the connection kill + table drop logic together.
 
 ## Hot-deploying rollbacks
 
@@ -136,6 +162,41 @@ If bad data has been committed to Metapod, there are some migrations that can be
 * Attributes: via `api/migrations/retract/attribute/:attribute-id`, where `:attribute-id` is the `:attribute/id` of the attribute you want to remove.
 * Indexed attributes: via `api/migrations/retract/indexed-attribute/:indexed-attribute-id`, where `:indexed-attribute-id` is the `:indexed-attribute/id` of the indexed attribute you want to remove.
 * Committed information of a dataset: via `api/migrations/retract/committed-dataset/:dataset-id`, where `:dataset-id` is the `:dataset/id` of the dataset you want to remove. Note that this does not remove the dataset from the transaction, only the information committed about this dataset (path, format, partitions, etc).
+
+_For example_:
+
+Say you suspect there is an issue with the schema associated with the `archive/policy-proactive-limit-v3` dataset.
+You can query the schema on [sonar](https://backoffice.nubank.com.br/sonar-js/#/sonar-js/graphiql) via this query:
+
+```
+{
+  transaction(transactionId: "319703ce-b90d-5a07-8195-33df0de911c8") {
+    datasets(
+      datasetNames: [
+      "archive/policy-proactive-limit-v3"]) {
+      id
+      name
+      committed
+      schema {
+        attributes {
+          name
+        }
+      }
+    }
+  }
+}
+```
+
+This query shows duplicate attributes in the schema, which is invalid, so the dataset should be retracted.
+Run the following, where `5a5d411b-e41a-4a30-ab34-bac476b95761` is the dataset id returned in the query:
+
+```
+nu ser curl POST global metapod /api/migrations/retract/committed-dataset/5a5d411b-e41a-4a30-ab34-bac476b95761
+```
+
+(if this fails, with a dns resolution issue, try `nu cache bust stack`)
+
+If you then re-run the query you will see that the `schema` is now `null`.
 
 ## Dealing with Datomic self-destructs
 
