@@ -26,8 +26,6 @@ The contribution margin dataset requires the following steps to be performed aft
 
   Replace `20XX-XX-XX` with today's date and `20XX` with the relevant year to which the data relates.  If there are additional legal entities than the four listed above, each legal entity should have its own file (and this documentation must be updated).
 
-  ENSURE THAT YOU DON'T HAVE MORE THAN ONE FILE FOR A GIVEN TIME PERIOD (EVEN WITH DIFFERENT REPORT DATE).  We are not currently filtering for the most recent report_date for a given post_date, so the entries will simply be duplicated and mess up the numbers.
-
   Each file should conform to the [MateraExport row format](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/static/package.scala#L28).
 
 2) After all files have been added to `matera-exports-csv`, we need to convert them to parquet format to validate and ensure better reliability.
@@ -49,16 +47,14 @@ Ask the People & Culture squad for these inputs (or get them from the VAMP excel
 
 ### Contribution Margin Finance Inputs
 
-Ask the FP&A squad to provide these inputs.
+Get these inputs from the latest VAMP excel file.
 
   * [Google sheet](https://docs.google.com/spreadsheets/d/17tDi9mdhn1cRH0PxpY6tvYi3LRkUZbfCEY6jX9AaTko)
   * [Format](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/static/package.scala#L234)
   * Example: `s3://nu-spark-us-east-1/non-datomic/static-datasets/contribution-margin-finance-inputs/report_date=2017-08-14/contribution_margin_finance_inputs.csv`
 
 
-### VAMP
-
-This is a temporary static op for convenience in comparing ETL-based contribution margin numbers with the VAMP numbers, as VAMP remains the gold standard until we update VAMP to depend on ETL-based contribution margin as an input (as opposed to an alternative calculation methodology).  Note that this input file is subject to change as VAMP has been rapidly evolving.  Considered temporary.
-
-  * [Format](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/static/package.scala#L83)
-  * Example: `s3://nu-spark-us-east-1/non-datomic/static-datasets/vamp/report_date=2017-08-07/vamp.csv`
+### Finance Chart of Accounts 
+- 
+-We keep our latest Matera chart of accounts in [Itaipu source code](https://github.com/nubank/itaipu/blob/master/src/main/resources/finance_chart_of_accounts.json) as a JSON file.  Check with the FP&A squad to confirm that they are keeping this up to date.  See the git committers for specific names. 
+-
