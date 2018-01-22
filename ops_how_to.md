@@ -4,7 +4,7 @@
 * [Hot-deploying rollbacks](#hot-deploying-rollbacks)
 * [Controlling aurora jobs via the CLI](#controlling-aurora-jobs-via-the-cli)
 * [Basic steps to handling Airflow DAG errors](#basic-steps-to-handling-airflow-dag-errors)
-* [Recover from non-critical model build failures](#recover-from-non-critical-model-build-failures)
+* [Recover from non-critical model build failures](#recover-from-non-critical-datasetmodel-build-failures)
   * [Determining if a dataset or model is business critical or can be fixed without time-pressure](#determining-if-a-dataset-or-model-is-business-critical-or-can-be-fixed-without-time-pressure)
   * [Determining if it was the dataset or model that failed](#determining-if-it-was-the-dataset-or-model-that-failed)
   * [Dealing with dataset failures](#dealing-with-dataset-failures)
