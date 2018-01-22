@@ -231,7 +231,7 @@ We need a suffix for scaling and running itaipu, so we can run Spark in an isola
 
 #### 1. Scale the Cluster
 
-`sabesp --aurora-stack=cantareira-dev jobs create prod scale-ec2-/suffix/ SLAVE_TYPE=/suffix/ NODE_COUNT=100 INSTANCE_TYPE=m4.2xlarge --job-version="scale_cluster=21d67a5" --filename scale-ec2 --check`
+`sabesp --aurora-stack=cantareira-dev jobs create prod scale-ec2-/suffix/ SLAVE_TYPE=/suffix/ NODE_COUNT=100 INSTANCE_TYPE=m4.2xlarge --job-version="scale_cluster=f362664" --filename scale-ec2 --check`
 
 This command basic translates to using the `scale-ec2` definition on aurora-jobs We're going to create the scale-up job that with 16 instances and using the version `d749aa4`, all those binds `VAR=value` translates to binds on the aurora-jobs those binds replace the mustaches `{{}}` in the file.
 
