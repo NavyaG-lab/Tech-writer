@@ -183,9 +183,9 @@ Add the following extensions to your class:
 extends FlatSpec with NuDataFrameSuiteBase with Matchers
 ```
 
-And then is basically writing normal tests, for reference you can check the [BillingCyclesSpec](https://github.com/nubank/itaipu/blob/master/src/test/scala/etl/dataset/billing_cycles/BillingCyclesUnsafeSpec.scala#L11) 
+And then is basically writing normal tests, for reference you can check the [CustomerTagsLogSpec](https://github.com/nubank/itaipu/blob/6b73228/src/test/scala/etl/dataset/CustomerTagsLogSpec.scala#L8).
 
-[Running the tests](https://github.com/nubank/data-infra-docs/blob/master/itaipu/workflow.md#running-tests) 
+[Running the tests](https://github.com/nubank/data-infra-docs/blob/master/itaipu/workflow.md#running-tests)
 
 ---
 
