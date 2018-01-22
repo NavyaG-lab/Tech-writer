@@ -41,7 +41,7 @@ When a job is changed on [`aurora-jobs`](https://github.com/nubank/aurora-jobs),
  that is run in this pipeline is called [`dry-run-tests`](#dry-run-tests). This needs to be
  manually `release` in order for Airflow to have access to it.  *Don't do this
  during an active DAG run.* ![releasing dagao](images/release_dagao.png)
-   3. On the [Airflow admin page](https://airflow.nubank.com.br/admin/) we need to click the "refresh" button on the `config_downloader` DAG. This will make Airflow suck in the new configuration.
+   3. On the [Airflow admin page](https://airflow.nubank.com.br/admin/) we need to click the "Trigger Dag" button on the `config_downloader` DAG. This will make Airflow suck in the new configuration.
  ![refreshing airflow config](images/config_refresh.png)
    4. You can check that the configuration was loaded into airflow by clicking `config_downloader` and checking the base date has been updated to now-ish ![config_downloader details](images/airflow_check.png)
    5. Send a message on the #guild-data-eng channel on Slack telling everyone that you deployed a new DAG.
