@@ -78,7 +78,12 @@ Note that this includes the Redshift load (into the devel Redshift cluster).
 
 ### Restart a job that has gotten into an infinite loop:
 
-If you see something like `17/03/19 21:28:34 WARN TaskSetManager: Lost task 31.3254 in stage 5253.3 (TID 329360, 10.130.124.36, executor 68): TaskCommitDenied (Driver denied task commit) for job: 5253, partition: 182, attemptNumber: 3254` in the logs for a task that is taking longer than expected, you can use the following command to restart the specific task in question (this example is for itaipu).
+For a task that is taking longer than expected, check to see if:
+
+- in the task logs you see `17/03/19 21:28:34 WARN TaskSetManager: Lost task 31.3254 in stage 5253.3 (TID 329360, 10.130.124.36, executor 68): TaskCommitDenied (Driver denied task commit) for job: 5253, partition: 182, attemptNumber: 3254`
+- in the status line of the aurora job `2 minutes ago - PENDING : Constraint not satisfied: slave-type`
+
+Then you can use the following command to restart the specific task in question (this example is for itaipu).
 
 For an ad hoc run on devel:
 
@@ -89,7 +94,7 @@ sabesp --aurora-stack cantareira-stable jobs restart jobs devel itaipu
 For a scheduled run on prod:
 
 ```shell
-sabesp --aurora-stack cantareira-stable jobs restart scheduled prod itaipu
+sabesp --aurora-stack cantareira-stable jobs restart jobs prod itaipu
 ```
 
 Running a specific job (not the full dagao)
@@ -154,12 +159,6 @@ Note that you need to hardcode the relevant commit SHA into your local aurora-jo
 [TBD]
 ```
 
-### Deschedule a previously scheduled dagao run:
-
-```shell
-sabesp --aurora-stack cantareira-stable jobs kill scheduled prod dagao
-```
-
 ### Kill an ad hoc dagao run on devel
 
 ```shell
@@ -170,7 +169,7 @@ sabesp --aurora-stack cantareira-stable jobs kill jobs devel itaipu
 ### Kill a job running from the scheduled dagao run:
 
 ```shell
-sabesp --aurora-stack cantareira-stable jobs kill scheduled prod hyoga-model
+sabesp --aurora-stack cantareira-stable jobs kill jobs prod hyoga-model
 ```
 
 ### Inspecting a metapod transaction
@@ -182,7 +181,7 @@ sabesp metapod --env prod --token transaction get 9684e3c0-a961-45da-add2-17b3de
 ### Starting the dagão of the current DAS by hand
 
 ```shell
-sabesp --aurora-stack cantareira-stable raw cron start aurora/scheduled/prod/dagao
+sabesp --aurora-stack cantareira-stable raw cron start aurora/jobs/prod/dagao
 ```
 
 ## Troubleshooting
