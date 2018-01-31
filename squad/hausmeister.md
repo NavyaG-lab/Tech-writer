@@ -5,7 +5,7 @@
 1. _non-work hours_ the hausmeister is on-call to ensure our services and DAG runs operate smoothly.
 2. _work hours_ the hausmeister is responsible for triaging issues and customer inquiries during work hours.
 
-_Backstop_: There should always be a secondary engineer with more ops experience backstopping the hausmeister. This is the first person the hausmeister can elevate an issue to if he/she needs assistance.
+_Level 2_: There should always be a secondary engineer with more ops experience supporting the hausmeister. This is the first person the hausmeister can elevate an issue to if he/she needs assistance.
 
 _Weekend on-call_: similar to the hausmeister role, but only responsible for being on pager duty (see below).
 
@@ -14,7 +14,7 @@ _Weekend on-call_: similar to the hausmeister role, but only responsible for bei
 ### pager duty
 Outside of work hours you should have a phone with [OpsGenie](http://opsgenie.com/) configured with you at all times. Your work-configured laptop should be readily available to address any alerts you receive from OpsGenie.
 
-If an issue comes up that you cannot handle independently, you should escalate the alert to the backstop and pair with them to resolve the issue.
+If an issue comes up that you cannot handle independently, you should escalate the alert to the Level 2 and pair with them to resolve the issue.
 
 ### support our clients
 Over the course of the week our customers, Nubank's data scientists, often encounter platform issues while using our services.
@@ -36,6 +36,12 @@ Monitor the normal operation of our services via
 
 * the `#squad-di-alarms` slack channel
 * the [data-infra riemann dashboard](http://prod-s0-watchtower.nubank.com.br/#data-infra) (check it for each shard by changing the url)
+
+### escalating
+Do not be afraid of asking the Level 2 for help if you need to. Here are some non-comprehensive guidelines on when to escalate:
+* if you want to start to work on an issue but do not know where to start;
+* if you try to solve an issue for more than one hour and feel you are not making progress;
+* if you do not know how to prioritize a new incoming issue.
 
 ### hand-off
 
