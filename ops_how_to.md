@@ -10,6 +10,7 @@
   * [Dealing with dataset failures](#dealing-with-dataset-failures)
   * [Dealing with model failures](#dealing-with-model-failures)
   * [Making downstream jobs run when an upstream job fails](#making-downstream-jobs-run-when-an-upstream-job-fails)
+* [Manually commit a dataset to metapod](#manually-commit-a-dataset-to-metapod)
 * [Removing bad data from Metapod](#removing-bad-data-from-metapod)
 * [Dealing with Datomic self-destructs](#dealing-with-datomic-self-destructs)
 
@@ -138,8 +139,14 @@ If the dataset is non-critical, we can comment out the dataset from `itaipu` to 
 
 Non-critical models can be removed from the DAG definition ([example PR here](https://github.com/nubank/aurora-jobs/pull/483)) so that it doesn't block future runs. The owner of the model can then fix it without blocking other models.
 
-Removing model will only take effect tomorrow, when in the next run is triggered.
-Hence, to get downstream jobs to build today, we can do some Airflow manipulations. Note that the failing model will show up as empty in those downstream jobs. Lastly, be sure to [deploy job changes to airflow](primer.md#deploying-job-changes-to-airflow) once the current run finishes.
+Removing model will only take affect tomorrow, when in the next run is triggered.
+
+Hence, there are two things you can do to get things building today:
+
+- To get downstream jobs to build today, we can do some Airflow manipulations. Note that the failing model will show up as empty in those downstream jobs.
+- If there are no downstream dependencies for a dataset, you can [manually commit an empty dataset for a specific dataset id](#manually-commit-a-dataset-to-metapod).
+
+Lastly, be sure to [deploy job changes to airflow](primer.md#deploying-job-changes-to-airflow) once the current run finishes.
 
 ### Making downstream jobs run when an upstream job fails
 
@@ -154,6 +161,35 @@ In this case you can select `fx-model` and mark it as successful:
 Then select the downstream nodes that have failed due to the upstream `fx-model` failure and clear them so that when other running dependencies finish, they will run these nodes. In this case, clear both `databricks_load-models` and `scale-ec2-rest`. The resulting DAG should look like this:
 
 ![resulting dag](images/recovered_dag.png)
+
+## Manually commit a dataset to metapod
+
+In specific cases, when a dataset that doesn't have downstream dependencies fails, you can commit an empty parquet file to the dataset.
+This allows buggy datasets to be skipped so that they don't affect the stability of ETL runs.
+
+- Get the `metapod-transaction-id` from `#guild-data-eng`.
+- Find the name of the failing dataset (`dataset-name`) from the SparkUI page.
+- Get the `dataset-id` from sonar with the following GraphQL query:
+
+```
+{
+  transaction(transactionId: "<metapod-transaction-id>") {
+    datasets(
+      datasetNames: [
+      "<dataset-name>"]) {
+      id
+      name
+      committed
+    }
+  }
+}
+```
+
+- Run the following `sabesb` command to commit a blank dataset for a specific dataset in a given run:
+
+```shell
+sabesp metapod --token --env prod dataset commit <metapod-transaction-id> <dataset-id> parquet s3://nu-spark-us-east-1/non-datomic/static-datasets/empty-materialized/empty.gz.parquet
+```
 
 ## Removing bad data from Metapod
 

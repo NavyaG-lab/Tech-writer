@@ -184,6 +184,14 @@ sabesp metapod --env prod --token transaction get 9684e3c0-a961-45da-add2-17b3de
 sabesp --aurora-stack cantareira-stable raw cron start aurora/jobs/prod/dagao
 ```
 
+### Manually commit a dataset to metapod
+
+```shell
+sabesp metapod --token --env prod dataset commit <metapod-transaction-id> <dataset-id> parquet s3://nu-spark-us-east-1/non-datomic/static-datasets/empty-materialized/empty.gz.parquet
+```
+
+See the entry in [Ops How-To](ops_how_to.md#manually-commit-a-dataset-to-metapod) for more details
+
 ## Troubleshooting
 
 ### 403 Forbidden
