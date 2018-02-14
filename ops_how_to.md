@@ -41,7 +41,7 @@ NOTE: this issue can be addressed by fixing `capivara` to have a timeout to the 
 
 ## Hot-deploying rollbacks
 
-If a buggy version gets depoyed of a service that lives in the non-data-infra production space (like `metapod`, `correnteza`, etc.), you can rollback to a stable version using [these deploy console instructions](https://wiki.nubank.com.br/index.php/Hot_deploying_a_service).
+If a buggy version gets deployed of a service that lives in the non-data-infra production space (like `metapod`, `correnteza`, etc.), you can rollback to a stable version using [these deploy console instructions](https://wiki.nubank.com.br/index.php/Hot_deploying_a_service).
 You can also do this directly from `CloudFormation`:
 
 * __Make sure there isn't a `to-prod` running and no stacks are being spun!__ The reasoning for this is [explained here](https://wiki.nubank.com.br/index.php/Hot_deploying_a_service)
@@ -146,7 +146,7 @@ Hence, there are two things you can do to get things building today:
 - To get downstream jobs to build today, we can do some Airflow manipulations. Note that the failing model will show up as empty in those downstream jobs.
 - If there are no downstream dependencies for a dataset, you can [manually commit an empty dataset for a specific dataset id](#manually-commit-a-dataset-to-metapod).
 
-Lastly, be sure to [deploy job changes to airflow](primer.md#deploying-job-changes-to-airflow) once the current run finishes.
+Lastly, be sure to [deploy job changes to airflow](airflow.md#deploying-job-changes-to-airflow) once the current run finishes.
 
 ### Making downstream jobs run when an upstream job fails
 

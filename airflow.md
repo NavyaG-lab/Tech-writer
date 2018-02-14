@@ -28,7 +28,7 @@ Sometimes a run hangs and you will want to manually stop it. Or a manual run is 
 4. Kill manually all tasks left
    1. Get the list of tasks that needs to be killed from the task list. Click the green 'running' circle in the `recent_tasks` tab, and filter by your dag, and by it's execution date.
    ![Get the name of hanging tasks](images/filter-by-tasks.png)
-   
+
    2. For each `task_id` execute the following command
    `sabesp --aurora-stack=cantareira-stable jobs kill jobs prod {{task_name}}`
 
@@ -40,11 +40,20 @@ When a job is changed on [`aurora-jobs`](https://github.com/nubank/aurora-jobs),
  Pipeline](https://go.nubank.com.br/go/pipeline/history/dagao). The main test
  that is run in this pipeline is called [`dry-run-tests`](#dry-run-tests). This needs to be
  manually `release` in order for Airflow to have access to it.  *Don't do this
- during an active DAG run.* ![releasing dagao](images/release_dagao.png)
+ during an active DAG run.*
+   ![releasing dagao](images/release_dagao.png)
    3. On the [Airflow admin page](https://airflow.nubank.com.br/admin/) we need to click the "Trigger Dag" button on the `config_downloader` DAG. This will make Airflow suck in the new configuration.
  ![refreshing airflow config](images/config_refresh.png)
    4. You can check that the configuration was loaded into airflow by clicking `config_downloader` and checking the base date has been updated to now-ish ![config_downloader details](images/airflow_check.png)
    5. Send a message on the #guild-data-eng channel on Slack telling everyone that you deployed a new DAG.
+
+#### Additional details on deploying a new DAG
+
+You can technically re-deploy the DAG if no new changes have been deployed to `itaipu` since the last DAG was deployed.
+You can check this by comparing the `itaipu` version on `master` with the one detailed in the DAG run message on `#guild-data-eng`.
+Also, if they aren't the same you can also manually revert the diffs and proceed.
+
+When a DAG is deployed while another is running, airflow will use the current state of the running DAG on the new DAG. Every new task will use the service versions provided by the newly deployed DAG.
 
 ### Updating Airflow
 
