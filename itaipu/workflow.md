@@ -281,11 +281,11 @@ Running the tests:
     1. Run the integration tests for a subset of SparkOps ("filtered run"):
         ```shell
         $ sbt
-        > it:test-only etl.itaipu.ItaipuSchemaSpec -- -DopsToRun=dataset-fact/prospect-junction,dataset-dimension/date
+        > it:testOnly etl.itaipu.ItaipuSchemaSpec -- -DopsToRun=dataset-fact/prospect-junction,dataset-dimension/date
         ```
         or, from the command line directly:
         ```shell
-        $ sbt "it:test-only etl.itaipu.ItaipuSchemaSpec -- -DopsToRun=dataset-fact/prospect-junction,dataset-dimension/date"
+        $ sbt "it:testOnly etl.itaipu.ItaipuSchemaSpec -- -DopsToRun=dataset-fact/prospect-junction,dataset-dimension/date"
         ```
 
 

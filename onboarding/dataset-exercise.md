@@ -183,9 +183,9 @@ Add the following extensions to your class:
 extends FlatSpec with NuDataFrameSuiteBase with Matchers
 ```
 
-And then is basically writing normal tests, for reference you can check the [BillingCyclesSpec](https://github.com/nubank/itaipu/blob/master/src/test/scala/etl/dataset/billing_cycles/BillingCyclesUnsafeSpec.scala#L11) 
+And then is basically writing normal tests, for reference you can check the [CustomerTagsLogSpec](https://github.com/nubank/itaipu/blob/6b73228/src/test/scala/etl/dataset/CustomerTagsLogSpec.scala#L8).
 
-[Running the tests](https://github.com/nubank/data-infra-docs/blob/master/itaipu/workflow.md#running-tests) 
+[Running the tests](https://github.com/nubank/data-infra-docs/blob/master/itaipu/workflow.md#running-tests)
 
 ---
 
@@ -231,7 +231,7 @@ We need a suffix for scaling and running itaipu, so we can run Spark in an isola
 
 #### 1. Scale the Cluster
 
-`sabesp --aurora-stack=cantareira-dev jobs create prod scale-ec2-/suffix/ SLAVE_TYPE=/suffix/ NODE_COUNT=100 INSTANCE_TYPE=m4.2xlarge --job-version="scale_cluster=21d67a5" --filename scale-ec2 --check`
+`sabesp --aurora-stack=cantareira-dev jobs create prod scale-ec2-/suffix/ SLAVE_TYPE=/suffix/ NODE_COUNT=100 INSTANCE_TYPE=m4.2xlarge --job-version="scale_cluster=f362664" --filename scale-ec2 --check`
 
 This command basic translates to using the `scale-ec2` definition on aurora-jobs We're going to create the scale-up job that with 16 instances and using the version `d749aa4`, all those binds `VAR=value` translates to binds on the aurora-jobs those binds replace the mustaches `{{}}` in the file.
 

@@ -48,25 +48,4 @@ We have several types of mesos slaves, one for each kind of workload. They can b
 
 Airflow is the piece which controls when to execute, what to execute and what's the execution order. All code related to Airflow is a normal python code and is in the [airflow](https://github.com/nubank/aurora-jobs/tree/master/airflow) directory on [aurora-jobs](https://github.com/nubank/aurora-jobs/).
 
-
-### Updating Airflow
-
-To update Airflow you need to first bump it's [Dockerfile](https://github.com/nubank/dockerfiles/blob/master/airflow/Dockerfile), merge it and wait until go has finished building it, then, you need to change the version on [deploy](https://github.com/nubank/deploy/blob/master/lib/recipes/airflow.rb#L21), open the deploy console in the cantareira environment and run:
-
-`Airflow.create!("x")`
-
-Wait until it's created and you can access https://cantareira-x-airflow.nubank.com.br/admin/ and then you can upsert the new airflow to the main DNS.
-
-`Airflow.upsert_alias!("x")`
-
-then you need to delete the old airflow
-
-`Airflow.delete!("x")`
-
-### Running tests for the Airflow DAGs
-
-Running the command below, will spin a environment similiar to the production one, and will run and check all tasks in the `main.py` dag.
-
-```
-./script/test integration
-```
+More stuff at [Airflow maintenance](./airflow.md)

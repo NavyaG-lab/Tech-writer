@@ -32,7 +32,12 @@ sabesp --aurora-stack cantareira-stable jobs status jobs prod itaipu-contracts
 
 ### Restart a job that has gotten into an infinite loop:
 
-If you see something like `17/03/19 21:28:34 WARN TaskSetManager: Lost task 31.3254 in stage 5253.3 (TID 329360, 10.130.124.36, executor 68): TaskCommitDenied (Driver denied task commit) for job: 5253, partition: 182, attemptNumber: 3254` in the logs for a task that is taking longer than expected, you can use the following command to restart the specific task in question (this example is for itaipu).
+For a task that is taking longer than expected, check to see if:
+
+- in the task logs you see `17/03/19 21:28:34 WARN TaskSetManager: Lost task 31.3254 in stage 5253.3 (TID 329360, 10.130.124.36, executor 68): TaskCommitDenied (Driver denied task commit) for job: 5253, partition: 182, attemptNumber: 3254`
+- in the status line of the aurora job `2 minutes ago - PENDING : Constraint not satisfied: slave-type`
+
+Then you can use the following command to restart the specific task in question (this example is for itaipu).
 
 For an ad hoc run on devel:
 
@@ -40,6 +45,11 @@ For an ad hoc run on devel:
 sabesp --aurora-stack cantareira-stable jobs restart jobs devel itaipu
 ```
 
+For a scheduled run on prod:
+
+```shell
+sabesp --aurora-stack cantareira-stable jobs restart jobs prod itaipu
+```
 Running a specific job (not the full dagao)
 ```shell
 sabesp --aurora-stack=cantareira-stable jobs create prod capivara-clj
@@ -71,7 +81,6 @@ sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-me
 sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-metapod-test/ 216 --itaipu=4155f24b  --use-cache
 ```
 
-
 ### Filtered run scaling the cluster up and down
 
 ```shell
@@ -87,6 +96,14 @@ sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-me
 
 **for a full list of possible switches run `sabesp jobs itaipu --help`**
 
+
+### Manually commit a dataset to metapod
+
+```shell
+sabesp metapod --token --env prod dataset commit <metapod-transaction-id> <dataset-id> parquet s3://nu-spark-us-east-1/non-datomic/static-datasets/empty-materialized/empty.gz.parquet
+```
+
+See the entry in [Ops How-To](ops_how_to.md#manually-commit-a-dataset-to-metapod) for more details
 
 ## Troubleshooting
 

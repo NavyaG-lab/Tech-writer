@@ -40,7 +40,7 @@ You should also check [Airflow](https://airflow.nubank.com.br/admin/airflow/grap
 
 ![image](https://user-images.githubusercontent.com/726169/33066455-9a8e8020-ceab-11e7-9853-eb755881fe27.png)
 
-If you see any node with a red (failed) or yellow (retrying), you can dive deeper by digging deeper into [Mesos logs](https://cantareira-stable-mesos-master.nubank.com.br:8080/scheduler/jobs):
+If you see any node with a red (failed) or yellow (retrying), you can dive deeper by digging deeper into [logs on splunk](https://nubank.splunkcloud.com/en-US/app/search/etl_job_logs?form.the_time.earliest=-24h%40h&form.the_time.latest=now&form.search=*) or [Mesos logs](https://cantareira-stable-mesos-master.nubank.com.br:8080/scheduler/jobs):
 
 ![image](https://user-images.githubusercontent.com/726169/33066845-b10242e6-ceac-11e7-946d-2bc15441a828.png)
 
@@ -69,7 +69,7 @@ limit 100;
 
 ![image](https://user-images.githubusercontent.com/726169/33068823-c5bba744-ceb2-11e7-8757-6ba2b44c3a4c.png)
 
-After understanding the error that occurred when loading (often a NULL value in a NON NULL column), you can dig deeper to understand how a NULL value could arise.  In this case, the next thing to check might be the source dataset where the problematic column came from to see if it is was also NULL upstream (for the rows with the data load). 
+After understanding the error that occurred when loading (often a NULL value in a NON NULL column), you can dig deeper to understand how a NULL value could arise.  In this case, the next thing to check might be the source dataset where the problematic column came from to see if it is was also NULL upstream (for the rows with the data load).
 
 You can use DataBricks to check on the source dataset:
 
@@ -85,7 +85,7 @@ Things that went wrong:
 
 ## Dealing with DAG errors
 
-[see the runbook](runbook.md#basic-steps-to-handling-airflow-dag-errors)
+[see the ops how to guide](ops_how_to.md#basic-steps-to-handling-airflow-dag-errors)
 
 ## Commonly run commands
 [common sabesp CLI commands](cli_examples.md)
