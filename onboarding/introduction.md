@@ -10,7 +10,7 @@ ask **@gavin** for a computer :)
 
 Good! You already have a computer, a Gmail and also a Slack account. Now it's time to get the other credentials you're going to need.
 
-First, you need to have an account on both [github.com](http://github.com) and [quay.io](http://quay.io), then ask on the **#squad-infosec** slack channel informing your nubank mail, your **GitHub** and quay.io **users** for the following accounts:
+First, you need to have an account on both [github.com](http://github.com) and [quay.io](http://quay.io), then ask on the **#access-request** slack channel informing your nubank mail, your **GitHub** and quay.io **users** for the following accounts:
 
 - Splunk
 - Databricks
