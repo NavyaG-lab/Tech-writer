@@ -19,6 +19,7 @@ This repository is the canonical place to put all documentation related to how t
 * [Primer](itaipu/primer.md)
 * [Styleguide](itaipu/styleguide.md)
 * [Workflow](itaipu/workflow.md)
+* [Bumping Itaipu on Databricks](itaipu/databricks_bump.md)
 
 ## Infrastructure
 * [Inventory](infrastructure/inventory.md)
