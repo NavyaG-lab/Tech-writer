@@ -249,8 +249,8 @@ jobs create staging itaipu-/suffix/ \
 --job-version="itaipu=$(git rev-parse --short HEAD)" \
 --filename itaipu \
 METAPOD_REPO=s3a://nu-spark-metapod-test \
-TARGET_DATE=$(date --iso-8601) \
-REFERENCE_DATE=$(date --iso-8601) \
+TARGET_DATE=$(date --iso-8601) \ # use gdate on Mac: https://apple.stackexchange.com/a/231227
+REFERENCE_DATE=$(date --iso-8601) \ # use gdate on Mac: https://apple.stackexchange.com/a/231227
 DRIVER_MEMORY=26843545600 \
 CORES=9999 \
 OPTIONS="filtered,dns" \
