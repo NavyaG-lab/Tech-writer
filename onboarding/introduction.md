@@ -29,7 +29,7 @@ For more information on the access you need to contribute to data-infra: [Permis
 
 Overall, you should use [https://wiki.nubank.com.br/index.php/Dev_environment](https://wiki.nubank.com.br/index.php/Dev_environment) . It has been updated and made more user-friendly recently.
 
-The setupnu.sh script is self-explicative so you shouldn’t have major problems with it.
+The setupnu.sh script is self-explicative. Make sure that you have access to the engineering team S3, otherwise you will have problems to use your aws key and secret while running setupnu.sh.
 
 Every now and then people will find minor bugs on setupnu. This is a great opportunity to create your first PR.
 
