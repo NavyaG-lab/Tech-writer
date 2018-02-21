@@ -277,7 +277,7 @@ To check if the job has finished you can look at the aurora-ui, or add the `--ch
 
 After the job has finished, we need to scale down the cluster.
 
-`sabesp --aurora-stack=cantareira-dev jobs create prod downscale-ec2-/suffix/ SLAVE_TYPE=/suffix/ NODE_COUNT=0 --job-version="scale_cluster=21d67a5" --filename scale-ec2 --check`
+`sabesp --aurora-stack=cantareira-dev jobs create prod downscale-ec2-/suffix/ SLAVE_TYPE=/suffix/ NODE_COUNT=0 --job-version="scale_cluster=f362664" --filename scale-ec2 --check`
 
 
 You can check if the instances are terminating in the AWS Console: https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:tag:Name=cantareira-dev-mesos-on-demand-;sort=instanceId
