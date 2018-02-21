@@ -10,6 +10,7 @@
   * [Dealing with dataset failures](#dealing-with-dataset-failures)
   * [Dealing with model failures](#dealing-with-model-failures)
   * [Making downstream jobs run when an upstream job fails](#making-downstream-jobs-run-when-an-upstream-job-fails)
+* [Keep machines up after a model fails](#keep-machines-up-after-a-model-fails)
 * [Manually commit a dataset to metapod](#manually-commit-a-dataset-to-metapod)
 * [Removing bad data from Metapod](#removing-bad-data-from-metapod)
 * [Dealing with Datomic self-destructs](#dealing-with-datomic-self-destructs)
@@ -161,6 +162,25 @@ In this case you can select `fx-model` and mark it as successful:
 Then select the downstream nodes that have failed due to the upstream `fx-model` failure and clear them so that when other running dependencies finish, they will run these nodes. In this case, clear both `databricks_load-models` and `scale-ec2-rest`. The resulting DAG should look like this:
 
 ![resulting dag](images/recovered_dag.png)
+
+## Keep machines up after a model fails
+
+Usually when a model job fails, you will want to look at the mesos logs for the machine that ran the model job. Unfortunately, those machines are scaled down, which means access to the logs are lost.
+
+You can get around this by disabling the scale-down logic on Airflow for a job.
+
+ - Restart the job.
+ - Find the downscale node
+
+![downscale job](images/downscale_node.png)
+
+ - Mark the downscale node as success
+
+![mark downscale as success](images/mark_success.png)
+
+ - After the job fails and you get the logs, clear the downscale node so that airflow will re-run the downscale and machines will be taken offline
+
+Note: this tactic mostly applies to models. For Spark, most of the interesting logs live in the driver, which runs on a fixed instance. In the rare cases where you want the Spark executor logs, you can also apply this downscale delay strategy.
 
 ## Manually commit a dataset to metapod
 
