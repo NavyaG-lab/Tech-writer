@@ -229,7 +229,7 @@ In the following steps, we're going to use just a single command that looks like
 
 `sabesp --aurora-stack=cantareira-dev jobs ...`
 
-Which translates to create a job on the `cantareira-dev` stack. All jobs definition are inside the [aurora-jobs](https://github.com/nubank/aurora-jobs) project. If you don't have `aurora-jobs` cloned, please do it (inside the $NU_HOME directory), because `sabesp` will look for the definitions from there.
+Which translates to create a job on the `cantareira-dev` stack. All jobs definition are inside the [aurora-jobs](https://github.com/nubank/aurora-jobs) project. If you don't have `aurora-jobs` cloned, please do it (inside the $NU_HOME directory), because `sabesp` will look for the definitions from there. Also, make sure that you were added to the *data-infra-aurora-access* group in aws (**#access-request**).
 
 #### Scale, Run and downscale the Cluster
 
