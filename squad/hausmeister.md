@@ -16,6 +16,10 @@ Outside of work hours you should have a phone with [OpsGenie](http://opsgenie.co
 
 If an issue comes up that you cannot handle independently, you should escalate the alert to the Level 2 and pair with them to resolve the issue.
 
+_For visibility_: when an issue arises, it is expected that you:
+ - mention the failure in `#guild-data-eng`. This allows people to follow along, contribute suggestions, and better connect their code changes to failures you have to wake up in the night for.
+ - add an entry to the [data-infra log book](https://docs.google.com/spreadsheets/d/1-1AEX2aPvZvEQgGjXyxIoYl4eD2oav6_6V-eAH2oZ74/edit#gid=0) so we can track the most common failures.
+
 ### support our clients
 Over the course of the week our customers, Nubank's data scientists, often encounter platform issues while using our services.
 To support their effectiveness, the hausmeister is responsible for communicating with these users; looking into their issues in a timely manner.
