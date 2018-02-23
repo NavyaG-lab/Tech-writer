@@ -3,7 +3,7 @@
 The goal of this exercise is to make you familiar with data-infra specific technologies. It's going to touch our core abstraction the [**SparkOp**](https://github.com/nubank/common-etl/blob/master/src/main/scala/common_etl/operator/SparkOp.scala) ** (short for spark operation) ** and guide you through how to write a new SparkOp, how to run it on Databricks and to consume it in a Clojure service.
 
 
- **TODO - Creating the Dataset** 
+ **TODO - Creating the Dataset**
 
 - [ ]  Figure out which datasets should we use to build the derivative dataset
 - [ ]  Write a SQL query that represents the dataset on Databricks
@@ -39,7 +39,7 @@ Nubank has a problem with dealing with bills. For some unknown reason, it has be
 
  **Figure out which Datasets should we use to build the derivative dataset** 
 
-For this, basically you want information about the customer and their bills. We organize our data-warehousing into facts and dimensions, using the terminology from [Kimball's DW books](https://github.com/nubank/data-infra-docs/blob/master/dimensional_modeling/kimball.md). 
+For this, basically you want information about the customer and their bills. We organize our data-warehousing into facts and dimensions, using the terminology from [Kimball's DW books](https://github.com/nubank/data-infra-docs/blob/master/dimensional_modeling/kimball.md).
 
 So, let's look at the available tables on Databricks.
 
@@ -59,7 +59,7 @@ So now let's look at its data to see if it makes sense:
 
 ![](https://static.notion-static.com/d4f0485d14ab4a6a95e4b8b6786e9b84/Screenshot_2017-12-05_15-56-19.png)
 
-It does! So now do the same thing to figure out which **dimension ** should we use to join to the **customer_key** column.
+It does! So now do the same thing to figure out which **dimension ** should we use to join to the **customer_key and due_date_key** column.
 
 ---
 
@@ -105,9 +105,11 @@ Now, go for it, change your code to Scala :)
 
 ## Write a SparkOp with the definition of our dataset
 
-You're probably questioning WTF is a SparkOP :), you can look by yourself [HERE](https://github.com/nubank/common-etl/blob/master/src/main/scala/common_etl/operator/SparkOp.scala#L7) 
+You're probably questioning WTF is a SparkOp :), you can look by yourself [HERE](https://github.com/nubank/common-etl/blob/master/src/main/scala/common_etl/operator/SparkOp.scala#L7)
 
-It's the core abstraction behind our data-platform, the important things are:
+Feel free to see some [examples of datasets](https://github.com/nubank/itaipu/tree/master/src/main/scala/etl/dataset) that extend SparkOp, in special (for this onboarding) the datasets: [BillingCycleFact](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/dataset/fact/BillingCycleFact.scala), [CustomerDimension](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/dataset/dimension/CustomerDimension.scala) and [DateDimension](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/dataset/dimension/DateDimension.scala).
+
+SparkOp is the core abstraction behind our data-platform, the important things are:
 
  **Name:** You have to grant your dataset a name so others can use your dataset as dependency
 
@@ -119,7 +121,7 @@ It's the core abstraction behind our data-platform, the important things are:
 
 So now import the **SparkOp** trait on Databricks:
 
- `import common_etl.operators.SparkOp` 
+ `import common_etl.operator.SparkOp`
 
 and create a new `object` that `extends` the `SparkOp` and implement the methods :)
 
@@ -129,9 +131,11 @@ and create a new `object` that `extends` the `SparkOp` and implement the methods
 
 Once you have your SparkOp done, you can use the function on [DatabricksHelpers](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/databricks/DatabricksHelpers.scala#L40) and run:
 
- `DatabricksHelpers.runOpAndSaveToTable(spark, op, "**schema**", "the_name_of_dataset")` 
+ `DatabricksHelpers.runOpAndSaveToTable(spark, op, "**schema**", "the_name_of_dataset")`
 
  `**schema**` usually we use our own names as the schema when saving the table to Databricks.
+ 
+ ![Databricks Schema](../images/databricks_schema.png)
 
 Run it! And then query your dataset to see if everything is nice!
 
@@ -151,23 +155,23 @@ Now that you have a SparkOP ready is time to add it to Itaipu.
 
 Create a file on:
 
- `itaipu/src/main/scala/etl/dataset/` With the name of your dataset `.scala` 
+ `itaipu/src/main/scala/etl/dataset/` With the name of your dataset `.scala`
 
-If you do through IntelliJ it already adds the package information for you. (Right-click on the `dataset` directory > new > `Scala Class` 
+If you do through IntelliJ it already adds the package information for you. (Right-click on the `dataset` directory > new > `Scala Class`
 
 Then just paste the code there!
 
-Now, you need to add the dataset to the list of all SparkOps that are run by Itaipu. This dataset fits the category of "general dataset" so you add it [**here**](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/dataset/package.scala#L23), all other lists of datasets can be found **[here](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/itaipu/Itaipu.scala#L46)** 
+Now, you need to add the dataset to the list of all SparkOps that are run by Itaipu. This dataset fits the category of "general dataset" so you add it [**here**](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/dataset/package.scala#L23), all other lists of datasets can be found **[here](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/itaipu/Itaipu.scala#L46)**
 
-To check if everything is right you can run: 
+To check if everything is right you can run:
 
- `sbt it:test` 
+ `sbt it:test`
 
 On Itaipu we have the [ItaipuSchemaSpec](https://github.com/nubank/itaipu/blob/master/src/it/scala/etl/itaipu/ItaipuSchemaSpec.scala#L35) that runs all **SparkOps** with fake data, and check if all inputs match the expectation. We can only to that due to Spark's lazy model, so we can effectively call the **definition** function with the expected **dataframes** as inputs, and check if all operation that you are doing can be done, like if the column that you're expecting from an input actually is there.
 
 **IMPORTANT**: We just want a sample of the data, otherwise adding it to Kafka and datomic would take forever, so just add the `.limit(10000)` to the end of your definition, this you give you 10k records. The `limit` method adds all the data into a single partition, to fix that just add `.repartition(10)` after the `limit` call
 
-More information about creating a new dataset [HERE](https://github.com/nubank/data-infra-docs/blob/master/itaipu/workflow.md#creating-a-new-dataset) : 
+More information about creating a new dataset [HERE](https://github.com/nubank/data-infra-docs/blob/master/itaipu/workflow.md#creating-a-new-dataset) :
 
 ---
 
@@ -193,7 +197,7 @@ And then is basically writing normal tests, for reference you can check the [Cus
 
 Time to run it!
 
-We use Docker for basically running everything here at Nubank, so it's not a surprise that you'll need to build Itaipu's docker container.
+Make sure that you were added to the `data-infra` group on `quay.io` (**#access-request**). We use Docker for basically running everything here at Nubank, so it's not a surprise that you'll need to build Itaipu's docker container.
 
 To do that just to:
 
@@ -221,66 +225,29 @@ Sabesp is basically a wrap over the [`aurora-client`](http://aurora.apache.org/d
 
 Take a look at [cli-examples](../cli_examples.md) to get a sense of how running sabesp commands look like.
 
-Now, we're going to use just a single command
-`sabesp --aurora-stack=cantareira-dev jobs create ... ... ...`
-Which translates to create a job on the `cantareira-dev` stack. All jobs definition are inside the (aurora-jobs)[github.com/nubank/aurora-jobs] project.
+In the following steps, we're going to use just a single command that looks like:
 
-If you don't have aurora-jobs cloned, please do it (inside the $NU_HOME directory), because sabesp you look for the definitions from there.
+`sabesp --aurora-stack=cantareira-dev jobs ...`
 
-We need a suffix for scaling and running itaipu, so we can run Spark in an isolated set of instances, so when you see the placeholder /suffix/ just use the same value. When running dev-runs We usually use our names.
+Which translates to create a job on the `cantareira-dev` stack. All jobs definition are inside the [aurora-jobs](https://github.com/nubank/aurora-jobs) project. If you don't have `aurora-jobs` cloned, please do it (inside the $NU_HOME directory), because `sabesp` will look for the definitions from there. Also, make sure that you were added to the *data-infra-aurora-access* group in aws (**#access-request**).
 
-#### 1. Scale the Cluster
+#### Scale, Run and downscale the Cluster
 
-`sabesp --aurora-stack=cantareira-dev jobs create prod scale-ec2-/suffix/ SLAVE_TYPE=/suffix/ NODE_COUNT=100 INSTANCE_TYPE=m4.2xlarge --job-version="scale_cluster=f362664" --filename scale-ec2 --check`
+Using the up-to-date version of `sabesp`, you should be able to scale, run and downscale the cluster using just one command, what makes everything simpler:
 
-This command basic translates to using the `scale-ec2` definition on aurora-jobs We're going to create the scale-up job that with 16 instances and using the version `d749aa4`, all those binds `VAR=value` translates to binds on the aurora-jobs those binds replace the mustaches `{{}}` in the file.
+`sabesp --aurora-stack=cantareira-dev jobs itaipu staging **your_name** s3a://nu-spark-metapod-test/ 100 --itaipu=**repository_tag** --filter-by-prefix **dataset_name**`
 
-You can check if the instances are running on the AWS Console: https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:tag:Name=cantareira-dev-mesos-on-demand-;sort=instanceId
+eg:
+`sabesp --aurora-stack=cantareira-dev jobs itaipu staging rodrigo s3a://nu-spark-metapod-test/ 100 --itaipu=be24227a --filter-by-prefix dataset/on-boarding-exercise-part-i`
 
-**IMPORTANT** Don't forget to scale down (step 3) after you are done running Itaipu. Leaving the cluster up is very expensive.
+You can check if the instances are running on the [AWS Console](https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:tag:Name=cantareira-dev-mesos-on-demand-;sort=instanceId) and check the status of your jobs [here](https://cantareira-dev-mesos-master.nubank.com.br:8080/scheduler/jobs). Now wait, it might take a while.
 
-#### 2. Run Itaipu
+If your proccess fails, you can run the same command again adding your `transaction_id`. The proccess will start again from where it stopped.
 
-Wow, it's a huge command, but for Itaipu We need to set a bunch of parameters, eg: METAPOD_REPO=where I'm going to write this thing, CORES=how many cores is spark allowed to use, TARGET_DATE=When is this run happening. REFERENCE_DATE=what's the reference for the data being generated (usually is from yesterday). and so on.
+eg:
+`sabesp --aurora-stack=cantareira-dev jobs itaipu staging rodrigo s3a://nu-spark-metapod-test/ 100 --itaipu=be24227a --filter-by-prefix dataset/on-boarding-exercise-part-i --transaction 56078219-e6e0-43ec-a7a0-0bcc59600473`
 
-```
-sabesp --verbose --aurora-stack=cantareira-dev \
-jobs create staging itaipu-/suffix/ \
---job-version="itaipu=$(git rev-parse --short HEAD)" \
---filename itaipu \
-METAPOD_REPO=s3a://nu-spark-metapod-test \
-TARGET_DATE=$(date --iso-8601) \ # use gdate on Mac: https://apple.stackexchange.com/a/231227
-REFERENCE_DATE=$(date --iso-8601) \ # use gdate on Mac: https://apple.stackexchange.com/a/231227
-DRIVER_MEMORY=26843545600 \
-CORES=9999 \
-OPTIONS="filtered,dns" \
-METAPOD_TRANSACTION=$(uuidgen) \
-METAPOD_ENVIRONMENT=staging \
-SKIP_PLACEHOLDER_OPS="true" \
-DATASETS="dataset/**THE_NAME_OF_YOUR_DATSET**" \
-ITAIPU_SUFFIX=/suffix/ \
-DRIVER_MEMORY_JAVA=22G
-```
-**Important**: Replace the `THE_NAME_OF_YOUR_DATSET` with the name attribute of your spark-op, and also replace the `/suffix/` with the same suffix that you used to upscale the cluster.
-
-All those variables could seem magical defined, but actually, if you remove one of them sabesp is going to complain that an argument is missing :).
-
-And if you're scared of trying to run, you can add the `--dryrun` flag to sabesp, which will just inspect if everything is "right".
-
-You can check the status of your job on https://cantareira-dev-mesos-master.nubank.com.br/scheduler/jobs/staging/itaipu-/suffix/, and if you click into the link on the IP address of the instance you'll see a link `spark-ui`, if you click there you'll see the `SparkUI` on which you can keep an eye on the execution process.
-
-
-To check if the job has finished you can look at the aurora-ui, or add the `--check` flag on sabesp so it'll away until the job has finished.
-
-
-#### 3. Scale down the Cluster
-
-After the job has finished, we need to scale down the cluster.
-
-`sabesp --aurora-stack=cantareira-dev jobs create prod downscale-ec2-/suffix/ SLAVE_TYPE=/suffix/ NODE_COUNT=0 --job-version="scale_cluster=f362664" --filename scale-ec2 --check`
-
-
-You can check if the instances are terminating in the AWS Console: https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:tag:Name=cantareira-dev-mesos-on-demand-;sort=instanceId
+#####**Make sure that your [AWS instances are terminating](https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:tag:Name=cantareira-dev-mesos-on-demand-;sort=instanceId) at the end of the proccess**.
 
 ---
 
