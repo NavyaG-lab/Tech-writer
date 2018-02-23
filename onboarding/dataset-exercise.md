@@ -242,60 +242,7 @@ eg:
 
 You can check if the instances are running on the [AWS Console](https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:tag:Name=cantareira-dev-mesos-on-demand-;sort=instanceId) and check the status of your jobs [here](https://cantareira-dev-mesos-master.nubank.com.br:8080/scheduler/jobs).
 
-In other hand, you can also do the steps one by one, as is following described below:
-
-#### 1. Scale the Cluster
-
-We need a suffix for scaling and running itaipu, so we can run Spark in an isolated set of instances, so when you see the placeholder /suffix/ just use the same value. When running dev-runs We usually use our names.
-
-`sabesp --aurora-stack=cantareira-dev jobs create prod scale-ec2-/suffix/ SLAVE_TYPE=/suffix/ NODE_COUNT=100 INSTANCE_TYPE=m4.2xlarge --job-version="scale_cluster=f362664" --filename scale-ec2 --check`
-
-This command basic translates to using the `scale-ec2` definition on aurora-jobs We're going to create the scale-up job that with 16 instances and using the version `d749aa4`, all those binds `VAR=value` translates to binds on the aurora-jobs those binds replace the mustaches `{{}}` in the file.
-
-**IMPORTANT** Don't forget to scale down (step 3) after you are done running Itaipu. Leaving the cluster up is very expensive.
-
-#### 2. Run Itaipu
-
-Wow, it's a huge command, but for Itaipu We need to set a bunch of parameters, eg: METAPOD_REPO=where I'm going to write this thing, CORES=how many cores is spark allowed to use, TARGET_DATE=When is this run happening. REFERENCE_DATE=what's the reference for the data being generated (usually is from yesterday). and so on.
-
-```
-sabesp --verbose --aurora-stack=cantareira-dev \
-jobs create staging itaipu-/suffix/ \
---job-version="itaipu=$(git rev-parse --short HEAD)" \
---filename itaipu \
-METAPOD_REPO=s3a://nu-spark-metapod-test \
-TARGET_DATE=$(date --iso-8601) \ # use gdate on Mac: https://apple.stackexchange.com/a/231227
-REFERENCE_DATE=$(date --iso-8601) \ # use gdate on Mac: https://apple.stackexchange.com/a/231227
-DRIVER_MEMORY=26843545600 \
-CORES=9999 \
-OPTIONS="filtered,dns" \
-METAPOD_TRANSACTION=$(uuidgen) \
-METAPOD_ENVIRONMENT=staging \
-SKIP_PLACEHOLDER_OPS="true" \
-DATASETS="dataset/**THE_NAME_OF_YOUR_DATSET**" \
-ITAIPU_SUFFIX=/suffix/ \
-DRIVER_MEMORY_JAVA=22G
-```
-**Important**: Replace the `THE_NAME_OF_YOUR_DATSET` with the name attribute of your spark-op, and also replace the `/suffix/` with the same suffix that you used to upscale the cluster.
-
-All those variables could seem magical defined, but actually, if you remove one of them sabesp is going to complain that an argument is missing :).
-
-And if you're scared of trying to run, you can add the `--dryrun` flag to sabesp, which will just inspect if everything is "right".
-
-You can check the status of your job on https://cantareira-dev-mesos-master.nubank.com.br/scheduler/jobs/staging/itaipu-/suffix/, and if you click into the link on the IP address of the instance you'll see a link `spark-ui`, if you click there you'll see the `SparkUI` on which you can keep an eye on the execution process.
-
-
-To check if the job has finished you can look at the aurora-ui, or add the `--check` flag on sabesp so it'll away until the job has finished.
-
-
-#### 3. Scale down the Cluster
-
-After the job has finished, we need to scale down the cluster.
-
-`sabesp --aurora-stack=cantareira-dev jobs create prod downscale-ec2-/suffix/ SLAVE_TYPE=/suffix/ NODE_COUNT=0 --job-version="scale_cluster=f362664" --filename scale-ec2 --check`
-
-
-You can check if the instances are terminating in the [AWS Console](https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:tag:Name=cantareira-dev-mesos-on-demand-;sort=instanceId).
+Now wait, it might take a while.
 
 ---
 
