@@ -1,7 +1,5 @@
 # Contributing to Itaipu (workflow)
 
-
-
 ## Contracts Workflow
 
 ### Creating a New Contract
