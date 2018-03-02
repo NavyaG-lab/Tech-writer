@@ -13,6 +13,7 @@
   * [Making downstream jobs run when an upstream job fails](#making-downstream-jobs-run-when-an-upstream-job-fails)
 * [Keep machines up after a model fails](#keep-machines-up-after-a-model-fails)
 * [Manually commit a dataset to metapod](#manually-commit-a-dataset-to-metapod)
+* [Checking a dataset loaded](#checking-a-dataset-loaded)
 * [Removing bad data from Metapod](#removing-bad-data-from-metapod)
   * [Retracting datasets in bulk](#retracting-datasets-in-bulk)
 * [Dealing with Datomic self-destructs](#dealing-with-datomic-self-destructs)
@@ -201,6 +202,14 @@ You can get around this by disabling the scale-down logic on Airflow for a job.
  - After the job fails and you get the logs, clear the downscale node so that airflow will re-run the downscale and machines will be taken offline
 
 Note: this tactic mostly applies to models. For Spark, most of the interesting logs live in the driver, which runs on a fixed instance. In the rare cases where you want the Spark executor logs, you can also apply this downscale delay strategy.
+
+## Checking a dataset loaded
+
+When datasets are loaded into redshift the load is logged in the `Loads` table.
+To check if a dataset has been loaded, look it up in `Belo Monte - Meta - Loads` on metabase, filtering by `Table Name`.
+For a dataset called `policy/fraud-report-policy` the table name will be `fraud_report_policy`.
+
+![dataset load info](images/metabase_loads.png)
 
 ## Manually commit a dataset to metapod
 
