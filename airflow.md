@@ -6,6 +6,7 @@ Table of contents
 * [Manually stopping a run](#manually-stopping-a-run)
 * [Deploying job changes to Airflow](#deploying-job-changes-to-airflow)
 * [Updating Airflow](#updating-airflow)
+* [Restarting the Airflow process](#restarting-the-airflow-process)
 * [Dry run tests](#dry-run-tests)
 
 ### Useful links
@@ -68,6 +69,26 @@ Wait until it's created and you can access https://cantareira-x-airflow.nubank.c
 then you need to delete the old airflow
 
 `Airflow.delete!("x")`
+
+### Restarting the Airflow process
+
+If you try clearing an airflow dag node and it doesn't actually restart the node, something on airflow may be messed up.
+The way forward is to cycle the airflow process.
+
+Ssh into the machine
+
+```
+nu ser ssh airflow --region us-east-1 --user phillip.mates --env cantareira --suffix t
+```
+
+and restart the process
+
+```
+sudo systemctl restart airflow
+```
+
+This should get things going again.
+
 
 ### Running tests for the Airflow DAGs
 

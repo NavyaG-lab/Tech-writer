@@ -2,6 +2,7 @@
 
 * [Restart redshift cluster](#restart-redshift-cluster)
 * [Hot-deploying rollbacks](#hot-deploying-rollbacks)
+* [Re-deploying the DAG during a run](#re-deploying-the-dag-during-a-run)
 * [Controlling aurora jobs via the CLI](#controlling-aurora-jobs-via-the-cli)
 * [Basic steps to handling Airflow DAG errors](#basic-steps-to-handling-airflow-dag-errors)
 * [Recover from non-critical model build failures](#recover-from-non-critical-datasetmodel-build-failures)
@@ -13,6 +14,7 @@
 * [Keep machines up after a model fails](#keep-machines-up-after-a-model-fails)
 * [Manually commit a dataset to metapod](#manually-commit-a-dataset-to-metapod)
 * [Removing bad data from Metapod](#removing-bad-data-from-metapod)
+  * [Retracting datasets in bulk](#retracting-datasets-in-bulk)
 * [Dealing with Datomic self-destructs](#dealing-with-datomic-self-destructs)
 
 ## Restart redshift cluster
@@ -54,6 +56,24 @@ You can also do this directly from `CloudFormation`:
 * Click through the following pages confirming your stack changes.
 * After a few minutes check that the new version has spun up and is healthy. The hacky way to do this is to hit `nu ser curl GET global metapod --suffix k /api/version` several times (due to the load balancer) and see if you eventually get the right SHA.
 * Now you need to take down the buggy version. You can do this by going through the `Update Stack` process and setting the instance size for the buggy versions to 0. This will result in no down-time. If you don't care about having downtime (like if you are data-infra and everything is already gone to shit), you can can do an in-place update of version of the running stack. This will result in the running instances spinning down and a new ones being spun up with the new version, causing ~5min downtime.
+
+## Re-deploying the DAG during a run
+
+If the DAG is using a buggy version of a program and you want to deploy a fix, in certain cases you can deploy the fix to the running DAG.
+
+Make sure you aren't pulling in non-fix related changes since the last DAG deployment. If datasets changed in `itaipu`, you should revert them to deploy the DAG. Not doing so may create inconsistencies in the datasets.
+
+In some cases, you will want to retract datasets before re-running jobs with the newly deployed version. For example, if `itaipu-contracts` is broken (the first job in the DAG) and you need to deploy a fix for it, kill the job and retract all the committed datasets before restarting with the new `itaipu` version ([see here](ops_how_to.md#retracting-datasets-in-bulk)).
+
+1. Push the fix through the pipeline as described [here](airflow.md#deploying-job-changes-to-airflow)
+
+2. You can't simply clear the running DAG nodes to restart jobs, because this will pull in the old configurations. Instead, you should kill the job via sabesp:
+
+```shell
+sabesp --aurora-stack cantareira-stable jobs kill jobs prod itaipu-contracts
+```
+
+3. Once the jobs have been killed manually, you should clear them and let airflow start them anew.
 
 ## Controlling aurora jobs via the CLI
 
@@ -253,6 +273,39 @@ nu ser curl POST global metapod /api/migrations/retract/committed-dataset/5a5d41
 (if this fails, with a dns resolution issue, try `nu cache bust stack`)
 
 If you then re-run the query you will see that the `schema` is now `null`.
+
+### Retracting datasets in bulk
+
+If you are retracting all datasets, use the following query
+```
+{
+  transaction(transactionId: "f7832a01-001b-56f7-a4fe-b3a417f8f654") {
+    datasets(committed: ONLY_COMMITTED) {
+      id
+      name
+    }
+  }
+}
+```
+
+Save the results in a file called `result.json` then run the retraction in parallel for every dataset id (make sure the `jq` command is correct for your query)
+
+```shell
+cat result.json | jq -r ".data.transaction.datasets | .[].id  " | xargs -P 10 -I {} nu ser curl POST global metapod /api/migrations/retract/committed-dataset/{}
+```
+
+You can track the number of committed datasets with the following query
+
+```
+{
+  transaction(transactionId: "713a86b9-4459-5167-8573-ca1ad17746c0") {
+    datasetConnection {
+            numCommittedDatasets
+        }
+  }
+}
+```
+
 
 ## Dealing with Datomic self-destructs
 
