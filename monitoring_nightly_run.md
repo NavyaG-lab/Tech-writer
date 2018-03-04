@@ -12,9 +12,9 @@ When checking on the progress of the run, first check [Sonar](https://backoffice
 
 ## Finding the transaction id
 
-To check Sonar, first get the Transaction ID for the run. The Transaction ID is an UUID that gets generated for every run, in order to logically group together datasets produced in a given run. A nice shortcut for opening the transaction on Sonar is to click at the transaction id link posted by Airflow at 00:00 UTC on the `guild-data-eng` channel on slack.
+To check Sonar, first get the Transaction ID for the run. The Transaction ID is an UUID that gets generated for every run, in order to logically group together datasets produced in a given run. A nice shortcut for opening the transaction on Sonar is to click at the transaction id link posted by Airflow at 00:00 UTC on the [#guild-data-eng](https://nubank.slack.com/messages/C1SNEPL5P/) channel on slack.
 
-One way to get the Transaction ID is from the daily Slack notification posted in #guild-data-eng when the nightly run begins (see the Metapod transaction line):
+One way to get the Transaction ID is from the daily Slack notification posted in [#guild-data-eng](https://nubank.slack.com/messages/C1SNEPL5P/) when the nightly run begins (see the Metapod transaction line):
 
 ![image](https://user-images.githubusercontent.com/726169/33165581-a8d1169c-d037-11e7-9062-40d678b9800d.png)
 

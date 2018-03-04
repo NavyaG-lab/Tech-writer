@@ -88,7 +88,7 @@ The dagão run failed. What can you do?
 - Check out for recent commits and deploy on go, to check if they are related to that
 - If nothing seems obvious and you get lots of generic errors (reading non-existent files, network errors, etc), you should:
  1. Cycle all machines (eg `nu ser cycle mesos-on-demand --env cantareira --suffix stable --region us-east-1`)
- 2. Get the transaction id from #guild-data-eng
+ 2. Get the transaction id from [#guild-data-eng](https://nubank.slack.com/messages/C1SNEPL5P/)
  3. Retry rerunning the dagão with the same transaction (eg `sabesp --verbose --aurora-stack=cantareira-stable jobs create prod dagao --filename dagao "profile.metapod_transaction=$metapod_tx"`)
  4. If that fails, increase the cluster size (eg `sabesp --aurora-stack=cantareira-stable jobs create prod scale  --job-version "scale_cluster=4945885" MODE=on-demand N_NODES=$nodes SCALE_TIMEOUT=0`)
  5. Retry dagão
@@ -216,7 +216,7 @@ For a dataset called `policy/fraud-report-policy` the table name will be `fraud_
 In specific cases, when a dataset that doesn't have downstream dependencies fails, you can commit an empty parquet file to the dataset.
 This allows buggy datasets to be skipped so that they don't affect the stability of ETL runs.
 
-- Get the `metapod-transaction-id` from `#guild-data-eng`.
+- Get the `metapod-transaction-id` from `[#guild-data-eng](https://nubank.slack.com/messages/C1SNEPL5P/)`.
 - Find the name of the failing dataset (`dataset-name`) from the SparkUI page.
 - Get the `dataset-id` from sonar with the following GraphQL query:
 

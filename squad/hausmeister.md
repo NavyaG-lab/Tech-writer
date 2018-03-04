@@ -17,7 +17,7 @@ Outside of work hours you should have a phone with [OpsGenie](http://opsgenie.co
 If an issue comes up that you cannot handle independently, you should escalate the alert to the Level 2 and pair with them to resolve the issue.
 
 _For visibility_: when an issue arises, it is expected that you:
- - mention the failure in `#guild-data-eng`. This allows people to follow along, contribute suggestions, and better connect their code changes to failures you have to wake up in the night for.
+ - mention the failure in [#guild-data-eng](https://nubank.slack.com/messages/C1SNEPL5P/). This allows people to follow along, contribute suggestions, and better connect their code changes to failures you have to wake up in the night for.
  - add an entry to the [data-infra log book](https://docs.google.com/spreadsheets/d/1-1AEX2aPvZvEQgGjXyxIoYl4eD2oav6_6V-eAH2oZ74/edit#gid=0) so we can track the most common failures.
 
 ### support our clients
@@ -26,9 +26,9 @@ To support their effectiveness, the hausmeister is responsible for communicating
 
 Slack channels you should monitor for questions:
 
-* `#squad-data-infra`
-* `#guild-data-eng`
-* `#data-help`
+* [#squad-data-infra](https://nubank.slack.com/messages/C0XRWDYQ2/)
+* [#guild-data-eng](https://nubank.slack.com/messages/C1SNEPL5P/)
+* [#data-help](https://nubank.slack.com/messages/C06F04CH1/)
 
 ### address open P4-P3 issues
 Hausmeister should work on any open P4-P3 issues. Others should be pulled in to help with any P4 issues.
@@ -38,7 +38,7 @@ If there are no open P4-P3 issues, the hausmeister can work on tech-debt or norm
 ### monitoring
 Monitor the normal operation of our services via
 
-* the `#squad-di-alarms` slack channel
+* the [#squad-di-alarms](https://nubank.slack.com/messages/C51LWJ0SK/) slack channel
 * the [data-infra riemann dashboard](http://prod-s0-watchtower.nubank.com.br/#data-infra) (check it for each shard by changing the url)
 
 ### escalating

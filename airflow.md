@@ -46,12 +46,12 @@ When a job is changed on [`aurora-jobs`](https://github.com/nubank/aurora-jobs),
    3. On the [Airflow admin page](https://airflow.nubank.com.br/admin/) we need to click the "Trigger Dag" button on the `config_downloader` DAG. This will make Airflow suck in the new configuration.
  ![refreshing airflow config](images/config_refresh.png)
    4. You can check that the configuration was loaded into airflow by clicking `config_downloader` and checking the base date has been updated to now-ish ![config_downloader details](images/airflow_check.png)
-   5. Send a message on the #guild-data-eng channel on Slack telling everyone that you deployed a new DAG.
+   5. Send a message on the [#guild-data-eng](https://nubank.slack.com/messages/C1SNEPL5P/) channel on Slack telling everyone that you deployed a new DAG.
 
 #### Additional details on deploying a new DAG
 
 You can technically re-deploy the DAG if no new changes have been deployed to `itaipu` since the last DAG was deployed.
-You can check this by comparing the `itaipu` version on `master` with the one detailed in the DAG run message on `#guild-data-eng`.
+You can check this by comparing the `itaipu` version on `master` with the one detailed in the DAG run message on [#guild-data-eng](https://nubank.slack.com/messages/C1SNEPL5P/).
 Also, if they aren't the same you can also manually revert the diffs and proceed.
 
 When a DAG is deployed while another is running, airflow will use the current state of the running DAG on the new DAG. Every new task will use the service versions provided by the newly deployed DAG.
