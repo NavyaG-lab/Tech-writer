@@ -123,7 +123,7 @@ More stuff at [Airflow maintenance](./airflow.md)
 
 ## Sonar overview
   * [Sonar](https://github.com/nubank/sonar-js) is a static frontend (written in pure JavaScript) that interfaces with Metapod's GraphQL API to give visibility into the datasets that are tracked by Metapod.
-  * To access Sonar, you need to have `metapod-admin` scope, which you can request in #access-request channel on Slack.  The reason for this is that the same scope gives you access to run mutations via Metapod's GraphQL API (potentially destructive).  TODO: We can separate the query path from the mutation path in the future to relax this requirement.
+  * To access Sonar, you need to have `metapod-user` scope, which you can request in #access-request channel on Slack.
   * [Nubank's Sonar URL](https://backoffice.nubank.com.br/sonar-js/) (requires VPN)
   * You can access the sonar output for a given metapod transaction by placing the transaction id in the URL: https://backoffice.nubank.com.br/sonar-js/#/sonar-js/transactions/2d1a7d12-0023-5de5-a437-36409b45f4c2
 
