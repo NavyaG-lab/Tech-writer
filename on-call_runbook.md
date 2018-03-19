@@ -24,7 +24,7 @@ _You need VPN access to follow the steps below._
 1. Check the `#crash` channel in Slack for possible ongoing outages that might cause the DAG run to fail.
 1. If you are not sure what is the cause for the failure, or you are not sure what to do about it, jump to the next step which is to restart the task.
 
-> If there is no content in that page or if you get a connection error, that means the task host machine is down and we can't get to the logs that way. In this case, we need to resort to Splunk. Search for `source="http:cantareira-docker-logs"` in our Splunk tenant https://nubank.splunkcloud.com/en-US/ _TODO: add link on DAG log output to splunk_
+> If there is no content in that page or if you get a connection error, that means the task host machine is down and we can't get to the logs that way. In this case, we need to resort to Splunk. Use this search: https://nubank.splunkcloud.com/en-US/app/search/etl_job_logs?form.the_time.earliest=-60m%40m&form.the_time.latest=now&form.search=*&form.job=aurora%2Fprod%2Fjobs%2Fitaipu-contracts
 
 **Second:** restart the task
 
