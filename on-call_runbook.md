@@ -37,3 +37,13 @@ _What you just did is "clearing" the state of the node. This will effectively ma
 After executing these steps, there is a possibility that the task fails once more. In this case, escalate to the next layer of on-call and coordinate with another engineer to figure out next steps.
 
 <hr>
+
+## [Alert]
+* put the reasoning behind the alert here to provide context
+
+What should be done to most directly resolve the alert.  What things
+we need to look for.  What procedures to follow.  What commands to
+enter.  If there is an associated script that can automate these steps
+it should be linked here.
+
+<hr>
