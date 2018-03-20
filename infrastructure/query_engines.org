@@ -10,7 +10,7 @@
 | Runs on                    | AWS                          | Google Cloud             | AWS                    |
 | We have experience         | Yes                          | No                       | Yes                    |
 | Loads data from            | S3 (Avro)                    | GCS (Avro/Parquet[fn:8]) | Agnostic[fn:3]         |
-| SQL Dialect                | PostgreSQL                   | Standard SQL             | Spark SQL              |
+| SQL Dialect                | Very old PostgreSQL (8.0.2)  | Standard SQL             | Spark SQL              |
 | Complex schema support     | Limited JSON support         | Awesome                  | Sufficient             |
 | Query start delay/overhead | Small                        | Small                    | Substantial            |
 | Caching                    | PostgreSQL-like (little)     | Automatic                | Little                 |
