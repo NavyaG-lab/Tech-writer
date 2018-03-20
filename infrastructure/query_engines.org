@@ -13,7 +13,7 @@
 | SQL Dialect                | Very old PostgreSQL (8.0.2)  | Standard SQL             | Spark SQL              |
 | Complex schema support     | Limited JSON support         | Awesome                  | Sufficient             |
 | Query start delay/overhead | Small                        | Small                    | Substantial            |
-| Caching                    | PostgreSQL-like (little)     | Automatic                | Little                 |
+| Caching                    | PostgreSQL-like (little)     | Query caching            | Little                 |
 | Future potential[fn:4]     | Doesn't look promising[fn:5] | Most promising[fn:6]     | Promising[fn:7]        |
 | SLA in-place?              | Great, existing AWS support  | None yet                 | Good, support is so-so |
 | Data load process          | Big overhead[fn:9]           | Big overhead[fn:10]      | Small overhead[fn:11]  |
