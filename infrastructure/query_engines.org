@@ -17,6 +17,7 @@
 | Future potential[fn:4]     | Doesn't look promising[fn:5] | Most promising[fn:6]     | Promising[fn:7]        |
 | SLA in-place?              | Great, existing AWS support  | None yet                 | Good, support is so-so |
 | Data load process          | Big overhead[fn:9]           | Big overhead[fn:10]      | Small overhead[fn:11]  |
+| BigDecimal support         | Yes                          | No, but is in alpha      | Yes                    |
 
 [fn:1] It doesn't support nested schemas
 [fn:2] Through notebooks
