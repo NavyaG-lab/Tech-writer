@@ -1,0 +1,34 @@
+|                            | Redshift                     | Google BigQuery               | Spark (Databricks)     |
+|----------------------------+------------------------------+-------------------------------+------------------------|
+| In production              | Since mid 2016               | No                            | No                     |
+| Used for development       | No                           | No                            | Yes[fn:2]              |
+| Metabase                   | Can connect                  | Limited support[fn:1]         | Can not connect        |
+| Looker                     | Can connect                  | Can connect                   | Can connect            |
+| Jupyter Notebook/Pandas    | Easy, using belomonte        | Easy, pd.read_gbq             | Hard/impossible        |
+| DBeaver                    | Easy, lot of people doing it | Can connect                   | Can't connect          |
+| Pricing model              | Fixed cluster                | Pay per query                 | Auto-scaling cluster   |
+| Runs on                    | AWS                          | Google Cloud                  | AWS                    |
+| We have experience         | Yes                          | No                            | Yes                    |
+| Loads data from            | Yes, S3 (Avro)               | Yes, GCS (Avro/Parquet[fn:8]) | No, polymorphic[fn:3]  |
+| SQL Dialect                | PostgreSQL                   | Standard SQL                  | Spark SQL              |
+| Complex schema support     | Limited JSON support         | Awesome                       | Sufficient             |
+| Query start delay/overhead | Small                        | Small                         | Substantial            |
+| Caching                    | PostgreSQL-like (little)     | Automatic                     | Little                 |
+| Future potential[fn:4]     | Doesn't look promising[fn:5] | Most promising[fn:6]          | Promising[fn:7]        |
+| SLA in-place?              | Great, existing AWS support  | None yet                      | Good, support is so-so |
+| Data load process          | Big overhead[fn:9]           | Big overhead[fn:10]           | Small overhead[fn:11]  |
+
+[fn:1] It doesn't support nested schemas
+[fn:2] Through notebooks
+[fn:3] Can be any Hive-registered table
+[fn:4] Hot new thing
+[fn:5] AWS isn't adding great features to the Redshift core--just bandaid like
+Athena
+[fn:6] Google is pushing hard on its Google Cloud Platform
+[fn:7] Spark is an active open-source project
+[fn:8] Parquet is in beta
+[fn:9] Requires a system that generates manifest files to S3 and manage the
+connection pooling
+[fn:10] Currently requires a transfer of data from AWS to GCP, after that
+requires some lambda style function that triggers load into BigQuery
+[fn:11] Just needs to register a Hive table for it to be available for queries
