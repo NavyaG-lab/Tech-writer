@@ -1,6 +1,6 @@
 |                            | Redshift                     | Google BigQuery               | Spark (Databricks)     |
 |----------------------------+------------------------------+-------------------------------+------------------------|
-| In production              | Since mid 2016               | No                            | No                     |
+| In production at Nubank    | Since mid 2016               | No                            | No                     |
 | Used for development       | No                           | No                            | Yes[fn:2]              |
 | Metabase                   | Can connect                  | Limited support[fn:1]         | Can not connect        |
 | Looker                     | Can connect                  | Can connect                   | Can connect            |
