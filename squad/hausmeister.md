@@ -73,3 +73,42 @@ The priority breakdown tells us how the issue should resourced:
 * _P2/P1 Medium/low priority_: Backlog issue that can be addressed when time permits if even worth the time investment.
 
 One should also be aware of the [severity levels](https://github.com/nubank/morgue#severity-levels) described on the `Nubank`-wide incident procedure docs. If an issue falls into one of those severity levels (rare for data-infra), those procedures should be followed.
+
+## Reporting The [DAG](https://airflow.nubank.com.br/admin/airflow/graph?dag_id=prod-dagao) run status
+
+Everyday the hausmeister needs to post the run status of the [DAG](https://airflow.nubank.com.br/admin/airflow/graph?dag_id=prod-dagao) for other teams to view.
+This is posted to the slack channel [#data-announcements](https://nubank.slack.com/messages/C20GTK220/)
+
+Here is an example [DAG](https://airflow.nubank.com.br/admin/airflow/graph?dag_id=prod-dagao) status post
+
+<pre>
+:white_check_mark: *Contracts* were calculated and loaded
+:white_check_mark: *Financial Reports* were calculated and loaded
+:white_check_mark: *Facts and Dimensions* were calculated and loaded
+:white_check_mark: *Models and Policies* were calculated and loaded
+:fast_forward: *Other datasets* were calculated and are being loaded
+</pre>
+
+There are 5 stages (roughly associated with a [DAG](https://airflow.nubank.com.br/admin/airflow/graph?dag_id=prod-dagao) node):
+
+| Stage | DAG Node |
+| ------ | -------- |
+| *Contracts* | "itaipu-contracts" |
+| *Financial Reports* | "finance" |
+| *Facts and Dimensions* | "itaipu-dimensional-modeling" (calculated) & "capivara-dm" (loaded) |
+| *Models and Policies* | "itaipu-policies" |
+| *Other datasets* | "itaipu-rest" |
+
+These items may be in one of the following 4 states:
+
+| Symbol | Description | Meaning |
+| ------ | ----------- | ------- |
+|:white_check_mark:  | `calculated and loaded` | if itaipu and capivara have finished |
+|:fast_forward:  | `was calculated and is being loaded` | if only itaipu has finished |
+|:arrow_forward: | `is being calculated` | if is itaipu still running |
+|:x: | `has to be calculated` | if it didn't start yet |
+
+you use capivara only for the `Facts and dimensions` and `Other datasets`
+for the other lines, there's no separate `is being loaded` state
+
+(soon there will be something automated to do this bit of human tedium: [There's a card for that](https://app.clubhouse.io/nubank/story/953/auto-post-dag-status-to-data-announcements) )
