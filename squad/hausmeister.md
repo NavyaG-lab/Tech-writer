@@ -30,6 +30,10 @@ Slack channels you should monitor for questions:
 * [#guild-data-eng](https://nubank.slack.com/messages/C1SNEPL5P/)
 * [#data-help](https://nubank.slack.com/messages/C06F04CH1/)
 
+### review open PRs
+The Hausmeister should check all Data Infra projects for new PRs and review them, asking other people to help (via the GitHub Review Request feature) if they feel it is needed.
+There is one inventory of Data Infra projects available [here](https://github.com/nubank/data-infra-docs/blob/master/infrastructure/inventory.md), and we are trying to centralize all reviews using [this GitHub query](https://github.com/pulls?q=is%3Apr+team-review-requested%3Anubank%2Fdata-infra+archived%3Afalse+user%3Anubank+is%3Aopen), although it currently contains only Itaipu PRs.
+
 ### address open P4-P3 issues
 Hausmeister should work on any open P4-P3 issues. Others should be pulled in to help with any P4 issues.
 
