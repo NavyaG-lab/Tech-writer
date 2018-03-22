@@ -24,7 +24,7 @@
 [fn:3] Can be any Hive-registered table
 [fn:4] Hot new thing
 [fn:5] AWS isn't adding great features to the Redshift core--just bandaid like
-Athena
+Spectrum
 [fn:6] Google is pushing hard on its Google Cloud Platform
 [fn:7] Spark is an active open-source project
 [fn:8] Parquet is in beta
