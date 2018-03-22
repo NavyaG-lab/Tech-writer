@@ -20,6 +20,7 @@
 | BigDecimal support          | Yes                          | No, but is in alpha      | Yes                       |
 | Concurrent query support    | TODO                         | TODO                     | TODO                      |
 | Performance characteristics | TODO                         | TODO                     | TODO                      |
+| Bad query handling          | Cancels query[fn:19]         | TODO                     | TODO                      |
 
 [fn:1] It doesn't support nested schemas
 [fn:2] Through notebooks
@@ -52,3 +53,5 @@ https://cloud.google.com/blog/big-data/2016/04/inside-capacitor-bigquerys-next-g
 performance is worse than disk storage like Redshift and BigQuery
 [fn:18] Databricks is improving its IO caching and its configurable:
 https://docs.databricks.com/user-guide/databricks-io-cache.html
+[fn:19] Redshift cancels a bad query if the bad query is using all the disk
+space
