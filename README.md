@@ -24,6 +24,7 @@ This repository is the canonical place to put all documentation related to how t
 ## Infrastructure
 * [Inventory](infrastructure/inventory.md)
 * [Guide to the runtime environment](infrastructure/guide-to-the-runtime-environment.md)
+* [Query Engines used/considered at Nubank](infrastructure/query_engines.md)
 
 ## Onboarding
 * [Introduction and setup](onboarding/introduction.md)
