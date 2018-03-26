@@ -1,4 +1,4 @@
-# Query Engines at Nubank
+# Query Engines used/considered at Nubank
 
 |                               | AWS Redshift                        | Google BigQuery                | Spark (Databricks)             |
 |-------------------------------|-------------------------------------|--------------------------------|--------------------------------|
