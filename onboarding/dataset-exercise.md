@@ -197,6 +197,8 @@ And then is basically writing normal tests, for reference you can check the [Cus
 
 Time to run it!
 
+Achtung: this is not how we run code in our day to day work. We use an automated CI pipeline, but to make the exercise more interesting and with less waiting for CI pipelines we are doing it in this way.
+
 Make sure that you were added to the `data-infra` group on `quay.io` (**#access-request**). We use Docker for basically running everything here at Nubank, so it's not a surprise that you'll need to build Itaipu's docker container.
 
 To do that just to:
