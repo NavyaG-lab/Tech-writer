@@ -1,28 +1,28 @@
 # Query Engines at Nubank
 
-|                             | AWS Redshift                 | Google BigQuery       | Spark (Databricks)     |
-|-----------------------------|------------------------------|-----------------------|------------------------|
-| In production at Nubank     | Since mid 2016               | No                    | No                     |
-| Used for development        | No                           | No                    | Yes[1]                 |
-| Metabase                    | Can connect                  | Limited support[2]    | Can not connect        |
-| Looker                      | Can connect                  | Can connect           | Can connect            |
-| Jupyter Notebook/Pandas     | Easy, using belomonte        | Easy, pd.read_gbq     | Embedded notebooks[3]  |
-| DBeaver                     | Easy, lot of people doing it | Can connect           | Can't connect          |
-| Pricing model               | Fixed cluster                | Pay per query         | Auto-scaling cluster   |
-| Runs on                     | AWS                          | Google Cloud          | AWS                    |
-| We have experience          | Yes                          | No                    | Yes                    |
-| Loads data from             | S3 (Avro)                    | GCS (Avro/Parquet[4]) | Agnostic[5]            |
-| SQL Dialect                 | Very old PostgreSQL (8.0.2)  | Standard SQL          | Spark SQL              |
-| Complex schema support      | Limited JSON support         | Awesome[6]            | Sufficient[7]          |
-| Query start delay/overhead  | Relatively small[8]          | Relatively small[9]   | Relatively large[10]   |
-| Caching                     | Data caching                 | Query caching         | Data caching[11]       |
-| Future potential[12]        | Doesn't look promising[13]   | Most promising[14]    | Promising[15]          |
-| SLA in-place?               | Great, existing AWS support  | None yet              | Good, support is so-so |
-| Data load process           | Big overhead[16]             | Big overhead[17]      | Small overhead[18]     |
-| BigDecimal support          | Yes                          | No, but is in alpha   | Yes                    |
-| Concurrent query support    | TODO                         | TODO                  | TODO                   |
-| Performance characteristics | TODO                         | TODO                  | TODO                   |
-| Bad query handling          | Cancels query[19]            | TODO                  | TODO                   |
+|                               | AWS Redshift                        | Google BigQuery                | Spark (Databricks)             |
+|-------------------------------|-------------------------------------|--------------------------------|--------------------------------|
+| In production at Nubank       | Since mid 2016                      | No                             | No                             |
+| Used for development          | No                                  | No                             | Yes<sup>1</sup>                |
+| Metabase                      | Can connect                         | Limited support<sup>2</sup>    | Can not connect                |
+| Looker                        | Can connect                         | Can connect                    | Can connect                    |
+| Jupyter Notebook/Pandas       | Easy, using belomonte               | Easy, pd.read_gbq              | Embedded notebooks<sup>3</sup> |
+| DBeaver                       | Easy, lot of people doing it        | Can connect                    | Can't connect                  |
+| Pricing model                 | Fixed cluster                       | Pay per query                  | Auto-scaling cluster           |
+| Runs on                       | AWS                                 | Google Cloud                   | AWS                            |
+| We have experience            | Yes                                 | No                             | Yes                            |
+| Loads data from               | S3 (Avro)                           | GCS (Avro/Parquet<sup>4</sup>) | Agnostic<sup>5</sup>           |
+| SQL Dialect                   | Very old PostgreSQL (8.0.2)         | Standard SQL                   | Spark SQL                      |
+| Complex schema support        | Limited JSON support                | Awesome<sup>6</sup>            | Sufficient<sup>7</sup>         |
+| Query start delay/overhead    | Relatively small<sup>8</sup>        | Relatively small<sup>9</sup>   | Relatively large<sup>10</sup>  |
+| Caching                       | Data caching                        | Query caching                  | Data caching<sup>11</sup>      |
+| Future potential<sup>12</sup> | Doesn't look promising<sup>13</sup> | Most promising<sup>14</sup>    | Promising<sup>15</sup>         |
+| SLA in-place?                 | Great, existing AWS support         | None yet                       | Good, support is so-so         |
+| Data load process             | Big overhead<sup>16</sup>           | Big overhead<sup>17</sup>      | Small overhead<sup>18</sup>    |
+| BigDecimal support            | Yes                                 | No, but is in alpha            | Yes                            |
+| Concurrent query support      | TODO                                | TODO                           | TODO                           |
+| Performance characteristics   | TODO                                | TODO                           | TODO                           |
+| Bad query handling            | Cancels query<sup>19</sup>          | TODO                           | TODO                           |
 
 1. Through notebooks
 2. It doesn't support nested schemas
