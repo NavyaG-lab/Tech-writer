@@ -1,6 +1,7 @@
 # Operations HOWTO
 
 * [Restart redshift cluster](#restart-redshift-cluster)
+* [Restart aurora](#restart-aurora)
 * [Hot-deploying rollbacks](#hot-deploying-rollbacks)
 * [Re-deploying the DAG during a run](#re-deploying-the-dag-during-a-run)
 * [Controlling aurora jobs via the CLI](#controlling-aurora-jobs-via-the-cli)
@@ -42,6 +43,18 @@ The easiest fix is to restart Redshift for `cantareira-k-redshift-redshiftcluste
 Other way, if you have superuser access (e.g. `sao_pedro`), is to run `pg_terminate_backend( pid )` on the appropriate transaction `pid`s ([details here](https://docs.aws.amazon.com/redshift/latest/dg/PG_TERMINATE_BACKEND.html))
 
 NOTE: this issue can be addressed by fixing `capivara` to have a timeout to the transaction and retrying the connection kill + table drop logic together.
+
+## Restart Aurora
+
+Every once in a while, aurora goes down. This will prevent anything that uses `sabesb` to work, like running the DAG.
+
+You can tell when aurora is down when the [aurora web UI](https://cantareira-stable-mesos-master.nubank.com.br:8080) won't load, but the [mesos web UI](https://cantareira-stable-mesos-master.nubank.com.br) will.
+
+Try to look into the issue, potentially by ssh'ing into `mesos-master`, via `nu ser ssh mesos-master --suffix dev --env cantareira --region us-east-1` and looking at the aurora logs via `journalctl -u aurora-scheduler`.
+
+To get aurora back up, cycle `mesos-master`:
+
+`nu ser cycle mesos-master --env cantareira --suffix stable --region us-east-1`
 
 ## Hot-deploying rollbacks
 
