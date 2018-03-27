@@ -5,7 +5,11 @@ this document is Alert: Reasoning: Action(s).  All the alert entries here
 should be linked with the alerts being dispatched from our alerting platform.
 The "ALERT" string should be verbatim the same string that is dispatched.
 
-<hr>
+## Alarms
+
+- [alert-itaipu-contracts triggered on Airflow](#alert-itaipu-contracts-triggered-on-airflow)
+
+---
 
 ## "alert-itaipu-contracts triggered on Airflow"
 
@@ -53,7 +57,7 @@ It is possible that a failure happens before the task is created in Aurora, and 
 - What is logged after "status FAILED and message <message>" is the reason why the task failed. If it reads simply `Task failed`, that means the task was started in Aurora, but the actual failure should be inspected via the Aurora logs. For that, jump back to the [Check reason for the failure](#check-reason-for-the-failure) step for this alarm.
 - In other cases, you might see a message such as: `Subtask: 401 Client Error: Unauthorized for url`. This means there was an error fetching credentials to talk to the Aurora API. Restarting the task should be enough. To achieve that, follow the steps in the [Restart the task](#restart-the-task) section above.
 
-<hr>
+---
 
 ## "Alert"
 * put the reasoning behind the alert here to provide context
@@ -63,4 +67,4 @@ we need to look for.  What procedures to follow.  What commands to
 enter.  If there is an associated script that can automate these steps
 it should be linked here.
 
-<hr>
+---
