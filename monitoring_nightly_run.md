@@ -1,6 +1,6 @@
 # Monitoring the nightly run
 
-We currently recompute all data sets (from scratch) every night at midnight UTC.  The nightly run consists of a directed acyclic graph (DAG) that starts with "contracts", then datasets that depend on contracts, then datasets that depend on other datasets, etc.  You can visualize the DAG using [Airflow](https://airflow.nubank.com.br/admin/airflow/graph?dag_id=prod-dagao):
+We currently recompute all datasets (from scratch) every night at midnight UTC.  The nightly run consists of a directed acyclic graph (DAG) that starts with "contracts", then datasets that depend on contracts, then datasets that depend on other datasets, etc.  You can visualize the DAG using [Airflow](https://airflow.nubank.com.br/admin/airflow/graph?dag_id=prod-dagao):
 
 ![image](https://user-images.githubusercontent.com/726169/33067668-2786662a-ceaf-11e7-89bb-14d787268c4b.png)
 
@@ -71,15 +71,9 @@ limit 100;
 
 After understanding the error that occurred when loading (often a NULL value in a NON NULL column), you can dig deeper to understand how a NULL value could arise.  In this case, the next thing to check might be the source dataset where the problematic column came from to see if it is was also NULL upstream (for the rows with the data load).
 
-You can use DataBricks to check on the source dataset:
+You can use DataBricks to check on the source dataset with [these instructions](ops_how_to.md#load-a-run-dataset-in-databricks).
 
-https://nubank.cloud.databricks.com/#notebook/131424/command/131441
-
-A given nightly run is identified via the Metapod transaction id.  You can load data from a historical Metapod transaction using the link in Sonar, with the following DataBricks syntax:
-
-`val x = spark.read.parquet("dbfs:/mnt/nu-spark-metapod/10b090f0-fda6-4ef3-b091-9b8fec7c45fc")`
-
-Things that went wrong:
+Things that may have gone wrong:
 - Itaipu can not complete because (early)
 - Redshift load failed (late)
 

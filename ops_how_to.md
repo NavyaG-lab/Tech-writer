@@ -18,6 +18,7 @@
 * [Removing bad data from Metapod](#removing-bad-data-from-metapod)
   * [Retracting datasets in bulk](#retracting-datasets-in-bulk)
 * [Dealing with Datomic self-destructs](#dealing-with-datomic-self-destructs)
+* [Load a run dataset in Databricks](#load-a-run-dataset-in-databricks)
 
 ## Restart redshift cluster
 
@@ -336,3 +337,33 @@ If you see frequent Datomic self-destructs alarms, a common cause is lack of pro
 * Search for the table for the service (the naming scheme is `$env-$prototype-$service-datomic`, although `$prototype` is ommitted for most tables in S0 and Global), e.g. `prod-s3-analytics-datomic`, and click on it.
 * Go to the Metrics tab and see if there are any throttled write requests or throttled read requests.
 * If there are, go to the Capacity tab and increase the Read capacity units and the Write capacity units.
+
+## Load a run dataset in Databricks
+
+### Find the path to the dataset
+
+Datasets are associated with Metapod transaction ids for (nightly) DAG runs ([see here on how to find the transaction id](monitoring_nightly_run.md#finding-the-transaction-id)).
+To find a dataset, load the metapod transaction on Sonar.
+
+On Sonar click the `Datasets` tab and:
+
+ - Locate the dataset you want, if you want the avro version look for `{your dataset name}-avro` and for parquet it is just `{your dataset name}`
+ - There are two paths, the `S3 Path` corresponds to the direct file path on S3, and the `Databricks Path` to the mounted version on databricks. In this case, we want the `Databricks Path`
+
+![finding a dataset on Sonar](images/find_dataset.png)
+
+### Load it in databricks
+Now that you have the path, open up a databricks notebook ([here is a nice example](https://nubank.cloud.databricks.com/#notebook/131424/command/131441))
+
+#### parquet
+
+```scala
+val x = spark.read.parquet("dbfs:/mnt/nu-spark-metapod/10b090f0-fda6-4ef3-b091-9b8fec7c45fc")
+```
+
+#### avro
+
+```scala
+import com.databricks.spark.avro._
+val x = spark.read.avro("dbfs:/mnt/nu-spark-metapod/UIeeQn58Qi6_6OLQH6li2w")
+```
