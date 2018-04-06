@@ -52,6 +52,8 @@ These are Python services to support online machine learning models in productio
 - [deploy-airflow](https://github.com/nubank/deploy-airflow)
 - [tapir](https://github.com/nubank/tapir)
 - [aurora-jobs](https://github.com/nubank/aurora-jobs), ([overview](/primer.md#aurora-overview))
+- [parsa](https://github.com/nubank/parsa)
+- [truta](https://github.com/nubank/truta)
 
 ## Other projects
 
