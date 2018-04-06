@@ -37,6 +37,8 @@ To validate the environment is working properly, you should clone a service repo
 
 Setting up **scala:** 
 
+Scala 101: https://wiki.nubank.com.br/index.php/Scala
+
 Independently of your editor of choice, is always a good idea to default to IDEA when coding in **Scala,** download it here [https://www.jetbrains.com/idea/download/#section=linux](https://www.jetbrains.com/idea/download/#section=linux) , you can use the community edition, which is free and works for working with **scala** .
 
 After installing IDEA, let's set up our main project, [Itaipu](https://github.com/nubank/itaipu/) :
