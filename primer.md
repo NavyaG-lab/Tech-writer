@@ -67,7 +67,7 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
   * Dimensions & fact tables
     * [Kimball principles](dimensional_modeling/kimball.md)
   * Unit testing approach
-    * [Unit tests in Itaipu](styleguide.md#unit-test-style) are designed to [test any non-trivial transformation step in isolation](styleguide.md#transform-test-granularity).  Generally we do not test the entire SparkOp on a unit basis.
+    * [Unit tests in Itaipu](itaipu/styleguide.md#unit-test-style) are designed to [test any non-trivial transformation step in isolation](itaipu/styleguide.md#transform-test-granularity).  Generally we do not test the entire SparkOp on a unit basis.
   * Integration test
     * The Itaipu integration test is able to statically check the entire Itaipu mini-DAG and raise errors if there are any broken column references, incorrect type signatures, unconventional names, etc.  This allows us to catch errors sooner (which is important, because catching an error after the nightly run has been running for 5 hours is very high cost).
   * Workflow for building a new dataset
