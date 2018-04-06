@@ -234,9 +234,9 @@ edit in an IDE because of type checking, autocompletion, etc.), then go back to 
 
 ### Make the dataset available in Redshift
 
-If you want to make the dataset available in Redshift, you need to create Avro files from it:
-1. In the package file `package.scala`, add a call to `avroizeWithSchemaFunctor` in the output of `allOps`
-
+If you want to make the dataset available in Redshift, you need to:
+1. Create Avro files from it: In the package file `package.scala`, add a call to `avroizeWithSchemaFunctor` in the output of `allOps`.
+2. Extend the class with the trait `DeclaredSchema` and populate the `AttributeOverrides`. 
 
 ## Running tests
 
