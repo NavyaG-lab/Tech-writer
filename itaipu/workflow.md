@@ -302,7 +302,27 @@ itaipu.  See `curva-de-rio`, `dataset-series`, and `StaticOp` for more informati
 
 Parquet files are mainly used for accessing data from Spark / Databricks. Avro files are used for loading into Redshift.
 
-## Bumping libraries on itaipu
+## Dependencies
+
+The dependencies are listed [here](https://github.com/nubank/itaipu/blob/2977173662217daee58adb75356834f20d215d89/build.sbt#L39). They typically follow the [format](https://www.scala-sbt.org/1.x/docs/Library-Dependencies.html#The++key) `groupID % artifactID % revision`.
+
+To compile the main sources (in `src/main/scala` and `src/main/java` directories) and download the dependencies:
+```sh
+$ sbt compile
+```
+Reference: https://www.scala-sbt.org/1.x/docs/Running.html#Common+commands
+
+Itaipu downloads them from [Maven](https://maven.apache.org/) and nu-maven (Nubank's private repo on AWS S3). To download from S3, itaipu uses the plugin [Frugal Mechanic SBT S3 Resolver](https://github.com/frugalmechanic/fm-sbt-s3-resolver).
+
+To check the latest versions:
+* In Maven: https://search.maven.org/
+    * Go to the Advanced Search and use the GroupId and ArtifactId. It's possible that you need to append the Scala version to the `artifactID` (e.g., `_2.11` for Scala 2.11). For example: `g:"org.typelevel" AND a:"cats_2.11"`.
+* In nu-maven:
+    ```sh
+    $ aws s3 ls s3://nu-maven/snapshots/common-etl/
+    ```
+
+### Bumping libraries on itaipu
 
 Since `itaipu` has code that runs on Spark, we need to keep in mind that some dependencies need to be excluded from packaging, as to not cause conflicts with dependencies that are already brought in by Spark into the classpath.
 
