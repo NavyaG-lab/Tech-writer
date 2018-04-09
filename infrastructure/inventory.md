@@ -35,14 +35,17 @@ These are Python services to support online machine learning models in productio
 ### Deprecated services not currently running
 - [weissman](https://github.com/nubank/weissman)
 
+## Accessing data
+
+- [belomonte](https://github.com/nubank/belomonte), ([overview](/primer.md#belo-monte))
+- [imordor](https://github.com/nubank/imordor)
+
 ## Common libraries
 
 - [common-etl](https://github.com/nubank/common-etl)
 - [common-etl-spec](https://github.com/nubank/common-etl-spec)
 - [metapod-client](https://github.com/nubank/metapod-client)
-- [belomonte](https://github.com/nubank/belomonte), ([overview](/primer.md#belo-monte))
 - [common-etl-python](https://github.com/nubank/common-etl-python)
-- [imordor](https://github.com/nubank/imordor)
 
 ## Daily batch-related projects
 
