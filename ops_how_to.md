@@ -57,6 +57,21 @@ To get aurora back up, cycle `mesos-master`:
 
 `nu ser cycle mesos-master --env cantareira --suffix stable --region us-east-1`
 
+Most likely you will need to [restart Airflow](airflow.md#restarting-the-airflow-process) after this happens.
+
+Another result restarting aurora is an orphaned mesos framework. To check this, look for entries under `Inactive Frameworks` [here](https://cantareira-stable-mesos-master.nubank.com.br/#/frameworks).
+
+Orphaned frameworks will mess up `capivara-clj` and must be dealt with
+
+```shell
+# Use the direct IP to the mesos instance (due to DNS issues)
+# Get the frameworkId is the ID for the inactive (orphaned) framework obtained on the framework web UI
+
+curl -XPOST 10.130.1.61:5050/master/teardown -d 'frameworkId=67386329-1fe2-48f4-9457-0d45d924db5d-0000'
+```
+
+After killing the orphaned framework, you must re-deploy `capivara-clj` via Go. Find the build and click the play button to trigger `capivara-clj`'s `to-staging` and `to-prod` tasks.
+
 ## Hot-deploying rollbacks
 
 If a buggy version gets deployed of a service that lives in the non-data-infra production space (like `metapod`, `correnteza`, etc.), you can rollback to a stable version using [these deploy console instructions](https://wiki.nubank.com.br/index.php/Hot_deploying_a_service).
