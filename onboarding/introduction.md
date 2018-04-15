@@ -17,25 +17,25 @@ First, you need to have an account on both [github.com](http://github.com) and [
 - AWS
 - Nubank's [Quay.io](http://quay.io) + data-infra group
 
- **To ask for any kind of access, account or credentials you should ask on #access-request** 
+ **To ask for any kind of access, account or credentials you should ask on #access-request**
 
 So now ask on #access-request for the following permissions:
 
 - Belomonte account
 
-For more information on the access you need to contribute to data-infra: [Permissions needed to contribute to data infra](https://github.com/nubank/data-infra-docs/blob/master/primer.md#permissions--accounts-needed-to-contribute-on-data-infra-update-required) 
+For more information on the access you need to contribute to data-infra: [Permissions needed to contribute to data infra](https://github.com/nubank/data-infra-docs/blob/master/primer.md#permissions--accounts-needed-to-contribute-on-data-infra-update-required)
 
 ## Setting up your environment
 
 Overall, you should use [https://wiki.nubank.com.br/index.php/Dev_environment](https://wiki.nubank.com.br/index.php/Dev_environment) . It has been updated and made more user-friendly recently.
 
-The setupnu.sh script is self-explicative. Make sure that you have access to the engineering team S3, otherwise you will have problems to use your aws key and secret while running setupnu.sh.
+The setupnu.sh script is self-explanatory. Make sure that you have access to the engineering team S3, otherwise you will have problems to use your aws key and secret while running setupnu.sh.
 
 Every now and then people will find minor bugs on setupnu. This is a great opportunity to create your first PR.
 
-To validate the environment is working properly, you should clone a service repo and try to run its tests. 
+To validate the environment is working properly, you should clone a service repo and try to run its tests.
 
-Setting up **scala:** 
+Setting up **scala:**
 
 Scala 101: https://wiki.nubank.com.br/index.php/Scala
 
@@ -49,7 +49,7 @@ After installing IDEA, let's set up our main project, [Itaipu](https://github.co
 
 Importing Itaipu on IDEA:
 
-1. Open idea, click in **Configure -> Plugins** 
+1. Open idea, click in **Configure -> Plugins**
 
   ![](https://static.notion-static.com/d90d9310dc1642249a992163f8d72c81/Screenshot_2017-12-01_11-58-00.png)
 
@@ -58,11 +58,11 @@ Importing Itaipu on IDEA:
   ![](https://static.notion-static.com/6224eb2fb911420bbafca0019e283e0a/Screenshot_2017-12-01_12-00-42.png)
 
 3. Restart IDEA
-4. Now, click on **Import Project** and select **itaipu's directory** 
+4. Now, click on **Import Project** and select **itaipu's directory**
 
   ![](https://static.notion-static.com/83b9fb8bf0384dafb15400821f4af401/Screenshot_2017-12-01_12-01-54.png)
 
-5. Select **Import Project from external Model -> SBT** 
+5. Select **Import Project from external Model -> SBT**
 
   ![](https://static.notion-static.com/c5d12ddcbd2f45c1a76f6a6515fe6526/Screenshot_2017-12-01_13-53-31.png)
 
@@ -71,7 +71,7 @@ Importing Itaipu on IDEA:
   ![](https://static.notion-static.com/7a4b466d0c1a4ce1be1bf78122f7abc0/Screenshot_2017-12-01_13-56-33.png)
 
 7. Next, Next, Finish. Wait a little bit for IDEA to download all dependencies and build the project.
-8. Repeat the process with **common-etl** 
+8. Repeat the process with **common-etl**
 
 All done.
 
