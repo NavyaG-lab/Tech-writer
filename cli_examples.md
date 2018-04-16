@@ -10,6 +10,13 @@ pip install -i https://pypi.nubank.com.br/pypi sabespcli
 
 Note: to deal with potential `Permission denied` issues during package installation, you can either use `sudo` (not recommended) or use `virtualenv`
 
+#### Upgrade
+
+```shell
+pip install -i https://pypi.nubank.com.br/pypi sabespcli --upgrade
+```
+
+
 ## Usage
 
 If you want to run an arbitrary command to test `sabesp` itself, consider for
@@ -74,7 +81,7 @@ sabesp metapod --env prod --token transaction get 9684e3c0-a961-45da-add2-17b3de
 ### Full run scaling the cluster up and down
 
 ```shell
-sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-metapod-test/ 216 --itaipu=4155f24b 
+sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-metapod-test/ 216 --itaipu=4155f24b
 ```
 
 ### Full run scaling the cluster up and down and using the materialized log cache
@@ -86,7 +93,7 @@ sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-me
 ### Filtered run scaling the cluster up and down
 
 ```shell
-sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-metapod-test/ 216 --itaipu=4155f24b  --filter-by-prefix contract 
+sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-metapod-test/ 216 --itaipu=4155f24b  --filter-by-prefix contract
 ```
 
 
