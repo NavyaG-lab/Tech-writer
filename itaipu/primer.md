@@ -2,17 +2,19 @@
 
 ## Structure
 
-| Name         | Raw               | Contract               | Dataset                            |
-|:------------:| ----------------- | ---------------------- | -----------------------------------|
-| Metapod name | `raw-$db/$entity` | `contract-$db/$entity` | `dataset/$name`                    |
-| Description  | Datomic entities  | References resolved    | Customer dataset                   |
-| Sharding?    | Sharded           | Unsharded              | Unsharded                          |
-| Schema type  | Operational       | Contract layer         | Analytical                         |
-| Rawness      | Raw               | Slightly opinionated   | Opinionated                        |
-| Level        | Single shard      | Single database        | Multi database                     |
-| Owner        | Service squad     | Service squad          | Dataset writer                     |
-| Code         | Attribute mapping | SparkOp                | SparkOp, Redshift schema           |
-| PII          | Exposed           | Encrypted (hashed)     | Depends on the dataset<sup>1</sup> |
+| Name            | Raw               | Contract               | Dataset                            |
+|:---------------:| ----------------- | ---------------------- | -----------------------------------|
+| Metapod name    | `raw-$db/$entity` | `contract-$db/$entity` | `dataset/$name`                    |
+| Redshift name   | N/A               | `contract.$db_$entity` | `origin.$name`                     |
+| Databricks name | `raw.$db_$entity` | `contract.$db_$entity` | `dataset.$name`                    |
+| Description     | Datomic entities  | References resolved    | Customer dataset                   |
+| Sharding?       | Sharded           | Unsharded              | Unsharded                          |
+| Schema type     | Operational       | Contract layer         | Analytical                         |
+| Rawness         | Raw               | Slightly opinionated   | Opinionated                        |
+| Level           | Single shard      | Single database        | Multi database                     |
+| Owner           | Service squad     | Service squad          | Dataset writer                     |
+| Code            | Attribute mapping | SparkOp                | SparkOp, Redshift schema           |
+| PII             | Exposed           | Encrypted (hashed)     | Depends on the dataset<sup>1</sup> |
 
 1. One must not expose PII in datasets destined for "public" consumption such as Redshift.
 
