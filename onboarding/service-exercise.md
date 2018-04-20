@@ -54,7 +54,7 @@ dockerized `nu`, you can check if your `nu` command is dockerized with `type nu`
 the dockerized version in your current terminal session.
 
 After that your tests should be working. Run [`lein nu-test`](https://github.com/nubank/nu-test)
-(this will run both [midje unit tests](https://github.com/nubank/playbooks/blob/master/glossary.md#test-unit-tests) and [postman integration tests](https://github.com/nubank/playbooks/blob/master/glossary.md#postman-tests))
+(this will run both [midje unit tests](https://github.com/nubank/playbooks/blob/3f67eaa4d43b293f4d89c3a4f3e4c0d27cca5cfc/docs/glossary.mdob/master/glossary.md#test-unit-tests) and [postman integration tests](https://github.com/nubank/playbooks/blob/3f67eaa4d43b293f4d89c3a4f3e4c0d27cca5cfc/docs/glossary.md#postman-tests))
 
 ---
 
@@ -65,7 +65,7 @@ locally, so before reading the files we need to download them from s3.
 
 We'll use the 
 [s3 component](https://github.com/nubank/common-db/blob/master/src/common_db/components/s3_store.clj)
-to discover and dowload the files ([component glossary term](https://github.com/nubank/playbooks/blob/master/glossary.md#componentsclj)). This component implements the [storage protocol](https://github.com/nubank/common-db/blob/master/src/common_db/protocols/storage.clj). 
+to discover and dowload the files ([component glossary term](https://github.com/nubank/playbooks/blob/3f67eaa4d43b293f4d89c3a4f3e4c0d27cca5cfc/docs/glossary.md#componentsclj)). This component implements the [storage protocol](https://github.com/nubank/common-db/blob/master/src/common_db/protocols/storage.clj). 
 Looking at the protocols implemented by a component is the simplest way to have 
 a big picture understanding of it can do.
 
@@ -76,7 +76,7 @@ same. The only dependency that your s3 component will need is the [`config` comp
 This s3 component can be used to access only one bucket (the bucket is the first
  part of an s3 uri after the `s3://`: `s3://bucket/folders/files`). One way to 
 define which bucket your component will use is add an entry on 
-[`resources/service_config.json.base`](https://github.com/nubank/playbooks/blob/master/glossary.md#resourcesmy-new-service_configjsonbase) with key `s3_bucket` and value 
+[`resources/service_config.json.base`](https://github.com/nubank/playbooks/blob/3f67eaa4d43b293f4d89c3a4f3e4c0d27cca5cfc/docs/glossary.md#resourcesmy-new-service_configjsonbase) with key `s3_bucket` and value 
 `nu-spark-devel` (which is the 
 [bucket](https://github.com/nubank/data-infra-docs/blob/onboarding/onboarding/introduction.md#run-the-sparkop-on-databricks)
  that we used to manually save the dataset on databricks)
