@@ -3,6 +3,15 @@
 This repository is the canonical place to put all documentation related to how to understand and operate in our analytical environment.
 
 ## Data Infra Overall
+
+<object data="https://github.com/nubank/data-infra-docs/blob/master/images/DataInfraOverview.pdf" type="application/pdf" width="700px" height="700px">
+    <embed src="https://github.com/nubank/data-infra-docs/blob/master/images/DataInfraOverview.pdf">
+        This browser does not support PDFs. Please download the PDF to view it: <a href="https://github.com/nubank/data-infra-docs/blob/master/images/DataInfraOverview.pdf">Download PDF</a>.</p>
+    </embed>
+</object>
+
+![Image of our infra](images/DataInfraOverview.png)
+
 * [Primer](primer.md)
 * [Slack channel guide](squad/channels.md)
 * [Data Infra Glossary](glossary.md)
