@@ -7,8 +7,8 @@ Since **metabase** doesn't have a configured CI to deploy to prod we have to man
 
 #### Requirements
 
-- quay.io write permissions (`data-infra` group).
 - `prod-eng` IAM group
+- quay.io write permissions (`data-infra` group).
 
 ### Manual Deploy
 
