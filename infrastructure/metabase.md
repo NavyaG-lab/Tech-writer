@@ -8,6 +8,7 @@ Since **metabase** doesn't have a configured CI to deploy to prod we have to man
 #### Requirements
 
 - quay.io write permissions (`data-infra` group).
+- `prod-eng` IAM group
 
 ### Manual Deploy
 
@@ -19,23 +20,24 @@ Currently the deployment follows this pipeline:
 ```
 $NU_HOME/deploy/bin/docker.sh build-and-push $(git rev-parse --short HEAD)
 ```
-After building the script will send the image to [quay.io](https://quay.io).
+After building the script will send the image to [quay.io](https://quay.io/repository/nubank/nu-metabase?tab=tags).
 
-5. Copy the image TAG on [quay.io](https://quay.io);
+5. Copy the image TAG on [quay.io](https://quay.io/repository/nubank/nu-metabase?tab=tags);
 6. Access [AWS CloudFormation](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks);
 7. Search for `cantareira-{stack-id}-metabase`;
-8. Select the stack;
-9. Get the active stack (Blue or Green) on the Parameters tab;
+8. Select the stack using the checkbox;
+9. Figure out the active and inactive stack (Blue or Green) on the Parameters tab by looking at the BlueSize/GreenSize (0 = inactive);
 10. Click Actions -> Update Stack;
 11. Leave the `Use current template` option selected and click Next;
-12. Change the inactive layer version to the **TAG version** on quay.io;
-13. Increase the instance size (BlueSize/GreenSize) on the inactive layer;
+12. Change the **inactive layer** version to the **TAG version** on [quay.io](https://quay.io/repository/nubank/nu-metabase?tab=tags);
+13. Increase the instance size (BlueSize/GreenSize) on the **inactive layer**;
 14. Click Next twice;
 15. Check the **I acknowledge that AWS CloudFormation might create IAM resources.** checkbox.;
 16. Click Update;
 17. Check the [EC2 instances](https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:search=metabase;sort=launchTime);
 18. Wait for the new instances to run and be available (check [Metabase's Load Balancer](https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#LoadBalancers:search=metabase;sort=loadBalancerName));
 19. Test [metabase](https://metabase.nubank.com.br) access
+20. After **making sure the new instances are running**, kill the instances running the old version (you should Update Stack again and set the GreenSize or BlueSize to 0)
 
 ##### Make sure that your current branch is not dirty (everything is in sync with `nubank` branch) and up to date!
 
