@@ -4,6 +4,7 @@
 * [Restart aurora](#restart-aurora)
 * [Hot-deploying rollbacks](#hot-deploying-rollbacks)
 * [Re-deploying the DAG during a run](#re-deploying-the-dag-during-a-run)
+* [Deploying a service in Aurora](#deploying-a-service-in-aurora)
 * [Controlling aurora jobs via the CLI](#controlling-aurora-jobs-via-the-cli)
 * [Basic steps to handling Airflow DAG errors](#basic-steps-to-handling-airflow-dag-errors)
 * [Recover from non-critical model build failures](#recover-from-non-critical-datasetmodel-build-failures)
@@ -64,7 +65,7 @@ Another result restarting aurora is an orphaned mesos framework. To check this, 
 Orphaned frameworks will mess up `capivara-clj` and must be dealt with
 
 ```shell
-# Use the direct IP to the mesos instance (due to DNS issues)
+# Use the direct IP to the mesos instance (due to DNS issues) - it's on Leader on the left side of https://cantareira-stable-mesos-master.nubank.com.br/
 # Get the frameworkId is the ID for the inactive (orphaned) framework obtained on the framework web UI
 
 curl -XPOST 10.130.1.61:5050/master/teardown -d 'frameworkId=67386329-1fe2-48f4-9457-0d45d924db5d-0000'
@@ -104,6 +105,13 @@ sabesp --aurora-stack cantareira-stable jobs kill jobs prod itaipu-contracts
 ```
 
 3. Once the jobs have been killed manually, you should clear them and let airflow start them anew.
+
+## Deploying a service in Aurora
+
+To manually deploy (first check if you can't just use GOCD for doing this automatically) a new version of a service in Aurora you should run the following command in staging and in prod with the git sha of the commit you wish to deploy
+```shell
+sabesp --aurora-stack=cantareira-stable services upsert staging capivara-clj --sha c0596f1
+```
 
 ## Controlling aurora jobs via the CLI
 
