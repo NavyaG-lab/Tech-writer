@@ -64,7 +64,7 @@ Another result restarting aurora is an orphaned mesos framework. To check this, 
 Orphaned frameworks will mess up `capivara-clj` and must be dealt with
 
 ```shell
-# Use the direct IP to the mesos instance (due to DNS issues)
+# Use the direct IP to the mesos instance (due to DNS issues) - it's on __Leader__ on the left side of https://cantareira-stable-mesos-master.nubank.com.br/
 # Get the frameworkId is the ID for the inactive (orphaned) framework obtained on the framework web UI
 
 curl -XPOST 10.130.1.61:5050/master/teardown -d 'frameworkId=67386329-1fe2-48f4-9457-0d45d924db5d-0000'
