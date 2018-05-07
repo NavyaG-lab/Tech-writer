@@ -108,7 +108,7 @@ sabesp --aurora-stack cantareira-stable jobs kill jobs prod itaipu-contracts
 
 ## Deploying a service in Aurora
 
-To deploy a new version of a service in Aurora you should run the following command in staging and in prod with the git sha of the commit you wish to deploya
+To manually deploy (first check if you can't just use GOCD for doing this automatically) a new version of a service in Aurora you should run the following command in staging and in prod with the git sha of the commit you wish to deploya
 ```shell
 sabesp --aurora-stack=cantareira-stable services upsert staging capivara-clj --sha c0596f1
 ```
