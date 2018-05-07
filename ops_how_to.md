@@ -4,6 +4,7 @@
 * [Restart aurora](#restart-aurora)
 * [Hot-deploying rollbacks](#hot-deploying-rollbacks)
 * [Re-deploying the DAG during a run](#re-deploying-the-dag-during-a-run)
+* [Deploying a service in Aurora](#deploying-a-service-in-aurora)
 * [Controlling aurora jobs via the CLI](#controlling-aurora-jobs-via-the-cli)
 * [Basic steps to handling Airflow DAG errors](#basic-steps-to-handling-airflow-dag-errors)
 * [Recover from non-critical model build failures](#recover-from-non-critical-datasetmodel-build-failures)
@@ -104,6 +105,13 @@ sabesp --aurora-stack cantareira-stable jobs kill jobs prod itaipu-contracts
 ```
 
 3. Once the jobs have been killed manually, you should clear them and let airflow start them anew.
+
+## Deploying a service in Aurora
+
+To deploy a new version of a service in Aurora you should run the following command in staging and in prod with the git sha of the commit you wish to deploya
+```shell
+sabesp --aurora-stack=cantareira-stable services upsert staging capivara-clj --sha c0596f1
+```
 
 ## Controlling aurora jobs via the CLI
 
