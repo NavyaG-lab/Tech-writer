@@ -44,7 +44,7 @@ Independently of your editor of choice, is always a good idea to default to IDEA
 After installing IDEA, let's set up our main project, [Itaipu](https://github.com/nubank/itaipu/) :
 
 - At this point in time, you already have **[nucli](https://github.com/nubank/nucli/)** installed, so let's use it.
-- `nu projects clone Itaipu` this command you clone Itaipu to into your **$NU_HOME**
+- `nu projects clone itaipu` this command you clone Itaipu to into your **$NU_HOME**
 - now `cd` into itaipu's dir, and run `sbt test it:test` sbt is going to download all necessary dependencies and run Itaipu's tests.
 
 Importing Itaipu on IDEA:
