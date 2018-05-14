@@ -24,6 +24,9 @@ First make sure you have access to [**databricks**](http://nubank.cloud.databric
 
 ![Import into Databricks](https://user-images.githubusercontent.com/1674699/33720480-594ffaec-db64-11e7-96b5-ec6a78a4cbae.png)
 
+Make sure you are running this exercise on the egnineers-cluster:
+![Databricks Cluster](../images/databricks_cluster.png)
+
 Go through that notebook and come back here :)
 
 ## Statement
@@ -98,6 +101,8 @@ Once you have both Dataframes, you need to change the SQL functions to SparkSQL 
  [sql.functions](http://spark.apache.org/docs/latest/api/scala/index.html#org.apache.spark.sql.functions$) (this is where the aggregations and statistical functions are, as well as bunch of other helpful functions like ones related to dates)
 
  [Column](http://spark.apache.org/docs/latest/api/scala/index.html#org.apache.spark.sql.Column) (when you need to do operations using columns like column + column)
+
+ [NuWiki](https://wiki.nubank.com.br/index.php/Apache_Spark) (Our own documentation on useful functions)
 
 Now, go for it, change your code to Scala :)
 
@@ -191,6 +196,8 @@ And then is basically writing normal tests, for reference you can check the [Cus
 
 [Running the tests](https://github.com/nubank/data-infra-docs/blob/master/itaipu/workflow.md#running-tests)
 
+Tip: Run testOnly on your file before running the full suit of tests.
+
 ---
 
 ## Build Itaipu locally
@@ -205,7 +212,10 @@ To do that just to:
 
 `$NU_HOME/deploy/bin/docker.sh build-and-push $(git rev-parse --short HEAD)`
 
-The `docker.sh` script is inside the `deploy` project. It's a standard script for building docker images. It will run the script `prepare.sh` (which will run `sbt assembly`) and then run build and push the docker image using the name of your project as the name. e.g. for `itaipu`, it will be `quay.io/nubank/nu-itaipu:{SHA}`
+The `docker.sh` script is inside the `deploy` project. It's a standard script for building docker images. It will run the script `prepare.sh` (which will run `sbt assembly`) and then run build and push the docker image using the name of your project as the name. e.g. for `itaipu`, it will be `quay.io/nubank/nu-itaipu:{SHA}`. 
+
+Look for the following line in the script's output. You will use this tag for the next step.
+`Successfully tagged nu-itaipu**repository_tag**`. 
 
 Done, we can now run it!
 
