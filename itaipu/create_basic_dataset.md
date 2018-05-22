@@ -1,16 +1,56 @@
 # Creating a Dataset
 
 ## 1- Preparation
-If you don't have Itaipu't in your machine, get it with
-    `nu projects clone itaipu`
-Go to the folder
-    `cd $NU_HOME/itaipu`
-If you already have it, make sure it is updated.
+Overall, you should use [https://wiki.nubank.com.br/index.php/Dev_environment](https://wiki.nubank.com.br/index.php/Dev_environment) . It has been updated and made more user-friendly recently.
 
-Now, install [IntelliJ](https://www.jetbrains.com/idea/). After that, go into `Configure > Plugins > Browse Repositories` and install `scalafmt`. It will format your code so that it is pretty and readable.
+The setupnu.sh script is self-explanatory. Make sure that you have access to the engineering team S3, otherwise you will have problems to use your aws key and secret while running setupnu.sh.
+
+Every now and then people will find minor bugs on setupnu. This is a great opportunity to create your first PR.
+
+To validate the environment is working properly, you should clone a service repo and try to run its tests.
+
+Setting up **scala:**
+
+Scala 101: https://wiki.nubank.com.br/index.php/Scala
+
+Independently of your editor of choice, is always a good idea to default to IDEA when coding in **Scala,** download it here [https://www.jetbrains.com/idea/download/#section=linux](https://www.jetbrains.com/idea/download/#section=linux) , you can use the community edition, which is free and works for working with **scala** .
+
+After installing IDEA, let's set up our main project, [Itaipu](https://github.com/nubank/itaipu/) :
+
+- At this point in time, you already have **[nucli](https://github.com/nubank/nucli/)** installed, so let's use it.
+- `nu projects clone itaipu` this command you clone Itaipu to into your **$NU_HOME**
+- now `cd` into itaipu's dir, and run `sbt test it:test` sbt is going to download all necessary dependencies and run Itaipu's tests.
+
+Importing Itaipu on IDEA:
+
+1. Open idea, click in **Configure -> Plugins**
+
+  ![](https://static.notion-static.com/d90d9310dc1642249a992163f8d72c81/Screenshot_2017-12-01_11-58-00.png)
+
+2. Browse Repositories -> Type Scala in the search box, and install the **Scala Language** plugin.
+
+  ![](https://static.notion-static.com/6224eb2fb911420bbafca0019e283e0a/Screenshot_2017-12-01_12-00-42.png)
+
+3. Restart IDEA
+4. Now, click on **Import Project** and select **itaipu's directory**
+
+  ![](https://static.notion-static.com/83b9fb8bf0384dafb15400821f4af401/Screenshot_2017-12-01_12-01-54.png)
+
+5. Select **Import Project from external Model -> SBT**
+
+  ![](https://static.notion-static.com/c5d12ddcbd2f45c1a76f6a6515fe6526/Screenshot_2017-12-01_13-53-31.png)
+
+6. Select the Java SDK that is installed on your machine. If you don't have one, click on **NEW** and select from your local machine.
+
+  ![](https://static.notion-static.com/7a4b466d0c1a4ce1be1bf78122f7abc0/Screenshot_2017-12-01_13-56-33.png)
+
+7. Next, Next, Finish. Wait a little bit for IDEA to download all dependencies and build the project.
+8. Repeat the process with **common-etl**
+
+All done.
 
 ## 2 - Create your query in SQL in Databricks
-Go to `https://nubank.cloud.databricks.com/` and create your own Notebook. There's this [Databricks Tutorial](https://docs.databricks.com/spark/latest/gentle-introduction/for-data-engineers.html) , designed for giving you a introduction to Spark running on Databricks. Feel free to read it to understand Databricks better.
+Go to `https://nubank.cloud.databricks.com/` and create your own Notebook. There's this [Databricks Tutorial](https://docs.databricks.com/spark/latest/gentle-introduction/for-data-engineers.html) , designed for giving you a introduction to Spark running on Databricks. Also, the [entry on the wiki](https://wiki.nubank.com.br/index.php/Databricks_Notebook) is pretty useful. Feel free to read it to understand Databricks better.
 
 [TODO: INSERT IMAGE EXAMPLE OF HOW TO CREATE A NOTEBOOK HERE]
 
