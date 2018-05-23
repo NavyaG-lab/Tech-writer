@@ -1,6 +1,20 @@
 # Creating a Dataset
 
-## 1- Preparation
+### Summary
+- [Preparation](#1---preparation) (Setting up Env/Scala/IDE)
+- [Creating SQL Query in Databricks](#2---create-your-query-in-sql-in-databricks)
+- [Understanding SparkOp Class](#3---understanding-sparkop-class)
+- [Create your SparkOp class](#4---create-your-sparkop-class)
+- [Recreating  you query in Scala](#5---recreating-your-query-in-scala)
+- [Final Product](#6---final-product)
+- [Testing](#7---testing)
+- [Final Test](#8---final-test)
+- [Running tests](#9---running-tests)
+- [Adding it to Itaipu](#10---adding-it-to-itaipu)
+- [Verification Checklist](#11---verification-checklist)
+- [Finishing up and pushing](#12---finishing-up-and-pushing)
+
+## 1 - Preparation
 Overall, you should use [https://wiki.nubank.com.br/index.php/Dev_environment](https://wiki.nubank.com.br/index.php/Dev_environment) . It has been updated and made more user-friendly recently.
 
 The setupnu.sh script is self-explanatory. Make sure that you have access to the engineering team S3, otherwise you will have problems to use your aws key and secret while running setupnu.sh.
@@ -72,10 +86,26 @@ SELECT calls.call__started_at AS time
    AND calls.call__our_number = '08008870463'
 ```
 
-## 3 - Decide the folder and create your Dataset
+## 3 - Understanding the SparkOp class
+
+Every dataset you find in Itaipu is a SparkOp. The SparkOp class has five important parts.
+
+The `name`. It decides how your new dataset will be called in places such as Metabase or Databricks once Itaipu runs. If `name = "dataset/name-of-dataset"`, then you'll be able to find it by querying dataset.name_of_dataset.
+
+The `inputs`. This is a set with the names of all the datasets you'll use in your query. **DON'T HARDCODE THEM.** Use the values we'll set further on.
+
+The `definition` method. This is the core of your object. All the logic involved in creating your dataset will be placed here. Well, hopefully not **all** your logic, because you'll divide your code neatly into small functions that can be easily tested, won't you? Good.
+
+The `attributeOverrides`. This Set contains the definition of what your output will be. The collumn names, if any field is primary key or not, if it is nullable, etc.
+
+The dataset names section. Here we'll get all the names of all the datasets we'll use and place them on variables with clear names. The reason why we do so will become apparent eventually.
+
+## 4 - Create your SparkOp Class
 In IntelliJ, go to `src/main/scala/etl/dataset` and see what folders there are. Choose your folder or, if there is none that fits your dataset, create a new one.
 
-In it, create a new Scala class with the name of your new Dataset. The example below is  good template to follow, and you can add it to your IntelliJ templates by going to `IntelliJ > Editor > File and Code Templates` and save it with `Name: ETL - Scala Object` and `Extension: scala`
+In it, create a new Scala class with the name of your new Dataset. The example below is  good template to follow.
+
+*Tip: you can add the this to your IntelliJ templates by going to `IntelliJ > Editor > File and Code Templates` and save it with `Name: ETL - Scala Object` and `Extension: scala`*
 
 ```scala
 package etl.dataset.${PACKAGE_NAME}
@@ -145,22 +175,8 @@ object ${NAME} extends SparkOp with DeclaredSchema {
 ```
 We'll explain everything that's in there in a bit. For now, just copy the contents of this file you've created, except the `package etl.dataset.${PACKAGE_NAME}`, into a new block in Databricks.
 
-## 4 - Understanding the SparkOp class
-
-Every dataset you find in Itaipu is a SparkOp. The SparkOp class has five important parts.
-
-The `name`. It decides how your new dataset will be called in places such as Metabase or Databricks once Itaipu runs. If `name = "dataset/name-of-dataset"`, then you'll be able to find it by querying dataset.name_of_dataset.
-
-The `inputs`. This is a set with the names of all the datasets you'll use in your query. **DON'T HARDCODE THEM.** Use the values we'll set further on.
-
-The `definition` method. This is the core of your object. All the logic involved in creating your dataset will be placed here. Well, hopefully not **all** your logic, because you'll divide your code neatly into small functions that can be easily tested, won't you? Good.
-
-The `attributeOverrides`. This Set contains the definition of what your output will be. The collumn names, if any field is primary key or not, if it is nullable, etc.
-
-The dataset names section. Here we'll get all the names of all the datasets we'll use and place them on variables with clear names. The reason why we do so will become apparent eventually.
-
 ## 5 - Recreating your query in Scala
-Jump back to your Databricks notebook and go to your copy of your class. 
+Jump back to your Databricks notebook and copy your class to a new cell. (Leave the package declaration out of it) e.g:
 
 ```scala
 import ...
@@ -447,7 +463,7 @@ Then we compare them.
 checkDataFrameAssertion(assertDataFrameEquals, expected, result)
 ```
 
-## 8 - The Final Test
+## 8 - Final Test
 Here's the final result.
 ```scala
 import etl.NuDataFrameSuiteBase
@@ -483,7 +499,7 @@ class OuvidoriaCallsSpec extends FlatSpec with NuDataFrameSuiteBase with Matcher
 ```
 Also, remember to format everything with scalafmt.
 
-## 9 - Running the tests
+## 9 - Running tests
 First, [install sbt](https://www.scala-sbt.org/1.0/docs/Setup.html).
 
 Now that you have `sbt` installed, run it.
