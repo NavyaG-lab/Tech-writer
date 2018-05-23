@@ -88,7 +88,7 @@ SELECT calls.call__started_at AS time
 
 ## 3 - Understanding the SparkOp class
 
-Every dataset you find in Itaipu is a SparkOp. The SparkOp class has five important parts:
+Every dataset you find in Itaipu is a SparkOp. The SparkOp class has six important parts:
 
 - `name` property. It decides how your new dataset will be called in places such as Metabase or Databricks once Itaipu runs. If `name = "dataset/name-of-dataset"`, then you'll be able to find it by querying dataset.name_of_dataset.
 
