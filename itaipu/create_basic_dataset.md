@@ -3,10 +3,10 @@
 ### Summary
 - [Preparation](#1---preparation) (Setting up Env/Scala/IDE)
 - [Creating SQL Query in Databricks](#2---create-your-query-in-sql-in-databricks)
-- [Understanding SparkOp Class](#3---understanding-sparkop-class)
+- [Understanding SparkOp Class](#3---understanding-the-sparkop-class)
 - [Create your SparkOp class](#4---create-your-sparkop-class)
 - [Recreating  you query in Scala](#5---recreating-your-query-in-scala)
-- [Final Product](#6---final-product)
+- [Final Product](#6---the-final-product)
 - [Testing](#7---testing)
 - [Final Test](#8---final-test)
 - [Running tests](#9---running-tests)
