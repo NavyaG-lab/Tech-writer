@@ -88,17 +88,19 @@ SELECT calls.call__started_at AS time
 
 ## 3 - Understanding the SparkOp class
 
-Every dataset you find in Itaipu is a SparkOp. The SparkOp class has five important parts.
+Every dataset you find in Itaipu is a SparkOp. The SparkOp class has five important parts:
 
-The `name`. It decides how your new dataset will be called in places such as Metabase or Databricks once Itaipu runs. If `name = "dataset/name-of-dataset"`, then you'll be able to find it by querying dataset.name_of_dataset.
+- `name` property. It decides how your new dataset will be called in places such as Metabase or Databricks once Itaipu runs. If `name = "dataset/name-of-dataset"`, then you'll be able to find it by querying dataset.name_of_dataset.
 
-The `inputs`. This is a set with the names of all the datasets you'll use in your query. **DON'T HARDCODE THEM.** Use the values we'll set further on.
+- `inputs` property. This is a set with the names of all the datasets you'll use in your query. **DON'T HARDCODE THEM.** Use the values we'll set further on.
 
-The `definition` method. This is the core of your object. All the logic involved in creating your dataset will be placed here. Well, hopefully not **all** your logic, because you'll divide your code neatly into small functions that can be easily tested, won't you? Good.
+- `definition` method. This is the core of your object. All the logic involved in creating your dataset will be placed here. Well, hopefully not **all** your logic, because you'll divide your code neatly into small functions that can be easily tested, won't you? Good.
 
-The `attributeOverrides`. This Set contains the definition of what your output will be. The collumn names, if any field is primary key or not, if it is nullable, etc.
+- `attributeOverrides` property. This Set contains the definition of what your output will be. The collumn names, if any field is primary key or not, if it is nullable, the collumn **description** field etc.
 
-The dataset names section. Here we'll get all the names of all the datasets we'll use and place them on variables with clear names. The reason why we do so will become apparent eventually.
+- `ownerSquad` property. That's the squad that owns that dataset.
+
+- dataset names section. Here we'll get all the names of all the datasets we'll use and place them on variables with clear names. The reason why we do so will become apparent eventually.
 
 ## 4 - Create your SparkOp Class
 In IntelliJ, go to `src/main/scala/etl/dataset` and see what folders there are. Choose your folder or, if there is none that fits your dataset, create a new one.
