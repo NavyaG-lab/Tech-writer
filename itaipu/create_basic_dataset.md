@@ -158,9 +158,9 @@ object ${NAME} extends SparkOp with DeclaredSchema {
   }
 
   override def attributeOverrides: Set[Attribute] = Set(
-    MetapodAttribute("some__id", LogicalType.UUIDType, nullable = false, primaryKey = true),
-    MetapodAttribute("another__id", LogicalType.UUIDType, nullable = false),
-    MetapodAttribute("some_amount", LogicalType.DecimalType, nullable = false))
+    MetapodAttribute("some__id", LogicalType.UUIDType, nullable = false, primaryKey = true, description = Some("")),
+    MetapodAttribute("another__id", LogicalType.UUIDType, nullable = false, description = Some("")),
+    MetapodAttribute("some_amount", LogicalType.DecimalType, nullable = false, description = Some("")))
 
   // Defining a function in Scala
   def myFunc(df: DataFrame): DataFrame = df
@@ -298,7 +298,10 @@ MetapodAttribute("reason", LogicalType.EnumType(enums = Calls.attributes.find(_.
       case _ => throw new Exception("Invalid Attribute in Calls")
     }))
 ```
-Yeah, it isn't pretty, and we'll probably do something to wrap it neatly in a function in the future, but for now we got nothing. 
+Yeah, it isn't pretty, and we'll probably do something to wrap it neatly in a function in the future, but for now we got nothing.
+
+Also, let's put a description on those fields, so to let people know what they're all about.
+
 That finishes our definition.
 
 ## 6 - The Final Product
@@ -314,6 +317,7 @@ import org.apache.spark.sql.DataFrame
 
 object OuvidoriaCalls extends SparkOp with DeclaredSchema {
   override val name = "dataset/ouvidoria-calls"
+  override val ownerSquad: Squad = Squad....
   override val inputs: Set[String] = Set(callsName)
   
   val dateToSearch = "2017-02-01"
@@ -330,13 +334,13 @@ object OuvidoriaCalls extends SparkOp with DeclaredSchema {
   }
 
   override def attributeOverrides: Set[Attribute] = Set(
-    MetapodAttribute("call_id", LogicalType.UUIDType, nullable = false, primaryKey = true),
-    MetapodAttribute("time", LogicalType.TimestampType, nullable = false),
-    MetapodAttribute("our_number", LogicalType.StringType, nullable = false),
+    MetapodAttribute("call_id", LogicalType.UUIDType, nullable = false, primaryKey = true, description = Some("Unique, UUID for each call")),
+    MetapodAttribute("time", LogicalType.TimestampType, nullable = false, description = Some("UTC Timestamp for when the call started")),
+    MetapodAttribute("our_number", LogicalType.StringType, nullable = false, description = Some("The number called to contact us")),
     MetapodAttribute("call__reason", LogicalType.EnumType(enums = Calls.attributes.find(_.source == "call__reason") match {
       case Some(EnumAttribute(_, _, _, _, LogicalType.EnumType(possibleReason), _, _)) => possibleReason
       case _ => throw new Exception("Invalid Attribute in Calls")
-    }))
+    }), description = Some("Reason selected by the xpeer"))
   )
 
   def callsName: String = ContractOp(Calls).name
