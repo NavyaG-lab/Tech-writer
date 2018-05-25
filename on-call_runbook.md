@@ -7,7 +7,20 @@ The "ALERT" string should be verbatim the same string that is dispatched.
 
 ## Alarms
 
+- [conrado failed to propagate dataset](#conrado-failed-to-propagate-dataset)
 - [alert-itaipu-contracts triggered on Airflow](#alert-itaipu-contracts-triggered-on-airflow)
+
+---
+
+## conrado failed to propagate dataset
+
+This means that [conrado](https://github.com/nubank/conrado/) encountered an issue while reading a dataset out of its dynamoDB table and turning it into a series of kafka messages. It is important that most datasets propagate no later than the day they were generated, so this is not 'drop everything' issue, but is important to address quickly.
+
+To get the relavant stack-trace, look at the `TO-PROPAGATE` deadletter on conrado associated with this failure via the [mortician web UI](https://backoffice.nubank.com.br/mortician/).
+
+Ideally the issue can be addressed and the deadletter can be replayed.
+
+For instance, sometimes there is read throttling on the dynamo table. This might come up if by chance two datasets are being propagated at the same time. You can try to increase the capacity of the `conrado` dynamo table on AWS and replay the deadletter.
 
 ---
 
@@ -59,12 +72,3 @@ It is possible that a failure happens before the task is created in Aurora, and 
 
 ---
 
-## "Alert"
-* put the reasoning behind the alert here to provide context
-
-What should be done to most directly resolve the alert.  What things
-we need to look for.  What procedures to follow.  What commands to
-enter.  If there is an associated script that can automate these steps
-it should be linked here.
-
----
