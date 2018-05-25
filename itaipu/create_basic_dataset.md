@@ -66,7 +66,7 @@ All done.
 ## 2 - Create your query in SQL in Databricks
 Go to `https://nubank.cloud.databricks.com/` and create your own Notebook. There's this [Databricks Tutorial](https://docs.databricks.com/spark/latest/gentle-introduction/for-data-engineers.html) , designed for giving you a introduction to Spark running on Databricks. Also, the [entry on the wiki](https://wiki.nubank.com.br/index.php/Databricks_Notebook) is pretty useful. Feel free to read it to understand Databricks better.
 
-[TODO: INSERT IMAGE EXAMPLE OF HOW TO CREATE A NOTEBOOK HERE]
+![](../images/create_new_dataset_on_databricks.png)
 
 Give it a nice name, because you're going to share with us later and we need to know what you're trying to do here.
 
