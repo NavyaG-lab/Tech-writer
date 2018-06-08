@@ -8,6 +8,7 @@ The "ALERT" string should be verbatim the same string that is dispatched.
 ## Alarms
 
 - [conrado failed to propagate dataset](#conrado-failed-to-propagate-dataset)
+- [tapir failed to load at least one row to DynamoDB in the last 24 hours](#tapir-failed-to-load-at-least-one-row-to-DynamoDB-in-the-last-24-hours)
 - [alert-itaipu-contracts triggered on Airflow](#alert-itaipu-contracts-triggered-on-airflow)
 
 ---
@@ -21,6 +22,16 @@ To get the relavant stack-trace, look at the `TO-PROPAGATE` deadletter on conrad
 Ideally the issue can be addressed and the deadletter can be replayed.
 
 For instance, sometimes there is read throttling on the dynamo table. This might come up if by chance two datasets are being propagated at the same time. You can try to increase the capacity of the `conrado` dynamo table on AWS and replay the deadletter.
+
+---
+
+## Tapir failed to load at least one row to DynamoDB in the last 24 hours
+
+When `tapir` loads datasets in the `tapir-load` DAG node, it [scales up the dynamo capacity dynamically](https://github.com/nubank/tapir/blob/e0fb144c25cd2320e0535c7d08c63133c08d5fc9/src/tapir/core.clj#L205). For whatever reason, this doesn't always work leading to crazy throttling and data load issues.
+
+You can check that this is the case by looking at the write capacity for the `conrado` DynamoDB table on [the metrics tab on AWS](https://sa-east-1.console.aws.amazon.com/dynamodb/home?region=sa-east-1#tables:selected=prod-conrado-docstore). If the capacity scale up failed, you will see that it is consuming way more than has been provisioned.
+
+The solution when the dynamo scale up didn't work is to kill `tapir-load` manually and restart it on airflow.
 
 ---
 
