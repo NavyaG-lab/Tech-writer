@@ -51,7 +51,7 @@ Creating a new contract is different than updating an existing contract because 
     1. Ensure all objects are referenced by the `entities` val in the database object (mentioned in the previous step).
 
 1. If this is the first contract for this database, add a reference to the database object to
-[`allDatabases` in `contract/package.scala`](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/contract/package.scala)
+[`allDatabases` in `contract/package.scala`](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/contract/package.scala). If not add a reference of your new contract to the [existing database object](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/contract/proximo/Proximo.scala) (entities attribute).
 
 1. Follow the instructions about [running tests](#running-tests)
 
