@@ -29,6 +29,7 @@ This repository is the canonical place to put all documentation related to how t
 * [Styleguide](itaipu/styleguide.md)
 * [Workflow](itaipu/workflow.md)
 * [Bumping Itaipu on Databricks](itaipu/databricks_bump.md)
+* [Updating the Log Cache](itaipu/log_cache_update.md)
 
 ## Infrastructure
 * [Inventory](infrastructure/inventory.md)
