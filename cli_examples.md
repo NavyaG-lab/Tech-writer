@@ -106,6 +106,18 @@ sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-me
 **for a full list of possible switches run `sabesp jobs itaipu --help`**
 
 
+### Manually run job 
+
+```
+sabesp --aurora-stack=<stack>  jobs create <env> <job> <binds> --metapod-transaction <transaction-id> --job-version "<job>=<version>"
+```
+
+e.g:
+```shell
+sabesp --aurora-stack=cantareira-dev jobs create staging capivara-clj  DEPLOY_NON_DIMENSIONAL_MODELING=true OUTPUT_PREFIX=s3a://nu-spark-devel COPY_REDSHIFT_MAX_ERRORS=100 TARGET_DATE="2018-06-14" METAPOD_ENVIRONMENT=staging METAPOD_TRANSACTION=e25faed2-6578-4a57-a15a-01ec33642d5c --metapod-transaction e25faed2-6578-4a57-a15a-01ec33642d5c  --job-version "capivara_clj=e6fbb31"
+
+```
+
 ### Manually commit a dataset to metapod
 
 ```shell
