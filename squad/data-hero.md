@@ -58,7 +58,7 @@ Two members of data access will be scheduled to work as data hero for each week.
 
 ### Support our Clients
 
-Do not help people that come directly to the data access room with their laptops, without being invited. Properly point them to the respective slack channel, making sure they understand that this is not just for bureaucracy. That's how we measure the quality of our support and other that other users can help them as well.
+Do not help people that come directly to the data access room with their laptops, without being invited. Properly point them to the respective slack channel, making sure they understand that this is not just for bureaucracy. That's how we measure the quality of our support and ensure that other users can help them as well.
 
 ### Data Infra
 
