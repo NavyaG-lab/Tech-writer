@@ -2,7 +2,7 @@
 
 ## What is a Data Hero?
 
-The Data Access team is one of the main problem solvers for data related issues at Nubank, and one of the main channels that people can rely on to ask a question about data is the Slack channel #data-help. Nubank is growing up in size really fast and, as a consequence, the number of data related problems is growing with it, which results into members of data access team receiving more questions than they can respond in parallel to their normal workday. 
+The Data Access team is one of the main problem solvers for data related issues at Nubank, and one of the main channels that people can rely on to ask a question about data is the Slack channel [#data-help](https://nubank.slack.com/messages/C06F04CH1/). Nubank is growing up in size really fast and, as a consequence, the number of data related problems is growing with it, which results into members of data access team receiving more questions than they can respond in parallel to their normal workday. 
 
 Worried about the constant context switch between squad's internal work to answering questions related to data, the Data Access team decided to create the role of the "data hero". Data hero is a person who will be in charge of resolving the problems of other nubankers that need help with data, while the rest of the team can focus on the squad objectives. By creating the role of Data Hero, Data Access will be able to benefit from more power hours of work without losing the ability to support other nubankers.
 
@@ -83,9 +83,10 @@ If the issue is with how to do a specific task, point them in the right directio
 ### Itaipu
 
 Common issues:
-	* Bad identation and/or formatting: run `scalafmt`
-	* New SparkOps not added to the main package
-	* New Dataset Series without a corresponding PR on [curva-de-rio](https://github.com/nubank/curva-de-rio)
-	* New StaticOp without file on S3
+
+* Bad identation and/or formatting: run `scalafmt`
+* New SparkOps not added to the main package
+* New Dataset Series without a corresponding PR on [curva-de-rio](https://github.com/nubank/curva-de-rio)
+* New StaticOp without file on S3
 
 
