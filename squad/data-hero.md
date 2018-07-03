@@ -15,6 +15,8 @@ Check and fix (if possible):
  * [Databricks](https://nubank.cloud.databricks.com/#setting/clusters) 
  * [Metabase](https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:search=metabase;sort=tag:Name)
  * [Looker](https://nubank.looker.com/admin)
+ * [Mordor](https://console.aws.amazon.com/ec2/v2/home?region=sa-east-1#Instances:search=mordor;sort=tag:Name)
+     * Cycling the machines will solve many problems: `nu ser cycle s0 mordor --env prod --suffix x`
 
 ### Support our Clients
 Over the course of the week our customers, Nubank's data users, often encounter issues while using our services.
