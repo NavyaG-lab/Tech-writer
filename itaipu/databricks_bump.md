@@ -25,6 +25,7 @@ then on `build_test_package` under "Workflow".
 1. Click on the `package` step in the workflow (it should be green). You
 will see something like this: ![](../images/circleci_workflow.png)
 1. Download the JAR by going to the `Artifacts` tab: ![](../images/circleci_artifacts.png)
+1. Rename it from `itaipu_2.11-1.0.0-SNAPSHOT.jar` to `itaipu_2.11-1.0.0-SNAPSHOT-<YYYYMMDD>-<GITSHA>.jar`, where `<YYYYMMDD>` is the current date, and `GITSHA` are the first 7 characters of the git commit SHA (in the case shown in the figure, `103f895`).
 
 ### Via sbt
 
@@ -35,13 +36,13 @@ $ git checkout master
 $ git pull origin master
 $ sbt clean
 $ sbt package
-$ mv target/scala-2.11/itaipu_2.11-1.0.0-SNAPSHOT.jar target/scala-2.11/itaipu_2.11-1.0.0-SNAPSHOT-$(date +'%Y%m%d').jar
+$ mv target/scala-2.11/itaipu_2.11-1.0.0-SNAPSHOT.jar target/scala-2.11/itaipu_2.11-1.0.0-SNAPSHOT-$(date +'%Y%m%d')-$(git rev-parse --short=7 HEAD).jar
 ```
 Explanation:
 - `sbt clean` removes all generated files from the target directory.
 - `sbt package` creates a JAR file containing the files in `src/main/scala`,
 `src/main/java`, and resources in `src/main/resources`.
-- The last part adds the current date to the filename. The name comes from variables
+- The last part adds the current date and git commit SHA to the filename. The name comes from variables
 `name`, `version` and `scalaVersion`
 in [build.sbt](https://github.com/nubank/itaipu/blob/28a63912d5d49b382bd0dcae41eccb4db7b4bb37/build.sbt#L1).
 If it is different, you need to change it accordingly.
