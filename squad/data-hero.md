@@ -33,10 +33,10 @@ Slack channels you should monitor for questions:
 * Move StaticOp's to the appropriate AWS S3 bucket and prefix
 
 ### Guide people on the use and setup of:
-* Sonar
+* Sonar: https://wiki.nubank.com.br/index.php/Sonar
 * belomonte (python library): https://wiki.nubank.com.br/index.php/Belo_Monte
-* Imordor
-* Mordor
+* IMordor: https://wiki.nubank.com.br/index.php/IMordor
+* Mordor: https://wiki.nubank.com.br/index.php/Mordor
 * Dbeaver: https://github.com/nubank/playbooks/tree/master/squads/data-access/dbeaver and https://wiki.nubank.com.br/index.php/SQL_client
 
 ### Databricks
@@ -58,7 +58,7 @@ Two members of data access will be scheduled to work as data hero for each week.
 
 ### Support our Clients
 
-Do not help people that come directly to the data access room with their laptops, without being invited. Properly point them to the respective slack channel, making sure they understand that this is not just for bureaucracy. That's how we measure the quality of our support and ensure that other users can help them as well.
+Do not help people that come directly to the data access room with their laptops, without being invited. Properly point them to the respective Slack channel, making sure they understand that this is not just for bureaucracy. That's how we measure the quality of our support and ensure that other users can help them as well.
 
 ### Data Infra
 
@@ -75,7 +75,7 @@ Fix someone else computer (we are here to help with data related problems)
 
 ## Tips
 
-An issue has come to your attention via a slack channel, an alarm, or monitoring dashboards
+An issue has come to your attention via a Slack channel, an alarm, or monitoring dashboards
 
 ### User Questions
 If the issue is with how to do a specific task, point them in the right direction (docs/playbooks). It isn't necessarily your responsibility to help them do their work, but consider writing docs if you see the same question coming up.
@@ -87,6 +87,6 @@ Common issues:
 * Bad identation and/or formatting: run `scalafmt`
 * New SparkOps not added to the main package
 * New Dataset Series without a corresponding PR on [curva-de-rio](https://github.com/nubank/curva-de-rio)
-* New StaticOp without file on S3
+* New StaticOp without file on S3 or with the wrong schema (extra or missing columns, wrong types)
 
 
