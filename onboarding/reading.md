@@ -34,6 +34,7 @@ Have a look at the books in the office to get some dead tree resources.
 - [You Do It Too: Forfeiting Network Partition Tolerance in Distributed Systems](http://blog.thislongrun.com/2015/07/Forfeit-Partition-Tolerance-Distributed-System-CAP-Theorem.html)
 - [Making The Case For Building Scalable Stateful Services In The Modern Era](http://highscalability.com/blog/2015/10/12/making-the-case-for-building-scalable-stateful-services-in-t.html)
 - [Provenance and causality in distributed systems](http://blog.jessitron.com/2016/09/provenance-and-causality-in-distributed.html)
+- [Aphyr's Jepsen article series](https://aphyr.com/posts/281-jepsen-on-the-perils-of-network-partitions)
 
 ## Databases
 
