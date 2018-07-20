@@ -19,6 +19,11 @@ If an issue comes up that you cannot handle independently, you should escalate t
 _For visibility_: when an issue arises, it is expected that you:
  - mention the failure in [#guild-data-eng](https://nubank.slack.com/messages/C1SNEPL5P/). This allows people to follow along, contribute suggestions, and better connect their code changes to failures you have to wake up in the night for.
  - add an entry to the [data-infra log book](https://docs.google.com/spreadsheets/d/1-1AEX2aPvZvEQgGjXyxIoYl4eD2oav6_6V-eAH2oZ74/edit#gid=0) so we can track the most common failures.
+ 
+### report squad's weekly progress
+On Friday we shoud should update our clients about the work done in the week. We should send a message on [#data-announcements](https://nubank.slack.com/messages/C20GTK220/) and replicate the message on [#guild-data-eng](https://nubank.slack.com/messages/C1SNEPL5P/) and [#squad-data-infra](https://nubank.slack.com/messages/C0XRWDYQ2/).
+
+This message should contain the main tasks done on new features, bug fixes and even squad tasks like hiring jobs.
 
 ### support our clients
 Over the course of the week our customers, Nubank's data scientists, often encounter platform issues while using our services.
