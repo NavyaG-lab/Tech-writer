@@ -8,6 +8,7 @@ Table of contents
 * [Updating Airflow](#updating-airflow)
 * [Restarting the Airflow process](#restarting-the-airflow-process)
 * [Dry run tests](#dry-run-tests)
+* [Add new model to dagão dependencies](#add-new-model-to-dagão-dependencies)
 
 ### Useful links
 * [Monitoring the run on Airflow](./monitoring_nightly_run.md)
@@ -132,3 +133,35 @@ differently in the past).
 Side note: obviously the docker in docker in docker approach is
 undesirable. Because of this, I think that this part of our architecture should
 be considered for a refactoring soon.
+
+### Add new model to dagão dependencies
+
+When users want to add new models to the nightly run we will need to make some updates to the dagão pipeline.
+
+Let's say you are adding a model called `healbot`.
+ - Check that there is a [go pipeline](https://go.nubank.com.br/go/tab/pipeline/history/healbot) for it. Someone should have created it via the [`batch-models-python-template`](https://github.com/nubank/batch-models-python-template/) repository.
+ - Add the model pipeline as one of the dagãod ependencies
+
+    Go to [dagao materials](https://go.nubank.com.br/go/admin/pipelines/dagao/materials?current_tab=materials#), click on `Add Material`
+    choose Package, and then on the configs select:
+        - Repository: gocd-artifacts
+        - Package: Define New
+        - Package Name: `healbot`
+        - Pipeline Name: `healbot`
+        - Stage Name: `publish`
+        - Job Name: `publish`
+
+ - Add the model version to the json provided to airflow:
+
+    - Go to `dagao` -> `create-das` -> `create-push-das` ([direct link](https://go.nubank.com.br/go/admin/pipelines/dagao/stages/create-das/job/create-push-das/tasks))
+    - Edit the `Script Executor` that runs when `Passed` condition is met (the big one)
+    - in the `write_das` function add two lines in two places:
+    ```
+    # to set the version variable using a value provided by the gocd-artifacts material
+    healbot_version="$(cat healbot/model-version.json | jq .healbot -r | cut -c 1-7 )"
+    ...
+    # to add the version to the json sent to airflow
+    "healbot" : "$healbot_version"
+    ```
+
+ - Add the model to the DAG definition in `aurora-jobs`. It will look something like [this](https://github.com/nubank/aurora-jobs/pull/606/files)

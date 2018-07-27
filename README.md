@@ -23,6 +23,7 @@ This repository is the canonical place to put all documentation related to how t
 * [On Call Runbook](on-call_runbook.md)
 * [Ops How To](ops_how_to.md)
 * [CLI usage examples](cli_examples.md)
+* [Airflow](airflow.md)
 
 ## Itaipu
 * [Primer](itaipu/primer.md)
