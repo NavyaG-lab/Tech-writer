@@ -140,7 +140,7 @@ When users want to add new models to the nightly run we will need to make some u
 
 Let's say you are adding a model called `healbot`.
  - Check that there is a [go pipeline](https://go.nubank.com.br/go/tab/pipeline/history/healbot) for it. Someone should have created it via the [`batch-models-python-template`](https://github.com/nubank/batch-models-python-template/) repository.
- - Add the model pipeline as one of the dagãod ependencies
+ - Add the model pipeline as one of the dagão dependencies
 
     Go to [dagao materials](https://go.nubank.com.br/go/admin/pipelines/dagao/materials?current_tab=materials#), click on `Add Material`
     choose Package, and then on the configs select:
