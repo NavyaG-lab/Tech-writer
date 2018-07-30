@@ -10,6 +10,7 @@ The "ALERT" string should be verbatim the same string that is dispatched.
 - [conrado failed to propagate dataset](#conrado-failed-to-propagate-dataset)
 - [tapir failed to load at least one row to DynamoDB in the last 24 hours](#tapir-failed-to-load-at-least-one-row-to-DynamoDB-in-the-last-24-hours)
 - [alert-itaipu-contracts triggered on Airflow](#alert-itaipu-contracts-triggered-on-airflow)
+- [Deadletter prod-etl-committed-dataset](#deadletter-prod-etl-committed-dataset)
 
 ---
 
@@ -83,3 +84,21 @@ It is possible that a failure happens before the task is created in Aurora, and 
 
 ---
 
+## Deadletter prod-etl-committed-dataset
+
+This happen when there is a problem on producing a dataset on capivara.
+
+### Check what type of dataset broke
+
+- Open the aws SQS service in the browser and change the region to `us-east-1` (North Virginia).
+- There will be at least two queues there: the one consumed by capivara `prod-etl-committed-dataset` and the deadletter queue (messages that failed in the capivara processing are produced to this queue) `prod-etl-committed-dataset-failed`.
+- Check the `prod-etl-committed-dataset-failed` queue on `Queue Actions` > `View/Delete Messages` > `Start pooling the messages`
+- Each line will be one deadletter. In the body of the message there will be the name of the dataset, if it's an archived (the name starts with `archive/` go to the [next step](#replay-archived-dataset-deadletter). If it's another type of dataset just delete it.
+
+### Replay archived dataset deadletter
+
+- Click in `More Details` in the right side of the deadletter.
+- Copy the message body.
+- Delete the deadletter.
+- Open a new tab and go to the SQS page (don't forget to check if you are in `us-east-1` region).
+- For the `prod-etl-committed-dataset` go `Queue Actions` > `Send a Message` > paste the body of the deadletter there > `Send Message`
