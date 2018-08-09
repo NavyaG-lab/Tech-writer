@@ -41,8 +41,8 @@ When a job is changed on [`aurora-jobs`](https://github.com/nubank/aurora-jobs),
  completes it'll trigger the [`dagao` Go
  Pipeline](https://go.nubank.com.br/go/pipeline/history/dagao). The main test
  that is run in this pipeline is called [`dry-run-tests`](#dry-run-tests). This needs to be
- manually `release` in order for Airflow to have access to it. 
- 
+ manually `release` in order for Airflow to have access to it.
+
  ### *Don't do this during an active DAG run.*
 
    ![releasing dagao](images/release_dagao.png)
@@ -138,30 +138,35 @@ be considered for a refactoring soon.
 
 When users want to add new models to the nightly run we will need to make some updates to the dagão pipeline.
 
-Let's say you are adding a model called `healbot`.
- - Check that there is a [go pipeline](https://go.nubank.com.br/go/tab/pipeline/history/healbot) for it. Someone should have created it via the [`batch-models-python-template`](https://github.com/nubank/batch-models-python-template/) repository.
+Let's say you are adding a model called `your-model-name`.
+ - Check that there is a [go pipeline](https://go.nubank.com.br/go/tab/pipeline/history/your-model-name) for it. Someone should have created it via the [`batch-models-python-template`](https://github.com/nubank/batch-models-python-template/) repository.
  - Add the model pipeline as one of the dagão dependencies
 
     Go to [dagao materials](https://go.nubank.com.br/go/admin/pipelines/dagao/materials?current_tab=materials#), click on `Add Material`
     choose Package, and then on the configs select:
         - Repository: gocd-artifacts
         - Package: Define New
-        - Package Name: `healbot`
-        - Pipeline Name: `healbot`
+        - Package Name: `your-model-name`
+        - Pipeline Name: `your-model-name`
         - Stage Name: `publish`
         - Job Name: `publish`
 
  - Add the model version to the json provided to airflow:
 
     - Go to `dagao` -> `create-das` -> `create-push-das` ([direct link](https://go.nubank.com.br/go/admin/pipelines/dagao/stages/create-das/job/create-push-das/tasks))
+    - Click on `Add new task` -> `Fetch from S3`
+        - Repository name: gocd-artifacts
+        - Package name: `your-model-name`
+        - Destination directory: `your-model-name`
+        - Save this change, and move your task to be the top one
     - Edit the `Script Executor` that runs when `Passed` condition is met (the big one)
     - in the `write_das` function add two lines in two places:
     ```
     # to set the version variable using a value provided by the gocd-artifacts material
-    healbot_version="$(cat healbot/model-version.json | jq .healbot -r | cut -c 1-7 )"
+    your_model_name_version="$(cat your-model-name/model-version.json | jq '."your-model-name"' -r | cut -c 1-7 )"
     ...
     # to add the version to the json sent to airflow
-    "healbot" : "$healbot_version"
+    "your-model-name" : "$your_model_name_version"
     ```
 
  - Add the model to the DAG definition in `aurora-jobs`. It will look something like [this](https://github.com/nubank/aurora-jobs/pull/606/files)
