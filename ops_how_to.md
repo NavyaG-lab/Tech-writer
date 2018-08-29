@@ -20,6 +20,7 @@
   * [Retracting datasets in bulk](#retracting-datasets-in-bulk)
 * [Dealing with Datomic self-destructs](#dealing-with-datomic-self-destructs)
 * [Load a run dataset in Databricks](#load-a-run-dataset-in-databricks)
+* [Restart the backup-restore cluster](#restart-the-backup-restore-cluster)
 
 ## Restart redshift cluster
 
@@ -390,3 +391,16 @@ val x = spark.read.parquet("dbfs:/mnt/nu-spark-metapod/10b090f0-fda6-4ef3-b091-9
 import com.databricks.spark.avro._
 val x = spark.read.avro("dbfs:/mnt/nu-spark-metapod/UIeeQn58Qi6_6OLQH6li2w")
 ```
+
+## Restart the backup-restore cluster
+If you see bunch of messages like the one below on #squad-di-alarms one of the two problems is happening: splunk is down or the bakcup-restore cluster is unhealthy
+
+```
+No successfull backup for prod-s2-double-entry-t0-datomic-double-entry-t0 in the last 96 hours! Please take a look.
+```
+
+If you can query splunk normally than take a look at the backup-restore cluster.
+
+On AWS UI open the ECS service in us-east-1. On the cluster tab search and open the `backup-restore` cluster.
+ - In the `Metrics` tab the CPU and Memory utilization should be more than 50%, if it's lower than that it means that something is wrong with the cluster.
+ - Go to the `Tasks` tab and click on `Stop all`. After all the tasks are stopped they will come back to a healthy life.
