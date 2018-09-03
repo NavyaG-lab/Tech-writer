@@ -2,6 +2,12 @@ Keep an eye on #guild-data-eng and #eng-cool-stuff at slack for newer resources.
 
 Have a look at the books in the office to get some dead tree resources.
 
+# Internal material
+
+- [Busquem Conhecimento ETL](https://www.youtube.com/watch?v=QKSiGzrLUyQ): talk given by Alessandro Andrioni and Andre Midea on November 11, 2016
+- [Machine Learning Meetup 5th Edition - Nubank’s Data Pipeline](https://www.youtube.com/watch?v=i97teM7TNqg): talk given by Alessandro Andrioni and Andre Midea on June 5, 2017
+- [BIMicroservices-v2.pdf](https://drive.google.com/file/d/1DbXJvEvab6TkoHFZgmRTFBWVVkCM00A_/view): presentation given by Edward Wible on October 6, 2017
+
 # Blog posts
 
 ## General data engineering
