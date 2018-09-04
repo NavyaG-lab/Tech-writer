@@ -106,7 +106,7 @@ This happen when there is a problem on producing a dataset on capivara.
 
 ### No file upload in the last hour
 
-This alert means that [Riverbend](github.com/nubank/riverbend) is not properly consuming, batching and uploading incoming messages.
+This alert means that [Riverbend](https://github.com/nubank/riverbend) is not properly consuming, batching and uploading incoming messages.
 
 - First, check on Grafana if that's really the case [Grafana Dashboard](https://prod-grafana.nubank.com.br/d/000000301/riverbend)
 - If that's the case and files upload is actually 0 in the last couple hours you should cycle riverbend, `nu ser cycle global riverbend`
