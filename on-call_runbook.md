@@ -11,6 +11,7 @@ The "ALERT" string should be verbatim the same string that is dispatched.
 - [tapir failed to load at least one row to DynamoDB in the last 24 hours](#tapir-failed-to-load-at-least-one-row-to-DynamoDB-in-the-last-24-hours)
 - [alert-itaipu-contracts triggered on Airflow](#alert-itaipu-contracts-triggered-on-airflow)
 - [Deadletter prod-etl-committed-dataset](#deadletter-prod-etl-committed-dataset)
+- [Riverbend - no file upload in the last hour](#no-file-upload-in-the-last-hour)
 
 ---
 
@@ -102,3 +103,12 @@ This happen when there is a problem on producing a dataset on capivara.
 - Delete the deadletter.
 - Open a new tab and go to the SQS page (don't forget to check if you are in `us-east-1` region).
 - For the `prod-etl-committed-dataset` go `Queue Actions` > `Send a Message` > paste the body of the deadletter there > `Send Message`
+
+### No file upload in the last hour
+
+This alert means that [Riverbend](github.com/nubank/riverbend) is not properly consuming, batching and uploading incoming messages.
+
+- First, check on Grafana if that's really the case [Grafana Dashboard](https://prod-grafana.nubank.com.br/d/000000301/riverbend)
+- If that's the case and files upload is actually 0 in the last couple hours you should cycle riverbend, `nu ser cycle global riverbend`
+- After a while check if it gets back to normal, it can take a while (~20 min) as it has to restore the state store.
+- If it doesn't start working again, check for further exceptions on Splunk.
