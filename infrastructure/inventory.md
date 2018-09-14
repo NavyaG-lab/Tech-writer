@@ -6,10 +6,8 @@
 
 These are "normal" Clojure services that get deployed in our main infrastructure for production services.
 - [metapod](https://github.com/nubank/metapod), ([overview](/primer.md#metapod-overview))
-- [analytics](https://github.com/nubank/analytics)
 - [curva-de-rio](https://github.com/nubank/curva-de-rio)
 - [warehouse](https://github.com/nubank/warehouse)
-- [mordor](https://github.com/nubank/mordor)
 - [conrado](https://github.com/nubank/conrado)
 
 ### Front-ends
