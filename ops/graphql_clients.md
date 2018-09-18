@@ -17,7 +17,7 @@ https://prod-metapod.nubank.com.br/api/graphql/query
 
 #### bearer token
 
-In the request settings click `Bearer` and add the output of running this command, excluding the `Bearer ` at the beginning
+In the request settings tabs bar below the URL, click `Bearer` (might be `Auth`, then choose `Bearer Token` in the dropdown) and add the output of running this command, excluding the `Bearer ` at the beginning
 
 ```
 nu auth token prod
@@ -30,9 +30,21 @@ nu auth get-refresh-token
 nu auth refresh-token
 ```
 
+Alternatively, you can also add a new _Environment_ in Insomnia, which will allow you to set environment variables across all saved requests. To access the Manage Environments window, click the `No Environment` dropdown below the Insomnia logo on the top-left.
+For instance, you can setup a `prod` environment such as:
+
+```
+{
+	"metapod_base_url": "https://prod-global-metapod.nubank.com.br/api",
+	"token": "EbDJHf45kj3b45..."
+}
+```
+
+And then in the Bearer token setting, you can type `{{token}}` and it will use the env vars for the environment.
+
 #### client cert and key
 
- - Navigate to the Insomnia `Workspace Settings` menu (click the insomnia drop down next to the `Request` menu area)
+ - Navigate to the Insomnia `Workspace Settings` menu (click the Insomnia drop down next to the `Request` menu area)
  - Within the `Client certificates` tab select `New Certificate`
  - Configure the certificate to have
     - a `HOST` set to  `*.nubank.com.br`
