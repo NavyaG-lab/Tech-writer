@@ -118,6 +118,16 @@ sabesp --aurora-stack=cantareira-dev jobs create staging capivara-clj  DEPLOY_NO
 
 ```
 
+### Manually downscale the cluster
+```shell
+sabesp --aurora-stack=<stack> jobs create <env> downscale-ec2-<job-name> NODE_COUNT=<nodes> SLAVE_TYPE=<job-name> --filename scale-ec2 --job-version"scale_cluster=<version>"
+```
+
+e.g:
+```shell
+ sabesp --aurora-stack=cantareira-stable jobs create staging downscale-ec2-itaipu-leo-test NODE_COUNT=20 SLAVE_TYPE=itaipu-leo-test --filename scale-ec2 --job-version="scale_cluster=74e5894"
+ ```
+
 ### Manually commit a dataset to metapod
 
 ```shell
