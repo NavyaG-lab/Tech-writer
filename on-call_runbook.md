@@ -12,6 +12,7 @@ The "ALERT" string should be verbatim the same string that is dispatched.
 - [alert-itaipu-contracts triggered on Airflow](#alert-itaipu-contracts-triggered-on-airflow)
 - [Deadletter prod-etl-committed-dataset](#deadletter-prod-etl-committed-dataset)
 - [Riverbend - no file upload in the last hour](#no-file-upload-in-the-last-hour)
+- [Correnteza - integrity checker unhealthy](#correnteza-integrity-checker-unhealthy)
 
 ---
 
@@ -40,7 +41,7 @@ The solution when the dynamo scale up didn't work is to kill `tapir-load` manual
 ## "alert-itaipu-contracts triggered on Airflow"
 
 This means the first task in our daily DAG failed. This task is a dependency
-to all the rest of the DAG, so it's important that it runs smoothly and 
+to all the rest of the DAG, so it's important that it runs smoothly and
 on time in order for us to meet our SLA.
 
 _You need VPN access to follow the steps below._
@@ -76,7 +77,7 @@ It is possible that a failure happens before the task is created in Aurora, and 
 1. Access https://airflow.nubank.com.br/admin/airflow/graph?dag_id=prod-dagao
 1. Click on the `itaipu-contracts` node in the graph, and you will see a pop-up appear. Click "Zoom into Sub DAG".
 1. In the graph that will appear, click the `itaipu-contracts` node. Then, click "View Log".
-1. You'll be seeing the log of the last attempt to start that task. If there was a failure, you'll see a stack trace, and right before that, a line that starts with:  
+1. You'll be seeing the log of the last attempt to start that task. If there was a failure, you'll see a stack trace, and right before that, a line that starts with:
 ```
 {base_task_runner.py:98} INFO - Subtask: [2018-03-22 00:32:36,584] {create.py:52} ERROR - job failed with status FAILED and message [...]
 ```
@@ -112,3 +113,61 @@ This alert means that [Riverbend](https://github.com/nubank/riverbend) is not pr
 - If that's the case and files upload is actually 0 in the last couple hours you should cycle riverbend, `nu ser cycle global riverbend`
 - After a while check if it gets back to normal, it can take a while (~20 min) as it has to restore the state store.
 - If it doesn't start working again, check for further exceptions on Splunk.
+
+### Correnteza integrity checker unhealthy
+
+If you see a `ops_health_failure` alarm on `#squad-di-alarms` for `component: integrity-checker` then you can get more info by running
+
+```bash
+nu ser curl GET global correnteza /ops/health/integrity-checker | jq .
+```
+
+An example output might be:
+```json
+{
+  "healthy": false,
+  "checks": {
+    "bonham-s3": [
+      {
+        "error_type": "last_extraction_more_than_24_hours_ago",
+        "corrupted_extractions": [
+          {
+            "path": "s3://nu-spark-datomic-logs/1/s3/bonham/3e0c72fd-24c0-4f8f-a471-44d88d80ed2c-3733-3737.avro",
+            "last_batch_t": 3733,
+            "prototype": "s3",
+            "requested_range": [
+              3734,
+              53734
+            ],
+            "database": "bonham",
+            "db_prototype": "bonham-s3",
+            "version": "7c137611328f5c161ad77d6d3492e0d4e4c5a82a",
+            "timestamp": 1537369460036,
+            "initial_t": 3734,
+            "last_t": 3737
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+#### Error type: `last_extraction_more_than_24_hours_ago`
+
+The `last_extraction_more_than_24_hours_ago` error type warns that a database hasn't been extracted in the last day. 
+This signifies that something is wrong or that a database hasn't received any new data in this time.
+
+Databases marked as `"error_type": "last_extraction_more_than_24_hours_ago"` in this output are probably databases that are no longer used or get very few writes.
+
+In the case of unused databases you can turn off this warning. For databases with low activity, you'll have to make the judgement call if turning off the check makes sense.
+
+To turn off this alert for a database, mark it as a `cold database` by adding it to [this list](https://github.com/nubank/correnteza/blob/50ffe40dfc60d176e1ecd190d1ef0639f055a775/src/prod/correnteza_config.json#L3).
+You can do this by opening a PR targeting the `config` branch of the `correnteza` repo.
+Once it is merged, trigger the `deploy-to-prod` step in the [`correnteza-prod-config` pipeline](https://go.nubank.com.br/go/tab/pipeline/history/correnteza-config-prod).
+
+Then you can refresh the integrity checker via:
+
+```bash
+nu ser curl POST global correnteza /ops/integrity-checker/force
+```
