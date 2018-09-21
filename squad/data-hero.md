@@ -48,6 +48,7 @@ Slack channels you should monitor for questions:
 * [#data-help](https://nubank.slack.com/messages/C06F04CH1/)
 * [#squad-data-access](https://nubank.slack.com/messages/C84FAS7L6/)
 * [#guild-data-eng](https://nubank.slack.com/messages/C1SNEPL5P/)
+* [#data-announcements](https://nubank.slack.com/messages/C20GTK220/)
 
 ### Itaipu
 

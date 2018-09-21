@@ -14,7 +14,7 @@ When checking on the progress of the run, first check [Sonar](https://backoffice
 
 To check Sonar, first get the [metapod transaction](glossary.md#transaction) ID for the run.
 
-One way to get the Transaction ID is from the daily Slack notification posted in [#guild-data-eng](https://nubank.slack.com/messages/C1SNEPL5P/) when the nightly run begins (see the Metapod transaction line):
+One way to get the Transaction ID is from the daily Slack notification posted in [#etl-updates](https://nubank.slack.com/messages/CCYJHJHR9/) when the nightly run begins (see the Metapod transaction line):
 
 ![image](https://user-images.githubusercontent.com/726169/33165581-a8d1169c-d037-11e7-9062-40d678b9800d.png)
 

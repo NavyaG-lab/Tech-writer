@@ -76,4 +76,4 @@ The `config_downloader` DAG runs the [bootstrap_config.sh script](https://github
 
 ## Conclusion
 
-If everything went well, you can rest and wait for the nightly run, which starts at 00:00:00 UTC. You can check the message from Aurotira on the Slack channel **#guild-data-eng**.
+If everything went well, you can rest and wait for the nightly run, which starts at 00:00:00 UTC. You can check the message from Aurora on the [#etl-updates](https://nubank.slack.com/messages/CCYJHJHR9/) channel.

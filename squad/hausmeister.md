@@ -33,6 +33,7 @@ Slack channels you should monitor for questions:
 
 * [#squad-data-infra](https://nubank.slack.com/messages/C0XRWDYQ2/)
 * [#guild-data-eng](https://nubank.slack.com/messages/C1SNEPL5P/)
+* [#data-announcements](https://nubank.slack.com/messages/C20GTK220/)
 * [#data-help](https://nubank.slack.com/messages/C06F04CH1/)
 
 ### review open PRs
@@ -95,4 +96,4 @@ Example:
 Each day the data-announcements job [defined in Aurora](https://github.com/nubank/aurora-jobs/blob/master/jobs/data-announcements.aurora#L21) is run as a part of [another DAG](https://airflow.nubank.com.br/admin/airflow/graph?dag_id=data-announcements) defined [here](https://github.com/nubank/aurora-jobs/blob/master/airflow/data-announcements.py#L1) that posts the ETL DAG status in [#data-announcements](https://nubank.slack.com/messages/C20GTK220/)
 
 Everyday the hausmeister should check the run status of the [DAG](https://airflow.nubank.com.br/admin/airflow/graph?dag_id=prod-dagao) for other teams to view.
-This is posted to the slack channel [#data-announcements](https://nubank.slack.com/messages/C20GTK220/)
+This is posted to the slack channel [#etl-updates](https://nubank.slack.com/messages/CCYJHJHR9/)
