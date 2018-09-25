@@ -259,7 +259,7 @@ Running the tests:
     file (passing the filename), and watch for updates in that file (using the tilde):
         ```shell
         $ sbt
-        > ~test-only etl.dataset.folder_name.FileNameSpec
+        > ~testOnly etl.dataset.folder_name.FileNameSpec
         ```
     1. Use [testQuick](http://www.scala-sbt.org/0.13/docs/Testing.html#testQuick) to run:
         - specific tests
