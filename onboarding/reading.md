@@ -52,6 +52,12 @@ Have a look at the books in the office to get some dead tree resources.
 
 - [Hermitage: Testing the “I” in ACID](https://martin.kleppmann.com/2014/11/25/hermitage-testing-the-i-in-acid.html)
 
+## Analytics
+
+- [Building The Analytics Team At Wish Part 2 — Scaling Data Engineering](https://medium.com/wish-engineering/scaling-the-analytics-team-at-wish-part-2-scaling-data-engineering-6bf7fd842dc2)
+- [Democratizing Data at Airbnb](https://medium.com/airbnb-engineering/democratizing-data-at-airbnb-852d76c51770)
+- [Analytical Maturity Evaluation by Looker](https://drive.google.com/open?id=1xkweS3a-Mneo8ba7RhIabmbc59PjFsu7)
+
 ## Data modeling
 
 - [Towards universal event analytics - building an event grammar](http://snowplowanalytics.com/blog/2013/08/12/towards-universal-event-analytics-building-an-event-grammar/)
