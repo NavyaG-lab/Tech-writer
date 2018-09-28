@@ -4,13 +4,13 @@
 |-------------------------------|-------------------------------------|--------------------------------|--------------------------------|--------------------------------|
 | In production at Nubank       | Since mid 2016                      | No                             | No                             | No                           |
 | Used for development          | No                                  | No                             | Yes<sup>1</sup>                | No                           |
-| Metabase                      | Can connect                         | Limited support<sup>2</sup>    | Can not connect                | Working driver, not officialy released<sup>20<sup>    |
+| Metabase                      | Can connect                         | Can connect, no complex schema support<sup>2</sup>    | Can not connect                | Working driver, not officialy released<sup>20<sup>    |
 | Looker                        | Can connect                         | Can connect                    | Can connect                    | Can connect<sup>21<sup>                 |
 | Jupyter Notebook/Pandas       | Easy, using belomonte               | Easy, pd.read_gbq              | Embedded notebooks<sup>3</sup> | Basic connection through belomonte                  |
 | DBeaver                       | Easy, lot of people doing it        | Can connect                    | Can't connect                  | Can connect<sup>22<sup>                           |
 | Pricing model                 | Fixed cluster                       | Pay per query                  | Auto-scaling cluster           | Auto-scaling cluster                    |
 | Runs on                       | AWS                                 | Google Cloud                   | AWS                            | AWS                           |
-| We have experience            | Yes                                 | No                             | Yes                            | No                           |
+| We have experience            | Yes                                 | Yes                             | Yes                            | No                           |
 | Loads data from               | S3 (Avro)                           | GCS (Avro/Parquet<sup>4</sup>) | Agnostic<sup>5</sup>           | S3 (Avro/Parquet)<sup>23<sup>                           |
 | SQL Dialect                   | Very old PostgreSQL (8.0.2)         | Standard SQL                   | Spark SQL                      | Similar to Redshift's<sup>24<sup>                    |
 | Complex schema support        | Limited JSON support                | Awesome<sup>6</sup>            | Sufficient<sup>7</sup>         | JSON support                         |
@@ -19,13 +19,13 @@
 | Future potential<sup>12</sup> | Doesn't look promising<sup>13</sup> | Most promising<sup>14</sup>    | Promising<sup>15</sup>         | Promising                           |
 | SLA in-place?                 | Great, existing AWS support         | None yet                       | Good, support is so-so         | None yet                           |
 | Data load process             | Big overhead<sup>16</sup>           | Big overhead<sup>17</sup>      | Small overhead<sup>18</sup>    | TODO                           |
-| BigDecimal support            | Yes                                 | No, but is in alpha            | Yes                            | <sup>26<sup>                           |
+| BigDecimal support            | Yes, 18+ places                                 | Up to 9 places           | Yes, 18+ places                            | Yes, 18+ places                           |
 | Concurrent query support      | TODO                                | TODO                           | TODO                           | TODO                           |
 | Performance characteristics   | TODO                                | TODO                           | TODO                           | TODO                           |
 | Bad query handling            | Cancels query<sup>19</sup>          | TODO                           | TODO                           | TODO                           |
 
 1. Through notebooks
-2. It doesn't support nested schemas
+2. It doesn't support nested schemas [https://github.com/metabase/metabase/issues/5808]
 3. Databricks has their own web based notebook implementation that runs Scala,
 Python, R, and SQL that you are supposed to use if you want to benefit from auto
 scaling clusters
@@ -62,4 +62,3 @@ some lambda style function that triggers load into BigQuery
 23. Snowflake Data Loading: [https://docs.snowflake.net/manuals/user-guide/data-load.html]
 24. How Compatible are Redshift and Snowflake’s SQL Syntaxes? [https://medium.com/@jthandy/how-compatible-are-redshift-and-snowflakes-sql-syntaxes-c2103a43ae84]
 25. Snowflake caching tutorial [https://sonra.io/2018/03/05/deep-dive-on-caching-in-snowflake/]
-26. Snowflake data types [https://docs.snowflake.net/manuals/sql-reference/data-types-numeric.html]
