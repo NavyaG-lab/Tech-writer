@@ -106,7 +106,7 @@ sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-me
 **for a full list of possible switches run `sabesp jobs itaipu --help`**
 
 
-### Manually run job 
+### Manually run job
 
 ```
 sabesp --aurora-stack=<stack>  jobs create <env> <job> <binds> --metapod-transaction <transaction-id> --job-version "<job>=<version>"
@@ -117,6 +117,25 @@ e.g:
 sabesp --aurora-stack=cantareira-dev jobs create staging capivara-clj  DEPLOY_NON_DIMENSIONAL_MODELING=true OUTPUT_PREFIX=s3a://nu-spark-devel COPY_REDSHIFT_MAX_ERRORS=100 TARGET_DATE="2018-06-14" METAPOD_ENVIRONMENT=staging METAPOD_TRANSACTION=e25faed2-6578-4a57-a15a-01ec33642d5c --metapod-transaction e25faed2-6578-4a57-a15a-01ec33642d5c  --job-version "capivara_clj=e6fbb31"
 
 ```
+
+### Manually run cluster scale up job
+
+Occasionally airflow may fail to run a cluster scale up job, which will cause a job to take way longer than usual because it doesn't have enough machines.
+When this happens (instructions on verifying [this here](ops_how_to.md#checking-status-of-cluster-up-and-down-scales)), you may want to manaully run the scale up.
+
+```shell
+sabesp --aurora-stack=<stack> jobs create <env> scale-ec2-<job-name> NODE_COUNT=<nodes> SLAVE_TYPE=<job-name> --filename scale-ec2 --job-version"scale_cluster=<version>"
+```
+
+- `version`: corresponds to the version of [`scale-cluster` repository](https://github.com/nubank/scale-cluster) used for the daily ETL run. You can get this from the `Airflow started running a dagao` message on `#etl-updates`.
+- `SLAVE_TYPE`: The job name, which will tag the instances with the name of your (itaipu) job. An example would be `itiapu-dimensional-modeling`.
+- `INSTANCE_TYPE`: the correct instance type for your itaipu job can be found by searching for `instance_type` in [`airflow/dagao.py`](https://github.com/nubank/aurora-jobs/blob/5dd280285613670796e3f8fc31d44d811ab252da/airflow/dagao.py#L30) or defaults to [this](https://github.com/nubank/aurora-jobs/blob/5dd280285613670796e3f8fc31d44d811ab252da/airflow/itaipu.py#L31)
+- `NODE_COUNT`: Number of instances to scale up to, which should be `cores / cores_per_instance`. `cores`, in the case of `itaipu-dimensional-modeling` for example, is defined in [`airflow/dagao.py`](https://github.com/nubank/aurora-jobs/blob/5dd280285613670796e3f8fc31d44d811ab252da/airflow/dagao.py#L44). And `cores_per_instance` is defined [here](https://github.com/nubank/aurora-jobs/blob/5dd280285613670796e3f8fc31d44d811ab252da/airflow/scale.py#L3-L9), where the instance type is proved [here](https://github.com/nubank/aurora-jobs/blob/5dd280285613670796e3f8fc31d44d811ab252da/airflow/itaipu.py#L31)
+
+e.g:
+```shell
+sabesp --aurora-stack=cantareira-stable jobs create prod scale-ec2-itaipu-dimensional-modeling NODE_COUNT=224 SLAVE_TYPE=itaipu-dimensional-modeling INSTANCE_TYPE=m4.2xlarge --filename scale-ec2 --job-version="scale_cluster=74e5894"
+ ```
 
 ### Manually downscale the cluster
 ```shell

@@ -21,6 +21,7 @@
 * [Dealing with Datomic self-destructs](#dealing-with-datomic-self-destructs)
 * [Load a run dataset in Databricks](#load-a-run-dataset-in-databricks)
 * [Restart the backup-restore cluster](#restart-the-backup-restore-cluster)
+* [Checking status of cluster up/down scales](#checking-status-of-cluster-up-and-down-scales)
 
 ## Restart redshift cluster
 
@@ -126,7 +127,7 @@ The dagão run failed. What can you do?
 - Check out for recent commits and deploy on go, to check if they are related to that
 - If nothing seems obvious and you get lots of generic errors (reading non-existent files, network errors, etc), you should:
  1. Cycle all machines (eg `nu ser cycle mesos-on-demand --env cantareira --suffix stable --region us-east-1`)
- 2. Get the transaction id from [#etl-updates](https://nubank.slack.com/messages/CCYJHJHR9/)
+ 2. Get the transaction id from [#etl-updates](https://nubank.slack.com/archives/CCYJHJHR9/p1538438447000100)
  3. Retry rerunning the dagão with the same transaction (eg `sabesp --verbose --aurora-stack=cantareira-stable jobs create prod dagao --filename dagao "profile.metapod_transaction=$metapod_tx"`)
  4. If that fails, increase the cluster size (eg `sabesp --aurora-stack=cantareira-stable jobs create prod scale  --job-version "scale_cluster=4945885" MODE=on-demand N_NODES=$nodes SCALE_TIMEOUT=0`)
  5. Retry dagão
@@ -404,3 +405,8 @@ If you can query splunk normally than take a look at the backup-restore cluster.
 On AWS UI open the ECS service in us-east-1. On the cluster tab search and open the `backup-restore` cluster.
  - In the `Metrics` tab the CPU and Memory utilization should be more than 50%, if it's lower than that it means that something is wrong with the cluster.
  - Go to the `Tasks` tab and click on `Stop all`. After all the tasks are stopped they will come back to a healthy life.
+
+## Checking status of cluster up and down scales
+
+Sometimes we run a job and forget to downscale the cluster. Or the up scale for a job fails.
+You can check this by looking at the number of instances tagged with your job on EC2 ([this link](https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:search=dimensional-modeling;sort=desc:launchTime)) or mesos agents ([this link](https://cantareira-stable-mesos-master.nubank.com.br/#/agents))
