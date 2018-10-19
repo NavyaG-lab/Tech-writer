@@ -20,9 +20,10 @@ You can follow this nice tutorial on [how to write a dataset](/itaipu/create_bas
 
 ### Making your dataset ready for the serving layer
 
- - Make sure your dataset is exported using the [serving layer functor](https://github.com/nubank/itaipu/blob/3e270152cc9f51200ad8423d7baf6d574c3aea57/src/main/scala/etl/itaipu/functors.scala#L90); [for example](https://github.com/nubank/itaipu/blob/3e270152cc9f51200ad8423d7baf6d574c3aea57/src/main/scala/etl/dataset/policy/collections_policy/package.scala#L20). Note, if you use the serving layer functor, you shouldn't also use `avroizeWithSchemaFunctor` on your dataset, because that will create two avro versions of the dataset.
-   This will ensure your dataset is saved in the AVRO format, with a number of partitions that is optimal for loading.
- - The serving layer functor has the `joinColumn` optional argument. This can be set to `account__id` or `customer__id`, given that one of those columns exists in your dataset. Using `joinColumn` will add a `prototype` column to each entry with the appropriate shard info for that account/customer. The `prototype` column allows `tapir` to produce messages to the correct shard during dataset propagation (see [note](#note-on-prototype-column) below)
+ - Make sure your dataset has the [serving layer mode](https://github.com/nubank/common-etl/blob/97d640d6c280f4dcedd7b65eae4a64b875f213f2/src/main/scala/common_etl/operator/ServingLayerMode.scala) set up properly; [for example](https://github.com/nubank/itaipu/blob/a77ca6e81c19e3331a96a1de3567a44671c2f7f9/src/main/scala/etl/dataset/policy/mgm_offenders/MgmOffendersPolicy.scala#L18). This will ensure your dataset is saved in the Avro format, with a number of partitions that is optimal for loading.
+   Note, if you set up a serving layer mode, current you can't also use `avroizeWithSchemaFunctor` on your dataset, because that will create two conflicting Avro versions of the dataset. This is currently considered a bug, and should be fixed soon.
+ - The serving layer mode has three modes right now: `NotUsed` (the default), `LoadedOnly` and `LoadedAndPropagated`, which define how the dataset should be sent to the serving layer. `LoadedOnly` datasets are available to be queried by normal production services, while `LoadedAndPropagated` datasets are also propagated via Kafka to notify other services whenever new data is available.
+ - If you use the `LoadedAndPropagated` mode, you also have to specify a propagation key: it ensures we can find the appropriate prototype each row of your dataset belongs to, which is required to route them to the proper Kafka cluster (see [note](#note-on-prototype-column) below). The current valid propagation keys are `CreditCardAccount`, `Customer` and `Prospect`, and they require columns called `account__id`, `customer__id` and `prospect__id` to be available in the dataset, respectively.
  - Make sure your dataset's primary key ([for example](https://github.com/nubank/itaipu/blob/3e270152cc9f51200ad8423d7baf6d574c3aea57/src/main/scala/etl/dataset/policy/collections_policy/CollectionsUnionPolicy.scala#L53)) is distinct per row. This is necessary because the dataset's primary key is how you will access the row on `conrado`. The primary key is generally something like customer id, account id, cpf, etc.
  - Tests that fail if you change the schema [like here](https://github.com/nubank/itaipu/blob/93709a89e4243e56b048586a5dba0a8160007284/src/it/scala/etl/itaipu/ItaipuSchemaSpec.scala#L54).
    This is necessary because if we change the schema of a dataset loaded by `tapir` we need to ensure all downstream consumers of the data (your microservices) can handle this schema change.
@@ -109,7 +110,7 @@ will result in
 
 #### note on prototype column
 
-`tapir` uses the `prototype` column added via the `joinColumn` of the serving layer functor on `itaipu` to know which shard to produce the message on. In case the dataset row ends up not containing a value for the `prototype` column, `tapir` ignores the row and does not propagate it.
+Using the propagation key, `itaipu` automatically looks up the prototype each rows belongs to and adds this information in a `prototype` column. `tapir` then uses this `prototype` column to know which shard to produce the message on. In case the dataset row ends up not containing a value for the `prototype` column, `tapir` ignores the row and does not propagate it.
 
 ## Monitoring
 
