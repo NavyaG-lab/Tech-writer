@@ -151,7 +151,7 @@ Let's say you are adding a model called `your-model-name`.
         - Stage Name: `publish`
         - Job Name: `publish`
 
- - Add the model version to the json provided to airflow:
+ - Fetch model version from s3:
 
     - Go to `dagao` -> `create-das` -> `create-push-das` ([direct link](https://go.nubank.com.br/go/admin/pipelines/dagao/stages/create-das/job/create-push-das/tasks))
     - Click on `Add new task` -> `Fetch from S3`
@@ -159,8 +159,9 @@ Let's say you are adding a model called `your-model-name`.
         - Package name: `your-model-name`
         - Destination directory: `your-model-name`
         - Save this change, and move your task to be the top one
-    - Edit the `Script Executor` that runs when `Passed` condition is met (the big one)
-    - in the `write_das` function add two lines in two places:
+ - Add model version to the json provided to airflow
+
+   Open a [`data-tribe-go-scripts`](https://github.com/nubank/data-tribe-go-scripts) PR that adds the following to the [`bin/dagao/create-push-das.sh` file](https://github.com/nubank/data-tribe-go-scripts/blob/master/bin/dagao/create-push-das.sh)
     ```
     # to set the version variable using a value provided by the gocd-artifacts material
     your_model_name_version="$(cat your-model-name/model-version.json | jq '."your-model-name"' -r | cut -c 1-7 )"
