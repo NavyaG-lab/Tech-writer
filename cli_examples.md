@@ -78,29 +78,34 @@ sabesp metapod --env prod --token transaction get 9684e3c0-a961-45da-add2-17b3de
 
 ## Running Itaipu
 
+For these commands, when you don't specify a `--transaction` flag, it generates a random transaction for you
+
+Also, the two s3 buckets, `s3a://nu-spark-metapod-test/` and `s3a://nu-spark-metapod-test/`, refer to the [`permanent` and `ephemeral`](/glossary.md#permanence-of-a-dataset) paths respectively.
+For test cases you can set the same bucket, but if you run real jobs you should use the proper paths that [prod uses](https://github.com/nubank/aurora-jobs/blob/83ff733d40c5cfd6ec6bfcaa55f69c764a6f03ff/airflow/dagao.py#L193-L194).
+
 ### Full run scaling the cluster up and down
 
 ```shell
-sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-metapod-test/ 216 --itaipu=4155f24b
+sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-metapod-test/ s3a://nu-spark-metapod-test/ 216 --itaipu=4155f24b
 ```
 
 ### Full run scaling the cluster up and down and using the materialized log cache
 
 ```shell
-sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-metapod-test/ 216 --itaipu=4155f24b  --use-cache
+sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-metapod-test/ s3a://nu-spark-metapod-test/ 216 --itaipu=4155f24b  --use-cache
 ```
 
 ### Filtered run scaling the cluster up and down
 
 ```shell
-sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-metapod-test/ 216 --itaipu=4155f24b  --filter-by-prefix contract
+sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-metapod-test/ s3a://nu-spark-metapod-test/ 216 --itaipu=4155f24b  --filter-by-prefix contract
 ```
 
 
 ### Filtered run scaling the without scaling up or down
 
 ```shell
-sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-metapod-test/ 216 --itaipu=4155f24b  --filter-by-prefix contract --skip-scale-up --skip-scale-down
+sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-metapod-test/ s3a://nu-spark-metapod-test/ 216 --itaipu=4155f24b  --filter-by-prefix contract --skip-scale-up --skip-scale-down
 ```
 
 **for a full list of possible switches run `sabesp jobs itaipu --help`**
@@ -109,13 +114,12 @@ sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-me
 ### Manually run job
 
 ```
-sabesp --aurora-stack=<stack>  jobs create <env> <job> <binds> --metapod-transaction <transaction-id> --job-version "<job>=<version>"
+sabesp --aurora-stack=<stack> jobs create <env> <job> <binds> --metapod-transaction <transaction-id> --job-version "<job>=<version>"
 ```
 
 e.g:
 ```shell
-sabesp --aurora-stack=cantareira-dev jobs create staging capivara-clj  DEPLOY_NON_DIMENSIONAL_MODELING=true OUTPUT_PREFIX=s3a://nu-spark-devel COPY_REDSHIFT_MAX_ERRORS=100 TARGET_DATE="2018-06-14" METAPOD_ENVIRONMENT=staging METAPOD_TRANSACTION=e25faed2-6578-4a57-a15a-01ec33642d5c --metapod-transaction e25faed2-6578-4a57-a15a-01ec33642d5c  --job-version "capivara_clj=e6fbb31"
-
+sabesp --aurora-stack=cantareira-dev jobs create staging capivara-clj DEPLOY_NON_DIMENSIONAL_MODELING=true OUTPUT_PREFIX=s3a://nu-spark-devel COPY_REDSHIFT_MAX_ERRORS=100 TARGET_DATE="2018-06-14" METAPOD_ENVIRONMENT=staging METAPOD_TRANSACTION=e25faed2-6578-4a57-a15a-01ec33642d5c --metapod-transaction e25faed2-6578-4a57-a15a-01ec33642d5c --job-version "capivara_clj=e6fbb31"
 ```
 
 ### Manually run cluster scale up job

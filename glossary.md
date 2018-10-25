@@ -23,6 +23,11 @@ The specification of some logical data structure, such as an event, a dataset, a
 
 For more info, see: https://github.com/nubank/playbooks/blob/master/docs/glossary.md#schemas
 
+#### Permanence of a dataset
+
+Datasets are marked as either `ephemeral` or `permanent`, and this dictacts what s3 bucket we place them in.
+Ephemeral s3 buckets are configured to delete files that are over ~2 weeks old, while permantent datasets are kept forever
+
 ## General infrastructure terms
 
 ### Prototype / Shard

@@ -22,6 +22,7 @@
 * [Load a run dataset in Databricks](#load-a-run-dataset-in-databricks)
 * [Restart the backup-restore cluster](#restart-the-backup-restore-cluster)
 * [Checking status of cluster up/down scales](#checking-status-of-cluster-up-and-down-scales)
+* [Run an itaipu job with a longer healthcheck](#run-an-itaipu-job-with-a-longer-timeout-healthcheck)
 
 ## Restart redshift cluster
 
@@ -410,3 +411,24 @@ On AWS UI open the ECS service in us-east-1. On the cluster tab search and open 
 
 Sometimes we run a job and forget to downscale the cluster. Or the up scale for a job fails.
 You can check this by looking at the number of instances tagged with your job on EC2 ([this link](https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:search=dimensional-modeling;sort=desc:launchTime)) or mesos agents ([this link](https://cantareira-stable-mesos-master.nubank.com.br/#/agents))
+
+## Run an itaipu job with a longer timeout healthcheck
+
+If a dataset has large skew it might not make enough progress before the healtcheck kills it. Aside from having the dataset not run, this can block downstream datasets.
+
+One solution is to do a custom run of the dataset with the timeout healthcheck set to a higher value.
+
+Up the [`initial_interval_secs`](https://github.com/nubank/aurora-jobs/blob/83ff733d40c5cfd6ec6bfcaa55f69c764a6f03ff/jobs/templates/spark.aurora#L84) in `aurora-jobs/jobs/templates/spark.aurora` to the appropriate amount, for instance, bump from `20` minutes to maybe `50` minutes. `sabesp` uses your local version of `aurora-jobs` when running commands from your computer, so this change will be used when running the `itaipu` job.
+
+Do a custom run of the skewed dataset
+
+```bash
+sabesp --aurora-stack cantareira-stable jobs itaipu prod <CLUSTER_NAME> s3a://nu-spark-metapod-permanent-1 s3a://nu-spark-metapod-ephemeral-1 <NODE_COUNT> --filter <DATASET_NAME> --itaipu <QUAY_DOCKER_IMAGE> --transaction <TODAYS_METAPOD_TRANSACTION>
+```
+
+for instance:
+```
+sabesp --aurora-stack cantareira-stable jobs itaipu prod phillip s3a://nu-spark-metapod-permanent-1 s3a://nu-spark-metapod-ephemeral-1 40 --filter dataset/prospect-key-integrity --itaipu c8574a9 --transaction 0235e606-4cbb-5cf4-a9c2-7986a1f462f1
+```
+
+The `QUAY_DOCKER_IMAGE` can be the version of `itaipu` listed on `#etl-updates` or chosen from images listed [on quay.io](https://quay.io/repository/nubank/nu-itaipu?tab=tags)
