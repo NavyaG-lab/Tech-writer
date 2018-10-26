@@ -54,9 +54,9 @@ When a job is changed on [`aurora-jobs`](https://github.com/nubank/aurora-jobs),
 
 #### Additional details on deploying a new DAG
 
-You can technically re-deploy the DAG if no new changes have been deployed to `itaipu` since the last DAG was deployed.
-You can check this by comparing the `itaipu` version on `master` with the one detailed in the DAG run message on [#etl-updates](https://nubank.slack.com/messages/CCYJHJHR9/).
-Also, if they aren't the same you can also manually revert the diffs and proceed.
+You can re-deploy the `dagao` DAG while it is running as long as there aren't changes from upstream dependencies (`aurora-jobs`, `itaipu`, models, etc.) that would effect the run.
+You can check this by comparing the versions of repositories to the versions in the DAG run message on [#etl-updates](https://nubank.slack.com/messages/CCYJHJHR9/).
+All upstream dependencies to `dagao` are built off their `master` branches, except for `itaipu`, which uses the `release` branch.
 
 When a DAG is deployed while another is running, airflow will use the current state of the running DAG on the new DAG. Every new task will use the service versions provided by the newly deployed DAG.
 

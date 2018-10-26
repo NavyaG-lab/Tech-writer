@@ -23,6 +23,7 @@
 * [Restart the backup-restore cluster](#restart-the-backup-restore-cluster)
 * [Checking status of cluster up/down scales](#checking-status-of-cluster-up-and-down-scales)
 * [Run an itaipu job with a longer healthcheck](#run-an-itaipu-job-with-a-longer-timeout-healthcheck)
+* [Deploy a hot-fix to itaipu](#deploy-a-hot-fix-to-itaipu)
 
 ## Restart redshift cluster
 
@@ -95,7 +96,7 @@ You can also do this directly from `CloudFormation`:
 
 If the DAG is using a buggy version of a program and you want to deploy a fix, in certain cases you can deploy the fix to the running DAG.
 
-Make sure you aren't pulling in non-fix related changes since the last DAG deployment. If datasets changed in `itaipu`, you should revert them to deploy the DAG. Not doing so may create inconsistencies in the datasets.
+Make sure you aren't pulling in non-fix related changes since the last DAG deployment.
 
 In some cases, you will want to retract datasets before re-running jobs with the newly deployed version. For example, if `itaipu-contracts` is broken (the first job in the DAG) and you need to deploy a fix for it, kill the job and retract all the committed datasets before restarting with the new `itaipu` version ([see here](ops_how_to.md#retracting-datasets-in-bulk)).
 
@@ -432,3 +433,15 @@ sabesp --aurora-stack cantareira-stable jobs itaipu prod phillip s3a://nu-spark-
 ```
 
 The `QUAY_DOCKER_IMAGE` can be the version of `itaipu` listed on `#etl-updates` or chosen from images listed [on quay.io](https://quay.io/repository/nubank/nu-itaipu?tab=tags)
+
+## Deploy a hot-fix to itaipu
+
+- Merge a PR into the `release` branch of `itaipu`. Aside from hotfixes, the `release` branch should only be updated once a day right before the `dagao` is automatically deployed ([see here for details](/itaipu/workflow.md#how-itaipu-is-deployed-to-the-dagao)).
+- This triggers a build of [`itaipu-stable`](https://go.nubank.com.br/go/tab/pipeline/history/itaipu-stable) on GoCD.
+- When this build finishes, and the downstream `dagao` pipeline is built, run the `publish` stage of of that task.
+
+Note that when `itaipu-release-refresh` runs at `23h20 UTC`, any changes merged into `release` will be wiped and replaced by `master`.
+If you have a fix that needs to persisted past today, you will need to open another PR targeting `master` with the fix.
+
+Note:
+- If `itaipu-stable` fails to build, due to flaky dependency downloads and such, it might be the case that nobody is able to fix it before the dag is deployed

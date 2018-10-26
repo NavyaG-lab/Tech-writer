@@ -117,15 +117,15 @@ daily ETL run (of DAGão). In the future, this would become an automated part of
     ```
 
 1. Access the tables listed:
-    
+
     ```scala
     val customers = spark.table("contract.customers__customers")
     ```
-    
+
     ```sql
     %sql select * from contract.customers__customers
     ```
-    
+
     ```scala
     val customers = spark.sql("select * from contract.customers__customers")
     ```
@@ -143,29 +143,29 @@ below.
     the file that you will create in the next step is called `FileName.scala`):
         ```scala
         package etl.dataset.parent_folder_name_if_subfolder
-        
+
         import common_etl.operator.SparkOp
         import etl.itaipu.avroizeWithSchemaFunctor
-        
+
         package object folder_name {
-          
+
           // only if the new class receives inputs, e.g., `referenceDate` (String), `targetDate` (String),
           // `referenceLocalDate` (LocalDate), `targetLocalDate` (LocalDate)
           def allOps(referenceDate: String): Seq[SparkOp] = {
             val fileNameOp = FileName(referenceDate)
             Seq(fileNameOp, avroizeWithSchemaFunctor(fileNameOp))
           }
-   
-          // only if the new class doesn't receive inputs: 
+
+          // only if the new class doesn't receive inputs:
           def allOps: Seq[SparkOp] = {
             Seq(FileName, avroizeWithSchemaFunctor(FileName))
           }
-          
+
           // only if there are subfolders (assuming it receives `referenceDate` as input):
           def allOps(referenceDate: String): Seq[SparkOp] =
             subfolder1.allOps(referenceDate) ++
             subfolder2.allOps ++
-            subfolder3.allOps(referenceDate)   
+            subfolder3.allOps(referenceDate)
         }
         ```
     1. Add `folder_name.allOps` to `opsToRun` in
@@ -189,24 +189,24 @@ For a faster iterative process, run the code from Itaipu directly in the Databri
     - **Important:** Remove the package name from the top of the file
 1. Manually set up the `df` value. For example, assuming your object name is `Whatever`:
     ```scala
-    
+
     // Option 1:
     val df = Whatever.definition(Map(
       "contract-customers/customers" -> spark.table("contract.customers__customers"),
       "contract-acquisition/account-requests" -> spark.table("contract.acquisition__account_requests")))
-    
+
     import etl.databricks.DatabricksHelpers.{translateName, opToDataFrame}
-    
+
     // Option 2:
     val df = Whatever.definition(Map(
       "contract-customers/customers" -> spark.table(translateName("contract-customers/customers")),
       "contract-acquisition/account-requests" -> spark.table(translateName("contract-acquisition/account-requests"))))
-    
+
     // Option 3:
     val df = opToDataFrame(spark, Whatever)
     ```
     If the class receives an input value, such as `refereceDate`, replace `Whatever` with `Whatever(referenceDate)`.
-    
+
     A more complete example: https://nubank.cloud.databricks.com/#notebook/47345
 1. Inspect if the values in `df` are correct. If you want to change something, edit the code in the IDE (it's better to
 edit in an IDE because of type checking, autocompletion, etc.), then go back to step 1.
@@ -236,7 +236,7 @@ edit in an IDE because of type checking, autocompletion, etc.), then go back to 
 
 If you want to make the dataset available in Redshift, you need to:
 1. Create Avro files from it: In the package file `package.scala`, add a call to `avroizeWithSchemaFunctor` in the output of `allOps`.
-2. Extend the class with the trait `DeclaredSchema` and populate the `AttributeOverrides`. 
+2. Extend the class with the trait `DeclaredSchema` and populate the `AttributeOverrides`.
 
 ## Running tests
 
@@ -266,7 +266,7 @@ Running the tests:
         - only the tests that failed in the previous run
         - tests that were not run before
         - tests that have been affected by changes in the source code
-    
+
         `$ sbt testQuick`. You can also pass a filename and use tilde to run the tests in a loop if the source code
         changes:
         ```shell
@@ -289,10 +289,15 @@ Running the tests:
         ```
 
 
-There is a build pipeline for Itaipu, so merging master does not guarantee that the master version will run at night -
-itaipu unit and integration tests need to pass, and the version needs to be explicitly promoted on the Go build pipeline
-(https://go.nubank.com.br/go/tab/pipeline/history/itaipu and https://go.nubank.com.br/go/tab/pipeline/history/dagao).
+## How Itaipu is deployed to the Dagao
 
+Pull requests generally target the `master` branch of `itaipu`. Once they are merged, circleci will test and build the repo.
+
+Once a day at `23h20 UTC`, the `release` branch is updated to point to `master` via the [`itaipu-release-refresh` GoCD pipeline](https://go.nubank.com.br/go/tab/pipeline/history/itaipu-release-refresh).
+This change triggers a build of [`itaipu-stable`](https://go.nubank.com.br/go/tab/pipeline/history/itaipu-stable), which builds off the `release` branch.
+
+The [`dagao`](https://go.nubank.com.br/go/tab/pipeline/history/dagao) pipeline depends on `itaipu-stable`, so it must finish before the `dagao` pipeline runs to deploy the dag.
+Sometimes `itaipu-stable` will fail (for instance when it fails to download dependencies, which happens sometimes). In this case, the `dagao` will get deployed with an old version of `itaipu`.
 
 ## Other sources
 
