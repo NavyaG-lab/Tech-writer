@@ -9,6 +9,7 @@ involves these steps:
 1. Install the library into Databricks
 1. Delete or detach the previous version
 1. Restart the cluster(s) (optional)
+1. For relevant lib bumps, test that things still work.
 
 ## Getting a JAR
 
@@ -65,6 +66,9 @@ timestamp as a suffix), edit it to avoid a naming conflict (e.g., `itaipu_2.11-1
 1. Click on `Create Library` and check `Attach automatically to all clusters` or choose the cluster(s)
     1. Be careful when attaching to all clusters a custom library or a custom version of itaipu,
 because you may affect other people's work
+1. If any dependency versions have been changed, you must upload those new versions.
+For instance, if you bump `circe` in `common-etl` ([for example](https://github.com/nubank/common-etl/pull/195/files#diff-fdc3abdfd754eeb24090dbd90aeec2ceR36)), then you must upload the new versions of `circe`.
+1. Confirm that common operations work after adding the new libraries and restarting the cluster. Running something like `metapodClient.getTransaction` ([see here](https://nubank.cloud.databricks.com/#notebook/422548/command/422549)) will test this.
 
 ## Delete or detach the previous version
 
