@@ -26,11 +26,11 @@ For this walkthrough, you'll need to obtain the following permissions:
 * Databricks: admin rights (or at least to be added to the engineers cluster) – ask `#squad-data-infra`
 * quay.io: get added to the `data-infra` team – ask `#squad-infosec`
 * AWS – ask `#access-request`:
-  *  `data-infra-aurora-access` 
+  *  `data-infra-aurora-access`
   * `data-access-ops`
   * `eng`
   * `prod-eng`
-  * `data-infra` 
+  * `data-infra`
   * `belomonte`
 * Metapod
   * `metapod-admin` scope – ask `#access-request` (any engineer can also provide it for you on staging)
@@ -85,7 +85,7 @@ This tutorial will focus on designing and spinning up the ETL pipeline which wil
 
 ---
 
-**Goal: Figure out which Datasets should we use to build the derivative dataset** 
+**Goal: Figure out which Datasets should we use to build the derivative dataset**
 
 For this exercise, we want information about the customer and their bills. Our data warehouse is organized into facts and dimensions, using the terminology from [Kimball's DW books](https://github.com/nubank/data-infra-docs/blob/master/dimensional_modeling/kimball.md).
 
@@ -142,7 +142,7 @@ But... it's SQL and we shouldn't throw SQL out to other people have to read, bec
 
 So let's transform that SQL query into Scala code!
 
-The first step to do that is to get the inputs that you need as Dataframes, you do that by using the method `.table` from the `SparkSession` which is available on Databricks as the value `spark` 
+The first step to do that is to get the inputs that you need as Dataframes, you do that by using the method `.table` from the `SparkSession` which is available on Databricks as the value `spark`
 
 So for the bill fact, the code would look like this:
 
@@ -174,7 +174,7 @@ You're probably questioning WTF is a SparkOp :) – you can see for yourself [HE
 
 Feel free to see some [examples of datasets](https://github.com/nubank/itaipu/tree/master/src/main/scala/etl/dataset) that extend SparkOp, in particular (for this onboarding) the datasets: [BillingCycleFact](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/dataset/fact/BillingCycleFact.scala), [CustomerDimension](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/dataset/dimension/CustomerDimension.scala) and [DateDimension](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/dataset/dimension/DateDimension.scala).
 
-SparkOp is the core abstraction behind our data-platform, the important things are:
+SparkOp is the core abstraction behind our data-platform, you can find out more about it [here](https://github.com/nubank/data-infra-docs/blob/master/itaipu/create_basic_dataset.md#3---understanding-the-sparkop-class). The important things are:
 
 * **Name:** You have to grant your dataset a name so others can use your dataset as dependency.
 
@@ -203,7 +203,9 @@ Once you have your SparkOp done, you can use the function on [DatabricksHelpers]
 ```scala
 %scala
 
-DatabricksHelpers.runOpAndSaveToTable(spark, op, "**schema**", "the_name_of_dataset")
+import etl.databricks.DatabricksHelpers
+
+DatabricksHelpers.runOpAndSaveToTable(spark, "**op_you_created**", "**schema**", "the_name_of_dataset")
 ```
 
 For  `**schema**` we normally use our own names when saving the table to Databricks.
@@ -234,7 +236,7 @@ Then just paste the code there!
 
 Now, you need to add the dataset to the list of all **SparkOps** that are run by Itaipu. This dataset fits the category of "general dataset" so you add it [**here**](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/dataset/package.scala#L23), all other lists of datasets can be found **[here](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/itaipu/Itaipu.scala#L46)**.
 
-To check if everything is right you can run:
+To check if everything is right you can run the following code on terminal in the project's folder:
 
 ```shell
 sbt it:test
@@ -278,7 +280,7 @@ To do that just use:
 $NU_HOME/deploy/bin/docker.sh build-and-push $(git rev-parse --short HEAD)
 ```
 
-The `docker.sh` script is inside the `deploy` project. It's a standard script for building docker images. It will run the script `prepare.sh` (which will run `sbt assembly`) and then run build and push the docker image using the name of your project as the name. e.g. for `itaipu`, it will be `quay.io/nubank/nu-itaipu:{SHA}`. 
+The `docker.sh` script is inside the `deploy` project. It's a standard script for building docker images. It will run the script `prepare.sh` (which will run `sbt assembly`) and then run build and push the docker image using the name of your project as the name. e.g. for `itaipu`, it will be `quay.io/nubank/nu-itaipu:{SHA}`.
 
 Look for the following line in the script's output. You will use this tag for the next step:
 `Successfully tagged nu-itaipu**repository_tag**`
