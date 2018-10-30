@@ -53,7 +53,7 @@ Importing Itaipu on IDEA:
 
   ![](https://static.notion-static.com/d90d9310dc1642249a992163f8d72c81/Screenshot_2017-12-01_11-58-00.png)
 
-2. Browse Repositories -> Type Scala in the search box, and install the **Scala Language** plugin.
+2. Browse Repositories -> Type Scala in the search box, and install the **Scala Language** plugin (you can further add IDEA features by following the instructions in section 7 of wiki's [useful programs](https://wiki.nubank.com.br/index.php/Programas_%C3%BAteis)).
 
   ![](https://static.notion-static.com/6224eb2fb911420bbafca0019e283e0a/Screenshot_2017-12-01_12-00-42.png)
 

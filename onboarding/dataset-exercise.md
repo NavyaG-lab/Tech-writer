@@ -26,7 +26,7 @@ For this walkthrough, you'll need to obtain the following permissions:
 * Databricks: admin rights (or at least to be added to the engineers cluster) – ask `#squad-data-infra`
 * quay.io: get added to the `data-infra` team – ask `#squad-infosec`
 * AWS – ask `#access-request`:
-  *  `data-infra-aurora-access`
+  * `data-infra-aurora-access`
   * `data-access-ops`
   * `eng`
   * `prod-eng`
@@ -236,7 +236,7 @@ Then just paste the code there!
 
 Now, you need to add the dataset to the list of all **SparkOps** that are run by Itaipu. This dataset fits the category of "general dataset" so you add it [**here**](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/dataset/package.scala#L23), all other lists of datasets can be found **[here](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/itaipu/Itaipu.scala#L46)**.
 
-To check if everything is right you can run the following code on terminal in the project's folder:
+To check if everything is right you can run the following code on terminal in the project's folder: 
 
 ```shell
 sbt it:test
