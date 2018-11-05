@@ -328,7 +328,7 @@ eg:
 
 ---
 
-## Query metapod to get the path were the dataset was written to
+## Query Metapod to get the path were the dataset was written to
 
 [`Metapod`](https://github.com/nubank/metapod) is the service on which we track the metadata about the run. It receives from Itaipu all information related to:
 
@@ -337,9 +337,9 @@ eg:
 * what's its schema;
 * and so on.
 
-We can query Metapod directly using its URL; our run was on the staging environment, so the metapod endpoint would be: https://staging-global-metapod.nubank.com.br/
+Since we used the staging environment for our run, we need to make sure to query Metapod on that environment to get the results.
 
-The simplest way to query this endpoint is via the Sonar UI which can be accessed at https://backoffice.nubank.com.br/sonar-js/ for the production data. Unfortunately, the version of this service on staging also points to production data, so we'll need to use a local copy of it for our purposes:
+The simplest way to query to do that is via the Sonar UI, which can be accessed at https://backoffice.nubank.com.br/sonar-js/ for the production data. Unfortunately, the version of this service on staging also points to production data, so we'll need to run it locally:
 
 ```shell
 nu service clone sonar-js
@@ -351,7 +351,7 @@ npm install # let it run, it should fail at some point. That's normal™
 yarn start # normally this should open sonar in your browser
 ```
 
-(You might need to run `npm install` and `yarn start` a couple times interchangeably to get your app into the correct state.)
+(**Tip**: You might need to run `npm install` and `yarn start` a couple times interchangeably to get your app into the correct state.)
 
 When you have the local sonar app open in your browser, log in and open the *Monitoring* view in the left side menu. Find and click on your transaction there to get information about the run and its progress.
 
