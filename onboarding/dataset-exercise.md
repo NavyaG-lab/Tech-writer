@@ -321,6 +321,8 @@ You can check if the instances are running on the [AWS Console](https://console.
 
 If your proccess fails, you can run the same command again adding your `transaction_id`. The process will start again from where it stopped.
 
+**Tip**: Actually, save the transaction ID somewhere or keep it accessible. You'll need it on the next steps.
+
 eg:
 `sabesp --aurora-stack=cantareira-dev jobs itaipu staging rodrigo s3a://nu-spark-metapod-test/ s3a://nu-spark-metapod-test/ 100 --itaipu=be24227a --filter-by-prefix dataset/on-boarding-exercise-part-i --transaction 56078219-e6e0-43ec-a7a0-0bcc59600473`
 
@@ -353,7 +355,7 @@ yarn start # normally this should open sonar in your browser
 
 (**Tip**: You might need to run `npm install` and `yarn start` a couple times interchangeably to get your app into the correct state.)
 
-When you have the local sonar app open in your browser, log in and open the *Monitoring* view in the left side menu. Find and click on your transaction there to get information about the run and its progress.
+When you have the local Sonar app open in your browser, log in and open the *Monitoring* view in the left side menu. Find and click on your transaction there to get information about the run and its progress.
 
 ![Transaction on Sonar](./images/sonar-tx.png)
 
