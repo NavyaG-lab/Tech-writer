@@ -46,17 +46,17 @@ After that your tests should be working. Run [`lein nu-test`](https://github.com
 
 ## Getting the avro partitions through the s3 component
 
-The library that we will use to read avro files requires the files to be saved locally, so before reading the files we need to download them from s3.
+The library that we will use to read avro files requires the files to be saved locally, so before reading the files we need to download them from S3.
 
-We'll use the [s3 component](https://github.com/nubank/common-db/blob/master/src/common_db/components/s3_store.clj) to discover and download the files ([component glossary term](https://github.com/nubank/playbooks/blob/3f67eaa4d43b293f4d89c3a4f3e4c0d27cca5cfc/docs/glossary.md#componentsclj)). This component implements the [storage protocol](https://github.com/nubank/common-db/blob/master/src/common_db/protocols/storage.clj).
+We'll use the [S3 component](https://github.com/nubank/common-db/blob/master/src/common_db/components/s3_store.clj) to discover and download the files ([component glossary term](https://github.com/nubank/playbooks/blob/3f67eaa4d43b293f4d89c3a4f3e4c0d27cca5cfc/docs/glossary.md#componentsclj)). This component implements the [storage protocol](https://github.com/nubank/common-db/blob/master/src/common_db/protocols/storage.clj).
 
 Looking at the protocols implemented by a component is the simplest way to have a big picture understanding of it can do.
 
-We'll add this component to the `base` fn on the `service.components` namespace of your service. Just take a look on how other components are added and do the same. The only dependency that your s3 component will need is the [`config` component](https://github.com/nubank/common-core/blob/34afaf592ddbfa5a5d2efb502ec69bcaf07c8841/src/common_core/components/config.clj#L179-L198).
+We'll add this component to the `base` fn on the `service.components` namespace of your service. Just take a look on how other components are added and do the same. The only dependency that your S3 component will need is the [`config` component](https://github.com/nubank/common-core/blob/34afaf592ddbfa5a5d2efb502ec69bcaf07c8841/src/common_core/components/config.clj#L179-L198).
 
 This S3 component can be used to access only one bucket (the bucket is the first part of an S3 URI after the `s3://`: `s3://bucket/folders/files`). One way to define which bucket your component will use is add an entry on [`resources/service_config.json.base`](https://github.com/nubank/playbooks/blob/3f67eaa4d43b293f4d89c3a4f3e4c0d27cca5cfc/docs/glossary.md#resourcesmy-new-service_configjsonbase) with key `s3_bucket` and value `nu-spark-devel` (which is the [bucket](https://github.com/nubank/data-infra-docs/blob/master/onboarding/dataset-exercise.md#run-the-sparkop-on-databricks) that we used to manually save the dataset on databricks).
 
-Congrats, you now have a s3 component. Now lets use it.
+Congrats, you now have a S3 component. Now let's use it.
 
 In a repl (or a file that will be sent to a repl) start your system with `service.components/create-and-start-system!`, storing the result in a variable for use later.
 
@@ -65,7 +65,7 @@ This system is a map with all the components defined on the `service.components`
 To list all the files you can simply do `(common-db.protocols.storage/list-objects (:s3 @system) "onboarding/**schema**/")`.
 This S3 path was defined [here](https://github.com/nubank/data-infra-docs/blob/master/onboarding/dataset-exercise.md#run-the-sparkop-on-databricks).
 
-**Task**: Write logic to download local copies of all the files in a given s3 folder.
+**Task**: Write logic to download local copies of all the files in a given S3 folder.
 
 ---
 
@@ -86,14 +86,14 @@ After creating the model of your entity add the skeleton on the namespace `servi
 
 Now let's move away from the REPL a bit to start to write the main logic to serve the Avro data to clients.
 
-We want an endpoint that only who has the `admin` scope can use. Add a new endpoint to the `service` namespace. This endpoint should receive a json body with the s3 path associated with the key `s3-path`. To extract the body parameters on your handler you need to extract the `:body-params` key in the arg list of the `defhandler` (in the same level as the `:components` is).
+We want an endpoint that only who has the `admin` scope can use. Add a new endpoint to the `service` namespace. This endpoint should receive a json body with the S3 path associated with the key `s3-path`. To extract the body parameters on your handler you need to extract the `:body-params` key in the arg list of the `defhandler` (in the same level as the `:components` is).
 
-This flow will cache locally the files from s3 and produce messages to Kafka. So in the handler triggered by the new endpoint we'll extract the s3 and producer component. But before using the s3 component on the HTTP handler we need to add it as a dependency to the webapp component(in the `service.components` 
+This flow will cache locally the files from S3 and produce messages to Kafka. So in the handler triggered by the new endpoint we'll extract the S3 and producer component. But before using the S3 component on the HTTP handler we need to add it as a dependency to the webapp component(in the `service.components` 
 namespace). The producer already is a dependecy of this component.
 
 The endpoint you are creating will call a `controller` function that will control the flow. All pure functions go into a `logic` namespace, try to extract as many of these functions as possible.
 
-The flow will download the files from s3 and for each entry in all files it will produce a message on Kafka.
+The flow will download the files from S3 and for each entry in all files it will produce a message on Kafka.
 
 ---
 
