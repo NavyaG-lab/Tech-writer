@@ -260,7 +260,7 @@ extends FlatSpec with NuDataFrameSuiteBase with Matchers
 
 Then, you can write some tests to check that the dataset computes as expected. You can look at [DailyDeltasLogSpec](https://github.com/nubank/itaipu/blob/master/src/test/scala/etl/dataset/ledger/double_entry/mutable/DailyDeltasLogSpec.scala) for inspiration.
 
-For running the tests, follow the documentation [HERE](https://github.com/nubank/data-infra-docs/blob/master/itaipu/workflow.md#running-tests) (tip: run `testOnly` on your specific file before running the full suit of tests).
+For running the tests, follow the documentation [HERE](https://github.com/nubank/data-infra-docs/blob/master/itaipu/workflow.md#running-tests) (**Tip**: run `testOnly` on your specific file before running the complete test suite.
 
 ---
 
