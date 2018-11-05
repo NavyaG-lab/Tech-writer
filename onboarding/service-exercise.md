@@ -54,7 +54,7 @@ Looking at the protocols implemented by a component is the simplest way to have 
 
 We'll add this component to the `base` fn on the `service.components` namespace of your service. Just take a look on how other components are added and do the same. The only dependency that your s3 component will need is the [`config` component](https://github.com/nubank/common-core/blob/34afaf592ddbfa5a5d2efb502ec69bcaf07c8841/src/common_core/components/config.clj#L179-L198).
 
-This s3 component can be used to access only one bucket (the bucket is the first part of an s3 uri after the `s3://`: `s3://bucket/folders/files`). One way to define which bucket your component will use is add an entry on [`resources/service_config.json.base`](https://github.com/nubank/playbooks/blob/3f67eaa4d43b293f4d89c3a4f3e4c0d27cca5cfc/docs/glossary.md#resourcesmy-new-service_configjsonbase) with key `s3_bucket` and value `nu-spark-devel` (which is the [bucket](https://github.com/nubank/data-infra-docs/blob/onboarding/onboarding/introduction.md#run-the-sparkop-on-databricks) that we used to manually save the dataset on databricks).
+This S3 component can be used to access only one bucket (the bucket is the first part of an S3 URI after the `s3://`: `s3://bucket/folders/files`). One way to define which bucket your component will use is add an entry on [`resources/service_config.json.base`](https://github.com/nubank/playbooks/blob/3f67eaa4d43b293f4d89c3a4f3e4c0d27cca5cfc/docs/glossary.md#resourcesmy-new-service_configjsonbase) with key `s3_bucket` and value `nu-spark-devel` (which is the [bucket](https://github.com/nubank/data-infra-docs/blob/master/onboarding/dataset-exercise.md#run-the-sparkop-on-databricks) that we used to manually save the dataset on databricks).
 
 Congrats, you now have a s3 component. Now lets use it.
 
@@ -63,7 +63,7 @@ In a repl (or a file that will be sent to a repl) start your system with `servic
 This system is a map with all the components defined on the `service.components` namespace.
 
 To list all the files you can simply do `(common-db.protocols.storage/list-objects (:s3 @system) "onboarding/**schema**/")`.
-This s3 path was defined [here](https://github.com/nubank/data-infra-docs/blob/onboarding/onboarding/introduction.md#run-the-sparkop-on-databricks).
+This S3 path was defined [here](https://github.com/nubank/data-infra-docs/blob/master/onboarding/dataset-exercise.md#run-the-sparkop-on-databricks).
 
 **Task**: Write logic to download local copies of all the files in a given s3 folder.
 
@@ -71,7 +71,7 @@ This s3 path was defined [here](https://github.com/nubank/data-infra-docs/blob/o
 
 ## Defining the inner representation of the entity
 
-Our next step is to store all the entries within the avro files on Datomic, with each line corresponding to a new entry on Datomic. To insert data on Datomic we need a [database model](https://github.com/nubank/data-infra-docs/blob/master/glossary.md#models). To help us figure out a good model let's look at the data contained in the avro files. For reading avro files we'll use the library [abracad](https://github.com/damballa/abracad). You'll need to add this library as a dependency in your `project.clj` file and restart your repl.
+Our next step is to store all the entries within the avro files on Datomic, with each line corresponding to a new entry on Datomic. To insert data on Datomic we need a [database model](https://github.com/nubank/playbooks/blob/master/docs/glossary.md#models). To help us figure out a good model let's look at the data contained in the avro files. For reading avro files we'll use the library [abracad](https://github.com/damballa/abracad). You'll need to add this library as a dependency in your `project.clj` file and restart your repl.
 
 To show all the records in a given avro file, run `(seq (abracad.avro/data-file-reader file-name))`, where `file-name` points to a file you saved locally. Based on these records you should define an inner
 representation to your entity. Take a look at this [namespace](https://github.com/nubank/savings-accounts/blob/master/src/savings_accounts/models/savings_account.clj) to get an idea on how to create your model.
