@@ -433,7 +433,7 @@ ls /mnt
 
 ---
 
-PS: if you get stuck, you can get all steps done in [this](https://nubank.cloud.databricks.com/#notebook/138371) notebook, but, don't cheat :)
+**PS**: if you get stuck, you can get all steps done in [this](https://nubank.cloud.databricks.com/#notebook/138371) notebook, but don't cheat :)
 
 ## Next up
 
