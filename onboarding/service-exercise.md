@@ -86,7 +86,7 @@ After creating the model of your entity add the skeleton on the namespace `servi
 
 Now let's move away from the REPL a bit to start to write the main logic to serve the Avro data to clients.
 
-We want an endpoint that only who has the `admin` scope can use. Add a new endpoint to the `service` namespace. This endpoint should receive a json body with the S3 path associated with the key `s3-path`. To extract the body parameters on your handler you need to extract the `:body-params` key in the arg list of the `defhandler` (in the same level as the `:components` is).
+We want an endpoint that only who has the `admin` scope can use. Add a new endpoint to the `service` namespace. This endpoint should receive a JSON body with the S3 path associated with the key `s3-path`. To extract the body parameters on your handler you need to extract the `:body-params` key from the argument list (the key is defined at the same level of the `:components` key). This key is not provided by Pedestal by default - it comes from an interceptor defined [in common-io](https://github.com/nubank/common-io/blob/master/src/common_io/interceptors/wire.clj#L98-L101).
 
 This flow will cache locally the files from S3 and produce messages to Kafka. So in the handler triggered by the new endpoint we'll extract the S3 and producer component. But before using the S3 component on the HTTP handler we need to add it as a dependency to the webapp component(in the `service.components` 
 namespace). The producer already is a dependecy of this component.
