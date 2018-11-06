@@ -109,7 +109,7 @@ But before defining the adapting function we need to define the wire schema. Usu
 
 Now you can write the function `avro-schema->wire-schema`. Adapter functions such as this one are called on the edges of our system (consumer, producer, https), so that we don't have to deal with wire data inside our service.
 
-Everytime you use a new topic you need to register it on `Kafka_topics` in the `resources/service_config.json.base` file.
+Everytime you use a new topic you need to register it on `kafka_topics` in the `resources/service_config.json.base` file.
 
 We'll consume messages from the topic we just produced them to (yes, it doesn't make a lot of sense in this case - it's just so you see producing/consuming of messages).
 
@@ -117,7 +117,7 @@ We'll consume messages from the topic we just produced them to (yes, it doesn't 
 
 ## Saving to datomic
 
-When we consume the messages that we've produced they will be in the same format we used to produce them (as expected), that is, a *wire schema*. We need an adapter function to convert a *wire schema* to our *internal schema*. This function will be called on the consumer.
+When we consume the messages that we've produced they will be in the same format we used to produce them (as expected), that is, a *wire schema*. We need an adapter function to convert a *wire schema* to our *internal schema* (`wire-schema->internal-schema`). This function will be called on the consumer.
 
 Now that we have an internal representation of the data we can send this data to a controller function. This new flow is simpler, we just need to store the data on Datomic, the functions to do that are in namespaces under `service.db.datomic`.
 
