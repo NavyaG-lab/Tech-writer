@@ -157,15 +157,15 @@ Test files follow the same structure as "real code", with two differences:
 We should write tests for all functions in the `logic`, `adapters`, and `datomic` 
 namespaces. As for the `service`, `consumer` and `producer` namespaces, try to write tests that would increase your level of confidence in the solution. If a function is doing something less conventional or that makes you feel suspicious, it might be a good idea to test it.
 
-Use `s/with-fn-validation` wherever possible. Be aware that midje's metaconstant break these validations. Also, ALWAYS test logic functions with schema validation and no stubs or mocks.
+Use `schema.core/with-fn-validation` wherever possible. Be aware that midje's metaconstant break these validations. Also, ALWAYS test logic functions with schema validation and no stubs or mocks.
 
 Controllers tests are a bit more controversial. Some people like to have them, others think they should be avoided because they don't have a big upside and require labor intensive work when the code is changed.
 
-### Integration test
+### Integration tests
 
 At Nubank we implemented [our own solution for integration tests](https://github.com/nubank/common-test#postman). These are often referred to as Postman tests. For the purpose of the exercise, take a look at this [postman test](https://github.com/nubank/savings-accounts/blob/master/postman/postman/account_creation.clj) to get familiarized with how they are written.
 
-Integration tests go in `postman/postman/` folder. You should add one postman test that will ensure that the whole flow is working:
+Integration tests go in the `postman/postman/` folder. You should add one postman test that will ensure that the whole flow is working:
 
 - caching locally and processing Avro files
 - producing and consuming Kafka messages
@@ -175,7 +175,7 @@ Integration tests go in `postman/postman/` folder. You should add one postman te
 
 Since you are using the mock component for s3 we should add some mock data there so we have something to download from s3. This component is a regular s3 component, you can use the methods defined in the s3 protocol for saving data. To improve code organization, you can move this function to an auxiliary namespace.
 
-For triggering an endpoint you can use the same functions as those found in `service-test`. To see if a message was produced to Kafka you can use the function [log-messages](https://github.com/nubank/common-test/#kafka). Make sure you call `common-test.postman.helpers.kafka/clear-messages!` in the `init!` function (you can find an example of such a function [here](https://github.com/nubank/papers-please/blob/7a67b7f6e52ed949ca46cfc9f3d1b3cadb26f53e/postman/postman/aux/init.clj#L9-L18)).
+For triggering an endpoint you can use the same functions as those found in `service.service-test`. To see if a message was produced to Kafka you can use the function [log-messages](https://github.com/nubank/common-test/#kafka). Make sure you call `common-test.postman.helpers.kafka/clear-messages!` in the `init!` function (you can find an example of such a function [here](https://github.com/nubank/papers-please/blob/7a67b7f6e52ed949ca46cfc9f3d1b3cadb26f53e/postman/postman/aux/init.clj#L9-L18)).
 
 ---
 
@@ -188,7 +188,7 @@ service will use the `base` s3 component, which will actually hit Amazon's s3.
  field. This will give some visibility on the insertions and you can later use 
 these ids in the query endpoint.
 
-Running a service is pretty straight forward with [nudev](https://github.com/nubank/nudev). First of all in this repo add your service to the `UNFLAVORED` list on `nustart.d/nustart/lein_service.rb` (this is related to the structure we're using in the `components.clj`).
+Running a service is pretty straightforward with [nudev](https://github.com/nubank/nudev). First of all, in this repo add your service to the `UNFLAVORED` list on `nustart.d/nustart/lein_service.rb` (this is related to the structure we're using in the `components.clj`).
 
 Before running any service you need to ensure the dependencies of the service are up. Running `dev-env-compose up -d` on a terminal starts a Kafka, Datomic, Redis and Zookeeper. To start your service run `dev-compose up -d service-name`. To see the logs run `dev-compose logs -f service-name`.
 
@@ -199,7 +199,7 @@ If everything goes fine you can hit the endpoint that consumes the data from s3.
 After that, hit the endpoint to get the entity that was inserted.
 
 You finished it, but our princess is in another castle. Now you need to go to 
-the real world!.
+the real world!
 
 ---
 
