@@ -129,10 +129,10 @@ There is one problem with this topic we are consuming: consumption of messages i
 
 Now let's add a new endpoint for querying the data we inserted. We'll query Datomic using the id we marked as unique in the schema. The user will supply this id in the request url. Take a look [here](https://github.com/nubank/savings-accounts/blob/8c904e2b266f27788557d641d32a4c3486d277e6/src/savings_accounts/service.clj#L202-L206) to see how this id is usually extracted.
 
-By default, when we extract data from the url we get a `String` – but for our purposes, we'll need a `UUID`. Fortunately we have an Pedestal interceptor that performs this conversion automatically for us. We just need to add it to the interceptor list at the `services` namespace. Take a look in the link above to find this
+By default, when we extract data from the url we get a `String` – but for our purposes, we'll need a `UUID`. Fortunately we have a Pedestal interceptor that performs this conversion automatically for us. We just need to add it to the interceptor list at the `services` namespace. Take a look in the link above to find this
 interceptor.
 
-There's another important interceptor you'll need: to fetch data from Datomic, we don't directly use the Datomic component; instead, we get a snapshot from the database using the `common-datomic.db.db` function. This snapshot is inserted into the request map as an immutable value against which we can run Datomic queries. The main advantage of this approach is that it's automatically clear if an endpoint will change anything in the database or just query it. Take a look in the link above to find this interceptor.
+There's another important interceptor you'll need: to fetch data from Datomic, we don't directly use the Datomic component; instead, we get a snapshot from the database using the `common-datomic.db.db` function. This snapshot is inserted into the request map as an immutable value against which we can run Datomic queries. The main advantage of this approach is that it's automatically clear if an endpoint will change anything in the database or just query it. Take a look in [this link](https://github.com/nubank/savings-accounts/blob/8c904e2b266f27788557d641d32a4c3486d277e6/src/savings_accounts/service.clj#L170) to find this interceptor.
 
 Also remember that you should convert the data to a wire schema before replying to the request.
 
