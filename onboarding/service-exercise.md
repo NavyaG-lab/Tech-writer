@@ -155,9 +155,7 @@ Test files follow the same structure as "real code", with two differences:
 - test file names (and thus test file namespaces) have the suffix `_test` (`-test` for the namespace). For example, the test file for `service.clj` is `service_test.clj`
 
 We should write tests for all functions in the `logic`, `adapters`, and `datomic` 
-namespaces. As for the `service`, `consumer` and `producer` namespaces, if you are 
-doing anything out of the ordinary or are not felling very confortable about 
-some function, you should also add tests to them.
+namespaces. As for the `service`, `consumer` and `producer` namespaces, try to write tests that would increase your level of confidence in the solution. If a function is doing something less conventional or that makes you feel suspicious, it might be a good idea to test it.
 
 Use `s/with-fn-validation` wherever possible. Be aware that midje's metaconstant break these validations. Also, ALWAYS test logic functions with schema validation and no stubs or mocks.
 
