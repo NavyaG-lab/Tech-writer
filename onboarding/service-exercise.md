@@ -101,7 +101,7 @@ The flow will download the files from S3 and for each entry in all files it will
 
 ## Producing and consuming to Kafka
 
-The namespaces responsible for producing and consuming messages to and from Kafka are `service.diplomat.producer` and `service.diplomat.consumer`, respectively. Take a look at `savings-accounts` to grasp how they work.
+The namespaces responsible for producing and consuming messages to and from Kafka are `service.diplomat.producer` and `service.diplomat.consumer`, respectively. Take a look at [savings-accounts](https://github.com/nubank/savings-accounts/tree/master/src/savings_accounts/diplomat) to grasp how they work.
 
 To produce a message we need to convert the data to a wire schema. We are reading the messages in the Avro schema, so we need a function to convert this Avro in our a wire schema; this kind of functions live on namespaces under `service.adapters`.
 
