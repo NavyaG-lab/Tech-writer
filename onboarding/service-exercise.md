@@ -163,7 +163,7 @@ Controllers tests are a bit more controversial. Some people like to have them, o
 
 ### Integration test
 
-Take a look at this [postman test](https://github.com/nubank/savings-accounts/blob/master/postman/postman/account_creation.clj) to get familiarized with how we write integration tests.
+At Nubank we implemented [our own solution for integration tests](https://github.com/nubank/common-test#postman). These are often referred to as Postman tests. For the purpose of the exercise, take a look at this [postman test](https://github.com/nubank/savings-accounts/blob/master/postman/postman/account_creation.clj) to get familiarized with how they are written.
 
 Integration tests go in `postman/postman/` folder. You should add one postman test that will ensure that the whole flow is working:
 
@@ -175,7 +175,7 @@ Integration tests go in `postman/postman/` folder. You should add one postman te
 
 Since you are using the mock component for s3 we should add some mock data there so we have something to download from s3. This component is a regular s3 component, you can use the methods defined in the s3 protocol for saving data. To improve code organization, you can move this function to an auxiliary namespace.
 
-For triggering an endpoint you can use the same functions as those found in `service-test`. To see if a message was produced to Kafka you can use the function [log-messages](https://github.com/nubank/common-test/#kafka). Make sure you call `common-test.postman.helpers.kafka/clear-messages!` in the `aux/init` function.
+For triggering an endpoint you can use the same functions as those found in `service-test`. To see if a message was produced to Kafka you can use the function [log-messages](https://github.com/nubank/common-test/#kafka). Make sure you call `common-test.postman.helpers.kafka/clear-messages!` in the `init!` function (you can find an example of such a function [here](https://github.com/nubank/papers-please/blob/7a67b7f6e52ed949ca46cfc9f3d1b3cadb26f53e/postman/postman/aux/init.clj#L9-L18)).
 
 ---
 
