@@ -260,7 +260,7 @@ extends FlatSpec with NuDataFrameSuiteBase with Matchers
 
 Then, you can write some tests to check that the dataset computes as expected. You can look at [DailyDeltasLogSpec](https://github.com/nubank/itaipu/blob/master/src/test/scala/etl/dataset/ledger/double_entry/mutable/DailyDeltasLogSpec.scala) for inspiration.
 
-For running the tests, follow the documentation [HERE](https://github.com/nubank/data-infra-docs/blob/master/itaipu/workflow.md#running-tests) (tip: run `testOnly` on your specific file before running the full suit of tests).
+For running the tests, follow the documentation [HERE](https://github.com/nubank/data-infra-docs/blob/master/itaipu/workflow.md#running-tests) (**Tip**: run `testOnly` on your specific file before running the complete test suite.
 
 ---
 
@@ -321,14 +321,16 @@ You can check if the instances are running on the [AWS Console](https://console.
 
 If your proccess fails, you can run the same command again adding your `transaction_id`. The process will start again from where it stopped.
 
+**Tip**: Actually, save the transaction ID somewhere or keep it accessible. You'll need it on the next steps.
+
 eg:
 `sabesp --aurora-stack=cantareira-dev jobs itaipu staging rodrigo s3a://nu-spark-metapod-test/ s3a://nu-spark-metapod-test/ 100 --itaipu=be24227a --filter-by-prefix dataset/on-boarding-exercise-part-i --transaction 56078219-e6e0-43ec-a7a0-0bcc59600473`
 
-**Make sure that your [AWS instances are terminating](https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:tag:Name=cantareira-dev-mesos-on-demand-;sort=instanceId) at the end of the proccess**.
+**IMPORTANT**: Make sure that your [AWS instances are terminating](https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:tag:Name=cantareira-dev-mesos-on-demand-;sort=instanceId) at the end of the process.
 
 ---
 
-## Query metapod to get the path were the dataset was written to
+## Query Metapod to get the path were the dataset was written to
 
 [`Metapod`](https://github.com/nubank/metapod) is the service on which we track the metadata about the run. It receives from Itaipu all information related to:
 
@@ -337,9 +339,9 @@ eg:
 * what's its schema;
 * and so on.
 
-We can query Metapod directly using its URL; our run was on the staging environment, so the metapod endpoint would be: https://staging-global-metapod.nubank.com.br/
+Since we used the staging environment for our run, we need to make sure to query Metapod on that environment to get the results.
 
-The simplest way to query this endpoint is via the Sonar UI which can be accessed at https://backoffice.nubank.com.br/sonar-js/ for the production data. Unfortunately, the version of this service on staging also points to production data, so we'll need to use a local copy of it for our purposes:
+The simplest way to query to do that is via the Sonar UI, which can be accessed at https://backoffice.nubank.com.br/sonar-js/ for the production data. Unfortunately, the version of this service on staging also points to production data, so we'll need to run it locally:
 
 ```shell
 nu service clone sonar-js
@@ -351,9 +353,9 @@ npm install # let it run, it should fail at some point. That's normal™
 yarn start # normally this should open sonar in your browser
 ```
 
-(You might need to run `npm install` and `yarn start` a couple times interchangeably to get your app into the correct state.)
+(**Tip**: You might need to run `npm install` and `yarn start` a couple times interchangeably to get your app into the correct state.)
 
-When you have the local sonar app open in your browser, log in and open the *Monitoring* view in the left side menu. Find and click on your transaction there to get information about the run and its progress.
+When you have the local Sonar app open in your browser, log in and open the *Monitoring* view in the left side menu. Find and click on your transaction there to get information about the run and its progress.
 
 ![Transaction on Sonar](./images/sonar-tx.png)
 
@@ -431,7 +433,7 @@ ls /mnt
 
 ---
 
-PS: if you get stuck, you can get all steps done in [this](https://nubank.cloud.databricks.com/#notebook/138371) notebook, but, don't cheat :)
+**PS**: if you get stuck, you can get all steps done in [this](https://nubank.cloud.databricks.com/#notebook/138371) notebook, but don't cheat :)
 
 ## Next up
 
