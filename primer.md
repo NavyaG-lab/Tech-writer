@@ -97,7 +97,7 @@ More stuff at [Airflow maintenance](./airflow.md)
   * Typically sabesp is called by other tools, like Airflow, but it can be run manually in a terminal, either for development or to address problems with a production run.
 
 ## Capivara-clj overview
-* [Capivara](https://github.com/nubank/capivara) is a Redshift data-loader written in Clojure. The `-clj` suffix is there to disambiguate from an older SQL runner project.
+* [Capivara](https://github.com/nubank/capivara) is a Redshift data-loader written in Clojure. The `-clj` suffix is there to disambiguate from an older [SQL runner](https://github.com/snowplow/sql-runner) project.
 * We load Redshift from Avro files that are computed by Itaipu. While the default dataset storage format for Itaipu is Parquet, we use the "avroize" function to create a copy of the dataset in Avro format, because, at the time of development, Redshift wasn't able to load Parquet files directly. [This is no longer the case](https://aws.amazon.com/about-aws/whats-new/2018/06/amazon-redshift-can-now-copy-from-parquet-and-orc-file-formats/), though.
 * This service has two modes of operation:
   * **Reactive mode** - it reacts to committed datasets by subscribing to SQS messages published by Metapod.
