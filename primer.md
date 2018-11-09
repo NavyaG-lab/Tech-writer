@@ -98,7 +98,7 @@ More stuff at [Airflow maintenance](./airflow.md)
 
 ## Capivara-clj overview
 * [Capivara](https://github.com/nubank/capivara) is a Redshift data-loader written in Clojure. The `-clj` suffix is there to disambiguate from an older SQL runner project.
-* We load Redshift from Avro files that are computed by Itaipu. While the default dataset storage format for Itaipu is Parquet, we use the "avroize" function to create a copy of the dataset in Avro format, because Redshift can load directly from Avro (and not from Parquet).
+* We load Redshift from Avro files that are computed by Itaipu. While the default dataset storage format for Itaipu is Parquet, we use the "avroize" function to create a copy of the dataset in Avro format, because, at the time of development, Redshift wasn't able to load Parquet files directly. [This is no longer the case](https://aws.amazon.com/about-aws/whats-new/2018/06/amazon-redshift-can-now-copy-from-parquet-and-orc-file-formats/), though.
 * This service has two modes of operation:
   * **Reactive mode** - it reacts to committed datasets by subscribing to SQS messages published by Metapod.
     We use SQS for this mode because Metapod is on our production stack (in AWS São Paulo) and Capivara runs in AWS US East (where Redshift runs). This use case asks for a message queue rather than a structured log, but we would probably use Kafka if it wasn't for a couple of things that need to be sorted out before:
