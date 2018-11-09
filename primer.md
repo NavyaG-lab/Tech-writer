@@ -77,6 +77,7 @@ In the raw Datomic storage format, attribute names (and enum values) are not sto
 ## Metapod overview
   * [Metapod](https://github.com/nubank/metapod) is a Clojure service with a Datomic database that stores metadata about our data, including when any given dataset was computed, where is was stored on S3 (and with which partitions), the schema, which grouping "transaction" it is part of, etc.
   * Metapod is a normal service deployed in sa-east-1 (Sao Paulo) in production in the `global` prototype (as opposed to in a specific shard, for example). That means that after a pull request is merged to master, it will build and then go through the e2e flow to staging, and then to prod. You can check what version of metapod is deployed in production using `curl https://prod-global-metapod.nubank.com.br/api/version`, and you can see whether the service is healthy in real time at `http://prod-global-watchtower.nubank.com.br/#services-health`.
+  * Metapod also emits events to SQS and Kafka when a dataset is committed, allowing downstream services to use them, e.g., Capivara subscribes to such events to load the Avro datasets into Belo Monte (Redshift cluster).
   * To know how to retract portions of a Metapod transaction (for example, to recompute a dataset), [please consult the section on how to remove bad data from Metapod in the ops how to guide.](https://github.com/nubank/data-infra-docs/blob/master/ops_how_to.md#removing-bad-data-from-metapod)
 
 ## Aurora overview
@@ -99,7 +100,7 @@ More stuff at [Airflow maintenance](./airflow.md)
   * [Capivara](https://github.com/nubank/capivara) is a Redshift data-loader written in Clojure. The -clj suffix is there to disambiguate from an older SQL runner project.
   * We load Redshift from avro files that are computed by Itaipu. While the default dataset storage format for Itaipu is Parquet, we use the "avroize" function to create a copy of the dataset in Avro format, because Redshift can load directly from Avro (and not from Parquet).
   * Capivara runs simultaneously with Itaipu (reacting to committed datasets via SQS messages published by Metapod) and after Itaipu (batch job to do the cutover once everything is ready).
-  We use SQS for this reactive flow because Metapod is on our production stack (in AWS São Paulo) and Capivara runs in AWS US East (where Redshift runs). Theoretically we could use Kafka for the same purpose, but a few things would need to be solved before:
+  We use SQS for this reactive flow because Metapod is on our production stack (in AWS São Paulo) and Capivara runs in AWS US East (where Redshift runs). This use case asks for a message queue rather than a structured log, but we would probably use Kafka if it wasn't for a couple of things that need to be sorted out before:
     * The services we have running on Mesos have no network access to Kafka clusters running in the São Paulo region;
     * Currently, our Kafka clusters are associated with [Immutable Infrastructure stacks](https://github.com/nubank/playbooks/blob/db4cc8939289c513228ff99b6050fe840bd17fa4/admin/infra/stack-spin.md), which get blue-green deployed from time to time. The problem is that Capivara does not know what stacks are is not prepared to switch over to a new one, when it gets deployed.
 
