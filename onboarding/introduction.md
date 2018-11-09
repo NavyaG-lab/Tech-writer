@@ -2,10 +2,6 @@
 
 Welcome to [Nubank](https://nubank.com.br/) Berlin
 
-## Getting a computer
-
-ask **@gavin** for a computer :)
-
 ## Getting accounts
 
 Good! You already have a computer, a Gmail and also a Slack account. Now it's time to get the other credentials you're going to need.
