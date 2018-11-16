@@ -27,9 +27,9 @@ Some of the external projects underlying our platform are:
 
 ## Datomic Log overview
 
-![Datomic Fact Structure](http://docs.datomic.com/entities-basics.png)
+![Datomic Fact Structure](https://docs.datomic.com/on-prem/entities-basics.png)
 
-[Datomic Log Documentation](http://docs.datomic.com/log.html)
+[Datomic Log Documentation](https://docs.datomic.com/on-prem/log.html)
 
 A Datomic log has an `EAVT Tx Added` structure, which stands for:
 * E = entity (Alessandro)
