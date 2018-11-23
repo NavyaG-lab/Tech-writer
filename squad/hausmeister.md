@@ -16,14 +16,24 @@ Outside of work hours you should have a phone with [OpsGenie](http://opsgenie.co
 
 If an issue comes up that you cannot handle independently, you should escalate the alert to the Level 2 and pair with them to resolve the issue.
 
-_For visibility_: when an issue arises, it is expected that you:
- - mention the failure in [#guild-data-eng](https://nubank.slack.com/messages/C1SNEPL5P/). This allows people to follow along, contribute suggestions, and better connect their code changes to failures you have to wake up in the night for.
- - add an entry to the [data-infra log book](https://docs.google.com/spreadsheets/d/1-1AEX2aPvZvEQgGjXyxIoYl4eD2oav6_6V-eAH2oZ74/edit#gid=0) so we can track the most common failures.
+##### visibility
+
+When an issue arises, it is expected that you mention the failure, communicate updates and actions taken in [#data-crash](https://nubank.slack.com/messages/CE98NE603/). This allows people to follow along and contribute suggestions.
+
+For serious incidents, also perform these steps:
+  - find someone to actively communicate updates about the incident, referred to as the "comms" person. if you're alone, you can take that role.
+  - you are the "point" person, which means you're the first responder and primary person acting on the issue 
+  - change the #data-crash channel topic to ":red_circle: -short description of the failure- | point: -your-name- comms: -comms-person-" e.g. "itaipu-dimensional-modeling not finishing"
+  - move any discussions about the issue to this channel (no need for threads)
+ 
+If the incident affects the time which data will be available for users at Nubank, or availability of some user-facing service (e.g. Metabase, Belo Monte, Databricks), post a short message about what is being affected in [#data-announcements](https://nubank.slack.com/messages/C20GTK220/). This way, users know we are aware of the issue. Note that this channel serves a wider audience than engineers, so describe the issue in plain terms and at a high level.
+
+After the incident has been taken care of and resolved, change the topic back to ":green_circle:" (and post an update for users in #data-announcements, if applicable).
  
 ### report squad's weekly progress
 On Friday we shoud should update our clients about the work done in the week. We should send a message on [#data-announcements](https://nubank.slack.com/messages/C20GTK220/) and replicate the message on [#guild-data-eng](https://nubank.slack.com/messages/C1SNEPL5P/) and [#squad-data-infra](https://nubank.slack.com/messages/C0XRWDYQ2/).
 
-This message should contain the main tasks done on new features, bug fixes and even squad tasks like hiring jobs.
+This message should contain the main tasks done on new features, bug fixes and even squad tasks like hiring.
 
 ### support our clients
 Over the course of the week our customers, Nubank's data scientists, often encounter platform issues while using our services.
