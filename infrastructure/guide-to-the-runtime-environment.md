@@ -58,7 +58,14 @@ We have several types of mesos slaves, one for each kind of workload. They can b
 - Merge all the stuff
 - Update cantareira-dev and cantareira-stable clusters (using deploy's console as well)
 
-## Reverting chang
+## Reverting changes of bump (in case of crash)
+ - Revert and merge: 
+   - `aurora-jobs`
+   - `scale-cluster`
+   -  deploy
+ - Wait their pipelines to run in go run
+ - Retrigger `dagao` and `dagao-deploy` to send the changes on the two repos to airflow
+ - Update mesos cluster [see here](#deployment)
 
 ## Airflow
 
