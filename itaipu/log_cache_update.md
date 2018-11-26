@@ -15,7 +15,7 @@ This can drastically speed up contract generation.
 To do so 
  - get the metapod transaction for the last successful nightly run ([see here](monitoring_nightly_run.md#finding-the-transaction-id)) 
   - run [this databricks notebook](https://nubank.cloud.databricks.com/#notebook/231312/command/231314) with that transaction
-  - copy all the parquets from the `ephemeral` bucket (which will eventually be deleted) into a permenant bucket. You can do some scripting like this:
+  - copy all the parquets from the `ephemeral` bucket (which will eventually be deleted) into a permanent bucket. You can do some scripting like this:
 
 ```
 grep "s3:\/\/nu-spark-metapod-ephemeral-1\/\K([^\"]*)" -oP ~/Downloads/export\(2\).csv | xargs -P 10 -I {} aws s3 cp --recursive s3://nu-spark-metapod-ephemeral-1/{} s3://nu-spark-metapod/{}

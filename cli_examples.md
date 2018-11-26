@@ -86,26 +86,26 @@ For test cases you can set the same bucket, but if you run real jobs you should 
 ### Full run scaling the cluster up and down
 
 ```shell
-sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-metapod-test/ s3a://nu-spark-metapod-test/ 216 --itaipu=4155f24b
+sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-metapod-test/ s3a://nu-spark-metapod-test/ 5 --itaipu=4155f24b
 ```
 
 ### Full run scaling the cluster up and down and using the materialized log cache
 
 ```shell
-sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-metapod-test/ s3a://nu-spark-metapod-test/ 216 --itaipu=4155f24b  --use-cache
+sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-metapod-test/ s3a://nu-spark-metapod-test/ 5 --itaipu=4155f24b  --use-cache
 ```
 
 ### Filtered run scaling the cluster up and down
 
 ```shell
-sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-metapod-test/ s3a://nu-spark-metapod-test/ 216 --itaipu=4155f24b  --filter-by-prefix contract
+sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-metapod-test/ s3a://nu-spark-metapod-test/ 5 --itaipu=4155f24b  --filter-by-prefix contract
 ```
 
 
 ### Filtered run scaling the without scaling up or down
 
 ```shell
-sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-metapod-test/ s3a://nu-spark-metapod-test/ 216 --itaipu=4155f24b  --filter-by-prefix contract --skip-scale-up --skip-scale-down
+sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-metapod-test/ s3a://nu-spark-metapod-test/ 5 --itaipu=4155f24b  --filter-by-prefix contract --skip-scale-up --skip-scale-down
 ```
 
 **for a full list of possible switches run `sabesp jobs itaipu --help`**
@@ -138,7 +138,7 @@ sabesp --aurora-stack=<stack> jobs create <env> scale-ec2-<job-name> NODE_COUNT=
 
 e.g:
 ```shell
-sabesp --aurora-stack=cantareira-stable jobs create prod scale-ec2-itaipu-dimensional-modeling NODE_COUNT=224 SLAVE_TYPE=itaipu-dimensional-modeling INSTANCE_TYPE=m4.2xlarge --filename scale-ec2 --job-version="scale_cluster=74e5894"
+sabesp --aurora-stack=cantareira-stable jobs create prod scale-ec2-itaipu-dimensional-modeling NODE_COUNT=10 SLAVE_TYPE=itaipu-dimensional-modeling INSTANCE_TYPE=m4.2xlarge --filename scale-ec2 --job-version="scale_cluster=74e5894"
  ```
 
 ### Manually downscale the cluster

@@ -39,21 +39,20 @@ As an engineer that would like to get data from ETL land into microservices land
 
 ### tell tapir to load the dataset
 
-Open a PR on `tapir` that adds your dataset name to the [`loadable-dataset-whitelist`](https://github.com/nubank/tapir/blob/master/resources/tapir_config.json.base#L20) config entry. Note that the dataset name may be `policy/foo`, but `tapir` needs the avro version, so be sure to add a `-avro` to the end of the name (`policy/foo-avro` in this case).
-
-Once this gets merged, it will be served as part of the following day's ETL run.
+Your dataset is served automatically by Tapir according to the [Serving Layer Mode](#making-your-dataset-ready-for-the-serving-layer) associated with it, so no extra work is necessary.
 
 ### primary key
 
 The primary key used when inserting rows of a dataset into the DynamoDB table is a conjunction of the primary key from the itaipu dataset (used as the dynamo hash key) along with the dataset name (used as the dynamo sort key).
-Hence, if you have duplicate values in your primary key column, your dataset can't be loaded. This key is how you will access rows of the dataset when querying through `conrado`, via HTTP ([see below](#conrado)).
+Hence, if you have duplicate values in your primary key column, your dataset will fail while running the dataset SparkOp as it wouldn't be loadable from DynamoDB afterwards. This key is how you will access rows of the dataset when querying through `conrado`, via HTTP ([see below](#conrado)).
 
 ### setting serving style
 
-By default, your data will be available via http in `conrado`, which your service can hit.
+The serving style is based on the [Serving Layer Mode](#making-your-dataset-ready-for-the-serving-layer) associated with the dataset.
 
-You can also have option of having the dataset rows be served via Kafka messages by adding your dataset to the [`propagatable-dataset-whitelist`](https://github.com/nubank/tapir/blob/master/resources/tapir_config.json.base#L37).
-This will tell `tapir` to serve your dataset by publishing to the `dataset-update` topic.
+The value of `LoadedOnly` instructs Tapir to load your dataset in the DynamoDB store where it will be available via http in `conrado`, which your service can hit.
+
+You can alternatively set the Serving Layer Mode to `LoadedAndPropagated` to have the dataset rows be served via Kafka messages, as well as loaded in the db to queried from `conrado`. The dataset would be published to the `dataset-update` topic.
 
 ### when is data overwritten?
 
