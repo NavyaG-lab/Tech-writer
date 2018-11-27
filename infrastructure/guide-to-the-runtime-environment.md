@@ -6,6 +6,8 @@ _Table of Contents:_
 * [Airflow overview](#airflow-overview)
 * [Deployment](#deployment)
 * [Types of Mesos Slaves](#types-of-mesos-slaves)
+* [Upgrading Mesos](#upgrading-mesos)
+  * [Reverting Bump](#reverting-bump)
 * [Ops](#ops)
   * [Checking running instances](#checking-running-instances)
   * [Executor logs](#executor-logs)
@@ -61,7 +63,7 @@ We have several types of mesos slaves, one for each kind of workload. They can b
 * **Specific On Demand Instances** - Those instances are created using the [scale-cluster](https://github.com/nubank/scale-cluster) `scale-ec2` enstrypoint, this differs from the other slaves by spinning individual ec2 instances (not in auto-scale cluster) so you can specify different attributes for each instance (like: instance type, naming etc.).
   * can be scaled up using the following command: `sabesp --aurora-stack=cantareira-stable jobs create prod downscale-ec2-model SLAVE_TYPE=model NODE_COUNT=1 --job-version="scale_cluster=d749aa4" --filename scale-ec2`
 
-## Upgrading mesos version
+## Upgrading Mesos
 
 - Find the new mesos version, you can use `apt-get update && apt-cache search mesos` inside an ubuntu docker.
 - Bump mesos version in mesos-base dockerfile follow [this](https://github.com/nubank/dockerfiles/pull/760/files) example.
@@ -75,7 +77,7 @@ We have several types of mesos slaves, one for each kind of workload. They can b
 - Merge all the stuff
 - Update cantareira-dev and cantareira-stable clusters (using deploy's console as well)
 
-## Reverting changes of bump (in case of crash)
+### Reverting Bump
  - Revert and merge: 
    - `aurora-jobs`
    - `scale-cluster`
