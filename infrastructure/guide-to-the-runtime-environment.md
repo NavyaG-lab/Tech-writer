@@ -6,6 +6,8 @@ _Table of Contents:_
 * [Airflow overview](#airflow-overview)
 * [Deployment](#deployment)
 * [Types of Mesos Slaves](#types-of-mesos-slaves)
+* [Upgrading Mesos](#upgrading-mesos)
+  * [Reverting Bump](#reverting-bump)
 * [Ops](#ops)
   * [Checking running instances](#checking-running-instances)
   * [Executor logs](#executor-logs)
@@ -60,6 +62,29 @@ We have several types of mesos slaves, one for each kind of workload. They can b
   * can be scaled up using the following command: `sabesp --verbose --aurora-stack=cantareira-stable jobs create prod scale MODE=spot-only N_NODES=0 SCALE_TIMEOUT=5 --job-version scale_cluster=df8da67`
 * **Specific On Demand Instances** - Those instances are created using the [scale-cluster](https://github.com/nubank/scale-cluster) `scale-ec2` enstrypoint, this differs from the other slaves by spinning individual ec2 instances (not in auto-scale cluster) so you can specify different attributes for each instance (like: instance type, naming etc.).
   * can be scaled up using the following command: `sabesp --aurora-stack=cantareira-stable jobs create prod downscale-ec2-model SLAVE_TYPE=model NODE_COUNT=1 --job-version="scale_cluster=d749aa4" --filename scale-ec2`
+
+## Upgrading Mesos
+
+- Find the new mesos version, you can use `apt-get update && apt-cache search mesos` inside an ubuntu docker.
+- Bump mesos version in mesos-base dockerfile follow [this](https://github.com/nubank/dockerfiles/pull/760/files) example.
+- Bump mesos-base dependencies [eg](https://github.com/nubank/dockerfiles/pull/761/files)
+- Bump deploy version of mesos-master and slave [eg](https://github.com/nubank/deploy/pull/3277)
+- Bump sabesp version of aurora-client [eg](https://github.com/nubank/sabesp/pull/80)
+- Bump aurora-jobs versions of aurora-client and sabesp [eg](https://github.com/nubank/aurora-jobs/pull/709)
+- Bump all models that depend on `nu-mesos-python` or `nu-mesos-python-spark` (*you can use [source graph](https://sourcegraph.nubank.com.br/search) to find the repositores and `sed` + `hub` to open the PRs*)
+- Create a test cluster using deploy's console [see here](#deployment) 
+- Run a successfull job in the new cluster (using sabesp + itaipu filtered run)
+- Merge all the stuff
+- Update cantareira-dev and cantareira-stable clusters (using deploy's console as well)
+
+### Reverting Bump
+ - Revert and merge: 
+   - `aurora-jobs`
+   - `scale-cluster`
+   -  deploy
+ - Wait their pipelines to run in go run
+ - Retrigger `dagao` and `dagao-deploy` to send the changes on the two repos to airflow
+ - Update mesos cluster [see here](#deployment)
 
 ## Ops
 
