@@ -145,7 +145,6 @@ below.
         package etl.dataset.parent_folder_name_if_subfolder
 
         import common_etl.operator.SparkOp
-        import etl.itaipu.avroizeWithSchemaFunctor
 
         package object folder_name {
 
@@ -153,12 +152,12 @@ below.
           // `referenceLocalDate` (LocalDate), `targetLocalDate` (LocalDate)
           def allOps(referenceDate: String): Seq[SparkOp] = {
             val fileNameOp = FileName(referenceDate)
-            Seq(fileNameOp, avroizeWithSchemaFunctor(fileNameOp))
+            Seq(fileNameOp)
           }
 
           // only if the new class doesn't receive inputs:
           def allOps: Seq[SparkOp] = {
-            Seq(FileName, avroizeWithSchemaFunctor(FileName))
+            Seq(FileName)
           }
 
           // only if there are subfolders (assuming it receives `referenceDate` as input):
@@ -235,8 +234,9 @@ edit in an IDE because of type checking, autocompletion, etc.), then go back to 
 ### Make the dataset available in Redshift
 
 If you want to make the dataset available in Redshift, you need to:
-1. Create Avro files from it: In the package file `package.scala`, add a call to `avroizeWithSchemaFunctor` in the output of `allOps`.
-2. Extend the class with the trait `DeclaredSchema` and populate the `AttributeOverrides`.
+1. [Override the `SparkOp` member `warehouseMode`](https://github.com/nubank/itaipu/blob/a206527f34acf419cdbb70acfbc145d5899d6be8/src/main/scala/etl/dataset/billing_cycles/BillingCycles.scala#L15) with the value `WarehouseMode.Loaded`.
+2. [Extend the class](https://github.com/nubank/itaipu/blob/a206527f34acf419cdbb70acfbc145d5899d6be8/src/main/scala/etl/dataset/billing_cycles/BillingCycles.scala#L15) with the trait `DeclaredSchema`
+3. [Override the `attributeOverrides` member](https://github.com/nubank/itaipu/blob/a206527f34acf419cdbb70acfbc145d5899d6be8/src/main/scala/etl/dataset/billing_cycles/BillingCycles.scala#L21-L34).
 
 ## Running tests
 
