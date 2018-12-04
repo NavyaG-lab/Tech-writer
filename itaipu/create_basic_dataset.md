@@ -100,6 +100,8 @@ Every dataset you find in Itaipu is a SparkOp. The SparkOp class has six importa
 
 - `ownerSquad` property. That's the squad that owns that dataset.
 
+- `warehouseMode` property. This is optional, and you should only set it to make your new dataset available for querying on the data warehouse (Redshift).
+
 - dataset names section. Here we'll get all the names of all the datasets we'll use and place them on variables with clear names. The reason why we do so will become apparent eventually.
 
 ## 4 - Create your SparkOp Class
@@ -132,7 +134,7 @@ import common_etl.implicits._
 import common_etl.metadata.Squad
 import common_etl.metadata.Squad.SquadName
 import common_etl.metapod.{Attribute, MetapodAttribute}
-import common_etl.operator.SparkOp
+  import common_etl.operator.{SparkOp, WarehouseMode}
 import common_etl.schema.{DeclaredSchema, DistConf, LogicalType}
 
 import org.apache.spark.sql.{DataFrame, Row}
@@ -147,6 +149,9 @@ object ${NAME} extends SparkOp with DeclaredSchema {
   //This sets the name of the squad who owns the dataset.
   //If your squad isn't in common_etl.metadata.Squad, please add it
   override val ownerSquad: Squad = SquadName
+
+  //Optional. This is how you make the dataset available on Redshift for querying
+  override val warehouseMode: WarehouseMode = WarehouseMode.Loaded
   
   override val inputs: Set[String] = Set(fooName, barName, bazName)
   override def definition(datasets: Map[String, DataFrame]): DataFrame = {
@@ -204,7 +209,7 @@ object OuvidoriaCalls extends SparkOp with DeclaredSchema {
   def callsName: String = ContractOp(Calls).name
 }
 ```
-Pretty barebones, right? All we do is say we use the ContractOp Calls, located at `etl.contract.stevie.Calls`. Then we call the `filterCalls` function, passing the `calls` Dataframe. But right now the `filterCalls` function is empty. 
+Pretty barebones, right? All we do is say we use the `ContractOp` `Calls`, located at `etl.contract.stevie.Calls`. Then we call the `filterCalls` function, passing the `calls` Dataframe. But right now the `filterCalls` function is empty.
 
 That `filterCalls` function is where we'll put our logic.
 
@@ -311,14 +316,15 @@ import etl.contract.EnumAttribute
 import etl.contract.stevie.Calls
 import common_etl.implicits._
 import common_etl.metapod.{Attribute, MetapodAttribute}
-import common_etl.operator.SparkOp
+import common_etl.operator.{SparkOp, WarehouseMode}
 import common_etl.schema.{DeclaredSchema, LogicalType}
 import org.apache.spark.sql.DataFrame
 
 object OuvidoriaCalls extends SparkOp with DeclaredSchema {
   override val name = "dataset/ouvidoria-calls"
-  override val ownerSquad: Squad = Squad....
-  override val inputs: Set[String] = Set(callsName)
+  override val ownerSquad: Squad            = Squad....
+  override val inputs: Set[String]          = Set(callsName)
+  override val warehouseMode: WarehouseMode = WarehouseMode.Loaded
   
   val dateToSearch = "2017-02-01"
   val phoneToFilter = "08008870463"
@@ -540,20 +546,18 @@ package etl.dataset
 package etl.dataset.parent_folder_name
 
 import common_etl.operator.SparkOp
-import etl.itaipu.functors.avroizeWithSchemaFunctor
-
 package object folder_name {
   
   // only if the new class receives inputs, e.g., `referenceDate` (String), `targetDate` (String),
   // `referenceLocalDate` (LocalDate), `targetLocalDate` (LocalDate)
   def allOps(referenceDate: String): Seq[SparkOp] = {
     val fileNameOp = FileName(referenceDate)
-    Seq(fileNameOp, avroizeWithSchemaFunctor(fileNameOp)) //You need both of them
+    Seq(fileNameOp)
   }
 
   // only if the new class doesn't receive inputs: 
   def allOps: Seq[SparkOp] = {
-    Seq(FileName, avroizeWithSchemaFunctor(FileName)) //You need both of them  
+    Seq(FileName)
   }
   
   // only if there are subfolders (assuming it receives `referenceDate` as input):
@@ -640,7 +644,7 @@ TestClass
   - Does your test actually test your class in a true, honest-to-god way?
 
 Other things:
-  - Did you add your new class to the folder's allOps? Did you remember to also add its avroizeWithSchemaFunctor version?
+  - Did you add your new class to the folder's allOps?
   - If you've created the folder your new class is in, have you created the package.scala file? 
   	- Is the name of the package object equal to the folder name?
   	- Have you then added it to the opsToRun in itaipu/src/main/scala/etl/itaipu/Itaipu.scala ?
