@@ -40,21 +40,21 @@ Given a `DatasetSeriesOp` called `YourOp`:
 A code generator helper can be found in `common-databricks`:
 
 ```scala
-import common_databricks.dataset_series.DatasetSeriesGenerator
+import common_databricks.dataset_series.DatasetSeriesOpGenerator
 import common_databricks.DatabricksHelpers
 import common_etl.metadata.Squad
 
 val metapod = DatabricksHelpers.getMetapod()
 
-DatasetSeriesGenerator.renderOp("your-series-name", 
-                                Squad.YourSquad,
-                                "description of your dataset series",
-                                metapod)
+DatasetSeriesOpGenerator.renderOp("your-series-name", 
+                                  Squad.YourSquad,
+                                  "description of your dataset series",
+                                  metapod)
 
 /* Output:
 
 import common_etl.metadata.Squad
-import common_etl.operator.dataset_series.{Attribute, DatasetSeriesOp}
+import common_etl.operator.dataset_series.{DatasetSeriesAttribute, DatasetSeriesOp}
 import common_etl.schema.LogicalType
 
 object YourSeriesName extends DatasetSeriesOp {
