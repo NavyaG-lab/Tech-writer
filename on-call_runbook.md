@@ -13,7 +13,7 @@ The "ALERT" string should be verbatim the same string that is dispatched.
 - [check-serving-layer triggered on Airflow](#check-serving-layer-triggered-on-airflow)
 - [Deadletter prod-etl-committed-dataset](#deadletter-prod-etl-committed-dataset)
 - [Riverbend - no file upload in the last hour](#no-file-upload-in-the-last-hour)
-- [Correnteza - integrity checker unhealthy](#correnteza-integrity-checker-unhealthy)
+- [Correnteza - database-claimer is failing](#correnteza-database-claimer-is-failing)
 
 ---
 
@@ -115,44 +115,23 @@ This alert means that [Riverbend](https://github.com/nubank/riverbend) is not pr
 - After a while check if it gets back to normal, it can take a while (~20 min) as it has to restore the state store.
 - If it doesn't start working again, check for further exceptions on Splunk.
 
-### Correnteza integrity checker unhealthy
+### Correnteza database-claimer is failing
 
-If you see a `ops_health_failure` alarm on `#squad-di-alarms` for `component: integrity-checker` then you can get more info by running
+If you see a `ops_health_failure` alarm on `#squad-di-alarms` for `component: database-claimer` then you can get more info by running
 
 ```bash
-nu ser curl GET global correnteza /ops/health/integrity-checker | jq .
+nu ser curl GET global correnteza /ops/health/database-claimer | jq .
 ```
 
-An example output might be:
-```json
-{
-  "healthy": false,
-  "checks": {
-    "bonham-s3": [
-      {
-        "error_type": "last_extraction_more_than_24_hours_ago",
-        "corrupted_extractions": [
-          {
-            "path": "s3://nu-spark-datomic-logs/1/s3/bonham/3e0c72fd-24c0-4f8f-a471-44d88d80ed2c-3733-3737.avro",
-            "last_batch_t": 3733,
-            "prototype": "s3",
-            "requested_range": [
-              3734,
-              53734
-            ],
-            "database": "bonham",
-            "db_prototype": "bonham-s3",
-            "version": "7c137611328f5c161ad77d6d3492e0d4e4c5a82a",
-            "timestamp": 1537369460036,
-            "initial_t": 3734,
-            "last_t": 3737
-          }
-        ]
-      }
-    ]
-  }
-}
-```
+Usually this means that the database claimer, which is responsible for acquiring zookeeper locks that correspond to datomic databases, has somehow failed to acquire the appropriate number of locks.
+
+If you cycle the service it should acquire the locks within 30 or so minutes:
+
+`nu ser cycle global correnteza`
+
+You can see the databases that have been claimed via:
+
+`nu ser curl GET --env prod global correnteza /ops/database-claimer/list -- -v | jq .`
 
 #### Error type: `last_extraction_more_than_24_hours_ago`
 
