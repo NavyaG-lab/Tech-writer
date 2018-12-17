@@ -22,12 +22,6 @@ In order to use the data from a Dataset Series in an Itaipu `SparkOp`, you'll fi
 
 ### Creating a new dataset series
 
-**NB: We are currently in the process of migrating existing DatasetSeries code to the DSL outlined below. For this reason:**
-
-* **please refrain form using the old DSL for new Ops**
-* **new DatasetSeriesOps declared with the new DSL should go in `etl.dataset_series_2` as outlined below. Old, yet-to-be-migrated Ops remain in the legacy `etl.dataset_series` package**
-* **If needed, see the example [migration PR](https://github.com/nubank/itaipu/pull/3585)**
-
 #### Code organization
 
 Given a `DatasetSeriesOp` called `YourOp`:
@@ -64,13 +58,13 @@ object YourSeriesName extends DatasetSeriesOp {
   override val ownerSquad: Squad = Squad.YourSquad
   override val description: Option[String]= Some("description of your dataset series")
 
-  override val contractSchema: Set[Attribute] = Set(
+  override val contractSchema: Set[DatasetSeriesAttribute] = Set(
     DatasetSeriesAttribute("index", LogicalType.UUIDType, description = Some("")),
     DatasetSeriesAttribute("attr1", LogicalType.StringType, description = Some("")),
     DatasetSeriesAttribute("attr2", LogicalType.IntegerType, description = Some(""))
   )
 
-  override val alternativeSchemas: Seq[Set[Attribute]] = Seq(
+  override val alternativeSchemas: Seq[Set[DatasetSeriesAttribute]] = Seq(
     Set(
       DatasetSeriesAttribute("index", LogicalType.UUIDType),
       DatasetSeriesAttribute("attr1", LogicalType.StringType)
@@ -298,7 +292,6 @@ Sometimes, you'll want to ignore certain versions of your series altogether. If 
 ```scala
 import common_etl.operator.dataset_series.DatasetSeriesAttribute
 
-// `cpf` and `customer_name` will be hashed
 override val droppedSchemas = Seq(
     Set(
         DatasetSeriesAttribute("customer_id", LogicalType.UUIDType, isPrimaryKey = true),
