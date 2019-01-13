@@ -19,7 +19,7 @@ So now ask on #access-request for the following permissions:
 
 - Belomonte account
 
-For more information on the access you need to contribute to data-infra: [Permissions needed to contribute to data infra](https://github.com/nubank/data-infra-docs/blob/master/primer.md#permissions--accounts-needed-to-contribute-on-data-infra-update-required)
+For more information on the access you need to contribute to data-infra: [Permissions needed to contribute to data infra](https://github.com/nubank/data-infra-docs/blob/master/primer.md#permissions--accounts-needed-to-contribute-on-data-infra)
 
 ## Setting up your environment
 
