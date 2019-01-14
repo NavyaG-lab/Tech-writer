@@ -13,7 +13,7 @@ At Nubank, Datomic is the main/preferred way to store data. But it's not the onl
 
 Dataset series data is produced by services by calling the `common-schemata.wire.etl/produce-to-etl!` function ([source](https://github.com/nubank/common-schemata/blob/master/src/common_schemata/wire/etl.clj#L133-L137)) . The resulting data is then handled by the *Ingestion Layer* – a set of services linked to the `EVENT-TO-ETL` Kafka topic:
 
-* The [Riverbend](https://github.com/nubank/riverbend) service is responsible for producing dataset series. It does so by consuming the `EVENT-TO-ETL` Kafka topic and serialising its messages to `.avro` files suitable for ingestion by Itaipu. A technical description for how data goes from Kafka all the way to being processed in Itaipu can be found in the [Annexes](#annexes) section
+* The [Riverbend](https://github.com/nubank/riverbend) service is responsible for producing dataset series. It does so by consuming the `EVENT-TO-ETL` Kafka topic and serialising its messages to `.avro` files suitable for ingestion by Itaipu. A technical description for how data goes from Kafka all the way to being processed in Itaipu can be found in the [Annexes](#annexes) section. The `dataset-name` should be in the format `series/dataset-name`.
 * The [Curva de Rio](https://github.com/nubank/curva-de-rio) service exposes an HTTP endpoint which allows services not connected to Kafka to send data to Riverbend.
 
 ## Using Dataset Series
@@ -88,7 +88,7 @@ Feel free to use and copy the [example databricks notebook](https://nubank.cloud
 
 ###### `seriesName`
 
-The name of your series, the same used by your service when posting data via the `common-schemata.wire.etl/produce-to-etl!` function ([source](https://github.com/nubank/common-schemata/blob/master/src/common_schemata/wire/etl.clj#L133-L137)).
+The name of your series, the same used by your service when posting data via the `common-schemata.wire.etl/produce-to-etl!` function ([source](https://github.com/nubank/common-schemata/blob/master/src/common_schemata/wire/etl.clj#L133-L137)) but without the `series/`.
 
 ###### `contractSchema`
 
