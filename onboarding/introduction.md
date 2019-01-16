@@ -1,25 +1,35 @@
 # Berlin Onboarding
 
-Welcome to [Nubank](https://nubank.com.br/) Berlin
+Welcome to [Nubank](https://nubank.com.br/) Berlin :tada:🇩🇪
 
-## Getting accounts
+## Getting accounts and permissions
 
 Good! You already have a computer, a Gmail and also a Slack account. Now it's time to get the other credentials you're going to need.
 
-First, you need to have an account on both [github.com](http://github.com) and [quay.io](http://quay.io), then ask on the **#access-request** slack channel informing your nubank mail, your **GitHub** and quay.io **users** for the following accounts:
+First, you need to have an account on both [github.com](http://github.com) and [quay.io](http://quay.io).
 
-- Splunk
-- Databricks
-- AWS
-- Nubank's [Quay.io](http://quay.io) + data-infra group
+Then let's ask for access requests with this [form](https://docs.google.com/forms/d/e/1FAIpQLSeXjitvbqmkpxzxBTss6UzLz_Np6U73ssQNJpX0yQG5p2QZyQ/viewform).
 
- **To ask for any kind of access, account or credentials you should ask on #access-request**
+* Submit one request by selecting "Account Creation", and accesses with this form, with these needs:
+  * Github
+  * Quay (in datainfra group)
+  * Splunk
+  * Databricks
+  * AWS
 
-So now ask on #access-request for the following permissions:
+* With the same form, submit another request by selecting "IAM Perms", and these are groups you need to be in:
+  * `data-access-ops data-infra-aurora-access eng infra-ops prod-eng data-infra belomonte analyst`
 
-- Belomonte account
+* We need one more request for accessing Sonas-JS. Submit another request by selecting "Scopes", and the scope name is:
+  * `metapod-admin`
 
-For more information on the access you need to contribute to data-infra: [Permissions needed to contribute to data infra](https://github.com/nubank/data-infra-docs/blob/master/primer.md#permissions--accounts-needed-to-contribute-on-data-infra)
+* Log-in to [circleci](https://circleci.com) with your GitHub account. This is for building code on branches, such as the pull request build indicator on Itaipu.
+
+* TODO: how are these users managed?:
+  * Datagrip license (or some other SQL client)
+  * Redshift user for etl@cantareira-redshift.nubank.com.br (or `sao_pedro` superuser)
+  * Metabase admin
+
 
 ## Setting up your environment
 
