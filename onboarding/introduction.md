@@ -33,9 +33,11 @@ Then let's ask for access requests with this [form](https://docs.google.com/form
 
 ## Setting up your environment
 
-Overall, you should use [https://wiki.nubank.com.br/index.php/Dev_environment](https://wiki.nubank.com.br/index.php/Dev_environment) . It has been updated and made more user-friendly recently.
+### `setupnu.sh`
 
-The setupnu.sh script is self-explanatory. Make sure that you have access to the engineering team S3, otherwise you will have problems to use your aws key and secret while running setupnu.sh.
+Overall, you should use [setupnu.sh](https://github.com/nubank/nudev#setting-up-a-new-development-machine). It has been updated and made more user-friendly recently.
+
+The `setupnu.sh` script is self-explanatory. Make sure that you have gone through [Getting accounts and permissions](#getting-accounts-and-permissions) to be in the engineering group, otherwise you will have problems to use your aws key and secret while running `setupnu.sh`.
 
 Every now and then people will find minor bugs on setupnu. This is a great opportunity to create your first PR.
 
