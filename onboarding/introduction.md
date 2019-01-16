@@ -41,9 +41,15 @@ The `setupnu.sh` script is self-explanatory. Make sure that you have gone throug
 
 Every now and then people will find minor bugs on setupnu. This is a great opportunity to create your first PR.
 
+### VPN
+
+After running `setupnu.sh`, setup your VPN by following [these steps](https://nubank.slack.com/archives/C024U9800/p1545380162000900).
+
+
+### Validation
 To validate the environment is working properly, you should clone a service repo and try to run its tests.
 
-Setting up **scala:**
+### Setting up scala
 
 Scala 101: https://wiki.nubank.com.br/index.php/Scala
 
