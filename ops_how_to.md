@@ -278,7 +278,7 @@ This allows buggy datasets to be skipped so that they don't affect the stability
 - Run the following `sabesb` command to commit a blank dataset for a specific dataset in a given run:
 
 ```shell
-sabesp metapod --token --env prod dataset commit <metapod-transaction-id> <dataset-id> parquet s3://nu-spark-us-east-1/non-datomic/static-datasets/empty-materialized/empty.gz.parquet
+sabesp metapod --token --env prod dataset commit <metapod-transaction-id> <dataset-id> PARQUET s3://nu-spark-us-east-1/non-datomic/static-datasets/empty-materialized/empty.gz.parquet
 ```
 
 ## Removing bad data from Metapod
