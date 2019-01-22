@@ -12,7 +12,7 @@ Then let's ask for access requests with this [form](https://docs.google.com/form
 
 * Submit one request by selecting "Account Creation", and accesses with this form, with these needs:
   * Github
-  * Quay (in datainfra group)
+  * Quay
   * Splunk
   * Databricks
   * AWS
@@ -22,6 +22,8 @@ Then let's ask for access requests with this [form](https://docs.google.com/form
 
 * We need one more request for accessing Sonas-JS. Submit another request by selecting "Scopes", and the scope name is:
   * `metapod-admin`
+  
+* Now, to join `datainfra` quay.io team, ping @chico or @schaffer on Slack with your quay.io handle (currently only admins are able to do this).
 
 * Log-in to [circleci](https://circleci.com) with your GitHub account. This is for building code on branches, such as the pull request build indicator on Itaipu.
 
