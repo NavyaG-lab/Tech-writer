@@ -32,6 +32,7 @@ Then let's ask for access requests with this [form](https://docs.google.com/form
   * Redshift user for etl@cantareira-redshift.nubank.com.br (or `sao_pedro` superuser)
   * Metabase admin
 
+You'll be tagged in #access-request slack channel when the permission is given to you.
 
 ## Setting up your environment
 
