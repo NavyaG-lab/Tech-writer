@@ -161,7 +161,7 @@ This check runs every day at 17h, 19h and 20h UTC, the last being our SLA for se
 To perform the check in your local machine:
 - make sure you have sabesp >=2.5.1
 ```
-pip install --upgrade sabespcli -i https://pypi.nubank.com.br/pypi
+pip install --upgrade sabesp -i https://pypi.nubank.com.br/pypi
 ```
 
 - check using the transaction ID of the day
