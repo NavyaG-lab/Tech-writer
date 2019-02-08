@@ -287,6 +287,8 @@ After deduplication, two more steps are run on the resulting data:
 
 ### `droppedSchemas`
 
+#### Explicitly dropping schemas
+
 Sometimes, you'll want to ignore certain versions of your series altogether. If this is the case, instead of declaring a schema in `alternativeSchemas`, you can declare it in `droppedSchemas`:
 
 ```scala
@@ -302,7 +304,54 @@ override val droppedSchemas = Seq(
 )
 ```
 
-It is fairly important to declare schemas you wish to drop on purpose in this `droppedSchemas` field; otherwise if you simply don't declare them Itaipu will alert on them and you won't be able to differentiate b etween schemas you're ignoring and schemas you're accidentally missing.
+It is fairly important to declare schemas you wish to drop on purpose in this `droppedSchemas` field; otherwise Itaipu will alert on them and you won't be able to differentiate between schemas you're ignoring intentionally and schemas you're accidentally missing.
+
+#### Troubleshooting dropped schemas
+
+Ideally, you'd want all datasets to be either processed normally, or intentionally dropped through the `droppedSchemas` attribute described above. You will know that it's not the case if during the run, Itaipu posts alerts about dropped schemas on [#squad-di-alarms](https://nubank.slack.com/messages/C51LWJ0SK/), for example:
+
+```
+Dropping dataset-series *series/policy-reactive-limit-v3*, owner *Unknown*, datasets dropped: *147* with *2* distinct schemas
+```
+
+This message means that Itaipu found existing dataset series in S3, but could not match them with a schema declared in the relevant `DatasetSeriesContractOp` (including schemas in `droppedSchemas`). In order to remedy this, you will need to update the existing schemas or add new schema in the op to match these dropped datasets. This can be achieved by using the [Dropped DatasetSeries Troubleshooting notebook](https://nubank.cloud.databricks.com/#notebook/574720) on Databricks. This notebook handles querying Metapod and comparing the schemas of existing loaded datasets against.
+
+When running the notebook, you will obtain an output which will look like:
+
+```
+2 schemas were dropped for a total of 149 dropped datasets
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+40 datasets were dropped for a schema most similar to declared schema 'series-raw/policy-reactive-limit-v3-contract'
+
+	Attributes found only in the dropped schema:
+
+	Attributes found only in the declared schema:
+
+		* Attribute(name = "was_negativated", logicalType = LogicalType.BooleanType, nullable = None, primaryKey = None)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+109 datasets were dropped for a schema most similar to declared schema 'series-raw/policy-reactive-limit-v3-contract'
+
+	Attributes found only in the dropped schema:
+
+	Attributes found only in the declared schema:
+
+		* Attribute(name = "hyoga_prediction_ecdf", logicalType = LogicalType.DoubleType, nullable = None, primaryKey = None)
+		* Attribute(name = "hyoga_prediction", logicalType = LogicalType.DoubleType, nullable = None, primaryKey = None)
+		* Attribute(name = "cronno_prediction", logicalType = LogicalType.DoubleType, nullable = None, primaryKey = None)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+
+This output indicates that it found 2 schemas in existing dataset series on S3 that couldn't be matched with one of the schemas of your op. Then, for each schema, it indicates which schema of the op looks most like these dropped schemas (so as to give you something to work from), as well as a description of the differences between the dropped schema and that closest matching schema.
+
+In the example above, a simple fix for the first dropped schema would be to add a new `alternativeSchema` which looks like the contract schema, but removing the `was_negativated` attribute.
+
+#### Troubleshooting very big dataset series
+
+One issue you might encounter when using this notebook is that the Metapod query will timeout (in case of very big series); in this case, you can solve the dropped datasets issue by:
+- Going to this [Splunk query](https://nubank.splunkcloud.com/en-US/app/search/search?q=search%20index%3Dcantareira%20%22Dropping%20dataset-series%22&display.page.search.mode=fast&dispatch.sample_ratio=1&earliest=-24h%40h&latest=now&sid=1549617293.5429746) and change it to search for the name of the series you're looking to troubleshoot
+- Finding the message for dropped datasets, which contains the schema that was dropped
+- Adding it to the schemas of the op (usually alternative schemas)
 
 ### Further reading:
 
