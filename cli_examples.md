@@ -4,7 +4,7 @@ Sabesp's repository: https://github.com/nubank/sabesp
 
 Sabesp is avaiable as a [nucli](https://github.com/nubank/nucli) sub-command. For usage check out:
 ```shell
-nu datainfra sabesp -h
+nu datainfra sabesp -- -h
 ```
 
 ## Usage
@@ -12,19 +12,19 @@ nu datainfra sabesp -h
 If you want to run an arbitrary command to test `sabesp` itself, consider for
 example this command that tries to scale up a cluster and fails (because x is not a number):
 ```shell
-nu datainfra sabesp --aurora-stack=cantareira-midea jobs create test scale MODE=try-spot N_NODES=x --check
+nu datainfra sabesp -- --aurora-stack=cantareira-midea jobs create test scale MODE=try-spot N_NODES=x --check
 ```
 
 ### Kill a specific job within the dagao run (itaipu for example):
 
 ```shell
-nu datainfra sabesp --aurora-stack cantareira-stable jobs kill jobs prod itaipu-contracts
+nu datainfra sabesp -- --aurora-stack cantareira-stable jobs kill jobs prod itaipu-contracts
 ```
 
 ### Check the status of a job:
 
 ```shell
-nu datainfra sabesp --aurora-stack cantareira-stable jobs status jobs prod itaipu-contracts
+nu datainfra sabesp -- --aurora-stack cantareira-stable jobs status jobs prod itaipu-contracts
 ```
 
 ### Restart a job that has gotten into an infinite loop:
@@ -39,31 +39,31 @@ Then you can use the following command to restart the specific task in question 
 For an ad hoc run on devel:
 
 ```shell
-nu datainfra sabesp --aurora-stack cantareira-stable jobs restart jobs devel itaipu
+nu datainfra sabesp -- --aurora-stack cantareira-stable jobs restart jobs devel itaipu
 ```
 
 For a scheduled run on prod:
 
 ```shell
-nu datainfra sabesp --aurora-stack cantareira-stable jobs restart jobs prod itaipu
+nu datainfra sabesp -- --aurora-stack cantareira-stable jobs restart jobs prod itaipu
 ```
 
 Running a specific job (not the full dagao)
 
 ```shell
-nu datainfra sabesp --aurora-stack=cantareira-stable jobs create prod capivara-clj
+nu datainfra sabesp -- --aurora-stack=cantareira-stable jobs create prod capivara-clj
 ```
 
 ### Kill a job running from the dagao run:
 
 ```shell
-nu datainfra sabesp --aurora-stack cantareira-stable jobs kill jobs prod hyoga-model
+nu datainfra sabesp -- --aurora-stack cantareira-stable jobs kill jobs prod hyoga-model
 ```
 
 ### Inspecting a metapod transaction
 
 ```shell
-nu datainfra sabesp metapod --env prod --token transaction get 9684e3c0-a961-45da-add2-17b3de5b513b | jq . | less
+nu datainfra sabesp metapod -- --env prod --token transaction get 9684e3c0-a961-45da-add2-17b3de5b513b | jq . | less
 ```
 
 ## Running Itaipu
@@ -76,26 +76,26 @@ For test cases you can set the same bucket, but if you run real jobs you should 
 ### Full run scaling the cluster up and down
 
 ```shell
-nu datainfra sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-metapod-test/ s3a://nu-spark-metapod-test/ 5 --itaipu=4155f24b
+nu datainfra sabesp -- --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-metapod-test/ s3a://nu-spark-metapod-test/ 5 --itaipu=4155f24b
 ```
 
 ### Full run scaling the cluster up and down and using the materialized log cache
 
 ```shell
-nu datainfra sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-metapod-test/ s3a://nu-spark-metapod-test/ 5 --itaipu=4155f24b  --use-cache
+nu datainfra sabesp -- --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-metapod-test/ s3a://nu-spark-metapod-test/ 5 --itaipu=4155f24b  --use-cache
 ```
 
 ### Filtered run scaling the cluster up and down
 
 ```shell
-nu datainfra nu datainfra sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-metapod-test/ s3a://nu-spark-metapod-test/ 5 --itaipu=4155f24b  --filter-by-prefix contract
+nu datainfra sabesp -- --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-metapod-test/ s3a://nu-spark-metapod-test/ 5 --itaipu=4155f24b  --filter-by-prefix contract
 ```
 
 
 ### Filtered run scaling the without scaling up or down
 
 ```shell
-nu datainfra sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-metapod-test/ s3a://nu-spark-metapod-test/ 5 --itaipu=4155f24b  --filter-by-prefix contract --skip-scale-up --skip-scale-down
+nu datainfra sabesp -- --aurora-stack=cantareira-dev jobs itaipu staging midea s3a://nu-spark-metapod-test/ s3a://nu-spark-metapod-test/ 5 --itaipu=4155f24b  --filter-by-prefix contract --skip-scale-up --skip-scale-down
 ```
 
 **for a full list of possible switches run `sabesp jobs itaipu --help`**
@@ -104,12 +104,12 @@ nu datainfra sabesp --aurora-stack=cantareira-dev jobs itaipu staging midea s3a:
 ### Manually run job
 
 ```
-sabesp --aurora-stack=<stack> jobs create <env> <job> <binds> --metapod-transaction <transaction-id> --job-version "<job>=<version>"
+nu datainfra sabesp -- --aurora-stack=<stack> jobs create <env> <job> <binds> --metapod-transaction <transaction-id> --job-version "<job>=<version>"
 ```
 
 e.g:
 ```shell
-nu datainfra sabesp --aurora-stack=cantareira-dev jobs create staging capivara-clj DEPLOY_NON_DIMENSIONAL_MODELING=true OUTPUT_PREFIX=s3a://nu-spark-devel COPY_REDSHIFT_MAX_ERRORS=100 TARGET_DATE="2018-06-14" METAPOD_ENVIRONMENT=staging METAPOD_TRANSACTION=e25faed2-6578-4a57-a15a-01ec33642d5c --metapod-transaction e25faed2-6578-4a57-a15a-01ec33642d5c --job-version "capivara_clj=e6fbb31"
+nu datainfra sabesp -- --aurora-stack=cantareira-dev jobs create staging capivara-clj DEPLOY_NON_DIMENSIONAL_MODELING=true OUTPUT_PREFIX=s3a://nu-spark-devel COPY_REDSHIFT_MAX_ERRORS=100 TARGET_DATE="2018-06-14" METAPOD_ENVIRONMENT=staging METAPOD_TRANSACTION=e25faed2-6578-4a57-a15a-01ec33642d5c --metapod-transaction e25faed2-6578-4a57-a15a-01ec33642d5c --job-version "capivara_clj=e6fbb31"
 ```
 
 ### Manually run cluster scale up job
@@ -118,7 +118,7 @@ Occasionally airflow may fail to run a cluster scale up job, which will cause a 
 When this happens (instructions on verifying [this here](ops_how_to.md#checking-status-of-cluster-up-and-down-scales)), you may want to manaully run the scale up.
 
 ```shell
-nu datainfra sabesp --aurora-stack=<stack> jobs create <env> scale-ec2-<job-name> NODE_COUNT=<nodes> SLAVE_TYPE=<job-name> --filename scale-ec2 --job-version"scale_cluster=<version>"
+nu datainfra sabesp -- --aurora-stack=<stack> jobs create <env> scale-ec2-<job-name> NODE_COUNT=<nodes> SLAVE_TYPE=<job-name> --filename scale-ec2 --job-version"scale_cluster=<version>"
 ```
 
 - `version`: corresponds to the version of [`scale-cluster` repository](https://github.com/nubank/scale-cluster) used for the daily ETL run. You can get this from the `Airflow started running a dagao` message on `#etl-updates`.
@@ -128,23 +128,23 @@ nu datainfra sabesp --aurora-stack=<stack> jobs create <env> scale-ec2-<job-name
 
 e.g:
 ```shell
-nu datainfra sabesp --aurora-stack=cantareira-stable jobs create prod scale-ec2-itaipu-dimensional-modeling NODE_COUNT=10 SLAVE_TYPE=itaipu-dimensional-modeling INSTANCE_TYPE=m4.2xlarge --filename scale-ec2 --job-version="scale_cluster=74e5894"
+nu datainfra sabesp -- --aurora-stack=cantareira-stable jobs create prod scale-ec2-itaipu-dimensional-modeling NODE_COUNT=10 SLAVE_TYPE=itaipu-dimensional-modeling INSTANCE_TYPE=m4.2xlarge --filename scale-ec2 --job-version="scale_cluster=74e5894"
  ```
 
 ### Manually downscale the cluster
 ```shell
-nu datainfra sabesp --aurora-stack=<stack> jobs create <env> downscale-ec2-<job-name> NODE_COUNT=<nodes> SLAVE_TYPE=<job-name> --filename scale-ec2 --job-version"scale_cluster=<version>"
+nu datainfra sabesp -- --aurora-stack=<stack> jobs create <env> downscale-ec2-<job-name> NODE_COUNT=<nodes> SLAVE_TYPE=<job-name> --filename scale-ec2 --job-version"scale_cluster=<version>"
 ```
 
 e.g:
 ```shell
-nu datainfra sabesp --aurora-stack=cantareira-stable jobs create staging downscale-ec2-itaipu-leo-test NODE_COUNT=20 SLAVE_TYPE=itaipu-leo-test --filename scale-ec2 --job-version="scale_cluster=74e5894"
+nu datainfra sabesp -- --aurora-stack=cantareira-stable jobs create staging downscale-ec2-itaipu-leo-test NODE_COUNT=20 SLAVE_TYPE=itaipu-leo-test --filename scale-ec2 --job-version="scale_cluster=74e5894"
  ```
 
 ### Manually commit a dataset to metapod
 
 ```shell
-nu datainfra sabesp metapod --token --env prod dataset commit <metapod-transaction-id> <dataset-id> parquet s3://nu-spark-us-east-1/non-datomic/static-datasets/empty-materialized/empty.gz.parquet
+nu datainfra sabesp -- metapod --token --env prod dataset commit <metapod-transaction-id> <dataset-id> parquet s3://nu-spark-us-east-1/non-datomic/static-datasets/empty-materialized/empty.gz.parquet
 ```
 
 See the entry in [Ops How-To](ops_how_to.md#manually-commit-a-dataset-to-metapod) for more details
