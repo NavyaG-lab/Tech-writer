@@ -32,6 +32,8 @@ This repository is the canonical place to put all documentation related to how t
 * [Workflow](itaipu/workflow.md)
 * [Bumping Itaipu on Databricks](itaipu/databricks_bump.md)
 * [Updating the Log Cache](itaipu/log_cache_update.md)
+* [Dataset Series][itaipu/dataset_series.md]
+* [Dataset Series Compaction][itaipu/dataset_series_compaction.md]
 
 ## Infrastructure
 * [Inventory](infrastructure/inventory.md)
