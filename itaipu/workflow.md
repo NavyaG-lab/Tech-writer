@@ -29,6 +29,14 @@ Creating a new contract is different than updating an existing contract because 
             1. Add a call to function `common-datomic.contract.test-helpers/enforce-contracts!`
     1. Run `$ lein gen-contracts` to generate the initial contracts in `resources/contract/[DB-NAME]/`. Give the data
     infra squad a heads up that you are working on it, and then answer `Y` to the command line prompt.
+        - If you receive the following error:
+        
+          ```
+          java.lang.AssertionError: Assert failed: Either `:contract/ref-ids` or `:skeleton` must explicitly specified as metadata on a schema.
+          ```
+        
+          It is probably because it cannot infer some references inside your skeletons. You can fix it by explicitly declaring it in your schema.
+          Look at the file `src/tyriel/models/payment_source.clj` from this PR as a reference: <https://github.com/nubank/tyrael/pull/54>.
     1. Open a pull request similar to [this one](https://github.com/nubank/forex/pull/93).
 
 1. Make sure that the database exists in prod before adding the contract to Itaipu.
@@ -41,8 +49,8 @@ Creating a new contract is different than updating an existing contract because 
     contract entities - similar to
     https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/contract/proximo/Proximo.scala.
     1. Only if the database is not sharded (that is, it is mapped to global), add the `prototypes` attribute:
-    `override val prototypes: Seq[Prototype] = Seq(Prototype.Global)`. Otherwise, leave only the attributes `name` and
-    `entities`,
+    `override val prototypes: Seq[Prototype] = Seq(Prototype.Global)`. Otherwise, leave only the attributes `name`,
+    `entities` and `qualityAssessment`,
 
 1. Create a new Scala object for each new contract entity you are adding.
     1. The code should be a direct copy paste from contract Scala file(s) generated in the Clojure project (generated
