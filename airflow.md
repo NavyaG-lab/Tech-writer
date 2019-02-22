@@ -140,25 +140,10 @@ When users want to add new models to the nightly run we will need to make some u
 
 Let's say you are adding a model called `your-model-name`.
  - Check that there is a [go pipeline](https://go.nubank.com.br/go/tab/pipeline/history/your-model-name) for it. Someone should have created it via the [`batch-models-python-template`](https://github.com/nubank/batch-models-python-template/) repository.
- - Add the model pipeline as one of the dagão dependencies
-
-    Go to [dagao materials](https://go.nubank.com.br/go/admin/pipelines/dagao/materials?current_tab=materials#), click on `Add Material`
-    choose Package, and then on the configs select:
-        - Repository: gocd-artifacts
-        - Package: Define New
-        - Package Name: `your-model-name`
-        - Pipeline Name: `your-model-name`
-        - Stage Name: `publish`
-        - Job Name: `publish`
-
- - Fetch model version from s3:
-
-    - Go to `dagao` -> `create-das` -> `create-push-das` ([direct link](https://go.nubank.com.br/go/admin/pipelines/dagao/stages/create-das/job/create-push-das/tasks))
-    - Click on `Add new task` -> `Fetch from S3`
-        - Repository name: gocd-artifacts
-        - Package name: `your-model-name`
-        - Destination directory: `your-model-name`
-        - Save this change, and move your task to be the top one
+ - Add the model pipeline as one of the dagão dependencies, and fetch model version from s3:
+    
+    Open a [`gocd-config-dsl`](https://github.com/nubank/gocd-config-dsl) PR that adds the model to [`common_batch_models.clj`](https://github.com/nubank/gocd-config-dsl/blob/master/src/gocd_config_dsl/pipelines/common_batch_models.clj). It will look similar to [this](https://github.com/nubank/gocd-config-dsl/pull/904).
+    
  - Add model version to the json provided to airflow
 
    Open a [`data-tribe-go-scripts`](https://github.com/nubank/data-tribe-go-scripts) PR that adds the following to the [`bin/dagao/create-push-das.sh` file](https://github.com/nubank/data-tribe-go-scripts/blob/master/bin/dagao/create-push-das.sh)
