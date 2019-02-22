@@ -55,7 +55,7 @@ Creating a new contract is different than updating an existing contract because 
 
 1. Follow the instructions about [running tests](#running-tests)
 
-1. Open a pull request on Itaipu and ask someone from data infra to review it alongside the PR on the Clojure service.
+1. Open a pull request on Itaipu. There’s no need to ask for reviews on Itaipu, we monitor new PRs multiple times a day as the repo is very active.
 
 1. Follow the instructions about [merging pull requests](#merging-pull-requests)
 
