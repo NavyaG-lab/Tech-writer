@@ -11,6 +11,7 @@ The "ALERT" string should be verbatim the same string that is dispatched.
 - [tapir failed to load at least one row to DynamoDB in the last 24 hours](#tapir-failed-to-load-at-least-one-row-to-DynamoDB-in-the-last-24-hours)
 - [alert-itaipu-contracts triggered on Airflow](#alert-itaipu-contracts-triggered-on-airflow)
 - [check-serving-layer triggered on Airflow](#check-serving-layer-triggered-on-airflow)
+- [check-archiving triggered on Airflow](#check-archiving-triggered-on-airflow)
 - [Deadletter prod-etl-committed-dataset](#deadletter-prod-etl-committed-dataset)
 - [Riverbend - no file upload in the last hour](#no-file-upload-in-the-last-hour)
 - [Correnteza - database-claimer is failing](#correnteza-database-claimer-is-failing)
@@ -135,7 +136,7 @@ You can see the databases that have been claimed via:
 
 #### Error type: `last_extraction_more_than_24_hours_ago`
 
-The `last_extraction_more_than_24_hours_ago` error type warns that a database hasn't been extracted in the last day. 
+The `last_extraction_more_than_24_hours_ago` error type warns that a database hasn't been extracted in the last day.
 This signifies that something is wrong or that a database hasn't received any new data in this time.
 
 Databases marked as `"error_type": "last_extraction_more_than_24_hours_ago"` in this output are probably databases that are no longer used or get very few writes.
@@ -185,6 +186,28 @@ nu ser curl POST global tapir /api/admin/process-transaction/:transaction-id
 ```
 
 It's safe to always tell `tapir` to re-process the entire transaction, since it has a mechanism for idempotency where it will not process the same partition twice.
+
+### "check-archiving" triggered on Airflow
+
+This means that some dataset marked to be archived was committed but not archived to the dataset-series.
+
+To perform the check in your local machine:
+- make sure you have [sabesp](https://github.com/nubank/sabesp/#installation) >=3.1.0
+- check using the transaction ID of the day
+```bash
+sabesp archive --env prod --token check <transaction-id>
+```
+
+The output will inform you which datasets have not been archived
+
+First action is to check [mortician](https://backoffice.nubank.com.br/mortician/) for deadletters from the `cutia` producer in the `global` "shard"˜. If there are any, replay them all.
+
+If there is no deadletter or the problem persists after replaying the deadletter you can try running a migration to fix it.
+
+Use the dataset name output that you got running the sabesp command above and the same transaction id to call the migration endpoint:
+```bash
+nu ser curl POST global cutia /api/admin/migrations/append-dataset/<transaction-id>/<dataset-name>
+```
 
 #### Further investigation
 
