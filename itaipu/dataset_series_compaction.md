@@ -34,8 +34,7 @@ This DAG is parameterized, which means it requires extra parameters to be passed
 Then, use the following command (connected to the VPN), replacing `DATASET_SERIES_NAME`:
 
 ```
-curl https://airflow.nubank.com.br/api/experimental/dags/dataset-series-compaction/dag_runs \
-  -d '{"conf":"{\"compact_dataset_series\":\"DATASET_SERIES_NAME\"}"}'
+nu datainfra compaction DATASET_SERIES_NAME
 ```
 
 You can check the progress in the DAG page: https://airflow.nubank.com.br/admin/airflow/graph?dag_id=dataset-series-compaction
@@ -43,56 +42,14 @@ And also the task page in aurora: https://cantareira-stable-mesos-master.nubank.
 
 #### Unapply compactions
 
-In case something goes wrong when reading the data back from its compacted state, we can always "unapply" the compactions, restoring the original datasets back into the Dataset Series. To do that, use the `UnapplyCompaction` mutation, available through the GraphQL interface in [metapod][4].
+In case something goes wrong when reading the data back from its compacted state, we can always "unapply" the compactions, restoring the original datasets back into the Dataset Series. To do that, use the admin endpoint in [metapod][4].
 
-1. Get the compaction ID
+1. Get the transaction ID generated from the compaction run. You can find it through the logs from the compaction job.
 
-**Note:** to perform those queries, you can use Sonar-js: https://backoffice.nubank.com.br/sonar-js/#/sonar-js/graphiql
-
-You will need the compaction ID that resulted in the compacted dataset, in order to unapply it.
-To get it, you can include a `compaction` attribute when querying for datasets in a Dataset Series.
-
-Replace `DATASET_SERIES_NAME` in the query below:
+2. Call the admin endpoint:
 
 ```
-query GetDatasetSeries($datasetSeriesName: String) {
-  datasetSeries(datasetSeriesName: $datasetSeriesName) {
-    name
-    datasets(compactedStatus: COMPACTED) {
-      name
-      compaction {
-        id
-        appliedAt
-        status
-      }
-    }
-  }
-}
-```
-```
-{
-  "datasetSeriesName": "DATASET_SERIES_NAME"
-}
-```
-
-2. Unapply the compaction, replacing `COMPACTION_UUID`:
-
-```
-mutation UnapplyCompaction($input: UnapplyCompactionInput!) {
-  unapplyCompaction(input: $input) {
-    id
-    appliedAt
-    datasetSeriesName
-    status
-  }
-}
-```
-```
-{
-  "input": {
-    "compactionId": "COMPACTION_UUID"
-  }
-}
+nu ser curl global metapod /api/migrations/compactions/unapply-by-transaction/TRANSACTION_ID
 ```
 
 [1]: ./dataset-series.md
