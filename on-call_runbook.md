@@ -187,6 +187,22 @@ nu ser curl POST global tapir /api/admin/process-transaction/:transaction-id
 
 It's safe to always tell `tapir` to re-process the entire transaction, since it has a mechanism for idempotency where it will not process the same partition twice.
 
+#### Further investigation
+
+You can check this [Grafana dashboard](https://prod-grafana.nubank.com.br/d/waGZJY2mk/serving-layer-monitoring?orgId=1&var-prometheus=prod-prometheus) for progress after you've triggered the re-processing.
+
+You can also check the [Splunk dashboard](https://nubank.splunkcloud.com/en-US/app/search/etl_serving_layer_tapir) and find the dataset(s) that are in the `stdout` of the failed job in [aurora job page](https://cantareira-stable-mesos-master.nubank.com.br:8080/scheduler/jobs/prod/check-serving-layer?jobView=history). If they appear in the dashboard, it's possible that they have been processed only partially.
+
+You can also check the [Splunk error logs](https://nubank.splunkcloud.com/en-US/app/search/search?sid=1538150037.2995655) for errors in general. Keep in mind that some instances of `ProvisionedThroughputExceededException` are expected, as explained below.
+
+#### DynamoDB write capacity
+
+Another thing to look out for is the DynamoDB autoscaling and provisioned throughput capacity: https://sa-east-1.console.aws.amazon.com/dynamodb/home?region=sa-east-1#tables:selected=prod-conrado-docstore;tab=capacity
+
+In the `Metrics` tab, if the throttled write events are too frequent, you can try scaling the write capacity to a higher amount, such as 15000. Just remember to scale it back down after everything is done, and avoid changing this unless you can see it's indeed the reason why tapir is not making progress - instances of `ProvisionedThroughputExceededException` in the deadletters might indicate this.
+
+`tapir` relies on DynamoDB autoscaling to be able to write data, and autoscaling requires signaling you want a bigger throughput capacity for writes. That is done by continously retrying if this is the error returned from DynamoDB, so there might be some instances of this exception in the error logs. However, if this error is listed as a reason for a deadletter in Mortician, then the retries were not enough and it eventually timed out.
+
 ### "check-archiving" triggered on Airflow
 
 This means that some dataset marked to be archived was committed but not archived to the dataset-series.
@@ -208,19 +224,3 @@ Use the dataset name output that you got running the sabesp command above and th
 ```bash
 nu ser curl POST global cutia /api/admin/migrations/append-dataset/<transaction-id>/<dataset-name>
 ```
-
-#### Further investigation
-
-You can check this [Grafana dashboard](https://prod-grafana.nubank.com.br/d/waGZJY2mk/serving-layer-monitoring?orgId=1&var-prometheus=prod-prometheus) for progress after you've triggered the re-processing.
-
-You can also check the [Splunk dashboard](https://nubank.splunkcloud.com/en-US/app/search/etl_serving_layer_tapir) and find the dataset(s) that are in the `stdout` of the failed job in [aurora job page](https://cantareira-stable-mesos-master.nubank.com.br:8080/scheduler/jobs/prod/check-serving-layer?jobView=history). If they appear in the dashboard, it's possible that they have been processed only partially.
-
-You can also check the [Splunk error logs](https://nubank.splunkcloud.com/en-US/app/search/search?sid=1538150037.2995655) for errors in general. Keep in mind that some instances of `ProvisionedThroughputExceededException` are expected, as explained below.
-
-#### DynamoDB write capacity
-
-Another thing to look out for is the DynamoDB autoscaling and provisioned throughput capacity: https://sa-east-1.console.aws.amazon.com/dynamodb/home?region=sa-east-1#tables:selected=prod-conrado-docstore;tab=capacity
-
-In the `Metrics` tab, if the throttled write events are too frequent, you can try scaling the write capacity to a higher amount, such as 15000. Just remember to scale it back down after everything is done, and avoid changing this unless you can see it's indeed the reason why tapir is not making progress - instances of `ProvisionedThroughputExceededException` in the deadletters might indicate this.
-
-`tapir` relies on DynamoDB autoscaling to be able to write data, and autoscaling requires signaling you want a bigger throughput capacity for writes. That is done by continously retrying if this is the error returned from DynamoDB, so there might be some instances of this exception in the error logs. However, if this error is listed as a reason for a deadletter in Mortician, then the retries were not enough and it eventually timed out.
