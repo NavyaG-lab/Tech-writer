@@ -44,12 +44,32 @@ And also the task page in aurora: https://cantareira-stable-mesos-master.nubank.
 
 In case something goes wrong when reading the data back from its compacted state, we can always "unapply" the compactions, restoring the original datasets back into the Dataset Series. To do that, use the admin endpoint in [metapod][4].
 
-1. Get the transaction ID generated from the compaction run. You can find it through the logs from the compaction job.
+1. Get the transaction ID generated from the compaction run you wish to revert. To get this info, you can for example query Metapod with:
+
+   ```graphQL
+   query GetDatasetSeries {
+     datasetSeries(datasetSeriesName: "series/customer-tracking") {
+       name
+       datasets(compactedStatus: COMPACTED) {
+         id
+         compaction {
+           id
+           transaction {
+             id 
+             startedAt
+           }
+         }
+       }
+     }
+   }
+   ```
+
+   
 
 2. Call the admin endpoint:
 
 ```
-nu ser curl global metapod /api/migrations/compactions/unapply-by-transaction/TRANSACTION_ID
+nu ser curl POST global metapod /api/migrations/compactions/unapply-by-transaction/TRANSACTION_ID
 ```
 
 [1]: ./dataset-series.md
