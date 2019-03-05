@@ -69,7 +69,7 @@ In case something goes wrong when reading the data back from its compacted state
 2. Call the admin endpoint:
 
 ```
-nu ser curl POST global metapod /api/migrations/compactions/unapply-by-transaction/TRANSACTION_ID
+nu ser curl PUT global metapod /api/migrations/transaction/TRANSACTION_ID/unapply-compactions
 ```
 
 [1]: ./dataset-series.md
