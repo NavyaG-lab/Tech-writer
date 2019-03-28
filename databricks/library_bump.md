@@ -28,7 +28,6 @@ click on the build number, then on `build_test_package` under "Workflow" (in the
 1. Click on the `package` step in the workflow (it should be green). You
 will see something like this: ![](../images/circleci_workflow.png)
 1. Download the JAR by going to the `Artifacts` tab: ![](../images/circleci_artifacts.png)
-1. Rename it from `itaipu_2.11-1.0.0-SNAPSHOT.jar` to `itaipu_2.11-1.0.0-SNAPSHOT-<YYYYMMDD>-<GITSHA>.jar`, where `<YYYYMMDD>` is the current date, and `GITSHA` are the first 7 characters of the git commit SHA (in the case shown in the figure, `103f895`).
 
 #### Via sbt
 
