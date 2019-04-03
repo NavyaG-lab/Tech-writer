@@ -200,7 +200,13 @@ If the dataset is non-critical, we can comment out the dataset from `itaipu` to 
 
 ### Dealing with model failures
 
-Non-critical models can be removed from the DAG definition ([example PR here](https://github.com/nubank/aurora-jobs/pull/483)) so that it doesn't block future runs. The owner of the model can then fix it without blocking other models.
+Non-critical models (models that don't feed into policies) can be removed from the DAG definition ([example PR here](https://github.com/nubank/aurora-jobs/pull/483)) so that it doesn't block future runs. The owner of the model can then fix it without blocking other models. It's a good idea to have a look at what happened by querying the model logs in splunk and dropping relevant information directly to the model owners (usually main github contributors to the model):
+
+```
+index=cantareira job=aurora/prod/jobs/sorting-hat error
+```
+
+(the lines are in the reverse order, so use the `>` on the left and select 'show source` to read the stacktraces more easily)
 
 Removing model will only take affect tomorrow, when in the next run is triggered.
 
@@ -445,3 +451,44 @@ If you have a fix that needs to persisted past today, you will need to open anot
 
 Note:
 - If `itaipu-stable` fails to build, due to flaky dependency downloads and such, it might be the case that nobody is able to fix it before the dag is deployed
+
+## Serve a dataset again
+
+If a dataset is served with bad data, and you need to quickly revert to yesterday's data while the issues are fixed, the following course of action is recommended:
+
+1. Query Metapod for the dataset id (for example, `dataset/lusa-scores`:
+
+   ```graphql
+   query GetTransaction {
+     transaction(transactionId:"<yesterdayTransactionId>") {
+       datasets(datasetNames: ["<dataset/name>"]) {
+         id
+       }
+     }
+   }
+   ```
+
+   
+
+2. Retract the dataset:
+
+   ```bash
+   nu ser curl POST global metapod /api/migrations/retract/committed-dataset/dataset/<datasetId>
+   ```
+
+   
+
+3. Recompute the dataset using yesterday's transaction details (you can get those from yesterday's dag node info)
+
+   ```bash
+   nu datainfra sabesp -- --aurora-stack=cantareira-stable jobs itaipu prod <dataset-name>-reserve s3a://nu-spark-metapod-permanent-1/ s3a://nu-spark-metapod-ephemeral-1/ 20 \
+   --itaipu <yesterday's itaipu version> \
+   --transaction <yesterday's transaction> \
+   --target-date <yesterday's target date> \
+   --reference-date <yesterday's reference date> \
+   --filter <dataset/name>  \
+   --use-cache \
+   --include-placeholder-ops
+   ```
+
+   
