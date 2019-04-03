@@ -1,4 +1,4 @@
-# Archive Datasets Reference
+# Archived Datasets Reference
 
 The dataset archive system allows you to save the output of any ETL dataset for reuse in a subsequent run.
 
@@ -59,9 +59,9 @@ object MyDataset extends SparkOp with DeclaredSchema {
 }
 ```
 
-### 2. Setting up a `DatasetSeriesContractOp`
+#### 2. Setting up a `DatasetSeriesContractOp`
 
-You can set up your series normally as described in the [Dataset Series documentation](dataset_series.md), with two important things to keep in mind:
+You can set up your series normally as described in the [Dataset Series documentation](dataset_series.md), keeping the following in mind:
 
 * We usually try to keep all archives in the `archived` package of the `dataset_series` package
 * The `name` attribute of your `DatasetSeriesContractOp` is identical to your original dataset's with all `/` characters replaced with `-`. For example, `dataset/my-dataset` becomes `dataset-my-dataset`
