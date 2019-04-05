@@ -24,6 +24,7 @@
 * [Checking status of cluster up/down scales](#checking-status-of-cluster-up-and-down-scales)
 * [Run an itaipu job with a longer healthcheck](#run-an-itaipu-job-with-a-longer-timeout-healthcheck)
 * [Deploy a hot-fix to itaipu](#deploy-a-hot-fix-to-itaipu)
+* [Serve a dataset again](#serve-a-dataset-again)
 
 ## Restart redshift cluster
 
@@ -468,7 +469,7 @@ If a dataset is served with bad data, and you need to quickly revert to yesterda
    }
    ```
 
-   
+
 
 2. Retract the dataset:
 
@@ -476,7 +477,7 @@ If a dataset is served with bad data, and you need to quickly revert to yesterda
    nu ser curl POST global metapod /api/migrations/retract/committed-dataset/dataset/<datasetId>
    ```
 
-   
+
 
 3. Recompute the dataset using yesterday's transaction details (you can get those from yesterday's dag node info)
 
@@ -490,5 +491,3 @@ If a dataset is served with bad data, and you need to quickly revert to yesterda
    --use-cache \
    --include-placeholder-ops
    ```
-
-   
