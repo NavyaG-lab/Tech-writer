@@ -7,6 +7,7 @@
 * [Post-mortems](https://github.com/nubank/morgue)
 * [Infrastructure Overivew](infrastructure/guide-to-the-runtime-environment.md)
 
+
 ## Languages/stack overview
 
 We currently use three different programming languages for most of our work, each of them with a certain purpose:
@@ -189,3 +190,7 @@ In Data Infra, we can use an admin user for administrative tasks (e.g. querying 
 ## Permissions / accounts needed to contribute on data infra
 
 Moved to https://github.com/nubank/data-infra-docs/blob/master/onboarding/introduction.md#getting-accounts-and-permissions
+
+## Deep dive
+
+[This video](https://www.youtube.com/watch?v=V2fbkBzFrAM) shows how and where datasets are actually calculated and explain the current dataset series DSL
