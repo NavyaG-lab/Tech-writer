@@ -68,6 +68,16 @@ To update Airflow you need to first bump it's [Dockerfile](https://github.com/nu
 
 Wait until it's created and you can access https://cantareira-x-airflow.nubank.com.br/admin/ and then you can upsert the new airflow to the main DNS.
 
+If this does not work, try to ssh (instructions below) in the new instance and see if there are any units that failed to start (there is a concurrency issue here)
+
+`$ systemctl list-units --state=failed`
+
+If there is any, try to restart them. Example for the `nginx.service` unit:
+
+`$ sudo systemctl restart nginx.service`
+
+If this solved the issue you may continue, otherwise you will have to find the problem first.
+
 `Airflow.upsert_alias!("x")`
 
 then you need to delete the old airflow
