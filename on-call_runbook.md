@@ -162,12 +162,12 @@ This check runs every day at 17h, 19h and 20h UTC, the last being our SLA for se
 To perform the check in your local machine:
 - make sure you have sabesp >=2.5.1
 ```
-pip install --upgrade sabesp -i https://pypi.nubank.com.br/pypi
+docker pull quay.io/nubank/datainfra-sabesp:latest
 ```
 
 - check using the transaction ID of the day
 ```
-sabesp serving-layer --env prod --token check-datasets-served <transaction-id>
+nu datainfra sabesp -- serving-layer --env prod --token check-datasets-served <transaction-id>
 ```
 
 The output will inform you which datasets have not been loaded.
@@ -211,7 +211,7 @@ To perform the check in your local machine:
 - make sure you have [sabesp](https://github.com/nubank/sabesp/#installation) >=3.1.0
 - check using the transaction ID of the day
 ```bash
-sabesp archive --env prod --token check <transaction-id>
+nu datainfra sabesp -- archive --env prod --token check <transaction-id>
 ```
 
 The output will inform you which datasets have not been archived
