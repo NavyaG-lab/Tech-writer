@@ -128,8 +128,8 @@ Don't send.
 * `#data-announcements`:
     * Announcements about ETL runs, Mordor, Belomonte, Metabase, Databricks, etc.
 * `#data-crash`:
-* For issues in the ETL (failure, updates and actions taken)
-* https://github.com/nubank/data-infra-docs/blob/master/squad/hausmeister.md#visibility
+    * For issues in the ETL (failure, updates and actions taken)
+    * https://github.com/nubank/data-infra-docs/blob/master/squad/hausmeister.md#visibility
 * `#data-help`:
     * Questions about Python, Scala, SQL, Datalog, Belomonte, Metabase, Databricks, Mordor, Spark
 * `#etl-updates`:
@@ -168,40 +168,40 @@ Don't send.
 
 * Code style:
     * Use IntelliJ's plugin scalafmt
-    * Indentation (https://docs.scala-lang.org/style/indentation.html):
+    * [Indentation](https://docs.scala-lang.org/style/indentation.html):
         * Indent with 2 spaces; no tabs
         * Avoid long lines (>  ~100 characters); wrap the expression across multiple lines when necessary
         * Try to avoid any method which takes more than two or three parameters
-    * Naming conventions (https://docs.scala-lang.org/style/naming-conventions.html):
+    * [Naming conventions](https://docs.scala-lang.org/style/naming-conventions.html):
         * Avoid underscores ( _ ) in names, but use in DataFrame column names
         * Use UpperCamelCase in names of classes, traits, objects
         * Use lowerCamelCase in names of methods (def), value (val) and variable (var), but UpperCamelCase for constants (member is final, immutable and belongs to a package object or an object)
         * Don't use symbolic (`+`, `<`, `*`, ...) method names, unless they are well-understood and self documenting
         * Use short names, few local names (including parameters)
-    * Types (https://docs.scala-lang.org/style/types.html):
+    * [Types](https://docs.scala-lang.org/style/types.html):
         * Use type inference where possible, but put clarity first
         * Don't annotate the type of a private field or a local variable, unless it has a complex or non-obvious form
         * Type annotations: `value: Type`
         * Type ascription: `Nil: List[String]`, `Set(values: _*)`, `"Daniel": AnyRef`
         * Functions: use a space between the parameter type, the arrow and the return type; parentheses should be omitted wherever possible: `def foo(f: Int => String) = ...`, `def bar(f: (Boolean, Double) => List[String]) = ...`
-    * Nested blocks (https://docs.scala-lang.org/style/nested-blocks.html):
+    * [Nested blocks](https://docs.scala-lang.org/style/nested-blocks.html):
         * Opening curly braces (`{`) must be on the same line as the declaration they represent
-    * Files (https://docs.scala-lang.org/style/files.html):
+    * [Files](https://docs.scala-lang.org/style/files.html):
         * Class, trait or object called `MyThing` in package `my.cool.thing` should be in path `src/main/scala/my/cool/thing/MyThing.scala`, except for subtypes of sealed superclasses (and traits)
-    * Control structures (https://docs.scala-lang.org/style/control-structures.html):
+    * [Control structures](https://docs.scala-lang.org/style/control-structures.html):
         * All control structures (`if`, `for`, `while`) should be written with a space following the defining keyword
         * `for`-comprehension with `yield` clause: `for (one generator) yield ...` (with parentheses) or `for {more than one generator split by line} yield ...` (with curly-braces)
         * `for`-comprehension without `yield` clause: `for (...) { … }`
         * `for`-comprehensions are preferred to chained class to `map`, `flatMap` and `filter`
         * Short `if/else` expression: `val res = if (foo) bar else baz`
-    * Method invocation (https://docs.scala-lang.org/style/method-invocation.html):
+    * [Method invocation](https://docs.scala-lang.org/style/method-invocation.html):
         * Use 1 space after the comma, and 1 space on either side of the equals sign in named parameters: `foo(42, bar)`, `target.foo(42, bar)`, `target.foo()`, `foo(x = 6, y = 7)`
         * Arity-0 methods: `pureFunction` (no parentheses), `withSideEfffects()`
         * Infix notation:
             * Symbolic-named methods and maybe operator-like methods like `max`, especially if commutative: don't use punctuation and use 1 space around it: `a + b`, `a max b`
             * Alphabetic-named method: use dot and parentheses: `names.mkString(",")`
         * Postfix notation: `names.toList`
-    * Declarations (https://docs.scala-lang.org/style/declarations.html):
+    * [Declarations](https://docs.scala-lang.org/style/declarations.html):
         * Class/Object/Trait constructors should be declared all on one line, unless the line becomes “too long” (about 100 characters). In that case, put each constructor argument on its own line, indented 4 spaces and 2 spaces for extensions.
         * All class/object/trait members should be declared interleaved with newlines, except `var` and `val` only if none of the fields have Scaladoc and if all of the fields have simple (max of 20-ish chars, one line) definitions.
         * Fields should precede methods in a scope, except if the `val` or `lazy val` has a block definition (more than one expression) and performs operations which may be deemed “method-like” (e.g. computing the length of a `List`).
@@ -213,38 +213,38 @@ Don't send.
             * Implicit modifier (`implicit`)
             * Final modifier (`final`)
             * `def`
-```
-@Transaction
-@throws(classOf[IOException])
-override protected final def foo(): Unit = {
-  ...
-}
-```
+              ```
+              @Transaction
+              @throws(classOf[IOException])
+              override protected final def foo(): Unit = {
+                ...
+              }
+              ```
             * Spacing:
                 * There should be no space between parentheses and the code they contain: `(a, b)`
                 * Curly braces should be separated from the code within them by a one-space gap or a line-break: `{ a, b }`
-```
-class Person(
-    name: String,
-    age: Int,
-    birthdate: Date)
-  extends Entity
-  with Logging
-  with Serializable {
-  val bar = 42
-  val baz = "Daniel"
-
-  def doSomething(): Unit = { ... }
-
-  def add(x: Int, y: Int): Int = x + y
-
-  def foo(x: Int = 6, y: Int = 7): Int = x + y
-  
-  private def foo(x: Int = 6, y: Int = 7) = x + y
-
-}
-```
-    * Scaladoc (https://docs.scala-lang.org/style/scaladoc.html):
+                ```
+                class Person(
+                    name: String,
+                    age: Int,
+                    birthdate: Date)
+                  extends Entity
+                  with Logging
+                  with Serializable {
+                  val bar = 42
+                  val baz = "Daniel"
+                
+                  def doSomething(): Unit = { ... }
+                
+                  def add(x: Int, y: Int): Int = x + y
+                
+                  def foo(x: Int = 6, y: Int = 7): Int = x + y
+                  
+                  private def foo(x: Int = 6, y: Int = 7) = x + y
+                
+                }
+                ```
+    * [Scaladoc](https://docs.scala-lang.org/style/scaladoc.html):
         * Document all classes, objects, traits and methods
         * Text begins on the first line of the comment
         * All lines of text are aligned on column 5
@@ -254,17 +254,17 @@ class Person(
         * Create links to referenced Scala Library classes using the square-bracket syntax, e.g. `[[scala.Option]]`
         * Use the annotations `@param`, `@tparam` (type parameter),  `@return` (summary of the return value; don't use if documentation is in one line)
         * Gutter asterisks can be aligned in column 2 or 3. Example below in column 3:
-```
-/** Provides a service as described.
-  *
-  * This is further documentation of what we're documenting.
-  * Here are more details about how it works and what it does.
-  */
-def member: Unit = ()
-
-/** Does something very simple */
-def simple: Unit = ()
-````
+          ```
+          /** Provides a service as described.
+            *
+            * This is further documentation of what we're documenting.
+            * Here are more details about how it works and what it does.
+            */
+          def member: Unit = ()
+          
+          /** Does something very simple */
+          def simple: Unit = ()
+          ```
         * Packages:
             * First document what sorts of classes are part of the package. Secondly, document the general sorts of things the package object itself provides.
             * It should provide an overview of the major classes, with some basic examples of how to use the classes in that package. Reference classes using the square-bracket notation:
