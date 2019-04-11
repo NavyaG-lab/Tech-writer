@@ -166,6 +166,11 @@ Don't send.
 
 ## Github Pull Request Reviews
 
+* Dataset:
+    * All Datasets must have tests
+    * All `MetapodAttribute` must have a description
+    * Your DataSet must have the SparkOp properties: `description`, `ownerSquad`, `qualityAssessment`
+    * If it is a new Dataset or `StaticOp`, add it to `allOps` or `allStaticsof` the corresponding `package.scala` file
 * Code style:
     * Use IntelliJ's plugin scalafmt
     * [Indentation](https://docs.scala-lang.org/style/indentation.html):
