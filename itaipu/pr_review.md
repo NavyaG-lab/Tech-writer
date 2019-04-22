@@ -166,13 +166,20 @@ Don't send.
 
 ## Github Pull Request Reviews
 
-* Dataset:
+* Followed instructions in the [PR Template](https://github.com/nubank/itaipu/blob/master/.github/PULL_REQUEST_TEMPLATE.md)
+* SparkOps:
     * All Datasets must have tests
     * All `MetapodAttribute` must have a description
     * Your DataSet must have the SparkOp properties: `description`, `ownerSquad`, `qualityAssessment`
-    * If it is a new Dataset or `StaticOp`, add it to `allOps` or `allStaticsof` the corresponding `package.scala` file
+    * If it is a new Dataset or `StaticOp`, add it to `allOps` or `allStaticsof` the corresponding `package.scala` file 
 * Code style:
     * Use IntelliJ's plugin scalafmt
+        * Version `2.0.0-RC5`
+        * In order to install this version on IntelliJ, follow [this](https://scalameta.org/scalafmt/docs/faq.html#install-nightly-plugin)
+        * Make sure IntelliJ is at least on version `2019.1` ([Reference](https://scalameta.org/scalafmt/docs/installation.html#intellij))
+        * You can also use the sbt CLI in order to format the code: `sbt scalafmt`
+        * Tests and generated contracts are not checked if are properly formatted
+    * [Optimize imports](https://www.jetbrains.com/help/clion/optimizing-imports.html) (IntelliJ `⌃⌥O`)
     * [Indentation](https://docs.scala-lang.org/style/indentation.html):
         * Indent with 2 spaces; no tabs
         * Avoid long lines (>  ~100 characters); wrap the expression across multiple lines when necessary
@@ -273,7 +280,4 @@ Don't send.
         * Packages:
             * First document what sorts of classes are part of the package. Secondly, document the general sorts of things the package object itself provides.
             * It should provide an overview of the major classes, with some basic examples of how to use the classes in that package. Reference classes using the square-bracket notation:
-        * Methods and other members: 
-    * Optimize imports
-* Followed instructions in the PR template
 
