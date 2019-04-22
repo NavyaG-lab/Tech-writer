@@ -133,7 +133,7 @@ nu datainfra sabesp -- --aurora-stack=cantareira-stable jobs create prod scale-e
 
 ### Manually downscale the cluster
 ```shell
-nu datainfra sabesp -- --aurora-stack=<stack> jobs create <env> downscale-ec2-<job-name> NODE_COUNT=<nodes> SLAVE_TYPE=<job-name> --filename scale-ec2 --job-version"scale_cluster=<version>"
+nu datainfra sabesp -- --aurora-stack=<stack> jobs create <env> downscale-ec2-<job-name> NODE_COUNT=<nodes> SLAVE_TYPE=<job-name> --filename scale-ec2 --job-version="scale_cluster=<version>"
 ```
 
 e.g:
