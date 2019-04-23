@@ -70,7 +70,7 @@ Go to `https://nubank.cloud.databricks.com/` and create your own Notebook. There
 
 Give it a nice name, because you're going to share with us later and we need to know what you're trying to do here.
 
-Create it using `Scala` as the language and the `enginees-cluster` as the cluster.
+Create it using `Scala` as the language and the `people's cluster` as the cluster.
 
 In Databricks, if you want to use another language that isn't the default, you can simply begin your block with %name_of_language. In here, let us create a simple query to check on calls from Ouvidoria. It will be our example throughout the rest of the tutorial.
 
