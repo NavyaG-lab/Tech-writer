@@ -20,7 +20,7 @@ This repository is the canonical place to put all documentation related to how t
 ## ETL User references
 
 * [Dataset Series](etl-users/dataset_series.md)
-* [Archived Datasets](etl-users/archived_datasets.md)
+* [Archived Datasets](etl-users/archived-datasets.md)
 
 ## ETL Operations
 
