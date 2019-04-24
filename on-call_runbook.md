@@ -7,40 +7,15 @@ The "ALERT" string should be verbatim the same string that is dispatched.
 
 ## Alarms
 
-- [conrado failed to propagate dataset](#conrado-failed-to-propagate-dataset)
-- [tapir failed to load at least one row to DynamoDB in the last 24 hours](#tapir-failed-to-load-at-least-one-row-to-DynamoDB-in-the-last-24-hours)
 - [alert-itaipu-contracts triggered on Airflow](#alert-itaipu-contracts-triggered-on-airflow)
+- [Deadletter prod-etl-committed-dataset](#deadletter-prod-etl-committed-dataset)
+- [Correnteza - database-claimer is failing](#correnteza-database-claimer-is-failing)
+- [Correnteza - attempt-checker is failing](#correnteza-attempt-checker-is-failing)
 - [check-serving-layer triggered on Airflow](#check-serving-layer-triggered-on-airflow)
 - [check-archiving triggered on Airflow](#check-archiving-triggered-on-airflow)
-- [Deadletter prod-etl-committed-dataset](#deadletter-prod-etl-committed-dataset)
 - [Riverbend - no file upload in the last hour](#no-file-upload-in-the-last-hour)
-- [Correnteza - database-claimer is failing](#correnteza-database-claimer-is-failing)
 
----
-
-## conrado failed to propagate dataset
-
-This means that [conrado](https://github.com/nubank/conrado/) encountered an issue while reading a dataset out of its dynamoDB table and turning it into a series of kafka messages. It is important that most datasets propagate no later than the day they were generated, so this is not 'drop everything' issue, but is important to address quickly.
-
-To get the relavant stack-trace, look at the `TO-PROPAGATE` deadletter on conrado associated with this failure via the [mortician web UI](https://backoffice.nubank.com.br/mortician/).
-
-Ideally the issue can be addressed and the deadletter can be replayed.
-
-For instance, sometimes there is read throttling on the dynamo table. This might come up if by chance two datasets are being propagated at the same time. You can try to increase the capacity of the `conrado` dynamo table on AWS and replay the deadletter.
-
----
-
-## Tapir failed to load at least one row to DynamoDB in the last 24 hours
-
-When `tapir` loads datasets in the `tapir-load` DAG node, it [scales up the dynamo capacity dynamically](https://github.com/nubank/tapir/blob/e0fb144c25cd2320e0535c7d08c63133c08d5fc9/src/tapir/core.clj#L205). For whatever reason, this doesn't always work leading to crazy throttling and data load issues.
-
-You can check that this is the case by looking at the write capacity for the `conrado` DynamoDB table on [the metrics tab on AWS](https://sa-east-1.console.aws.amazon.com/dynamodb/home?region=sa-east-1#tables:selected=prod-conrado-docstore). If the capacity scale up failed, you will see that it is consuming way more than has been provisioned.
-
-The solution when the dynamo scale up didn't work is to kill `tapir-load` manually and restart it on airflow.
-
----
-
-## "alert-itaipu-contracts triggered on Airflow"
+## alert-itaipu-contracts triggered on Airflow
 
 This means the first task in our daily DAG failed. This task is a dependency
 to all the rest of the DAG, so it's important that it runs smoothly and
@@ -86,8 +61,6 @@ It is possible that a failure happens before the task is created in Aurora, and 
 - What is logged after "status FAILED and message <message>" is the reason why the task failed. If it reads simply `Task failed`, that means the task was started in Aurora, but the actual failure should be inspected via the Aurora logs. For that, jump back to the [Check reason for the failure](#check-reason-for-the-failure) step for this alarm.
 - In other cases, you might see a message such as: `Subtask: 401 Client Error: Unauthorized for url`. This means there was an error fetching credentials to talk to the Aurora API. Restarting the task should be enough. To achieve that, follow the steps in the [Restart the task](#restart-the-task) section above.
 
----
-
 ## Deadletter prod-etl-committed-dataset
 
 This happen when there is a problem on producing a dataset on capivara.
@@ -99,15 +72,7 @@ This happen when there is a problem on producing a dataset on capivara.
 - Check the `prod-etl-committed-dataset-failed` queue on `Queue Actions` > `View/Delete Messages` > `Start pooling the messages`
 - Each line will be one deadletter. In the body of the message there will be the name of the dataset, if it's an archived (the name starts with `archive/` go to the [next step](#replay-archived-dataset-deadletter). If it's another type of dataset just delete it.
 
-### Replay archived dataset deadletter
-
-- Click in `More Details` in the right side of the deadletter.
-- Copy the message body.
-- Delete the deadletter.
-- Open a new tab and go to the SQS page (don't forget to check if you are in `us-east-1` region).
-- For the `prod-etl-committed-dataset` go `Queue Actions` > `Send a Message` > paste the body of the deadletter there > `Send Message`
-
-### No file upload in the last hour
+## No file upload in the last hour
 
 This alert means that [Riverbend](https://github.com/nubank/riverbend) is not properly consuming, batching and uploading incoming messages.
 
@@ -116,7 +81,7 @@ This alert means that [Riverbend](https://github.com/nubank/riverbend) is not pr
 - After a while check if it gets back to normal, it can take a while (~20 min) as it has to restore the state store.
 - If it doesn't start working again, check for further exceptions on Splunk.
 
-### Correnteza database-claimer is failing
+## Correnteza database-claimer is failing
 
 If you see a `ops_health_failure` alarm on `#squad-di-alarms` for `component: database-claimer` then you can get more info by running
 
@@ -134,26 +99,34 @@ You can see the databases that have been claimed via:
 
 `nu ser curl GET --env prod global correnteza /ops/database-claimer/list -- -v | jq .`
 
-#### Error type: `last_extraction_more_than_24_hours_ago`
+## Correnteza attempt-checker is failing
 
-The `last_extraction_more_than_24_hours_ago` error type warns that a database hasn't been extracted in the last day.
-This signifies that something is wrong or that a database hasn't received any new data in this time.
+Correnteza has several instances that coordinate via zookeeper to extract from all the datomic databases discovered. If for some reason these instances fail to connect to a datomic database it has extracted from in the past it means that either: there is a bug or the database has been deprecated. In order to check for this we always log in a little docstore when we try to extract from a database. Then every hour we have a healthcheck that ensures that every database listed in that docstore has had an extraction attempt in the last 2 or so hours. 
 
-Databases marked as `"error_type": "last_extraction_more_than_24_hours_ago"` in this output are probably databases that are no longer used or get very few writes.
-
-In the case of unused databases you can turn off this warning. For databases with low activity, you'll have to make the judgement call if turning off the check makes sense.
-
-To turn off this alert for a database, mark it as a `cold database` by adding it to [this list](https://github.com/nubank/correnteza/blob/50ffe40dfc60d176e1ecd190d1ef0639f055a775/src/prod/correnteza_config.json#L3).
-You can do this by opening a PR targeting the `config` branch of the `correnteza` repo.
-Once it is merged, trigger the `deploy-to-prod` step in the [`correnteza-prod-config` pipeline](https://go.nubank.com.br/go/tab/pipeline/history/correnteza-config-prod).
-
-Then you can refresh the integrity checker via:
+When this healthcheck fails you'll see a `ops_health_failure` alarm on `#squad-di-alarms` for `component: attempt-checker`. For more info run:
 
 ```bash
-nu ser curl POST global correnteza /ops/integrity-checker/force
+nu ser curl GET global correnteza /ops/health/attempt-checker | jq .
 ```
 
-### "check-serving-layer" triggered on Airflow
+Generally this failure means that out of all the `correnteza` instances, one of them somehow failed to start extracting from a database that has been extracted from before.
+
+You can see the databases that have been claimed via:
+
+`nu ser curl GET --env prod global correnteza /ops/database-claimer/list -- -v | jq .`
+
+You can try to cycle the service to see if it acquires the left out database (takes 30 or so minutes to get all the locks):
+
+`nu ser cycle global correnteza`
+
+If the database that isn't being extracted from has been deprecated, you can remove it from the attempt checker list:
+
+`nu ser curl DELETE --env prod global correnteza /api/admin/delete-attempt/waldo-s0`
+
+where `waldo-s0` is the name of the database+prototype.
+
+
+## "check-serving-layer" triggered on Airflow
 
 This means that some partitions of some serving layer datasets have not been processed by tapir yet.
 
@@ -176,7 +149,7 @@ First action is to check [Mortician](https://backoffice.nubank.com.br/mortician/
 
 If there are no deadletters, this probably means a `DATASET-COMMITTED` message from `metapod` was not consumed by `tapir`, for some reason. See below for a way to work around this.
 
-#### Force re-processing of datasets
+### Force re-processing of datasets
 
 You can manually make `tapir` walk through all the committed serving layer datasets present in the transaction in metapod and process all of them once again.
 
@@ -187,7 +160,7 @@ nu ser curl POST global tapir /api/admin/process-transaction/:transaction-id
 
 It's safe to always tell `tapir` to re-process the entire transaction, since it has a mechanism for idempotency where it will not process the same partition twice.
 
-#### Further investigation
+### Further investigation
 
 You can check this [Grafana dashboard](https://prod-grafana.nubank.com.br/d/waGZJY2mk/serving-layer-monitoring?orgId=1&var-prometheus=prod-prometheus) for progress after you've triggered the re-processing.
 
@@ -195,7 +168,7 @@ You can also check the [Splunk dashboard](https://nubank.splunkcloud.com/en-US/a
 
 You can also check the [Splunk error logs](https://nubank.splunkcloud.com/en-US/app/search/search?sid=1538150037.2995655) for errors in general. Keep in mind that some instances of `ProvisionedThroughputExceededException` are expected, as explained below.
 
-#### DynamoDB write capacity
+### DynamoDB write capacity
 
 Another thing to look out for is the DynamoDB autoscaling and provisioned throughput capacity: https://sa-east-1.console.aws.amazon.com/dynamodb/home?region=sa-east-1#tables:selected=prod-conrado-docstore;tab=capacity
 
@@ -203,7 +176,7 @@ In the `Metrics` tab, if the throttled write events are too frequent, you can tr
 
 `tapir` relies on DynamoDB autoscaling to be able to write data, and autoscaling requires signaling you want a bigger throughput capacity for writes. That is done by continously retrying if this is the error returned from DynamoDB, so there might be some instances of this exception in the error logs. However, if this error is listed as a reason for a deadletter in Mortician, then the retries were not enough and it eventually timed out.
 
-### "check-archiving" triggered on Airflow
+## "check-archiving" triggered on Airflow
 
 This means that some dataset marked to be archived was committed but not archived to the dataset-series.
 
