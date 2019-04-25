@@ -689,11 +689,6 @@ def getAddress(name: String): Option[String] = {
 
 ## <a name='concurrency'>Concurrency</a>
 
-### <a name='concurrency-scala-collection'>Scala concurrent.Map</a>
-
-__Prefer `java.util.concurrent.ConcurrentHashMap` over `scala.collection.concurrent.Map`__. In particular the `getOrElseUpdate` method in `scala.collection.concurrent.Map` is not atomic (fixed in Scala 2.11.6, [SI-7943](https://issues.scala-lang.org/browse/SI-7943)). Since all the projects we work on require cross-building for both Scala 2.10 and Scala 2.11, `scala.collection.concurrent.Map` should be avoided.
-
-
 ### <a name='concurrency-sync-vs-map'>Explicit Synchronization vs Concurrent Collections</a>
 
 There are 3 recommended ways to make concurrent accesses to shared states safe. __Do NOT mix them__ because that could make the program very hard to reason about and lead to deadlocks.
