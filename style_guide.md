@@ -598,7 +598,7 @@ __Avoid using implicits__, unless:
 - you are using it for implicit type parameters (e.g. `ClassTag`, `TypeTag`)
 - you are using it private to your own class to reduce verbosity of converting from one type to another (e.g. Scala closure to Java closure)
 
-When implicits are used, we must ensure that another engineer who did not author the code can understand the semantics of the usage without reading the implicit definition itself. Implicits have very complicated resolution rules and make the code base extremely difficult to understand. From Twitter's Effective Scala guide: "If you do find yourself using implicits, always ask yourself if there is a way to achieve the same thing without their help."
+When implicits are used, we must ensure that another engineer who did not author the code can understand the semantics of the usage without reading the implicit definition itself. Implicits have very complicated resolution rules and make the code base extremely difficult to understand. From [Twitter's Effective Scala guide](http://twitter.github.io/effectivescala/): "If you do find yourself using implicits, always ask yourself if there is a way to achieve the same thing without their help."
 
 If you must use them (e.g. enriching some DSL), do not overload implicit methods, i.e. make sure each implicit method has distinct names, so users can selectively import them.
 ```scala
