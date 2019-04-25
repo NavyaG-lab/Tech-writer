@@ -27,7 +27,7 @@ In order to use the data from a Dataset Series in an Itaipu `SparkOp`, you'll fi
 Given a `DatasetSeriesOp` called `YourOp`:
 
 * An `object` called `YourOp` extending `common_etl.operator.dataset_series.DatasetSeriesOp` should be placed in the `etl.dataset_series` [package](https://github.com/nubank/itaipu/tree/master/src/main/scala/etl/dataset_series). See [Code Generation](#code-generation) below for best practices on generating it from scratch.
-* The object should be added to this package's `package.scala` file in the `allSeries` set [here](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/dataset_series_2/package.scala).
+* The object should be added to this package's `package.scala` file in the `allSeries` set [here](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/dataset_series/package.scala).
 
 #### Code generation
 
