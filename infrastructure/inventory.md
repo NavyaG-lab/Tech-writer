@@ -5,10 +5,13 @@
 ### Clojure services in the prod stack
 
 These are "normal" Clojure services that get deployed in our main infrastructure for production services.
-- [metapod](https://github.com/nubank/metapod), ([overview](/primer.md#metapod-overview))
 - [curva-de-rio](https://github.com/nubank/curva-de-rio)
-- [warehouse](https://github.com/nubank/warehouse)
 - [conrado](https://github.com/nubank/conrado)
+- [cutia](https://github.com/nubank/cutia)
+- [correnteza](https://github.com/nubank/correnteza), ([overview](/primer.md#correnteza-overview))
+- [metapod](https://github.com/nubank/metapod), ([overview](/primer.md#metapod-overview))
+- [riverbend](https://github.com/nubank/riverbend)
+- [tapir](https://github.com/nubank/tapir)
 
 ### Front-ends
 #### Clojurescript
@@ -27,7 +30,6 @@ These are Python services to support online machine learning models in productio
 
 ### Clojure services in production, but outside of the prod stack
 
-- [correnteza](https://github.com/nubank/correnteza), ([overview](/primer.md#correnteza-overview))
 - [capivara](https://github.com/nubank/capivara), ([overview](/primer.md#capivara-clj-overview))
 
 ### Deprecated services not currently running
@@ -51,7 +53,6 @@ These are Python services to support online machine learning models in productio
 - [capivara](https://github.com/nubank/capivara)
 - [scale-cluster](https://github.com/nubank/scale-cluster)
 - [deploy-airflow](https://github.com/nubank/deploy-airflow)
-- [tapir](https://github.com/nubank/tapir)
 - [aurora-jobs](https://github.com/nubank/aurora-jobs), ([overview](/primer.md#aurora-overview))
 - [parsa](https://github.com/nubank/parsa)
 - [truta](https://github.com/nubank/truta)

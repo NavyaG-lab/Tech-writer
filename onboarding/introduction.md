@@ -1,37 +1,57 @@
 # Berlin Onboarding
 
-Welcome to [Nubank](https://nubank.com.br/) Berlin
+Welcome to [Nubank](https://nubank.com.br/) Berlin :tada:🇩🇪
 
-## Getting accounts
+## Getting accounts and permissions
 
 Good! You already have a computer, a Gmail and also a Slack account. Now it's time to get the other credentials you're going to need.
 
-First, you need to have an account on both [github.com](http://github.com) and [quay.io](http://quay.io), then ask on the **#access-request** slack channel informing your nubank mail, your **GitHub** and quay.io **users** for the following accounts:
+First, you need to have an account on both [github.com](http://github.com) and [quay.io](http://quay.io).
 
-- Splunk
-- Databricks
-- AWS
-- Nubank's [Quay.io](http://quay.io) + data-infra group
+Then let's ask for access requests with this [form](https://docs.google.com/forms/d/e/1FAIpQLSeXjitvbqmkpxzxBTss6UzLz_Np6U73ssQNJpX0yQG5p2QZyQ/viewform).
 
- **To ask for any kind of access, account or credentials you should ask on #access-request**
+* Submit one request by selecting "Account Creation", and accesses with this form, with these needs:
+  * Github
+  * Quay
+  * Splunk
+  * Databricks
+  * AWS
 
-So now ask on #access-request for the following permissions:
+* With the same form, submit another request by selecting "IAM Perms", and these are groups you need to be in:
+  * `data-access-ops data-infra-aurora-access eng infra-ops prod-eng data-infra belomonte analyst`
 
-- Belomonte account
+* We need one more request for accessing Sonas-JS. Submit another request by selecting "Scopes", and the scope name is:
+  * `metapod-admin`
+  
+* Now, to join `datainfra` quay.io team, ping @chico or @schaffer on Slack with your quay.io handle (currently only admins are able to do this).
 
-For more information on the access you need to contribute to data-infra: [Permissions needed to contribute to data infra](https://github.com/nubank/data-infra-docs/blob/master/primer.md#permissions--accounts-needed-to-contribute-on-data-infra-update-required)
+* Log-in to [circleci](https://circleci.com) with your GitHub account. This is for building code on branches, such as the pull request build indicator on Itaipu.
+
+* TODO: how are these users managed?:
+  * Datagrip license (or some other SQL client)
+  * Redshift user for etl@cantareira-redshift.nubank.com.br (or `sao_pedro` superuser)
+  * Metabase admin
+
 
 ## Setting up your environment
 
-Overall, you should use [https://wiki.nubank.com.br/index.php/Dev_environment](https://wiki.nubank.com.br/index.php/Dev_environment) . It has been updated and made more user-friendly recently.
+### `setupnu.sh`
 
-The setupnu.sh script is self-explanatory. Make sure that you have access to the engineering team S3, otherwise you will have problems to use your aws key and secret while running setupnu.sh.
+Overall, you should use [setupnu.sh](https://github.com/nubank/nudev#setting-up-a-new-development-machine). It has been updated and made more user-friendly recently.
+
+The `setupnu.sh` script is self-explanatory. Make sure that you have gone through [Getting accounts and permissions](#getting-accounts-and-permissions) to be in the engineering group, otherwise you will have problems to use your aws key and secret while running `setupnu.sh`.
 
 Every now and then people will find minor bugs on setupnu. This is a great opportunity to create your first PR.
 
+### VPN
+
+After running `setupnu.sh`, setup your VPN by following [these steps](https://nubank.slack.com/archives/C024U9800/p1545380162000900).
+
+
+### Validation
 To validate the environment is working properly, you should clone a service repo and try to run its tests.
 
-Setting up **scala:**
+### Setting up scala
 
 Scala 101: https://wiki.nubank.com.br/index.php/Scala
 

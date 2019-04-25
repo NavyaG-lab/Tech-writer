@@ -17,7 +17,13 @@ This repository is the canonical place to put all documentation related to how t
 * [Data Infra Glossary](glossary.md)
 * [General Glossary](https://github.com/nubank/playbooks/blob/master/docs/glossary.md)
 
-## Ops
+## ETL User references
+
+* [Dataset Series](etl-users/dataset_series.md)
+* [Archived Datasets](etl-users/archived-datasets.md)
+
+## ETL Operations
+
 * [Hausmeister](squad/hausmeister.md) (a.k.a on-call rotation)
 * [Monitoring the nightly run](monitoring_nightly_run.md)
 * [On Call Runbook](on-call_runbook.md)
@@ -32,6 +38,7 @@ This repository is the canonical place to put all documentation related to how t
 * [Workflow](itaipu/workflow.md)
 * [Bumping Itaipu on Databricks](itaipu/databricks_bump.md)
 * [Updating the Log Cache](itaipu/log_cache_update.md)
+* [Dataset Series Compaction](itaipu/dataset_series_compaction.md)
 
 ## Infrastructure
 * [Inventory](infrastructure/inventory.md)

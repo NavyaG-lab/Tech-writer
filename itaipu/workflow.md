@@ -1,5 +1,23 @@
 # Contributing to Itaipu (workflow)
 
+ * [Contracts Workflow](#contracts-workflow)
+   * [Creating a New Contract](#creating-a-new-contract)
+   * [Updating an Existing Contract](#updating-an-existing-contract)
+ * [Datasets, Dimensions, and Fact Tables Workflow](#datasets,-dimensions,-and-fact-tables-workflow)
+   * [Bus matrix](#bus-matrix)
+   * [Databricks Approach](#databricks-approach)
+   * [Creating a new dataset](#creating-a-new-dataset)
+   * [Editing an existing dataset](#editing-an-existing-dataset)
+   * [Make the dataset available in Redshift](#make-the-dataset-available-in-redshift)
+ * [Running Tests](#running-tests)
+ * [How Itaipu is deployed to the Dagao](#how-itaipu-is-deployed-to-the-dagao)
+ * [Publishing an itaipu build](#publishing-an-itaipu-build)
+   * [Locally](#locally)
+   * [On GoCD](#on-gocd)
+ * [Other sources](#other-sources)
+ * [Dependencies](#dependencies)
+   * [Bumping libraries on itaipu](#bumping-libraries-on-itaipu)
+
 ## Contracts Workflow
 
 ### Creating a New Contract
@@ -29,6 +47,14 @@ Creating a new contract is different than updating an existing contract because 
             1. Add a call to function `common-datomic.contract.test-helpers/enforce-contracts!`
     1. Run `$ lein gen-contracts` to generate the initial contracts in `resources/contract/[DB-NAME]/`. Give the data
     infra squad a heads up that you are working on it, and then answer `Y` to the command line prompt.
+        - If you receive the following error:
+        
+          ```
+          java.lang.AssertionError: Assert failed: Either `:contract/ref-ids` or `:skeleton` must explicitly specified as metadata on a schema.
+          ```
+        
+          It is probably because it cannot infer some references inside your skeletons. You can fix it by explicitly declaring it in your schema.
+          Look at the file `src/tyriel/models/payment_source.clj` from this PR as a reference: <https://github.com/nubank/tyrael/pull/54>.
     1. Open a pull request similar to [this one](https://github.com/nubank/forex/pull/93).
 
 1. Make sure that the database exists in prod before adding the contract to Itaipu.
@@ -41,8 +67,8 @@ Creating a new contract is different than updating an existing contract because 
     contract entities - similar to
     https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/contract/proximo/Proximo.scala.
     1. Only if the database is not sharded (that is, it is mapped to global), add the `prototypes` attribute:
-    `override val prototypes: Seq[Prototype] = Seq(Prototype.Global)`. Otherwise, leave only the attributes `name` and
-    `entities`,
+    `override val prototypes: Seq[Prototype] = Seq(Prototype.Global)`. Otherwise, leave only the attributes `name`,
+    `entities` and `qualityAssessment`,
 
 1. Create a new Scala object for each new contract entity you are adding.
     1. The code should be a direct copy paste from contract Scala file(s) generated in the Clojure project (generated
@@ -55,7 +81,7 @@ Creating a new contract is different than updating an existing contract because 
 
 1. Follow the instructions about [running tests](#running-tests)
 
-1. Open a pull request on Itaipu and ask someone from data infra to review it alongside the PR on the Clojure service.
+1. Open a pull request on Itaipu. There’s no need to ask for reviews on Itaipu, we monitor new PRs multiple times a day as the repo is very active.
 
 1. Follow the instructions about [merging pull requests](#merging-pull-requests)
 
@@ -299,11 +325,21 @@ This change triggers a build of [`itaipu-stable`](https://go.nubank.com.br/go/ta
 The [`dagao`](https://go.nubank.com.br/go/tab/pipeline/history/dagao) pipeline depends on `itaipu-stable`, so it must finish before the `dagao` pipeline runs to deploy the dag.
 Sometimes `itaipu-stable` will fail (for instance when it fails to download dependencies, which happens sometimes). In this case, the `dagao` will get deployed with an old version of `itaipu`.
 
+## Publishing an itaipu build
+
+### Locally
+
+You can follow [these instructions](../onboarding/dataset-exercise.md).
+
+### On GoCD
+
+Force-push your changes to the `debug-build` branch of `itaipu` and trigger the [`itaipu-debug-build`](https://go.nubank.com.br/go/tab/pipeline/history/itaipu-debug-build) job on GoCD. This will build the image and once the downstream `itaipu-debug-build-publish` is done the image should appear on [quay.io](https://quay.io/repository/nubank/nu-itaipu?tab=tags)
+
 ## Other sources
 
 When you have a dataset that doesn't originate from a Datomic service and you
 want to utilize Spark to process it (periodically), you can build with
-itaipu.  See `curva-de-rio`, `dataset-series`, and `StaticOp` for more information.
+`itaipu`.  See [`dataset-series`](itaipu/dataset_series.md) and `StaticOp` for more information.
 
 Parquet files are mainly used for accessing data from Spark / Databricks. Avro files are used for loading into Redshift.
 

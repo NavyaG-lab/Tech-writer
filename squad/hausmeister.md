@@ -36,7 +36,7 @@ On Friday we shoud should update our clients about the work done in the week. We
 This message should contain the main tasks done on new features, bug fixes and even squad tasks like hiring.
 
 ### support our clients
-Over the course of the week our customers, Nubank's data scientists, often encounter platform issues while using our services.
+Over the course of the week our customers (Nubank's data scientists, business analysts, data analysts, etc), often encounter platform issues while using our services.
 To support their effectiveness, the hausmeister is responsible for communicating with these users; looking into their issues in a timely manner.
 
 Slack channels you should monitor for questions:
