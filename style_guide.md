@@ -876,7 +876,7 @@ The [equality check](http://docs.oracle.com/javase/7/docs/api/java/net/URL.html#
 
 ### <a name='misc_well_tested_method'>Prefer existing well-tested methods over reinventing the wheel</a>
 
-When there is an existing well-tesed method and it doesn't cause any performance issue, prefer to use it. Reimplementing such method may introduce bugs and requires spending time testing it (maybe we don't even remember to test it!).
+When there is an existing well-tested method and it doesn't cause any performance issue, prefer to use it. Reimplementing such method may introduce bugs and requires spending time testing it (maybe we don't even remember to test it!).
 
   ```scala
   val beginNs = System.nanoTime()
@@ -897,5 +897,5 @@ When there is an existing well-tesed method and it doesn't cause any performance
   ```
 
 Exceptions:
-- Using an existing well-tesed method requires adding a new dependency. If such method is pretty simple, reimplementing it is better than adding a dependency. But remember to test it.
+- Using an existing well-tested method requires adding a new dependency. If such method is pretty simple, reimplementing it is better than adding a dependency. But remember to test it.
 - The existing method is not optimized for our usage and is too slow. But benchmark it first, avoid premature optimization.
