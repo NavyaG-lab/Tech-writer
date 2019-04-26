@@ -458,7 +458,7 @@ Note:
 
 Before the old stack is killed, the engineer will announce to #chapter-engineering so every squad can make sure it is good to continue. Since a big part of the ETL is fed by Kafka messages, we need to make sure that there are no messages left behind.
 
-* Check if there's any apparent Kafka lags for our services on [Thanos](https://prod-thanos.nubank.com.br/graph?g0.range_input=1h&g0.expr=sort_desc(sum(kafka_burrow_partition_lag%7Bstack_id%3D%22%3Cstack_id_to_tear_down%3E%22%2Cgroup!~%22.*RANDOM.*%22%2C%20squad%3D%22data-infra%22%7D)%20by%20(group%2Cprototype%2Ctopic)%20%3E%200)&g0.tab=0).
+* Check if there's any apparent Kafka lags for our services on [Thanos](https://prod-thanos.nubank.com.br/graph?g0.range_input=1h&g0.expr=sort_desc(sum(kafka_burrow_partition_lag%7Bstack_id%3D%22%3Cstack_id_to_tear_down%3E%22%2Cgroup!~%22.*RANDOM.*%22%2C%20squad%3D%22data-infra%22%7D)%20by%20(group%2Cprototype%2Ctopic)%20%3E%200)&g0.tab=0). The stack-id should be mentioned by the message above posted by the engineer.
 * If any service has a huge lag (huge = 1k+), check if it's healthy and consuming.
 * `riverbend` has some peculiarities for its Kafka consumption
   * First, the topic `EVENT-TO-ETL` consumed by `riverbend` depends on other services to stop producing to be drained. The other services will only stop producing after two conditions are met: the DNS is all pointed to the new stack, and there're no [wendy](https://www.github.com/nubank/wendy) instances anymore in the old stack. Currently `wendy` instances can be checked on [EC2 Console](https://sa-east-1.console.aws.amazon.com/ec2/v2/home?region=sa-east-1#Instances:search=wendy;sort=instanceState). Make sure those conditions are true before continuing.
