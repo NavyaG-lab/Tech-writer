@@ -25,7 +25,7 @@
 * [Run an itaipu job with a longer healthcheck](#run-an-itaipu-job-with-a-longer-timeout-healthcheck)
 * [Deploy a hot-fix to itaipu](#deploy-a-hot-fix-to-itaipu)
 * [Serve a dataset again](#serve-a-dataset-again)
-* [Checks before old Prod stack tear down](#checks-before-old-prod-stack-tear-down)
+* [Checks before old Prod stack teardown](#checks-before-old-prod-stack-teardown)
 
 ## Restart redshift cluster
 
