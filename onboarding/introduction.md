@@ -32,6 +32,7 @@ Then let's ask for access requests with this [form](https://docs.google.com/form
   * Redshift user for etl@cantareira-redshift.nubank.com.br (or `sao_pedro` superuser)
   * Metabase admin
 
+You'll be tagged in #access-request slack channel when the permission is given to you.
 
 ## Setting up your environment
 
@@ -46,7 +47,6 @@ Every now and then people will find minor bugs on setupnu. This is a great oppor
 ### VPN
 
 After running `setupnu.sh`, setup your VPN by following [these steps](https://nubank.slack.com/archives/C024U9800/p1545380162000900).
-
 
 ### Validation
 To validate the environment is working properly, you should clone a service repo and try to run its tests.
