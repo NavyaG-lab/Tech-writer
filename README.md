@@ -47,7 +47,14 @@ This repository is the canonical place to put all documentation related to how t
 * [Testing models in staging](infrastructure/testing-models.md)
 * [The Serving Layer](infrastructure/serving_layer.md)
 
-## Onboarding
+## Squad
+
+### Working groups
+
+* [Index of working groups and their outputs](squad/working_groups/index.md)
+
+### Onboarding
+
 * [Introduction and setup](onboarding/introduction.md)
 * [Exercise Part I: Creating a dataset](onboarding/dataset-exercise.md)
 * [Exercise Part II: Creating a service to expose a dataset via API](onboarding/service-exercise.md)
