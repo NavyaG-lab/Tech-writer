@@ -37,7 +37,8 @@ Creating a new contract is different than updating an existing contract because 
         - `src/[SERVICE-NAME]/models/*.clj`:
             1. Annotate the relevant Datomic models with contract attributes as appropriate, similar to
             [this](https://github.com/nubank/forex/pull/93))
-            1. Ensure every attribute in the `skeleton` has an example (`:eg`) and documentation (`:doc`)
+            1. Ensure every attribute in the `skeleton` has documentation (`:doc`)
+            1. Ensure the skeleton itself has documentation (`(def skeleton ^{:contract/doc "Lorem ipsum"} ...)`)
             1. Potentially add:
                 - a `:contract/name` if you want to alias the attribute for ETL purposes
                 - `:contract/include false` if you want to remove the attribute from the ETL
@@ -57,7 +58,8 @@ Creating a new contract is different than updating an existing contract because 
           Look at the file `src/tyriel/models/payment_source.clj` from this PR as a reference: <https://github.com/nubank/tyrael/pull/54>.
     1. Open a pull request similar to [this one](https://github.com/nubank/forex/pull/93).
 
-1. Make sure that the database exists in prod before adding the contract to Itaipu.
+1. Make sure that the database exists in prod and is being extracted before adding the contract to Itaipu.
+    - [Example query of this on Grafana](https://prod-grafana.nubank.com.br/d/A8ULVDTmz/correnteza-datomic-extractor-service?orgId=1&var-stack_id=All&var-host=All&var-database=auth&var-prototype=All&var-prometheus=prod-thanos)
 
 1. On Itaipu create a Scala object for the database:
     1. If this is the first contract for this database, create a new package (aka folder) under
