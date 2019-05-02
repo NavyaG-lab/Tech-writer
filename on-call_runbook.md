@@ -125,6 +125,10 @@ If the database that isn't being extracted from has been deprecated, you can rem
 
 where `waldo-s0` is the name of the database+prototype.
 
+You can force the healthcheck to recompute its state via:
+
+`nu ser curl POST global --env prod correnteza /ops/attempt-checker/force`
+
 
 ## "check-serving-layer" triggered on Airflow
 
