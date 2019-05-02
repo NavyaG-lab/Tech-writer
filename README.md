@@ -31,6 +31,7 @@ This repository is the canonical place to put all documentation related to how t
 * [CLI usage examples](cli_examples.md)
 * [GraphQL clients](ops/graphql_clients.md)
 * [Airflow](airflow.md)
+* [Metapod](metapod.md)
 
 ## Itaipu
 * [Primer](itaipu/primer.md)

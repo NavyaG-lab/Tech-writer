@@ -12,7 +12,7 @@ It has a basic frontend called [Sonar](https://github.com/nubank/sonar-js).
 
 ## How to copy a transaction
 
-For debug purposes it is possible to create a copy of a transaction. This basically creates a new transaction, removing specified datasets. So it is possible to process and debug one specific dataset without having to reprocess everything again because the s3 paths will be the same.
+For debug purposes it is possible to create a copy of a transaction. This basically creates a new transaction, removing specified datasets. So it is possible to process and debug one specific dataset without having to reprocess everything again because the **s3 paths will be the same**.
 
 The endpoint for this is: `/api/migrations/copy-transaction/TRANSACTION-ID` and the expected POST content:
 ```json
