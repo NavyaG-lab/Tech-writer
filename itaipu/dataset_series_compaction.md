@@ -18,6 +18,17 @@ Each file (called a 'partition') is rather small, and as time went by, and more 
 
 The solution we implemented was to write a batch job which reads all data from a Dataset Series, and re-partitions the resulting DataFrame to create larger and fewer partition files in S3. It then commits those partitions into a new dataset in a new [metapod transaction][5], and replaces the original datasets in the Dataset Series with this new aggregated dataset, which has larger partition files. These files are also written in Parquet format, further improving performance of Spark jobs which will read them (namely `itaipu-dataset-series`).
 
+### Finding out which dataset series should be compacted
+
+Even though the problem is on having larger and fewer partition files, calculating how many of these exist requires running a databricks notebook, which takes some time.
+A good proxy for finding out which dataset series are "too big" is looking how many datasets they have.
+This light weight [mordor query](https://backoffice.nubank.com.br/eye-of-mauron/#/s0/mordor/5ccab752-2e3d-40c9-8a76-543ed5ed5ee2) get us the largest dataset series.
+
+You can order by size by clicking in the title of the column `(count ?dataset)`.
+An ok heuristic is to run compaction for all dataset series that have more than 30k datasets.
+
+Even though it's possible I don't recommend running more than one compaction in parallel because this is a very heavy process for metapod's transactor.
+
 ### Starting a compaction run
 
 Currently, there is an airflow DAG which will:
@@ -55,7 +66,7 @@ In case something goes wrong when reading the data back from its compacted state
          compaction {
            id
            transaction {
-             id 
+             id
              startedAt
            }
          }
@@ -64,7 +75,6 @@ In case something goes wrong when reading the data back from its compacted state
    }
    ```
 
-   
 
 2. Call the admin endpoint:
 
