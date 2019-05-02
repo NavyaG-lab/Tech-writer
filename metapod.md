@@ -7,7 +7,7 @@ It has a basic frontend called [Sonar](https://github.com/nubank/sonar-js).
 ### Table of contents
 
 - [What is a transaction?](glossary.md#transaction)
-- [GraphSQL Clients](ops/graphql_clients.md)
+- [GraphQL Clients](ops/graphql_clients.md)
 - [How to copy a transaction](#how-to-copy-a-transaction)
 
 ## How to copy a transaction
