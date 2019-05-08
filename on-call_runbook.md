@@ -210,7 +210,7 @@ nu ser curl POST global cutia /api/admin/migrations/append-dataset/<transaction-
 This means that a given production database (Datomic or RDS) didn't create any backups for the specified period of time.
 
 The most common reason for this to happen is that the database was deleted and re-created, and the
-[https://github.com/nubank/datomic-backup-restore](datomic backup process) does not know how to recover.
+[datomic backup process](https://github.com/nubank/datomic-backup-restore) does not know how to recover.
 
 The first step would be to ensure that this is the problem. For that, go to the [Backup and Restore Debug dashboard](https://nubank.splunkcloud.com/en-US/app/search/backup_and_restore_debug) in Splunk and look for a message like this:
 
