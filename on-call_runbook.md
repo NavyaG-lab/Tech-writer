@@ -1,7 +1,7 @@
 # On-Call Runbook
 
 This document is a resource for engineers *on-call*.  The general layout of
-this document is Alert: Reasoning: Action(s).  All the alert entries here
+this document is Alert: Reasoning: Action(s). All the alert entries here
 should be linked with the alerts being dispatched from our alerting platform.
 The "ALERT" string should be verbatim the same string that is dispatched.
 
@@ -201,3 +201,56 @@ Use the dataset name output that you got running the sabesp command above and th
 ```bash
 nu ser curl POST global cutia /api/admin/migrations/append-dataset/<transaction-id>/<dataset-name>
 ```
+
+## No successful backup for {database} in the last 96 hours! Please take a look.
+
+**Note:** In this case, the alert message is not copied verbatim because it contains the name of the affected database.
+
+This means that a given production database (Datomic or RDS) didn't create any backups for the specified period of time.
+
+The most common reason for this to happen is that the database was deleted and re-created, and the
+[https://github.com/nubank/datomic-backup-restore](datomic backup process) does not know how to recover.
+
+The first step would be to ensure that this is the problem. For that, go to the [Backup and Restore Debug dashboard](https://nubank.splunkcloud.com/en-US/app/search/backup_and_restore_debug) in Splunk and look for a message like this:
+
+```
+{"line":"java.lang.IllegalArgumentException: :backup/claim-failed Backup storage already used by skyler-66ccf2fe-3e22-4dc0-ae57-ebadff5315f3","source":"stderr","tag":"6e72516dd850","attrs":{"database":"skyler","dynamo_table":"prod-s6-skyler-datomic"}}
+```
+
+This message refers to the `skyler` database, but the rest should be similar.
+
+Before continuing, let's unpack what is happening. The message above suggests that a new backup could not be started because it is being used by `skyler-66ccf2fe-3e22-4dc0-ae57-ebadff5315f3`.
+This happens because the backup process uses the unique identifier for each database (`66ccf2fe-3e22-4dc0-ae57-ebadff5315f3` in this case), but since the database was deleted and re-created, it has a new identifier, which the Datomic backup doesn't know about.
+Ideally, we would make the Datomic backup aware of this change and recover graciously. For now, the solution is to delete the existing backup for the database, and let the backup process start a new one (which happens automatically).
+It's worth noting that deleting the backup also deletes the lock that associates the database with the old identifier.
+
+### Deleting the older backup, allowing a new one to start
+
+The process of deleting an old backup requires running a command for each alert received. Since in our infrastructure each shard is a different Datomic database, it is likely that we receive an alert per shard, and consequently have to run the command multiple times.
+
+Continuing with the example above, here is the process to delete the backup corresponding to the alert above.
+
+Go to [Datomic backup and restore project](https://github.com/nubank/datomic-backup-restore)
+
+Run the `clear_backup` script
+
+```
+./scripts/clear_backup.sh prod-s6-skyler/skyler
+```
+
+If you want to be sure that you are deleting the right thing, you can use the AWS CLI to list the files on S3:
+
+```
+aws s3 ls s3://nu-backups/datomic/sa-east-1/prod-s6-skyler/skyler/
+```
+
+It's worth noting that S0 is an exception to the structure above. In this case, the shard part of the aforementioned commands is omitted.
+Running the script to clear the backup for Skyler's S0 would look like this:
+
+```
+./scripts/clear_backup.sh prod-skyler/skyler
+```
+
+The script should print out information about the deleted keys, but once again, you can list the files on S3 to double-check that the process was successful.
+
+The directory listed above should be empty after running the script.
