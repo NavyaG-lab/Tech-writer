@@ -14,6 +14,7 @@ The "ALERT" string should be verbatim the same string that is dispatched.
 - [check-serving-layer triggered on Airflow](#check-serving-layer-triggered-on-airflow)
 - [check-archiving triggered on Airflow](#check-archiving-triggered-on-airflow)
 - [Riverbend - no file upload in the last hour](#no-file-upload-in-the-last-hour)
+- [Datomic backup - No successful backup](#no-successful-backup-for-database-in-the-last-96-hours-please-take-a-look)
 
 ## alert-itaipu-contracts triggered on Airflow
 
