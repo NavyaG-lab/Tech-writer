@@ -241,6 +241,6 @@ The unfortunate aspect of this is that you have to escape special characters in 
 
 ## sonar
 
-[Sonar](primer.md#sonar-overview) has a graphql query interface at [`https://backoffice.nubank.com.br/sonar-js/#/sonar-js/graphiql`](https://backoffice.nubank.com.br/sonar-js/#/sonar-js/graphiql).
+[Sonar](https://github.com/nubank/data-infra-docs/blob/master/primer.md#sonar-overview) has a graphql query interface at [`https://backoffice.nubank.com.br/sonar-js/#/sonar-js/graphiql`](https://backoffice.nubank.com.br/sonar-js/#/sonar-js/graphiql).
 
 The page requires the VPN and is pretty slow to load. That said, it has some doc navigation and requires no other configuration.
