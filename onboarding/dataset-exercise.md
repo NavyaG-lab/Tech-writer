@@ -346,7 +346,7 @@ Since we used the staging environment for our run, we need to make sure to query
 The simplest way to query to do that is via the Sonar UI, which can be accessed at https://backoffice.nubank.com.br/sonar-js/ for the production data. Unfortunately, the version of this service on staging also points to production data, so we'll need to run it locally:
 
 ```shell
-nu service clone sonar-js
+nu projects clone sonar-js
 cd $NU_HOME/sonar-js
 git checkout staging # the staging branch has been modified to point to staging data
 
