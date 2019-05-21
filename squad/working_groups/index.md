@@ -16,6 +16,7 @@ It is the responsability of the working group lead to update this document (if a
 * [Hiring working group](https://drive.google.com/drive/folders/1GKtzDQTcsQn0Plo-1KPm1YcZ2gPwUp11)
   * [Stopped hiring pipeline while we solve management situation](https://drive.google.com/open?id=1aRTTGeXP3hj4sIBn0fs0kmQu_6I_8-L4FApmyAGZcwQ)
   * [Established tech manager profile](https://docs.google.com/document/d/1PviLgqyQ5hWqSAadyokC_PnflKnj7qtpmZfkz2xUdw0/edit?usp=sharing)
+  * [Decision on Code Challenge for TM](https://docs.google.com/document/d/1eI02T8MERjyoomq71c82SkNEW81ZjQXRSPsFyWuWNFo/edit#)
 * [Hausmeister working group](https://drive.google.com/drive/folders/1UernfEylX4bbkys6rOQ72Az0pN0w3U5v)
   * [Decided to move to a 2 week Hausmeister rotation where the hausmeister for a week would be supported by the Hausmeister from the previous week](https://docs.google.com/document/d/1SkgviCRUspFN6hmL2NdAx9iwhzlqKOYqcy8DEtlI1L8/edit?usp=sharing)
 
