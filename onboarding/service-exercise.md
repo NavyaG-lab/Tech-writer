@@ -2,7 +2,7 @@
 
 The goal of this exercise is to make you familiar with Nubank's general service infrastructure and how it integrates with data infrastructure specific technology. Your task is to build a Nubank microservice to serve data from the dataset you produced in _part I_: ["Creating a dataset"](dataset-exercise.md).
 
-Here you can find one possible solution. But avoid peaking, you should be able to do the exercise by yourself (with help of other nubankers).
+Here you can find one possible solution. But avoid peeking, you should be able to do the exercise by yourself (with help of other nubankers).
 
  **TODO - Creating the Service** 
 
