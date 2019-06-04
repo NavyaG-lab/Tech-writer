@@ -264,7 +264,7 @@ edit in an IDE because of type checking, autocompletion, etc.), then go back to 
 If you want to make the dataset available in Redshift, you need to:
 1. [Override the `SparkOp` member `warehouseMode`](https://github.com/nubank/itaipu/blob/a206527f34acf419cdbb70acfbc145d5899d6be8/src/main/scala/etl/dataset/billing_cycles/BillingCycles.scala#L15) with the value `WarehouseMode.Loaded`.
 2. [Extend the class](https://github.com/nubank/itaipu/blob/a206527f34acf419cdbb70acfbc145d5899d6be8/src/main/scala/etl/dataset/billing_cycles/BillingCycles.scala#L15) with the trait `DeclaredSchema`
-3. [Override the `attributeOverrides` member](https://github.com/nubank/itaipu/blob/a206527f34acf419cdbb70acfbc145d5899d6be8/src/main/scala/etl/dataset/billing_cycles/BillingCycles.scala#L21-L34).
+3. [Override the `attributes` method](https://github.com/nubank/itaipu/blob/a206527f34acf419cdbb70acfbc145d5899d6be8/src/main/scala/etl/dataset/billing_cycles/BillingCycles.scala#L21-L34).
 
 ## Running tests
 
