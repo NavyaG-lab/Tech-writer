@@ -10,7 +10,7 @@ Standard event-based dataset series take a bunch of kafka messages (with the sam
 
 With manual dataset series, we are preparing the dataset that will be appended to the dataset series manually and directly telling our metadata store to include it in the series.
 
-In essence this comes down to running a CLI command that takes a Parquet file on s3 and the associated logical type schema. By logical type schema, I mean a json file that describes the contents of the Parquet file using Nubank's custom type system. In Scala code we define this schema by having our SparkOps extend `DeclaredSchema` and defining the `attributeOverrides` field. Since we are working from the command line, we need to write this manually as a json file.
+In essence this comes down to running a CLI command that takes a Parquet file on s3 and the associated logical type schema. By logical type schema, I mean a json file that describes the contents of the Parquet file using Nubank's custom type system. In Scala code we define this schema by having our SparkOps extend `DeclaredSchema` and defining the `attributes` field. Since we are working from the command line, we need to write this manually as a json file.
 
 With the Parquet file and the schema file, the CLI command copies the Parquet into a safe place, and tells our metadata store about your new dataset
 
