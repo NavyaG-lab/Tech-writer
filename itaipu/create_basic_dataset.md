@@ -96,7 +96,7 @@ Every dataset you find in Itaipu is a SparkOp. The SparkOp class has six importa
 
 - `definition` method. This is the core of your object. All the logic involved in creating your dataset will be placed here. Well, hopefully not **all** your logic, because you'll divide your code neatly into small functions that can be easily tested, won't you? Good.
 
-- `attributeOverrides` property. This Set contains the definition of what your output will be. The collumn names, if any field is primary key or not, if it is nullable, the collumn **description** field etc.
+- `attributes` property. This Set contains the definition of what your output will be. The column names, if any field is primary key or not, if it is nullable, the column **description** field etc.
 
 - `ownerSquad` property. That's the squad that owns that dataset.
 
@@ -162,7 +162,7 @@ object ${NAME} extends SparkOp with DeclaredSchema {
     myFunc(foo)
   }
 
-  override def attributeOverrides: Set[Attribute] = Set(
+  override def attributes: Set[Attribute] = Set(
     MetapodAttribute("some__id", LogicalType.UUIDType, nullable = false, primaryKey = true, description = Some("")),
     MetapodAttribute("another__id", LogicalType.UUIDType, nullable = false, description = Some("")),
     MetapodAttribute("some_amount", LogicalType.DecimalType, nullable = false, description = Some("")))
@@ -204,7 +204,7 @@ object OuvidoriaCalls extends SparkOp with DeclaredSchema {
   
   }
   
-  override def attributeOverrides: Set[Attribute] = Set()
+  override def attributes: Set[Attribute] = Set()
 
   def callsName: String = ContractOp(Calls).name
 }
@@ -280,16 +280,16 @@ Just like that. Now we need to rename the columns. The Dataset object has the me
 ```
 Boom! Your definition is done!
 
-We're still not done, though. Now we need to define what exactly are the types of the columns we output in our `definition` method. We do so in the `attributeOverrides`.
+We're still not done, though. Now we need to define what exactly are the types of the columns we output in our `definition` method. We do so in the `attributes`.
 Take a look in the [LogicalType](https://github.com/nubank/common-etl/blob/master/src/main/scala/common_etl/schema/LogicalType.scala) class. It has all the types of objects you can have in your table. Our first field will be the `call_id`, which will be the primary key. As for the type, we check in the [Calls Contract](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/contract/stevie/Calls.scala) and see that the column `call__id` is of type UUIDType.
 ```scala
- override def attributeOverrides: Set[Attribute] = Set(
+ override def attributes: Set[Attribute] = Set(
     MetapodAttribute("call_id", LogicalType.UUIDType, primaryKey = true)
   )
 ```
 Next, the `time` column and the `our_number` columnn. They come, respectively, from the `call__started_at` and `call__our_number` columns in Calls, which are TimestampType and StringType.
 ```scala
- override def attributeOverrides: Set[Attribute] = Set(
+ override def attributes: Set[Attribute] = Set(
     MetapodAttribute("call_id", LogicalType.UUIDType, primaryKey = true),
     MetapodAttribute("time", LogicalType.TimestampType),
     MetapodAttribute("our_number", LogicalType.StringType)
@@ -339,7 +339,7 @@ object OuvidoriaCalls extends SparkOp with DeclaredSchema {
       select($"call__started_at" as "time", $"call__id" as "call_id", $"call__our_number" as "our_number", $"call__reason" as "reason"))
   }
 
-  override def attributeOverrides: Set[Attribute] = Set(
+  override def attributes: Set[Attribute] = Set(
     MetapodAttribute("call_id", LogicalType.UUIDType, nullable = false, primaryKey = true, description = Some("Unique, UUID for each call")),
     MetapodAttribute("time", LogicalType.TimestampType, nullable = false, description = Some("UTC Timestamp for when the call started")),
     MetapodAttribute("our_number", LogicalType.StringType, nullable = false, description = Some("The number called to contact us")),
@@ -630,7 +630,7 @@ MainClass:
  - Is the attribute "name" int this format "dataset/folder-class-name"?
  - Are the Datasets you use imported? Are their name stored into a "datasetName" variable, which is then used to retreive them from the "datasets" variable?
  - Is your code well partitioned in small functions?
- - Does your code return the columns with the names and types you declared in attributeOverrides?
+ - Does your code return the columns with the names and types you declared in attributes?
 
 TestClass
   - Do you have a test class?
