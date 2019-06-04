@@ -53,7 +53,7 @@ object MyDataset extends SparkOp with DeclaredSchema {
   
   ...
   
-  override def attributeOverrides: Set[Attribute] = Set(
+  override def attributes: Set[Attribute] = Set(
     ...
   )
 }
