@@ -43,13 +43,13 @@ __NOTE__ in the alpha version you have to write this by hand. Later we'll see if
 }
  ```
 
- - Ask for the [`manual-dataset-series` scope](https://github.com/nubank/service-scopes/blob/master/service-scopes.md) from someone on data-infra or data-access (probably @phillip for now)
+ - Ask for to be given access to the [`manual-dataset-series-append` policy group](https://github.com/nubank/iam-groups/blob/master/groups/manual-dataset-series-append.json)
  - Run the append command
  ```
  nu dataset-series append my-monthly-report s3://nu-spark-devel/my-monthly-report/costs-to-etl-00002.snappy.parquet
  ```
 
- - Run the graphql query mentioned above again and assert there is a new dataset
+ - Run the `nu dataset-series check my-monthly-report` to assert that the a new dataset is there
 
 ## Create a dataset series contract op for your new dataset series
 
