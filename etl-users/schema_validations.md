@@ -1,9 +1,6 @@
-### Troubleshooting Schema Validation Failures
+# Troubleshooting Schema Validation Failures
 
-If your dataset has a declared `metapod` schema, it is expected that it matches the dataset's actual (Spark SQL) schema. In case it does not match during a run, Itaipu posts alerts about it on [#squad-di-alarms](https://nubank.slack.com/messages/C51LWJ0SK/). For example,
-```
-Schema validation for series-raw/aws-cur-test-contract-avro, owned by DataInfra failed.
-```
+When Itaipu computes your dataset (including dataset series contracts), it will verify that your output's Spark schema matches the schema you declared in your SparkOp's `declaredSchema` field. In case it does not match during a run, Itaipu will log the errors. These logs can be consulted in the `Schema Validation Failures` table of the [ETL Monitoring Dashboard](https://nubank.splunkcloud.com/en-US/app/search/etl__dataset_issues_monitoring).
 
 The fix for such inconsistencies in the schema is usually a simple one. The most common scenario is that you missed to declare a particular attribute of the dataset in the declared schema. This is defined in your `SparkOp`, as a field called `attributes` (you can see an example of this [here](https://github.com/nubank/itaipu/blob/583492a5bda37a5ddc2d098878b05db74589ed7e/src/main/scala/etl/dataset/rollout_distribution/RolloutFeatureDistribution.scala#L23-L27)).
 

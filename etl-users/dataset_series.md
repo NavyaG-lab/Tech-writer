@@ -308,13 +308,11 @@ It is fairly important to declare schemas you wish to drop on purpose in this `d
 
 #### Troubleshooting dropped schemas
 
-Ideally, you'd want all datasets to be either processed normally, or intentionally dropped through the `droppedSchemas` attribute described above. You will know that it's not the case if during the run, Itaipu posts alerts about dropped schemas on [#squad-di-alarms](https://nubank.slack.com/messages/C51LWJ0SK/), for example:
+Ideally, you'd want all datasets to be either processed normally, or intentionally dropped through the `droppedSchemas` attribute described above. If Itaipu is unable to match a given dataset against one of the schemas defined in the op, it will log a warning and ignore the dataset.
 
-```
-Dropping dataset-series *series/policy-reactive-limit-v3*, owner *Unknown*, datasets dropped: *147* with *2* distinct schemas
-```
+To track these, the `Dropped Series Versions` table in the [ETL Monitoring Dashboard](https://nubank.splunkcloud.com/en-US/app/search/etl__dataset_issues_monitoring) indicates which dataset series experienced datasets being dropped. If your series appears in this table, it means that Itaipu found an existing dataset series in S3, but could not match all of its datasets with a schema declared in the relevant `DatasetSeriesContractOp` (including schemas in `droppedSchemas`). The `dropped_count` column shows how many datasets were dropped, and the `schemas` column indicates how many distinct schemas were found in these datasets, which could not be reconciled against the contract schema.
 
-This message means that Itaipu found existing dataset series in S3, but could not match them with a schema declared in the relevant `DatasetSeriesContractOp` (including schemas in `droppedSchemas`). In order to remedy this, you will need to update the existing schemas or add new schema in the op to match these dropped datasets. This can be achieved by using the [Dropped DatasetSeries Troubleshooting notebook](https://nubank.cloud.databricks.com/#notebook/574720) on Databricks. This notebook handles querying Metapod and comparing the schemas of existing loaded datasets against.
+In order to remedy this, you will need to update the existing schemas or add new schema in the op to match these dropped datasets. This can be achieved by using the [Dropped DatasetSeries Troubleshooting notebook](https://nubank.cloud.databricks.com/#notebook/574720) on Databricks. This notebook handles querying Metapod and comparing the schemas of existing loaded datasets against.
 
 When running the notebook, you will obtain an output which will look like:
 
