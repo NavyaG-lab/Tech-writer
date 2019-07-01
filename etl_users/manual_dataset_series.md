@@ -53,7 +53,7 @@ __NOTE__ in the alpha version you have to write this by hand. Later we'll see if
 
 ## Create a dataset series contract op for your new dataset series
 
-[Follow these instructions](/etl-users/dataset_series.md#creating-a-new-dataset-series)
+[Follow these instructions](/etl_users/dataset_series.md#creating-a-new-dataset-series)
 
 ## References
 
