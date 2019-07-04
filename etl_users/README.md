@@ -12,6 +12,8 @@
 
 * [Dataset Series](dataset_series.md)
 
+* [Manual Dataset Series (in beta)](manual_dataset_series.md)
+
 * [Archived Datasets](archived_datasets.md)
 
 * [Dataset Schema Validation](schema_validation.md)

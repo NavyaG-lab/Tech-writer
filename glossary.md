@@ -2,11 +2,6 @@
 
 Work-in-progress, please add placeholders or info as you come across new terminology
 
-* [Data infrastructure terms](#data-infrastructure-terms)
-* [General infrastructure terms](#general-infrastructure-terms)
-
-## Data infrastructure terms
-
 #### transaction
 
 A **metapod transaction** is a concept present in metapod, which is composed by a set of datasets and it's used to group those together in a logical semantic unit, such as a daily batch of data consumed and processed.
@@ -23,18 +18,55 @@ The specification of some logical data structure, such as an event, a dataset, a
 
 For more info, see: https://github.com/nubank/playbooks/blob/master/docs/glossary.md#schemas
 
+#### logical type schema
+
+##### Rationale
+
+##### Types
+
+Base types: `DOUBLE, INTEGER, DECIMAL, UUID, ENUM, STRING DATE, TIMESTAMP`
+
+Complex types: `ARRAY of X (where X is a base type)`
+
+##### Representations
+
+###### JSON
+Logical type schemas need to be passed between systems, such as between our Scala batch processing code and our metadata store. We do this by encoding them as JSON.
+
+[Here is an example](/etl_users/manual_series_schema.json) of a logical type schema encoded as JSON. Below is a snippet of it:
+
+```json
+{
+    "attributes": [
+      {
+        "name": "example_enum",
+        "primaryKey": false,
+        "logicalType": "DOUBLE",
+        "logicalSubType": null
+      },
+      {
+        "name": "id",
+        "primaryKey": true,
+        "logicalType": "UUID",
+        "logicalSubType": null
+      },
+      ...
+      ]
+}
+```
+
+###### Scala
+`SparkOp` datasets in `itaipu` need to define a logical type schema if they are to be used in various contexts (the data-warehouse, the serving-layer, as archives, etc.)
+This is done by overriding the `attributes` field of the `SparkOp`, [for example here](https://github.com/nubank/itaipu/blob/bc7bdd85301ba46418f1b116f3679f7cf844983c/src/main/scala/etl/dataset/data_infra/DummyServedDataset.scala#L39-L98).
+
+This schema is registered in `metapod`, our metadata store. We also validate that the schema defined matches the data produced by the dataset, failures of which can be seen [on this dashboard](https://nubank.splunkcloud.com/en-US/app/search/etl__dataset_issues_monitoring?earliest=%40d&latest=now&form.squad=*)
+
+###### Clojure
+We use logical types to describe the event data sent from production services to the ETL via `riverbend`.
+
+These logical types are encoded using edn and their format is described in [`common-schemata.wire.etl`](https://github.com/nubank/common-schemata/blob/master/src/common_schemata/wire/etl.clj)
+
 #### Permanence of a dataset
 
-Datasets are marked as either `ephemeral` or `permanent`, and this dictacts what s3 bucket we place them in.
+Datasets are marked as either `ephemeral` or `permanent`, and this dictates what s3 bucket we place them in.
 Ephemeral s3 buckets are configured to delete files that are over ~2 weeks old, while permantent datasets are kept forever
-
-## General infrastructure terms
-
-### Prototype / Shard
-
-### Environment
-
-### Stack
-
-### Region
-

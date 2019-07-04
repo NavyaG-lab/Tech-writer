@@ -1,64 +1,119 @@
-# Manual Dataset Series
+# Manual Dataset Series (in beta)
 
 Many users of Nubank's data platform need to get slowly changing adhoc data into the ETL. The traditional way to do this was to create a new StaticOp every time you need to update data. This is very cumbersome.
 
-A new alternative (in alpha) is to use the dataset series abstraction to manually add new Parquet files to the ETL.
+A new alternative (in alpha) is to use the [dataset series abstraction](/etl_users/dataset_series.md) to manually add new Parquet files to the ETL.
 
 ## How does it work?
 
 Standard event-based dataset series take a bunch of kafka messages (with the same schema), put them in an avro, and append that as a new dataset in a dataset series.
 
-With manual dataset series, we are preparing the dataset that will be appended to the dataset series manually and directly telling our metadata store to include it in the series.
+With manual dataset series, we pepare by-hand the dataset that will be appended to the dataset series and directly tell `metapod`, our metadata store, to include it in the series.
 
-In essence this comes down to running a CLI command that takes a Parquet file on s3 and the associated logical type schema. By logical type schema, I mean a json file that describes the contents of the Parquet file using Nubank's custom type system. In Scala code we define this schema by having our SparkOps extend `DeclaredSchema` and defining the `attributes` field. Since we are working from the command line, we need to write this manually as a json file.
+This is done by running a CLI command that takes a Parquet file on s3 and the associated [logical type schema](/glossary.md#logical-type-schema) encoded as a json. The logical type schema describes the schema of the Parquet file using Nubank's custom type system. In Scala code we define this schema by having our SparkOps extend `DeclaredSchema` and defining the `attributes` field. Since we are working from the command line, we need to write this manually as a json file.
 
-With the Parquet file and the schema file, the CLI command copies the Parquet into a safe place, and tells our metadata store about your new dataset
+With the Parquet file and the schema file, the CLI command validates the logical type schema against the Parquet file, copies the Parquet into a permanent location, and tells our metadata store about your new dataset.
 
-__NOTE__ in the alpha version you have to write this by hand. Later we'll see if there is an easier way to generate this schema file. Also, there is currently no check to ensure that the json logical type schema you define matches the contents of the Parquet file. This will come later. It means you may run into unexpected issues when the dataset series contract is computed.
+## Preparing the data
+In a nutshell, place your parquet file on s3 somewhere (`s3://nu-scratch/me/my-dataset`) and place your logical type json schema in the same directory and name it `schema.json` (`s3://nu-scratch/me/schema.json`)
 
-## Creating a dataset series from manually prepared data
+In detail:
 
- - Choose a name for your dataset series. You can't use an existing one. Let's call ours `my-monthly-report`
- - Check that you don't have any datasets in that dataset series by making the following [graphql query to `metapod`](https://github.com/nubank/data-infra-docs/blob/master/ops/graphql_clients.md)
+### The Parquet file
 
- ```
+ - Create a Parquet file from whatever tool / source you want.
+ - Place it on `s3` somewhere that you have permissions to access (i.e `s3://nu-scratch/me/my-dataset`).
+ - Open it up on databricks and take a look at the schema of the resulting dataframe:
+
+```scala
+val df = spark.read.parquet("dbfs:/mnt/nu-scratch/my-dataset")
+df.schema
+// results in:
+StructType(
+  StructField(id,StringType,true),
+  StructField(example_boolean,BooleanType,true),
+  StructField(example_booleans,ArrayType(BooleanType,true),true),
+  StructField(example_date,DateType,true),
+  StructField(example_dates,ArrayType(DateType,true),true),
+  StructField(example_decimal,DecimalType(38,9),true),
+  StructField(example_decimals,ArrayType(DecimalType(38,9),true),true),
+  StructField(example_double,DoubleType,true),
+  StructField(example_doubles,ArrayType(DoubleType,true),true),
+  StructField(example_enum,StringType,true),
+  StructField(example_enums,ArrayType(StringType,true),true),
+  StructField(example_integer,IntegerType,true),
+  StructField(example_integers,ArrayType(IntegerType,true),true),
+  StructField(example_string,StringType,true),
+  StructField(example_strings,ArrayType(StringType,true),true),
+  StructField(example_timestamp,TimestampType,true),
+  StructField(example_timestamps,ArrayType(TimestampType,true),true),
+  StructField(example_uuid,StringType,true),
+  StructField(example_uuids,ArrayType(StringType,true),true)
+)
+```
+
+You'll see that the Parquet schema looses some type information, for instance, UUIDs are stored as strings.
+This is why we define our own logical type schema.
+
+### The logical type schema
+
+The logical type schema describes the schema of the dataset using our own internal schema language instead of that of Parquet. They differ a little bit, hence we don't have a tool to generate them automatically. That said, we do validate that the Parquet and logical type schemas match up before committing the dataset to the series.
+
+[Here is a full example of the logical type schema](manual_series_schema.json) for the dataframe above.
+
+It looks roughly like:
+
+```json
 {
-    datasetSeries(datasetSeriesName: "series/my-monthly-report") {
-      datasets {
-        id
-      }
-    }
+    "attributes": [
+      {
+        "name": "example_enum",
+        "primaryKey": false,
+        "logicalType": "DOUBLE",
+        "logicalSubType": null
+      },
+      {
+        "name": "id",
+        "primaryKey": true,
+        "logicalType": "UUID",
+        "logicalSubType": null
+      },
+      ...
+      ]
 }
- ```
+```
 
- - Prepare a Parquet file and place it on s3 somewhere. Let's say you put it in `s3://nu-spark-devel/my-monthly-report/`
- - Prepare the logical type schema for your dataset. Name it `schema.json` and put it in `s3://nu-spark-devel/my-monthly-report/`. It should look roughly like the following, where loosely the available types [are these](https://github.com/nubank/common-schemata/blob/40ab96f574ffe2d72eabd5b1260d406996f3c789/src/common_schemata/wire/etl.clj#L18-L20)
+Prepare this file, name it `schema.json`, and place it in the same directory on s3 that your Parquet file is at (i.e `s3://nu-scratch/me/schema.json`).
 
- ```
- {"attributes":
-  [
-    {"name": "foo", "logicalType": "DECIMAL", "nullable": "true"},
-    {"name": "bar", "logicalType": "DATE", "nullable": "true"}
-  ]
-}
- ```
+## Appending your dataset to your manual dataset series
 
- - Ask for to be given access to the [`manual-dataset-series-append` policy group](https://github.com/nubank/iam-groups/blob/master/groups/manual-dataset-series-append.json)
+```
+nu dataset-series info my-series
+```
+
+Will give you information on the current status of the series in question.
+
+If the series doesn't exist then you know you are starting fresh.
+If it does exist, note number of datasets in the series so we can verify the number went up after we append a new one.
+
+ - Do a dry run of the append to check that the schemas match up
+   ```
+   nu dataset-series append my-series s3://nu-scratch/me/my-dataset --dry-run
+   ```
+
+   If it fails you can get a little more info regarding the schemas by adding the `--verbose` flag.
+
+ - Once the schema validation is passing ask `@phillip` for write access to the `nu-spark-metapod-manual-dataset-series` bucket if you don't have it already. This will eventually be automated through the `#access-request` form.
  - Run the append command
+
  ```
- nu dataset-series append my-monthly-report s3://nu-spark-devel/my-monthly-report/costs-to-etl-00002.snappy.parquet
+ nu dataset-series append my-series s3://nu-scratch/me/my-dataset
  ```
 
- - Run the `nu dataset-series check my-monthly-report` to assert that the a new dataset is there
+   * If there is an s3 file copy error, save the output of the command and ask `@phillip` for help
+
+ - Run the info command again to see that your dataset was added `nu dataset-series info my-series`
 
 ## Create a dataset series contract op for your new dataset series
 
 [Follow these instructions](/etl_users/dataset_series.md#creating-a-new-dataset-series)
-
-## References
-
-If you want to look into the internals, here are some relevant PRs and docs
-
-- [RFC](https://docs.google.com/document/d/1y12jsmp9CS6o_-qyOl-nfspZ9mUnWdQ7hjctyzJ-gwc/edit#heading=h.g1uhsmsys485)
-- [nucli command](https://github.com/nubank/nucli/pull/1435)
-- [metapod implementation](https://github.com/nubank/metapod/pull/276)
