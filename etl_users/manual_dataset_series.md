@@ -116,4 +116,8 @@ If it does exist, note number of datasets in the series so we can verify the num
 
 ## Create a dataset series contract op for your new dataset series
 
-[Follow these instructions](/etl_users/dataset_series.md#creating-a-new-dataset-series)
+[Follow these instructions](/etl_users/dataset_series.md#creating-a-new-dataset-series) but be sure it set the `seriesType` to `Manual` in the contract SparkOp (`override val seriesType: SeriesType = SeriesType.Manual)
+
+## Questions
+
+checkout `#manual-dataset-series` channel on slack.
