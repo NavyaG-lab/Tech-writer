@@ -2,7 +2,7 @@
 
 Many users of Nubank's data platform need to get slowly changing adhoc data into the ETL. The traditional way to do this was to create a new StaticOp every time you need to update data. This is very cumbersome.
 
-A new alternative (in alpha) is to use the [dataset series abstraction](/etl_users/dataset_series.md) to manually add new Parquet files to the ETL.
+A new alternative (in beta) is to use the [dataset series abstraction](/etl_users/dataset_series.md) to manually add new Parquet files to the ETL.
 
 ## How does it work?
 
