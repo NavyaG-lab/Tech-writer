@@ -18,15 +18,15 @@ Dataset series data is produced by services by calling the `common-schemata.wire
 
 ## Using Dataset Series
 
-In order to use the data from a Dataset Series in an Itaipu `SparkOp`, you'll first need to define a `DatasetSeriesOp`. In this Op you'll explicitly declare the schema ([why?](#why-do-i-need-all-these-different-schemas)) you expect to be receiving from the Series, as well as perform a number of standard data cleaning operations to make working with the data safer and more convenient.
+In order to use the data from a Dataset Series in an Itaipu `SparkOp`, you'll first need to define a `DatasetSeriesContractOp`. In this Op you'll explicitly declare the schema ([why?](#why-do-i-need-all-these-different-schemas)) you expect to be receiving from the Series, as well as perform a number of standard data cleaning operations to make working with the data safer and more convenient.
 
 ### Creating a new dataset series
 
 #### Code organization
 
-Given a `DatasetSeriesOp` called `YourOp`:
+Given a `DatasetSeriesContractOp` called `YourOp`:
 
-* An `object` called `YourOp` extending `common_etl.operator.dataset_series.DatasetSeriesOp` should be placed in the `etl.dataset_series` [package](https://github.com/nubank/itaipu/tree/master/src/main/scala/etl/dataset_series). See [Code Generation](#code-generation) below for best practices on generating it from scratch.
+* An `object` called `YourOp` extending `common_etl.operator.dataset_series.DatasetSeriesContractOp` should be placed in the `etl.dataset_series` [package](https://github.com/nubank/itaipu/tree/master/src/main/scala/etl/dataset_series). See [Code Generation](#code-generation) below for best practices on generating it from scratch.
 * The object should be added to this package's `package.scala` file in the `allSeries` set [here](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/dataset_series/package.scala).
 
 #### Code generation
@@ -34,13 +34,13 @@ Given a `DatasetSeriesOp` called `YourOp`:
 A code generator helper can be found in `common-databricks`:
 
 ```scala
-import common_databricks.dataset_series.DatasetSeriesOpGenerator
+import common_databricks.dataset_series.DatasetSeriesContractOpGenerator
 import common_databricks.DatabricksHelpers
 import common_etl.metadata.Squad
 
 val metapod = DatabricksHelpers.getMetapod()
 
-DatasetSeriesOpGenerator.renderOp("your-series-name", 
+DatasetSeriesContractOpGenerator.renderOp("your-series-name", 
                                   Squad.YourSquad,
                                   "description of your dataset series",
                                   metapod)
@@ -48,10 +48,10 @@ DatasetSeriesOpGenerator.renderOp("your-series-name",
 /* Output:
 
 import common_etl.metadata.Squad
-import common_etl.operator.dataset_series.{DatasetSeriesAttribute, DatasetSeriesOp}
+import common_etl.operator.dataset_series.{DatasetSeriesAttribute, DatasetSeriesContractOp}
 import common_etl.schema.LogicalType
 
-object YourSeriesName extends DatasetSeriesOp {
+object YourSeriesName extends DatasetSeriesContractOp {
 
   override val seriesName: String = "your-series-name"
 
@@ -84,7 +84,7 @@ Usage of the generator is highly recommended as it:
 
 Feel free to use and copy the [example databricks notebook](https://nubank.cloud.databricks.com/#notebook/463279/command/463286) for this purpose.
 
-#### Anatomy of a DatasetSeriesOp
+#### Anatomy of a DatasetSeriesContractOp
 
 ###### `seriesName`
 
@@ -100,7 +100,7 @@ Override this optional field to declare other existing schemas for your dataset 
 
 #### Why do I need all these different schemas?
 
-Over time, producers of the data in your dataset series ~~might~~ will introduce changes in its schema: adding/removing columns, renaming them, or even changing their types. Whenever a schema change is introduced, you will need to modify your `DatasetSeriesOp` accordingly to ensure that:
+Over time, producers of the data in your dataset series ~~might~~ will introduce changes in its schema: adding/removing columns, renaming them, or even changing their types. Whenever a schema change is introduced, you will need to modify your `DatasetSeriesContractOp` accordingly to ensure that:
 
 * it knows how to handle and reconcile the different schemas of your data
 * aligns 100% with the schema *you* wish to pass down to downstream `SparkOps` (the `contractSchema` field)
@@ -120,7 +120,7 @@ When your dataset series' schema has changed over time, you'll have to add metad
 
   `withTransform` accepts any valid Spark `Column` expression.
 
-  **NB**: don't abuse transforms; a `DatasetSeriesOp`'s primary purpose is to reconcile versions. Other logic can be implemented with a normal SparkOp consuming your `DatasetSeriesOp`
+  **NB**: don't abuse transforms; a `DatasetSeriesContractOp`'s primary purpose is to reconcile versions. Other logic can be implemented with a normal SparkOp consuming your `DatasetSeriesContractOp`
 
 * Looks for attributes which do not exist in the `contractSchema` and tries to rename them to match an attribute from the `contractSchema`, using their `as` field:
 
@@ -238,14 +238,14 @@ Once all versions (including the contract) have been processed, the engine union
     ```scala
     import org.apache.spark.sql.functions._
     
-    object MyDatasetSeriesOp extends DatasetSeriesOp {
+    object MyDatasetSeriesOp extends DatasetSeriesContractOp {
         ...
         override val orderByColumns: Seq[Column] = Seq($"key1", desc($"key2"))
         ...
     }
     ```
 
-**NB: The deduplication step can be skipped by using `override val deduplication = false` in the `DatasetSeriesOp` declaration**
+**NB: The deduplication step can be skipped by using `override val deduplication = false` in the `DatasetSeriesContractOp` declaration**
 
 ### Final steps
 
@@ -351,11 +351,6 @@ One issue you might encounter when using this notebook is that the Metapod query
 - Finding the message for dropped datasets, which contains the schema that was dropped
 - Adding it to the schemas of the op (usually alternative schemas)
 
-### Further reading:
-
-* `DatasetSeriesOp` [docstring](https://github.com/nubank/common-etl/blob/master/src/main/scala/common_etl/operator/dataset_series/DatasetSeriesOp.scala#L11-L23) 
-* `DatasetSeriesAttribute` [docstring](https://github.com/nubank/common-etl/blob/037fa6b506ed0f800609632eab7a433ef322ace5/src/main/scala/common_etl/operator/dataset_series/DatasetSeriesAttribute.scala#L11-L31)
-
 ## Annexes
 
 ### Technical description of the ingestion pipeline
@@ -380,7 +375,7 @@ One issue you might encounter when using this notebook is that the Metapod query
 
    One dataset corresponding to one generated `.avro` file. 
 
-2. At the start of each run, Itaipu starts by [generating 'root datasets'](https://github.com/nubank/itaipu/blob/dc8fa20fc9af26b29dd3eb5cff6ed43496b7e083/src/main/scala/etl/itaipu/package.scala#L36-L46), which include the Dataset Series. It iterates through the DatasetSeriesOps listed in [etl.dataset_series.AllSeries](https://github.com/nubank/itaipu/blob/dc8fa20fc9af26b29dd3eb5cff6ed43496b7e083/src/main/scala/etl/dataset_series/package.scala#L12-L87), and for each Op:
+2. At the start of each run, Itaipu starts by [generating 'root datasets'](https://github.com/nubank/itaipu/blob/dc8fa20fc9af26b29dd3eb5cff6ed43496b7e083/src/main/scala/etl/itaipu/package.scala#L36-L46), which include the Dataset Series. It iterates through the DatasetSeriesContractOps listed in [etl.dataset_series.AllSeries](https://github.com/nubank/itaipu/blob/dc8fa20fc9af26b29dd3eb5cff6ed43496b7e083/src/main/scala/etl/dataset_series/package.scala#L12-L87), and for each Op:
 
    1. Queries Metapod to obtain a `DatasetSeries` object. The structure of this object is directly equivalent to the structure returned by the query, so that it contains a `datasets` field listing all avro file paths.
-   2. Groups the avro files by Schema, and for each schema that matches one of the version declared in the `DatasetSeriesOp`, persists a dataset suitable for input into a `SparkOp` & identified by a combination of the series name and the version number. These datasets are identified by the prefix `series-raw
+   2. Groups the avro files by Schema, and for each schema that matches one of the version declared in the `DatasetSeriesContractOp`, persists a dataset suitable for input into a `SparkOp` & identified by a combination of the series name and the version number. These datasets are identified by the prefix `series-raw
