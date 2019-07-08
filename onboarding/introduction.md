@@ -8,31 +8,39 @@ Good! You already have a computer, a Gmail and also a Slack account. Now it's ti
 
 First, you need to have an account on both [github.com](http://github.com) and [quay.io](http://quay.io).
 
-Then let's ask for access requests with this [form](https://docs.google.com/forms/d/e/1FAIpQLSeXjitvbqmkpxzxBTss6UzLz_Np6U73ssQNJpX0yQG5p2QZyQ/viewform).
+### Access Requests
 
-* Submit one request by selecting "Account Creation", and accesses with this form, with these needs:
+Then let's ask for access requests with this
+[form](https://forms.gle/DkwiWfWoZXHXHAFQA).
+
+* Submit one request by selecting `Account Creation -> add` for each of the
+  following accounts, if don’t have them, already:
   * Github
   * Quay
   * Splunk
   * Databricks
   * AWS
+  * Looker
+* Submit another request by selecting `Account Creation -> group-add`.
+  Specify `amazon` and paste the following groups:
+  ```
+  data-access-ops data-infra-aurora-access eng infra-ops prod-eng data-infra belomonte analyst
+  ```
+* Sonar-JS. Submit another request by selecting `Scopes`, and the
+  scope name is: `metapod-admin`
+* [BigQuery](https://wiki.nubank.com.br/index.php/BigQuery)
 
-* With the same form, submit another request by selecting "IAM Perms", and these are groups you need to be in:
-  * `data-access-ops data-infra-aurora-access eng infra-ops prod-eng data-infra belomonte analyst`
+You'll be tagged in #access-request slack channel when the permission
+is given to you.
 
-* We need one more request for accessing Sonas-JS. Submit another request by selecting "Scopes", and the scope name is:
-  * `metapod-admin`
-  
-* Now, to join `datainfra` quay.io team, ping @chico or @schaffer on Slack with your quay.io handle (currently only admins are able to do this).
+### Other accounts
 
-* Log-in to [circleci](https://circleci.com) with your GitHub account. This is for building code on branches, such as the pull request build indicator on Itaipu.
-
-* TODO: how are these users managed?:
-  * Datagrip license (or some other SQL client)
-  * Redshift user for etl@cantareira-redshift.nubank.com.br (or `sao_pedro` superuser)
-  * Metabase admin
-
-You'll be tagged in #access-request slack channel when the permission is given to you.
+* Now, to join `datainfra` quay.io team, ping `@chico` or `@schaffer`
+  on Slack with your quay.io handle (currently only admins are able to
+  do this).
+* Log-in to [circleci](https://circleci.com) with your GitHub account.
+  This is for building code on branches, such as the pull request
+  build indicator on Itaipu.
 
 ## Setting up your environment
 
@@ -43,6 +51,12 @@ Overall, you should use [setupnu.sh](https://github.com/nubank/nudev#setting-up-
 The `setupnu.sh` script is self-explanatory. Make sure that you have gone through [Getting accounts and permissions](#getting-accounts-and-permissions) to be in the engineering group, otherwise you will have problems to use your aws key and secret while running `setupnu.sh`.
 
 Every now and then people will find minor bugs on setupnu. This is a great opportunity to create your first PR.
+
+### Other useful programs
+
+[This wiki page](https://wiki.nubank.com.br/index.php/Programas_%C3%BAteis) lists
+additional programs not covered by the setup script that you can
+install and configure.
 
 ### VPN
 
