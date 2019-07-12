@@ -1,6 +1,12 @@
 # Onboarding Exercise Part I: Creating a Dataset
 
-The goal of this exercise is to make you familiar with data-infra specific technologies. It's going to touch on our core abstraction, the [**SparkOp**](https://github.com/nubank/common-etl/blob/master/src/main/scala/common_etl/operator/SparkOp.scala) (short for spark operation), and guide you through how to write a new SparkOp, how to run it on Databricks and to consume it in a Clojure service.
+The goal of this exercise is to make you familiar with data-infra
+specific technologies. It's going to touch on our core abstraction,
+the
+[**SparkOp**](https://github.com/nubank/common-etl/blob/master/src/main/scala/common_etl/operator/op.scala#L45)
+(short for spark operation), and guide you through how to write a new
+SparkOp, how to run it on Databricks and to consume it in a Clojure
+service.
 
 
  **TODO - Creating the Dataset**
@@ -34,9 +40,15 @@ For this walkthrough, you'll need to obtain the following permissions:
   * `belomonte`
 * Metapod
   * `metapod-admin` scope – ask `#access-request` (any engineer can also provide it for you on staging)
-  * ensure your certs are set up properly by running `nu certs setup --env staging`
+  * ensure your certs are set up properly by running `nu certs setup
+    --env staging`
 
-We recommend you get all these permissions right away to avoid getting stuck during the tutorial.
+We recommend you get all these permissions right away to avoid getting
+stuck during the tutorial.
+
+##### Auxiliary projects
+* [aurora-jobs](https://github.com/nubank/aurora-jobs) project cloned
+  on your machine
 
 ##### Language Fundamentals
 
@@ -53,9 +65,13 @@ This tutorial uses Spark & Databricks heavily, so it's a good idea to get famili
 
 * Then, go through these Databricks tutorials:
 
-  * [A Gentle Intro to Apache Sparks](https://docs.databricks.com/spark/latest/gentle-introduction/gentle-intro.html) (you can skip if you're already familiar with Spark)
+  * [A Gentle Intro to Apache Sparks](https://databricks-prod-cloudfront.cloud.databricks.com/public/4027ec902e239c93eaaa8714f173bcfc/346304/2168141618055043/484361/latest.html)
+    (you can skip if you're already familiar with Spark)
 
-  * [Apache Spark on Databricks for Data Engineers](https://docs.databricks.com/spark/latest/gentle-introduction/for-data-engineers.html) (NB: As of 09/10/2018 the code in this tutorial is broken half-way through. It's still a good idea to at least read through it even without interacting with the code though.)
+  * [Apache Spark on Databricks for Data Engineers](https://databricks-prod-cloudfront.cloud.databricks.com/public/4027ec902e239c93eaaa8714f173bcfc/346304/2168141618055194/484361/latest.html)
+    (NB: As of 11/07/2019 the code in this tutorial is broken half-way
+    through. It's still a good idea to at least read through it even
+    without interacting with the code though.)
 
   * Note that both tutorials above can be imported as interactive notebooks, which allow you to run and play with the code as it's introduced to you. In order to use the tutorials interactively:
 
@@ -99,8 +115,8 @@ Let's look at the tables available in Databricks. Tables can be queried like so:
 -- List all tables from the `dataset` schema
 show tables from dataset
 
--- List all tables from the `dataset` schema starting with the word 'fact'
-show tables from dataset like "fact*"
+-- List all tables from the `dataset` schema starting with the word 'billing'
+show tables from dataset like "billing*"
 
 -- List all tables from the `dataset` schema starting with the word 'dimension'
 show tables from dataset like "dimension*"
@@ -108,13 +124,18 @@ show tables from dataset like "dimension*"
 
 So, let's figure out which is the table that we should use:
 
-![](https://static.notion-static.com/1a39fc32ba514f7389624f1efda33b8f/Screenshot_2017-12-05_15-54-00.png)
+![](../images/databricks_lookup_fact_table.png)
 
-Running the command above gives you the `fact__billing_cycle` table as the only option. Let's check what's in it and see if it makes sense for our problem:
+The most promising table from the command above is `billing_cycles`.
+Let's check what's in it and see if it makes sense for our problem:
 
-![](https://static.notion-static.com/d4f0485d14ab4a6a95e4b8b6786e9b84/Screenshot_2017-12-05_15-56-19.png)
+![](../images/databrick_fact_table_sample.png)
 
-It does! Now you can do the same thing to figure out which **dimension ** table we'll need to join onto our `fact__billing_cycle`  table  (hint: our join keys will be `customer_key` and `due_date_key`).
+It does! Now you can do the same thing to figure out which
+**dimension** table we'll need to join onto our `billing_cycles` table
+(hint: we need information about the customer, in particular we need
+its `customer__id`. However, `billing_cycles` has only `account__id`,
+so we need a table linking the two. Look for the table `account_key_integrity`).
 
 ---
 
@@ -149,10 +170,10 @@ So for the bill fact, the code would look like this:
 ```scala
 %scala
 
-val billsFact = spark.table("dataset.fact__billing_cycle")
+val billsFact = spark.table("dataset.billing_cycles")
 ```
 
-You can then do the same for the customer and date tables.
+You can then do the same for the other tables.
 
 Once you have all Dataframes, you need to change the SQL functions to SparkSQL functions. For this, useful documentation includes:
 
@@ -170,11 +191,19 @@ Now, go for it, change your code to Scala :)
 
 ## Write a SparkOp with the definition of our dataset
 
-You're probably questioning WTF is a SparkOp :) – you can see for yourself [HERE](https://github.com/nubank/common-etl/blob/master/src/main/scala/common_etl/operator/SparkOp.scala#L7)
+You're probably questioning WTF is a SparkOp :) – you can see for
+yourself [HERE](https://github.com/nubank/common-etl/blob/master/src/main/scala/common_etl/operator/op.scala#L45)
 
-Feel free to see some [examples of datasets](https://github.com/nubank/itaipu/tree/master/src/main/scala/etl/dataset) that extend SparkOp, in particular (for this onboarding) the datasets: [BillingCycleFact](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/dataset/fact/BillingCycleFact.scala), [CustomerDimension](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/dataset/dimension/CustomerDimension.scala) and [DateDimension](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/dataset/dimension/DateDimension.scala).
+Feel free to see some [examples of
+datasets](https://github.com/nubank/itaipu/tree/master/src/main/scala/etl/dataset)
+that extend SparkOp, in particular (for this onboarding) the datasets:
 
-SparkOp is the core abstraction behind our data-platform, you can find out more about it [here](https://github.com/nubank/data-infra-docs/blob/master/itaipu/create_basic_dataset.md#3---understanding-the-sparkop-class). The important things are:
+  * [BillingCycles](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/dataset/billing_cycles/BillingCycles.scala)
+  * [CustomerDimension](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/dataset/dimension/CustomerDimension.scala)
+  * [DateDimension](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/dataset/dimension/DateDimension.scala)
+
+As said earlier, SparkOp is the core abstraction behind our
+ data-platform, you can find out more about it [here](https://github.com/nubank/data-infra-docs/blob/master/itaipu/create_basic_dataset.md#3---understanding-the-sparkop-class). The important things are:
 
 * **Name:** You have to grant your dataset a name so others can use your dataset as dependency.
 
@@ -205,22 +234,34 @@ Once you have your SparkOp done, you can use the function on [DatabricksHelpers]
 
 import etl.databricks.DatabricksHelpers
 
-DatabricksHelpers.runOpAndSaveToTable(spark, "**op_you_created**", "**schema**", "the_name_of_dataset")
+DatabricksHelpers.runOpAndSaveToTable(spark, **op_you_created**, "**schema**", "**the_name_of_dataset**")
 ```
+where:
 
-For  `**schema**` we normally use our own names when saving the table to Databricks.
+  * `**op_you_created**` :: Is the name of the Scala object you created
+  * `**schema**` :: We normally use our own names when saving the table
+    to Databricks. (See picture below)
+  * `**the_name_of_dataset**` :: Your choice, since it‘s under your
+    own schema. Anything goes as long as it is a legal name.
 
- ![Databricks Schema](../images/databricks_schema.png)
+![Databricks Schema](../images/databricks_schema.png)
 
 Run it! And then query your dataset to see if everything pulled through correctly!
 
 To make it easier to do the service exercise save the avro files to s3 once again (itaipu will do that, but we're doing it again in case anything goes wrong there). This will save the dataset on `s3://nu-spark-devel/onboarding/**schema**/`:
 
 ```scala
-import com.databricks.spark.avro._
 
-spark.table("**schema**.the_name_of_dataset").write.avro("/mnt/nu-spark-devel/onboarding/**schema**/")
+spark
+  .table("**schema**.**the_name_of_dataset**")
+  .write
+  .mode(SaveMode.Overwrite)
+  .format("com.databricks.spark.avro")
+  .save("/mnt/nu-spark-devel/onboarding/**schema**/")
 ```
+
+`SaveMode.Overwrite` is optional, but it‘s handy, in this context, to
+avoid unwanted exceptions in case you want to rewrite the file.
 
 ---
 
@@ -260,7 +301,7 @@ Add the following extensions to your class:
 extends FlatSpec with NuDataFrameSuiteBase with Matchers
 ```
 
-Then, you can write some tests to check that the dataset computes as expected. You can look at [DailyDeltasLogSpec](https://github.com/nubank/itaipu/blob/master/src/test/scala/etl/dataset/ledger/double_entry/mutable/DailyDeltasLogSpec.scala) for inspiration.
+Then, you can write some tests to check that the dataset computes as expected. You can look at [this spec](https://github.com/nubank/itaipu/blob/master/src/test/scala/etl/dataset/data_access/MordorLogsSpec.scala) for inspiration.
 
 For running the tests, follow the documentation [HERE](https://github.com/nubank/data-infra-docs/blob/master/itaipu/workflow.md#running-tests) (**Tip**: run `testOnly` on your specific file before running the complete test suite.
 
@@ -295,7 +336,8 @@ This is where the real fun begins :)
 
 We'll split the work into 4 parts:
 
-* Get used to `sabesp`
+* Get used to `sabesp`, a [nucli](https://github.com/nubank/nucli/)
+  subcommand of `datainfra`
 * Scale the cluster
 * Run Itaipu
 * Downscale the cluster
@@ -305,19 +347,47 @@ We'll split the work into 4 parts:
 In the following steps, we're going to use just a single command that looks like:
 
 ```shell
-sabesp --aurora-stack=cantareira-dev jobs ...
+nu datainfra sabesp -- --aurora-stack=cantareira-dev jobs ...
 ```
 
-Which translates to: create a job on the `cantareira-dev` stack. All jobs definition are inside the [aurora-jobs](https://github.com/nubank/aurora-jobs) project. If you don't have `aurora-jobs` cloned, please do it (inside the $NU_HOME directory), because `sabesp` will look for the definitions from there. Also, make sure that you were added to the *data-infra-aurora-access* group in AWS (**#access-request**).
+Which translates to: create a job on the `cantareira-dev` stack. All
+jobs definition are inside the
+[aurora-jobs](https://github.com/nubank/aurora-jobs) project. (See
+#Auxiliary-projects)
 
 #### Scale, Run and downscale the Cluster
 
-Using the up-to-date version of `sabesp`, you should be able to scale, run and downscale the cluster using just one command:
+Using the up-to-date version of `sabesp`, you should be able to scale,
+run and downscale the cluster using just one command:
 
-`sabesp --aurora-stack=cantareira-dev jobs itaipu staging **your_name** s3a://nu-spark-metapod-test/ s3a://nu-spark-metapod-test/ 100 --itaipu=**repository_tag** --filter-by-prefix **dataset_name**`
+```
+nu datainfra sabesp -- \
+    --aurora-stack=cantareira-dev \
+    jobs itaipu staging **your_name** s3a://nu-spark-metapod-test/ s3a://nu-spark-metapod-test/ 100 \
+    --itaipu=**repository_tag** \
+    --filter-by-prefix **dataset_name** \
+    --scale=48abb11
+```
 
-eg:
-`sabesp --aurora-stack=cantareira-dev jobs itaipu staging rodrigo s3a://nu-spark-metapod-test/ s3a://nu-spark-metapod-test/ 100 --itaipu=be24227a --filter-by-prefix dataset/on-boarding-exercise-part-i`
+Where:
+  * `**your_name**` :: will be used a an identifying suffix for the
+    name of the jobs
+  * `**repository_tag**` is the tag of the Docker image in the
+    [Itaipu repo on Quay](https://quay.io/repository/nubank/nu-itaipu?tab=tags)
+  * `--scale=48abb11` A temporary workaround (as of 12/07/2019). See
+    [Slack](https://nubank.slack.com/archives/GAPDSCKJ4/p1562869308439200?thread_ts=1562866965.436200&cid=GAPDSCKJ4)
+    for context.
+
+Here‘s an example:
+
+```
+nu datainfra sabesp -- \
+    --aurora-stack=cantareira-dev \
+    jobs itaipu staging rodrigo s3a://nu-spark-metapod-test/ s3a://nu-spark-metapod-test/ 100 \
+    --itaipu=be24227a \
+    --filter-by-prefix dataset/on-boarding-exercise-part-i \
+    --scale=48abb11
+```
 
 You can check if the instances are running on the [AWS Console](https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:tag:Name=cantareira-dev-mesos-on-demand-;sort=instanceId) and check the status of your jobs [here](https://cantareira-dev-mesos-master.nubank.com.br:8080/scheduler/jobs). Now wait, it will take quite a while for the data to compute. If you're part of data infra, you should move on to [the service exercise](./service-exercise.md) and use the avro files you computed from Databricks as your input. You can come back later once your Itaipu run is done.
 
@@ -348,7 +418,7 @@ The simplest way to query to do that is via the Sonar UI, which can be accessed 
 ```shell
 nu projects clone sonar-js
 cd $NU_HOME/sonar-js
-git checkout staging # the staging branch has been modified to point to staging data
+git checkout staging-metapod # the staging branch has been modified to point to staging data
 
 # Then it gets tricky
 npm install # let it run, it should fail at some point. That's normal™
