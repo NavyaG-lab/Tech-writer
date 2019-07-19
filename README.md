@@ -29,6 +29,8 @@ This repository is the canonical place to put all documentation related to how t
 * [Monitoring the nightly run](monitoring_nightly_run.md)
 * [On Call Runbook](on-call_runbook.md)
 * [Ops How To](ops_how_to.md)
+* [Incident Response Checklist](./etl_operators/incident_response_checklist.md)
+* [Getting help from other squads](./etl_operators/getting_help_from_other_squads.md)
 * [CLI usage examples](cli_examples.md)
 * [GraphQL clients](ops/graphql_clients.md)
 * [Airflow](airflow.md)
