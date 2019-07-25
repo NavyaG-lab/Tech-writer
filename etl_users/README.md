@@ -16,5 +16,5 @@
 
 * [Archived Datasets](archived_datasets.md)
 
-* [Dataset Schema Validation](schema_validation.md)
+* [Dataset Schema Validation](schema_validations.md)
 
