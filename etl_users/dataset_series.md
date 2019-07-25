@@ -2,7 +2,7 @@
 
 ## Background
 
-At Nubank, Datomic is the main/preferred way to store data. But it's not the only one. Data that is high throughput is usually not stored on Datomic so as not to clutter it. While Itaipu [Contracts](contracts.md) are used as an entry point for data stored in Datomic, DatasetSeries are the mechanism we use in Itaipu to make high throughput events available for computation as input datasets.
+At Nubank, Datomic is the main/preferred way to store data. But it's not the only one. Data that is high throughput is usually not stored on Datomic so as not to clutter it. While Itaipu [Contracts](../itaipu/contracts.md) are used as an entry point for data stored in Datomic, DatasetSeries are the mechanism we use in Itaipu to make high throughput events available for computation as input datasets.
 
 | Input type     | Type of data                                                 |
 | -------------- | ------------------------------------------------------------ |
@@ -11,7 +11,7 @@ At Nubank, Datomic is the main/preferred way to store data. But it's not the onl
 
 #### Source of the data
 
-Dataset series data is produced by services by calling the `common-schemata.wire.etl/produce-to-etl!` function ([source](https://github.com/nubank/common-schemata/blob/master/src/common_schemata/wire/etl.clj#L133-L137)) . The resulting data is then handled by the *Ingestion Layer* – a set of services linked to the `EVENT-TO-ETL` Kafka topic:
+Dataset series data is produced by services by calling the `common-schemata.wire.etl/produce-to-etl!` function ([source](https://codesearch.nubank.com.br/search/linux?q=defn%20produce-to-etl!&fold_case=auto&regex=false&context=true&repo%5B%5D=nubank%2Fcommon-schemata)) . The resulting data is then handled by the *Ingestion Layer* – a set of services linked to the `EVENT-TO-ETL` Kafka topic:
 
 * The [Riverbend](https://github.com/nubank/riverbend) service is responsible for producing dataset series. It does so by consuming the `EVENT-TO-ETL` Kafka topic and serialising its messages to `.avro` files suitable for ingestion by Itaipu. A technical description for how data goes from Kafka all the way to being processed in Itaipu can be found in the [Annexes](#annexes) section. The `dataset-name` should be in the format `series/dataset-name`.
 * The [Curva de Rio](https://github.com/nubank/curva-de-rio) service exposes an HTTP endpoint which allows services not connected to Kafka to send data to Riverbend.
@@ -40,7 +40,7 @@ import common_etl.metadata.Squad
 
 val metapod = DatabricksHelpers.getMetapod()
 
-DatasetSeriesContractOpGenerator.renderOp("your-series-name", 
+DatasetSeriesContractOpGenerator.renderOp("your-series-name",
                                   Squad.YourSquad,
                                   "description of your dataset series",
                                   metapod)
@@ -73,7 +73,7 @@ object YourSeriesName extends DatasetSeriesContractOp {
       DatasetSeriesAttribute("index", LogicalType.UUIDType)
     )
   )
-  
+
  */
 ```
 
@@ -107,137 +107,154 @@ Over time, producers of the data in your dataset series ~~might~~ will introduce
 
 ### Dealing with versions
 
-When your dataset series' schema has changed over time, you'll have to add metadata to your schema declarations so that the computing engine may reconcile them into the final contract version. When processing various versions, the engine:
+When your dataset series' schema has changed over time, you'll have to
+add metadata to your schema declarations so that the computing engine
+may reconcile them into the final contract version. When processing
+various versions, the engine will go through the following steps:
+    1. Transform values of existing attributes
+    2. Rename attributes
+    3. Coerce values
 
-* Looks for attributes with `transforms` fields and applies the transforms to these fields
+#### Transform values of existing attributes
+The engine looks for attributes with `transform` fields and applies
+the transforms to these fields.
 
-  ```scala
-  ...
-  DatasetSeriesAttribute("field", LogicalType.IntegerType)
-  	.withTransform($"field" + 10) // values of this field will have `10` added to them
-  ...
-  ```
+```scala
+...
+DatasetSeriesAttribute("field", LogicalType.IntegerType)
+    .withTransform($"field" + 10) // values of this field will have `10` added to them
+...
+```
 
-  `withTransform` accepts any valid Spark `Column` expression.
+`withTransform` accepts any valid Spark `Column` expression.
 
-  **NB**: don't abuse transforms; a `DatasetSeriesContractOp`'s primary purpose is to reconcile versions. Other logic can be implemented with a normal SparkOp consuming your `DatasetSeriesContractOp`
+**NB**: don't abuse transforms; a `DatasetSeriesContractOp`'s primary
+purpose is to reconcile versions. Other logic can be implemented with
+a normal SparkOp consuming your `DatasetSeriesContractOp`
 
-* Looks for attributes which do not exist in the `contractSchema` and tries to rename them to match an attribute from the `contractSchema`, using their `as` field:
+#### Rename attributes
+The engine looks for attributes that can be renamed using their `as`
+field. In this example `ndex` becomes `index`, `user_id` becomes
+`user__id`, so that they match an attribute from the `contractSchema`:
 
-  ```scala
-  import org.apache.spark.sql.functions._
-  
-  ...
-  val contractSchema = Set(
-      DatasetSeriesAttribute("ndex", LogicalType.UUIDType, isPrimaryKey = true)
-      			.as("index"),
-      DatasetSeriesAttribute("user__id",
-                              LogicalType.StringType)
-  )
-  
-  val alternativeSchemas = Seq(
-  	Set(
-          // Will not be renamed as `ndex` is in the contractVersion
-          DatasetSeriesAttribute("ndex", LogicalType.UUIDType, isPrimaryKey = true)
-      			.as("index"),
-          // Will be renamed prior to merging with other datasets, as `user__id` is
-          // in the contract version
-          DatasetSeriesAttribute("user_id",
-                                 LogicalType.StringType,)
-          	.as("user__id")
-      )
-  )
-  ...
-  ```
+```scala
+import org.apache.spark.sql.functions._
 
-  See [Final Steps](#final-steps) for `as` fields declared on `contractSchema` attributes (which would be ignored in the above phase)
+...
+val contractSchema = Set(
+    DatasetSeriesAttribute("ndex", LogicalType.UUIDType, isPrimaryKey = true)
+                .as("index"),
+    DatasetSeriesAttribute("user__id",
+                            LogicalType.StringType)
+)
 
-* Coerces the dataframe to the `contractSchema`:
-
-  * Missing columns are added, and backfilled using the attribute's `defaultValue` (a `Column` expression) – `defaultValue` defaults to `lit(null)`
-
-    ```scala
-    import org.apache.spark.sql.functions._
-    
-    ...
-    
-    val contractSchema = Set(
-        // Will be added to alternative version schemas which do not have
-        // a `cpf` attribute, and backfilled with "N/A"
-        // In schemas which do have it but with a different type, it will
-        // be recast to string
-        DatasetSeriesAttribute("cpf",
-                               LogicalType.StringType,
-                               defaultValue = lit("N/A"))
+val alternativeSchemas = Seq(
+    Set(
+        // Will not be renamed as `ndex` is in the contractVersion
+        DatasetSeriesAttribute("ndex", LogicalType.UUIDType, isPrimaryKey = true)
+                .as("index"),
+        // Will be renamed prior to merging with other datasets, as `user__id` is
+        // in the contract version
+        DatasetSeriesAttribute("user_id",
+                               LogicalType.StringType,)
+            .as("user__id")
     )
-        
-    ...
-    ```
+)
+...
+```
 
-  * Existing columns which match the contract by name but not by type are coerced to the contract's type. Coercions are currently supported for:
+See [Final Steps](#final-steps) for `as` fields declared on
+`contractSchema` attributes (which would be ignored in the above
+phase).
 
-    * Number to number (e.g. double to decimal)
-    * any to string
-    * string to uuid-format string. If the original string cannot be parsed as a UUID, it will be converted to one using `java.util.UUID/nameUUIDFromBytes` ([source](https://github.com/nubank/common-etl/blob/master/src/main/scala/common_etl/operator/dataset_series/DatasetSeriesAttribute.scala#L53-L58))
+#### Coerce values
 
-  * Columns which do not appear in the contract are dropped
+We have three possible cases:
+  * The column is missing
+  * The column has a different type
+  * The column does not appear in any schema
 
-  ```scala
-  import org.apache.spark.sql.functions._
-  
-  ...
-  val contractSchema = Set(
-      DatasetSeriesAttribute("customer__id", LogicalType.UUIDType, isPrimaryKey = true),
-      DatasetSeriesAttribute("precise_amount", LogicalType.DecimalType),
-  )
-  
-  val alternativeSchemas = Seq(
-  	Set(
-          // This will be automatically recast to UUID prior to
-          // merging with other versions
-          DatasetSeriesAttribute("customer_id",
-                                 LogicalType.StringType),
-          // This will be automatically recast to Decimal prior to
-          // merging with other versions
-          DatasetSeriesAttribute("precise_amount",
-                                 LogicalType.DoubleType),
-          // This will be dropped as it does not appear in the contract
-          DatasetSeriesAttribute("amount",
-                                 LogicalType.IntegerType)
-      )
-  )
-  ...
-  ```
+**NB: both the `alternativeSchemas` and the `contractSchema` go
+through this step; in other words, the `contractSchema` is both used
+as one of the possible versions and as the final version of the
+dataset**
 
+Missing columns are added, and backfilled using the attribute's
+`defaultValue` (a `Column` expression) – `defaultValue` defaults to
+`lit(null)`
 
-**NB: both the `alternativeSchemas` and the `contractSchema` go through this step; in other words, the `contractSchema` is both used as one of the possible versions and as the final version of the dataset**
+```scala
+import org.apache.spark.sql.functions._
+
+...
+
+val contractSchema = Set(
+    // Will be added to alternative version schemas which do not have
+    // a `cpf` attribute, and backfilled with "N/A"
+    // In schemas which do have it but with a different type, it will
+    // be recast to string
+    DatasetSeriesAttribute("cpf",
+                           LogicalType.StringType,
+                           defaultValue = lit("N/A"))
+)
+
+...
+```
+
+Existing columns which match the contract by name but not by type are
+coerced to the contract's type. Coercions are currently supported for:
+
+  * Number to number (e.g. double to decimal)
+  * any to string
+  * string to uuid-format string. If the original string cannot be
+    parsed as a UUID, it will be converted to one using
+    `java.util.UUID/nameUUIDFromBytes` ([source][1])
+
+```scala
+import org.apache.spark.sql.functions._
+
+...
+val contractSchema = Set(
+    DatasetSeriesAttribute("customer__id", LogicalType.UUIDType, isPrimaryKey = true),
+    DatasetSeriesAttribute("precise_amount", LogicalType.DecimalType),
+)
+
+val alternativeSchemas = Seq(
+    Set(
+        // This will be automatically recast to UUID prior to
+        // merging with other versions
+        DatasetSeriesAttribute("customer_id",
+                               LogicalType.StringType),
+        // This will be automatically recast to Decimal prior to
+        // merging with other versions
+        DatasetSeriesAttribute("precise_amount",
+                               LogicalType.DoubleType),
+        // This will be dropped as it does not appear in the contract
+        DatasetSeriesAttribute("amount",
+                               LogicalType.IntegerType)
+    )
+)
+...
+```
+
+Columns which do not appear in the contract are dropped.
 
 ### Primary keys and deduplication
 
 Once all versions (including the contract) have been processed, the engine unions all the datasets (which now have identical schema) and runs a deduplication step:
 
-* Rows are grouped by primary key. A column can be made a primary key by marking its corresponding `DatasetSeriesAttribute` as `isPrimaryKey = true`
-
-  ```scala
-  import common_etl.operator.dataset_series.DatasetSeriesAttribute
-  
-  // `customer_id` and `cpf` are primary keys, `customer_name` is not
-  val contractSchema = Set(
-      DatasetSeriesAttribute("customer_id", LogicalType.UUIDType, isPrimaryKey = true),
-      DatasetSeriesAttribute("cpf", LogicalType.StringType, isPrimaryKey = true),
-      DatasetSeriesAttribute("customer_name", LogicalType.StringType)
-  )
-  ```
-
-* When several rows have the same primary key, they are sorted and the first row in the resulting sequence is kept, the others are dropped. Sorting is done either:
-
+* Rows are grouped by primary key. A column can be made a primary key
+  by marking its corresponding `DatasetSeriesAttribute` as
+  `isPrimaryKey = true`
+* When several rows have the same primary key, they are sorted and the
+  first row in the resulting sequence is kept, the others are dropped.
+  Sorting is done either:
   * Using the primary key columns sorted alphabetically
-
-  * By passing a list of column objects in the *optional* `orderByColumns` field:
-
+  * By passing a list of column objects in the *optional*
+    `orderByColumns` field:
     ```scala
     import org.apache.spark.sql.functions._
-    
+
     object MyDatasetSeriesOp extends DatasetSeriesContractOp {
         ...
         override val orderByColumns: Seq[Column] = Seq($"key1", desc($"key2"))
@@ -255,14 +272,14 @@ After deduplication, two more steps are run on the resulting data:
 
   ```scala
   import common_etl.operator.dataset_series.DatasetSeriesAttribute
-  
+
   // `cpf` and `customer_name` will be hashed
   val contractSchema = Set(
       DatasetSeriesAttribute("customer_id", LogicalType.UUIDType, isPrimaryKey = true),
       DatasetSeriesAttribute("cpf", LogicalType.StringType,
                              isPrimaryKey = true,
                              isPii = true),
-      DatasetSeriesAttribute("customer_name", 
+      DatasetSeriesAttribute("customer_name",
                              LogicalType.StringType,
                              isPii = true)
   )
@@ -272,7 +289,7 @@ After deduplication, two more steps are run on the resulting data:
 
   ```scala
   import common_etl.operator.dataset_series.DatasetSeriesAttribute
-  
+
   // `customer_id` and `cpf` will be renamed to `customer__id` and `id_number` in the
   // final dataframe
   val contractSchema = Set(
@@ -280,7 +297,7 @@ After deduplication, two more steps are run on the resulting data:
       	.as("customer__id"),
       DatasetSeriesAttribute("cpf", LogicalType.StringType)
       	.as("id_number"),
-      DatasetSeriesAttribute("customer_name", 
+      DatasetSeriesAttribute("customer_name",
                              LogicalType.StringType)
   )
   ```
@@ -297,7 +314,7 @@ import common_etl.operator.dataset_series.DatasetSeriesAttribute
 override val droppedSchemas = Seq(
     Set(
         DatasetSeriesAttribute("customer_id", LogicalType.UUIDType, isPrimaryKey = true),
-        DatasetSeriesAttribute("corrupted_attribute", 
+        DatasetSeriesAttribute("corrupted_attribute",
                                LogicalType.StringType,
                                isPii = true)
     )
@@ -355,7 +372,7 @@ One issue you might encounter when using this notebook is that the Metapod query
 
 ### Technical description of the ingestion pipeline
 
-1. Riverbend consumes the `EVENT-TO-ETL` Kafka topic using Kafka streams, constantly its content into `.avro` files. 
+1. Riverbend consumes the `EVENT-TO-ETL` Kafka topic using Kafka streams, constantly its content into `.avro` files.
 
    * Each `.avro` file corresponds to one schema for one dataset series, over a window of either 90 minutes or 50,000 messages (whichever happens first)
 
@@ -373,9 +390,11 @@ One issue you might encounter when using this notebook is that the Metapod query
    }
    ```
 
-   One dataset corresponding to one generated `.avro` file. 
+   One dataset corresponding to one generated `.avro` file.
 
 2. At the start of each run, Itaipu starts by [generating 'root datasets'](https://github.com/nubank/itaipu/blob/dc8fa20fc9af26b29dd3eb5cff6ed43496b7e083/src/main/scala/etl/itaipu/package.scala#L36-L46), which include the Dataset Series. It iterates through the DatasetSeriesContractOps listed in [etl.dataset_series.AllSeries](https://github.com/nubank/itaipu/blob/dc8fa20fc9af26b29dd3eb5cff6ed43496b7e083/src/main/scala/etl/dataset_series/package.scala#L12-L87), and for each Op:
 
    1. Queries Metapod to obtain a `DatasetSeries` object. The structure of this object is directly equivalent to the structure returned by the query, so that it contains a `datasets` field listing all avro file paths.
    2. Groups the avro files by Schema, and for each schema that matches one of the version declared in the `DatasetSeriesContractOp`, persists a dataset suitable for input into a `SparkOp` & identified by a combination of the series name and the version number. These datasets are identified by the prefix `series-raw
+
+[1]: https://codesearch.nubank.com.br/search/linux?q=val%20toUUIDUdf
