@@ -59,7 +59,7 @@ Creating a new contract is different than updating an existing contract because 
     1. Open a pull request similar to [this one](https://github.com/nubank/forex/pull/93).
 
 1. Make sure that the database exists in prod and is being extracted before adding the contract to Itaipu.
-    - [Example query of this on Grafana](https://prod-grafana.nubank.com.br/d/A8ULVDTmz/correnteza-datomic-extractor-service?orgId=1&var-stack_id=All&var-host=All&var-database=auth&var-prototype=All&var-prometheus=prod-thanos)
+    - [Example query of this on Thanos](https://prod-thanos.nubank.com.br/graph?g0.range_input=1h&g0.expr=max(datomic_extractor_basis_t%7Bdatabase%3D~%22metapod%22%7D)&g0.tab=0) You should see line chart showing the growing amount of data extracted with time. _NB. In this example we are referring to the `metapod` service. You have to replace it with the name of your service._
 
 1. On Itaipu create a Scala object for the database:
     1. If this is the first contract for this database, create a new package (aka folder) under
