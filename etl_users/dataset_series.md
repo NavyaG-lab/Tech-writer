@@ -114,9 +114,10 @@ When your dataset series' schema has changed over time, you'll have to
 add metadata to your schema declarations so that the computing engine
 may reconcile them into the final contract version. When processing
 various versions, the engine will go through the following steps:
-    1. Transform values of existing attributes
-    2. Rename attributes
-    3. Coerce values
+
+1. Transform values of existing attributes
+2. Rename attributes
+3. Coerce values
 
 #### Transform values of existing attributes
 The engine looks for attributes with `transform` fields and applies
