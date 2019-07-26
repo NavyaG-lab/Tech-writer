@@ -73,4 +73,4 @@ Example:
 | `211f5cfc-7cb1-4436-8cae-c8cfd5893170` | `s1` | `unsettled` | `5.50` | `2017-12-10 22:00:00` |
 | `7845d1ec-34ed-4f92-aeee-ac20ee60fc73` | `s0` | `waiting` | `42.24` | `2017-12-13 05:00:00` |
 
-[1] https://nubank.slack.com/archives/CFGDGFU78/p1564043751035800?thread_ts=1564040968.034100&cid=CFGDGFU78
+[1]: https://nubank.slack.com/archives/CFGDGFU78/p1564043751035800?thread_ts=1564040968.034100&cid=CFGDGFU78
