@@ -131,7 +131,7 @@ import java.time.LocalDate
 import java.util.{Date, UUID}
 
 import common_etl.implicits._
-import common_etl.metadata.Squad
+import common_etl.metadata.{Country, Squad}
 import common_etl.metadata.Squad.SquadName
 import common_etl.metapod.{Attribute, MetapodAttribute}
   import common_etl.operator.{SparkOp, WarehouseMode}
@@ -145,6 +145,8 @@ object ${NAME} extends SparkOp with DeclaredSchema {
   //This is how you`ll access this database on the future, in Metabase or Databricks
   //It must be on the form prefix-you-want-name-of-your-dataset
   override val name = "dataset/name-of-your-dataset"
+  
+  override val country = Country.BR
   
   //This sets the name of the squad who owns the dataset.
   //If your squad isn't in common_etl.metadata.Squad, please add it
@@ -191,6 +193,7 @@ import etl.contract.stevie.Calls
 
 object OuvidoriaCalls extends SparkOp with DeclaredSchema {
   override val name = "dataset/ouvidoria-calls"
+  override val country = Country.BR
   override val ownerSquad: Squad = Squad....
   override val inputs: Set[String] = Set(callsName)
 
@@ -322,6 +325,7 @@ import org.apache.spark.sql.DataFrame
 
 object OuvidoriaCalls extends SparkOp with DeclaredSchema {
   override val name = "dataset/ouvidoria-calls"
+  override val country = Country.BR
   override val ownerSquad: Squad            = Squad....
   override val inputs: Set[String]          = Set(callsName)
   override val warehouseMode: WarehouseMode = WarehouseMode.Loaded
