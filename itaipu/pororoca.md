@@ -13,6 +13,7 @@ cd itaipu
 ### Setup
 
 - [joker][1] installed.
+- [aws cli][4] installed.
 - Spark installed and available on $SPARK_HOME. **Pororoca will try to install that for you**.
 - [nucli][2] installed and updated.
 - `staging` access token an certificate.
@@ -57,3 +58,4 @@ To run in a cluster, a version that was pushed to quay.io must be provided. By d
 [1]: https://github.com/candid82/joker  
 [2]: https://github.com/nubank/nucli
 [3]: https://docs.databricks.com/api/latest/authentication.html#generate-a-token
+[4]: https://aws.amazon.com/cli/
