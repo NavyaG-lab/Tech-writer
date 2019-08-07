@@ -176,7 +176,7 @@ Don't send.
         * Attribute's name matches attribute's description
         * All attributes have descriptions (unless it is a model with 100s of attributes)
     * Code
-        * Logic is mainly reviewed by the teamate
+        * Logic is mainly reviewed by the teammate
         * Stop usage of magic numbers
         * Enforce naming standards
     * Tests
