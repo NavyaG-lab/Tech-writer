@@ -70,7 +70,7 @@ Go to `https://nubank.cloud.databricks.com/` and create your own Notebook. There
 
 Give it a nice name, because you're going to share with us later and we need to know what you're trying to do here.
 
-Create it using `Scala` as the language and the `people's cluster` as the cluster.
+Create it using `Scala` as the language and the `we-the-people` as the cluster.
 
 In Databricks, if you want to use another language that isn't the default, you can simply begin your block with %name_of_language. In here, let us create a simple query to check on calls from Ouvidoria. It will be our example throughout the rest of the tutorial.
 
@@ -91,6 +91,8 @@ SELECT calls.call__started_at AS time
 Every dataset you find in Itaipu is a SparkOp. The SparkOp class has six important parts:
 
 - `name` property. It decides how your new dataset will be called in places such as Metabase or Databricks once Itaipu runs. If `name = "dataset/name-of-dataset"`, then you'll be able to find it by querying dataset.name_of_dataset.
+
+- `description` property. Description of what the dataset does, and why. This is useful to avoid confusion and help users to understand your dataset.
 
 - `inputs` property. This is a set with the names of all the datasets you'll use in your query. **DON'T HARDCODE THEM.** Use the values we'll set further on.
 
@@ -117,7 +119,7 @@ package etl.dataset.${PACKAGE_NAME}
 import etl.static.StaticOp
 
 // if you are going to use some contract
-import etl.contract.ContractOp
+import etl.contract.DatabaseContractOps
 import etl.contract._folder_._contractFileName_
 
 // If you are going to use some dataset, you need to import it if it isn''t on the same folder
@@ -146,6 +148,9 @@ object ${NAME} extends SparkOp with DeclaredSchema {
   //It must be on the form prefix-you-want-name-of-your-dataset
   override val name = "dataset/name-of-your-dataset"
   
+  //Description of what the dataset does
+  override def description: Option[String] = Some("Description Here")
+  
   override val country = Country.BR
   
   //This sets the name of the squad who owns the dataset.
@@ -173,7 +178,7 @@ object ${NAME} extends SparkOp with DeclaredSchema {
   def myFunc(df: DataFrame): DataFrame = df
 
   // If you want to use a contract, you get its name like this
-  def barName: String = ContractOp(contractFileName).name
+  def barName: String = DatabaseContractOps.lookup(contractFileName).name
   
   // If you're using just another dataset, get the name like this
   def bazName: String = datasetFileName.name
@@ -193,6 +198,7 @@ import etl.contract.stevie.Calls
 
 object OuvidoriaCalls extends SparkOp with DeclaredSchema {
   override val name = "dataset/ouvidoria-calls"
+  override def description: Option[String] = Some("Dataset to list all calls made to Nubank's Ouvidoria.")
   override val country = Country.BR
   override val ownerSquad: Squad = Squad....
   override val inputs: Set[String] = Set(callsName)
@@ -209,7 +215,7 @@ object OuvidoriaCalls extends SparkOp with DeclaredSchema {
   
   override def attributes: Set[Attribute] = Set()
 
-  def callsName: String = ContractOp(Calls).name
+  def callsName: String = DatabaseContractOps.lookup(Calls).name
 }
 ```
 Pretty barebones, right? All we do is say we use the `ContractOp` `Calls`, located at `etl.contract.stevie.Calls`. Then we call the `filterCalls` function, passing the `calls` Dataframe. But right now the `filterCalls` function is empty.
@@ -314,7 +320,7 @@ That finishes our definition.
 
 ## 6 - The Final Product
 ```scala
-import etl.contract.ContractOp
+import etl.contract.DatabaseContractOps
 import etl.contract.EnumAttribute
 import etl.contract.stevie.Calls
 import common_etl.implicits._
@@ -325,6 +331,7 @@ import org.apache.spark.sql.DataFrame
 
 object OuvidoriaCalls extends SparkOp with DeclaredSchema {
   override val name = "dataset/ouvidoria-calls"
+  override def description: Option[String] = Some("Dataset to list all calls made to Nubank's Ouvidoria.")
   override val country = Country.BR
   override val ownerSquad: Squad            = Squad....
   override val inputs: Set[String]          = Set(callsName)
@@ -353,7 +360,7 @@ object OuvidoriaCalls extends SparkOp with DeclaredSchema {
     }), description = Some("Reason selected by the xpeer"))
   )
 
-  def callsName: String = ContractOp(Calls).name
+  def callsName: String = DatabaseContractOps.lookup(Calls).name
 }
 ```
 We've removed the date and the phone number we're searching for and put them into variables, se we don'have any "magical numbers" floating around. This way, if we ever need to change it, we won't have to scour the whole code looking for them.
@@ -600,25 +607,25 @@ To try to avoid branch conflicts. Also, remember to format everything with scala
 ### 10.2 - If you used an existing folder
 If you used an existing folder, all you have to do is go to the folder's `package.scala` file and add your subfolder.allOps to its allOps.
 
-Do try to simply add a new line and not change any of the existing ones. That means, if you have:
+Do try to simply add a new line and not change any of the existing ones, and keep it into alphabetical order. That means, if you have:
 ```scala
-subfolder1.allOps ++
-subfolder2.allOps ++
-subfolder3.allOps)
+a_subfolder1.allOps ++
+b_subfolder2.allOps ++
+d_subfolder3.allOps)
 ```
 Do this:
 ```scala
-subfolder1.allOps ++
-subfolder2.allOps ++
-your_subfolder.allOps ++
-subfolder3.allOps)
+a_subfolder1.allOps ++
+b_subfolder2.allOps ++
+c_your_subfolder.allOps ++
+d_subfolder3.allOps)
 ```
 Instead of this
 ```scala
-subfolder1.allOps ++
-subfolder2.allOps ++
-subfolder3.allOps ++
-your_subfolder.allOps)
+a_subfolder1.allOps ++
+b_subfolder2.allOps ++
+d_subfolder3.allOps ++
+c_your_subfolder.allOps)
 ```
 To try to avoid branch conflicts. Also, remember to format everything with scalafmt.
 
