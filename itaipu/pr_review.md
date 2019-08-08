@@ -177,7 +177,7 @@ Don't send.
         * All attributes have descriptions (unless it is a model with 100s of attributes)
     * Code
         * Logic is mainly reviewed by the teammate
-        * Stop usage of magic numbers
+        * Stop usage of hard-coded values in the middle of the code (magic numbers) and enforce that all fixed values are stored in variables that are passed by parameter
         * Enforce naming standards
     * Tests
         * Ensure all functions are properly tested
