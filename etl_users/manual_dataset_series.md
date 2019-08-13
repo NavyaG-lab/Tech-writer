@@ -85,6 +85,22 @@ It looks roughly like:
 
 Prepare this file, name it `schema.json`, and place it in the same directory on s3 that your Parquet file is at (i.e `s3://nu-scratch/me/schema.json`).
 
+## Before appending (Temporary)
+
+First you will need to have docker installed, download [Here](https://download.docker.com/mac/stable/Docker.dmg). Docker is a set of coupled software-as-a-service and platform-as-a-service products that use operating-system-level virtualization to develop and deliver software in packages called containers [Wikipedia](https://en.wikipedia.org/wiki/Docker_(software)). Containers are isolated from one another and bundle their own software, libraries and configuration files; they can communicate with each other through well-defined channels. All containers are run by a single operating-system kernel and are thus more lightweight than virtual machines.
+
+After that you will need to create an account in quay.io [Here](https://docs.quay.io/solution/getting-started.html), and ask permission in #access-request channel, to be added in Nubank group. (Do not forget to accept the invitation in quay website.)
+
+Now you should have to sign into Quay.io using docker. Quay.io was originally created out of necessity when the company wanted to use Docker containers with an original IDE product, it is a private container registry that stores, builds, and deploys container images. It analyzes your images for security vulnerabilities, identifying potential issues that can help you mitigate security risks. In order to login run the command ```docker login quay.io ```.
+
+Since appending involves talking directly to `metapod`, you need still need to have read and write access to a particular bucket where our metadata store has access. For this step fo to #squad-data-infra and ask for them to run the following command:
+
+```
+nu iam allow <your.name> bucket read bucket nu-spark-metapod-manual-dataset-series/your-dataset-series/*
+
+nu iam allow <your.name> bucket write bucket nu-spark-metapod-manual-dataset-series/your-dataset-series/*
+```
+
 ## Appending your dataset to your manual dataset series
 
 ```
