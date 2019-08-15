@@ -103,8 +103,18 @@ will result in
 
 ## Kafka
 
-`tapir` can serve datasets via Kafka, publishing to the `DATASET-UPDATE` with the subtopic set to the dataset name. The payload schema is the same as the http endpoints in `conrado`, which is [`common-schemata.wire.tapir/DatasetRow`](https://github.com/nubank/common-schemata/blob/9cf054a6665341e0b44495151fa7ca2f744f5886/src/common_schemata/wire/tapir.clj#L6-L14).
+When a dataset is declared to be propagated, Tapir serves the rows of a dataset through Kafka. There are 2 approaches at the moment, a single topic for all datasets, and a dedicated topic per dataset.
 
+### Single topic for all datasets
+
+Tapir serves the rows of all datasets to the `DATASET-UPDATE` Kafka topic. The subtopic for each message is set to the name of the dataset. The messages in this topic conform to the generic [`common-schemata.wire.tapir/DatasetRow`](https://github.com/nubank/common-schemata/blob/9cf054a6665341e0b44495151fa7ca2f744f5886/src/common_schemata/wire/tapir.clj#L6-L14) schema. Note: Since this topic is used for all datasets, the map under the `:value` key of the `DatasetRow` is not coerced or checked against any schema. Please consider using the dedicated topic per dataset if you need this.
+
+### Dedicated topic per dataset
+
+Tapir also serves the rows of datasets to a dedicated Kafka topic per dataset. The name of the Kafka topic is derived from the name of the dataset, and is called `SERVING-<DATASET-NAME>`. The messages in the dedicated Kafka topics conform to an extended version fo the `DatasetRow` schema. The row of a dataset under the `:value` key of the `DatasetRow` is coerced and checked against the Metapod schema of the dataset. The dedicated topic per dataset is the preferred way to consume a dataset from Tapir. It has the following benefits:
+- **Less bandwidth consumption**, because your service reads only the rows of the dataset you are interested in, and not all rows of all datasets.
+- Deeper **integration with Sachem**, provided your consumer uses a Plumatic schema that also has definitions for the map under the `:value` key of the `DatasetRow` schema. If you are looking for the Plumatic schema of a dataset, take a look at the [Sarcophagus](https://github.com/nubank/sarcophagus) project.
+- **Proper type coercion**, because Tapir uses the Metapod schema of a dataset to serialize the rows. If you use one of the Plumatic dataset schemas provided by [Sarcophagus](https://github.com/nubank/sarcophagus), types like UUIDs, dates, timestamps, etc. will be coerced to their proper Clojure types.
 
 #### note on prototype column
 
