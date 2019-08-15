@@ -79,8 +79,8 @@ The [Sarcophagus](https://github.com/nubank/sarcophagus) project publishes the P
 
 `conrado` is a service that runs in the prod environment. It serves data out the DynamoDB table that `tapir` loaded data into, via an HTTP interface, described below:
 
-- _coerce one_ `GET /api/dataset/:dataset/row/:id`: gets the row of a dataset given the primary key id, supports coersion and Sachem
-- _coerce many_ `POST /api/dataset/:dataset/rows`: gets the rows of a dataset given the primary key ids under the :ids parameter of the request body, supports coersion and Sachem
+- _coerce one_ `GET /api/dataset/:dataset/row/:id`: gets the row of a dataset given the primary key id, supports coercion and Sachem
+- _coerce many_ `POST /api/dataset/:dataset/rows`: gets the rows of a dataset given the primary key ids under the :ids parameter of the request body, supports coercion and Sachem
 
  - _fetch many_ `/api/dataset/:id`: gets the results for all datasets loaded into `conrado`'s table with the provided id/entry primary key (i.e. customer ID or account ID)
  - _fetch one_ `/api/dataset/:id/:dataset`: gets the row of a dataset given the primary key id
