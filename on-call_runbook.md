@@ -287,8 +287,7 @@ nu ser curl DELETE --env prod s0 correnteza /api/admin/extractions/s0/skyler -- 
 ```
 
 The command runs asynchronously, so the expected response is `HTTP 202 Accepted`. To check if the extractions were actually deleted,
-query the [Correnteza docstore][correnteza-docstore] in the AWS console. To check the items corresponding to the command above, the filter
-would be `db-protobe = skyler-s0`.
+query the [Correnteza docstore][correnteza-docstore] in the AWS console. To check the items corresponding to the command above, the filter would be `db-prototype = skyler-s0`.
 
 #### Cycle Correnteza in the corresponding prototype
 
