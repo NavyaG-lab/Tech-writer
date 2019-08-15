@@ -15,7 +15,7 @@ The "ALERT" string should be verbatim the same string that is dispatched.
 - [check-archiving triggered on Airflow](#check-archiving-triggered-on-airflow)
 - [Riverbend - no file upload in the last hour](#no-file-upload-in-the-last-hour)
 - [Datomic backup - No successful backup](#no-successful-backup-for-database-in-the-last-96-hours-please-take-a-look)
-- [Warning: [PROD] correnteza_last_t_greater_than_basis_t]()
+- [Warning: [PROD] correnteza_last_t_greater_than_basis_t](#warning-prod-correnteza_last_t_greater_than_basis_t)
 
 ## alert-itaipu-contracts triggered on Airflow
 
