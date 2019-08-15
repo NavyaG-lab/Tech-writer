@@ -15,6 +15,7 @@ The "ALERT" string should be verbatim the same string that is dispatched.
 - [check-archiving triggered on Airflow](#check-archiving-triggered-on-airflow)
 - [Riverbend - no file upload in the last hour](#no-file-upload-in-the-last-hour)
 - [Datomic backup - No successful backup](#no-successful-backup-for-database-in-the-last-96-hours-please-take-a-look)
+- [Warning: [PROD] correnteza_last_t_greater_than_basis_t]()
 
 ## alert-itaipu-contracts triggered on Airflow
 
@@ -102,7 +103,7 @@ You can see the databases that have been claimed via:
 
 ## Correnteza attempt-checker is failing
 
-Correnteza has several instances that coordinate via zookeeper to extract from all the datomic databases discovered. If for some reason these instances fail to connect to a datomic database it has extracted from in the past it means that either: there is a bug or the database has been deprecated. In order to check for this we always log in a little docstore when we try to extract from a database. Then every hour we have a healthcheck that ensures that every database listed in that docstore has had an extraction attempt in the last 2 or so hours. 
+Correnteza has several instances that coordinate via zookeeper to extract from all the datomic databases discovered. If for some reason these instances fail to connect to a datomic database it has extracted from in the past it means that either: there is a bug or the database has been deprecated. In order to check for this we always log in a little docstore when we try to extract from a database. Then every hour we have a healthcheck that ensures that every database listed in that docstore has had an extraction attempt in the last 2 or so hours.
 
 When this healthcheck fails you'll see a `ops_health_failure` alarm on `#squad-di-alarms` for `component: attempt-checker`. For more info run:
 
@@ -255,3 +256,69 @@ Running the script to clear the backup for Skyler's S0 would look like this:
 The script should print out information about the deleted keys, but once again, you can list the files on S3 to double-check that the process was successful.
 
 The directory listed above should be empty after running the script.
+
+## Warning: [PROD] correnteza_last_t_greater_than_basis_t
+
+### Context
+
+Correnteza tracks the extractions from the Datomic databases by storing the ``last-t` that it extracted from each of those databases.
+The actual last `t` stored on those databases is referred to as `basis-t` in Correnteza. This alarm goes off when Correnteza thinks that
+it is ahead of the original database, which means that it won't extract any new data from that database.
+
+The condition described above seems impossible to reach, and so far, it has only happened when people destroy and re-create databases for
+the production services.
+
+
+### Solution
+
+Note that this solution only applies for the cases described above, **so please confirm with the service owners that the database was
+re-created**.
+
+The solution involves 3 steps:
+
+#### Delete all the extractions for the databases that the alarm is going off for.
+
+There is an admin endpoint in Correnteza exactly for this purpose, but it's protected with the scope `correnteza-extraction-delete`.
+If you have to execute this command, make sure to ask for this scope in #access-request.
+
+```
+# parameterised with database name (skyler) and prototype (s0)
+nu ser curl DELETE --env prod s0 correnteza /api/admin/extractions/s0/skyler -- -v
+```
+
+The command runs asynchronously, so the expected response is `HTTP 202 Accepted`. To check if the extractions were actually deleted,
+query the [Correnteza docstore][correnteza-docstore] in the AWS console. To check the items corresponding to the command above, the filter
+would be `db-protobe = skyler-s0`.
+
+#### Cycle Correnteza in the corresponding prototype
+
+After the extractions are deleted, the next step is to cycle the instances of Correnteza that are connected to that DB prototype. This is
+necessary to refresh the `last-t` kept by Correnteza for that database prototype, which happens at service startup.
+
+Correnteza is sharded and it connects to the databases within the same prototype, so we have to cycle the same one that we deleted the extractions
+for.
+
+```
+# parameterised prototype (s0)
+nu k8s cycle s0 correnteza
+```
+
+To check the progress of the service cycling, run this command:
+
+```
+# parameterised with service name (correnteza) and prototype (s0)
+watch --differences --interval 10 nu k8s ctl s0 -- get po -l nubank.com.br/name=correnteza
+```
+
+#### Monitor re-extractions
+
+After the service has cycled, wait for a few minutes. Correnteza's startup is noticeably slow because it has to discover and connect to many Datomic databases.
+Then, check the status of the Datomic extractor using [Correnteza's extractor dashboard][correnteza-extractor-dashboard] on Graphana.
+
+![Correnteza extractor dashboard][correnteza-extractor-dashboard-img]
+
+The dashboard has a lot more useful information about Correnteza's extractions, but the important bits for this purpose are highlighted in the screenshot.
+
+[correnteza-docstore]: https://sa-east-1.console.aws.amazon.com/dynamodb/home?region=sa-east-1#tables:selected=prod-correnteza-docstore;tab=items
+[correnteza-extractor-dashboard]: https://prod-grafana.nubank.com.br/d/A8ULVDTmz/correnteza-datomic-extractor-service?orgId=1&var-stack_id=All&var-host=All&var-database=skyler&var-prototype=s0&var-prometheus=prod-thanos
+[correnteza-extractor-dashboard-img]: images/correnteza_extractor_dashboard_highlighted.png
