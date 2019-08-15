@@ -281,7 +281,7 @@ The solution involves 3 steps:
 There is an admin endpoint in Correnteza exactly for this purpose, but it's protected with the scope `correnteza-extraction-delete`.
 If you have to execute this command, make sure to ask for this scope in #access-request.
 
-```
+```bash
 # parameterised with database name (skyler) and prototype (s0)
 nu ser curl DELETE --env prod s0 correnteza /api/admin/extractions/s0/skyler -- -v
 ```
@@ -298,14 +298,14 @@ necessary to refresh the `last-t` kept by Correnteza for that database prototype
 Correnteza is sharded and it connects to the databases within the same prototype, so we have to cycle the same one that we deleted the extractions
 for.
 
-```
+```bash
 # parameterised prototype (s0)
 nu k8s cycle s0 correnteza
 ```
 
 To check the progress of the service cycling, run this command:
 
-```
+```bash
 # parameterised with service name (correnteza) and prototype (s0)
 watch --differences --interval 10 nu k8s ctl s0 -- get po -l nubank.com.br/name=correnteza
 ```
