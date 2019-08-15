@@ -71,9 +71,16 @@ Data is served either via HTTP or Kafka as [`DatasetRow`](https://github.com/nub
  - `:target-date`: the day that the data was loaded
  - `:value`: a map representing the row of the dataset
 
+## Plumatic schemas for the payload
+
+The [Sarcophagus](https://github.com/nubank/sarcophagus) project publishes the Plumatic schemas of the serving layer datasets as artifacts to the `nu-maven` repository. You can use theses schemas as a dependency in your service if you don't want write them yourself. Take a look at this [guide](https://github.com/nubank/sarcophagus#how-can-i-use-a-dataset-artifact) to learn more about how to use those artifacts.
+
 ## Conrado
 
 `conrado` is a service that runs in the prod environment. It serves data out the DynamoDB table that `tapir` loaded data into, via an HTTP interface, described below:
+
+- _coerce one_ `GET /api/dataset/:dataset/row/:id`: gets the row of a dataset given the primary key id, supports coersion and Sachem
+- _coerce many_ `POST /api/dataset/:dataset/rows`: gets the rows of a dataset given the primary key ids under the :ids parameter of the request body, supports coersion and Sachem
 
  - _fetch many_ `/api/dataset/:id`: gets the results for all datasets loaded into `conrado`'s table with the provided id/entry primary key (i.e. customer ID or account ID)
  - _fetch one_ `/api/dataset/:id/:dataset`: gets the row of a dataset given the primary key id
