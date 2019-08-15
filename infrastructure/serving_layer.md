@@ -71,9 +71,16 @@ Data is served either via HTTP or Kafka as [`DatasetRow`](https://github.com/nub
  - `:target-date`: the day that the data was loaded
  - `:value`: a map representing the row of the dataset
 
+## Plumatic schemas for the payload
+
+The [Sarcophagus](https://github.com/nubank/sarcophagus) project publishes the Plumatic schemas of the serving layer datasets as artifacts to the `nu-maven` repository. You can use theses schemas as a dependency in your service if you don't want write them yourself. Take a look at this [guide](https://github.com/nubank/sarcophagus#how-can-i-use-a-dataset-artifact) to learn more about how to use those artifacts.
+
 ## Conrado
 
 `conrado` is a service that runs in the prod environment. It serves data out the DynamoDB table that `tapir` loaded data into, via an HTTP interface, described below:
+
+- _coerce one_ `GET /api/dataset/:dataset/row/:id`: gets the row of a dataset given the primary key id, supports coercion and Sachem
+- _coerce many_ `POST /api/dataset/:dataset/rows`: gets the rows of a dataset given the primary key ids under the :ids parameter of the request body, supports coercion and Sachem
 
  - _fetch many_ `/api/dataset/:id`: gets the results for all datasets loaded into `conrado`'s table with the provided id/entry primary key (i.e. customer ID or account ID)
  - _fetch one_ `/api/dataset/:id/:dataset`: gets the row of a dataset given the primary key id
@@ -103,8 +110,18 @@ will result in
 
 ## Kafka
 
-`tapir` can serve datasets via Kafka, publishing to the `DATASET-UPDATE` with the subtopic set to the dataset name. The payload schema is the same as the http endpoints in `conrado`, which is [`common-schemata.wire.tapir/DatasetRow`](https://github.com/nubank/common-schemata/blob/9cf054a6665341e0b44495151fa7ca2f744f5886/src/common_schemata/wire/tapir.clj#L6-L14).
+When a dataset is declared to be propagated, Tapir serves the rows of a dataset through Kafka. There are 2 approaches at the moment, a single topic for all datasets, and a dedicated topic per dataset.
 
+### Single topic for all datasets
+
+Tapir serves the rows of all datasets to the `DATASET-UPDATE` Kafka topic. The subtopic for each message is set to the name of the dataset. The messages in this topic conform to the generic [`common-schemata.wire.tapir/DatasetRow`](https://github.com/nubank/common-schemata/blob/9cf054a6665341e0b44495151fa7ca2f744f5886/src/common_schemata/wire/tapir.clj#L6-L14) schema. Note: Since this topic is used for all datasets, the map under the `:value` key of the `DatasetRow` is not coerced or checked against any schema. Please consider using the dedicated topic per dataset if you need this.
+
+### Dedicated topic per dataset
+
+Tapir also serves the rows of datasets to a dedicated Kafka topic per dataset. The name of the Kafka topic is derived from the name of the dataset, and is called `SERVING-<DATASET-NAME>`. The messages in the dedicated Kafka topics conform to an extended version for the `DatasetRow` schema. The row of a dataset under the `:value` key of the `DatasetRow` is coerced and checked against the Metapod schema of the dataset. The dedicated topic per dataset is the preferred way to consume a dataset from Tapir. It has the following benefits:
+- **Less bandwidth consumption**, because your service reads only the rows of the dataset you are interested in, and not all rows of all datasets.
+- Deeper **integration with Sachem**, provided your consumer uses a Plumatic schema that also has definitions for the map under the `:value` key of the `DatasetRow` schema. If you are looking for the Plumatic schema of a dataset, take a look at the [Sarcophagus](https://github.com/nubank/sarcophagus) project.
+- **Proper type coercion**, because Tapir uses the Metapod schema of a dataset to serialize the rows. If you use one of the Plumatic dataset schemas provided by [Sarcophagus](https://github.com/nubank/sarcophagus), types like UUIDs, dates, timestamps, etc. will be coerced to their proper Clojure types.
 
 #### note on prototype column
 
