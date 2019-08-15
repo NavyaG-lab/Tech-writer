@@ -261,24 +261,27 @@ The directory listed above should be empty after running the script.
 
 ### Context
 
-Correnteza tracks the extractions from the Datomic databases by storing the ``last-t` that it extracted from each of those databases.
-The actual last `t` stored on those databases is referred to as `basis-t` in Correnteza. This alarm goes off when Correnteza thinks that
-it is ahead of the original database, which means that it won't extract any new data from that database.
+Correnteza tracks the extractions from the Datomic databases by storing the `last-t`
+that it extracted from each of those databases.
+The actual last `t` stored on those databases is referred to as `basis-t` in Correnteza.
+This alarm goes off when Correnteza thinks that it is ahead of the original database, which
+means that it won't extract any new data from that database.
 
-The condition described above seems impossible to reach, and so far, it has only happened when people destroy and re-create databases for
-the production services.
+The condition described above seems impossible to reach, and so far, it has only happened when
+people destroy and re-create databases for the production services.
 
 
 ### Solution
 
-Note that this solution only applies for the cases described above, **so please confirm with the service owners that the database was
-re-created**.
+Note that this solution only applies for the cases described above, **so please confirm
+with the service owners that the database was re-created**.
 
 The solution involves 3 steps:
 
 #### Delete all the extractions for the databases that the alarm is going off for.
 
-There is an admin endpoint in Correnteza exactly for this purpose, but it's protected with the scope `correnteza-extraction-delete`.
+There is an admin endpoint in Correnteza exactly for this purpose, but it's protected with
+the scope `correnteza-extraction-delete`.
 If you have to execute this command, make sure to ask for this scope in #access-request.
 
 ```bash
@@ -286,16 +289,19 @@ If you have to execute this command, make sure to ask for this scope in #access-
 nu ser curl DELETE --env prod s0 correnteza /api/admin/extractions/s0/skyler -- -v
 ```
 
-The command runs asynchronously, so the expected response is `HTTP 202 Accepted`. To check if the extractions were actually deleted,
-query the [Correnteza docstore][correnteza-docstore] in the AWS console. To check the items corresponding to the command above, the filter would be `db-prototype = skyler-s0`.
+The command runs asynchronously, so the expected response is `HTTP 202 Accepted`. To check if
+the extractions were actually deleted, query the [Correnteza docstore][correnteza-docstore]
+in the AWS console. To check the items corresponding to the command above, the filter would
+be `db-prototype = skyler-s0`.
 
 #### Cycle Correnteza in the corresponding prototype
 
-After the extractions are deleted, the next step is to cycle the instances of Correnteza that are connected to that DB prototype. This is
-necessary to refresh the `last-t` kept by Correnteza for that database prototype, which happens at service startup.
+After the extractions are deleted, the next step is to cycle the instances of Correnteza that
+are connected to that DB prototype. This is necessary to refresh the `last-t` kept by
+Correnteza for that database prototype, which happens at service startup.
 
-Correnteza is sharded and it connects to the databases within the same prototype, so we have to cycle the same one that we deleted the extractions
-for.
+Correnteza is sharded and it connects to the databases within the same prototype, so we have
+to cycle the same one that we deleted the extractions for.
 
 ```bash
 # parameterised prototype (s0)
@@ -311,12 +317,15 @@ watch --differences --interval 10 nu k8s ctl s0 -- get po -l nubank.com.br/name=
 
 #### Monitor re-extractions
 
-After the service has cycled, wait for a few minutes. Correnteza's startup is noticeably slow because it has to discover and connect to many Datomic databases.
-Then, check the status of the Datomic extractor using [Correnteza's extractor dashboard][correnteza-extractor-dashboard] on Graphana.
+After the service has cycled, wait for a few minutes. Correnteza's startup is noticeably
+slow because it has to discover and connect to many Datomic databases.
+Then, check the status of the Datomic extractor using
+[Correnteza's extractor dashboard][correnteza-extractor-dashboard] on Graphana.
 
 ![Correnteza extractor dashboard][correnteza-extractor-dashboard-img]
 
-The dashboard has a lot more useful information about Correnteza's extractions, but the important bits for this purpose are highlighted in the screenshot.
+The dashboard has a lot more useful information about Correnteza's extractions, but the
+important bits for this purpose are highlighted in the screenshot.
 
 [correnteza-docstore]: https://sa-east-1.console.aws.amazon.com/dynamodb/home?region=sa-east-1#tables:selected=prod-correnteza-docstore;tab=items
 [correnteza-extractor-dashboard]: https://prod-grafana.nubank.com.br/d/A8ULVDTmz/correnteza-datomic-extractor-service?orgId=1&var-stack_id=All&var-host=All&var-database=skyler&var-prototype=s0&var-prometheus=prod-thanos
