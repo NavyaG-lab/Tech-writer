@@ -318,7 +318,7 @@ Make sure that you were added to the `data-infra` group on `quay.io` (ask **#squ
 To do that just use:
 
 ```shell
-$NU_HOME/deploy/bin/docker.sh build-and-push $(git rev-parse --short HEAD)
+$NU_HOME/itaipu/local/itaipu-docker-build-and-push.sh $(git rev-parse --short HEAD)
 ```
 
 The `docker.sh` script is inside the `deploy` project. It's a standard script for building docker images. It will run the script `prepare.sh` (which will run `sbt assembly`) and then run build and push the docker image using the name of your project as the name. e.g. for `itaipu`, it will be `quay.io/nubank/nu-itaipu:{SHA}`.
