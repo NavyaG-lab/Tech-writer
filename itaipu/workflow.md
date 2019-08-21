@@ -59,8 +59,9 @@ Creating a new contract is different than updating an existing contract because 
     1. Open a pull request similar to [this one](https://github.com/nubank/forex/pull/93).
 
 1. Make sure that the database exists in prod and is being extracted before adding the contract to Itaipu.
-    - [Example query of this on Thanos](https://prod-thanos.nubank.com.br/graph?g0.range_input=1h&g0.expr=max(datomic_extractor_basis_t%7Bdatabase%3D~%22metapod%22%7D)&g0.tab=0) You should see line chart showing the growing amount of data extracted with time. _NB. In this example we are referring to the `metapod` service. You have to replace it with the name of your service._
-
+    
+- [Example query of this on Thanos](https://prod-thanos.nubank.com.br/graph?g0.range_input=1h&g0.expr=max(datomic_extractor_basis_t%7Bdatabase%3D~%22metapod%22%7D)&g0.tab=0) You should see line chart showing the growing amount of data extracted with time. _NB. In this example we are referring to the `metapod` service. You have to replace it with the name of your service._
+    
 1. On Itaipu create a Scala object for the database:
     1. If this is the first contract for this database, create a new package (aka folder) under
     [itaipu/src/main/scala/etl/contract](https://github.com/nubank/itaipu/tree/master/src/main/scala/etl/contract) named
@@ -87,12 +88,13 @@ Creating a new contract is different than updating an existing contract because 
 
 1. Follow the instructions about [merging pull requests](#merging-pull-requests)
 
+1. Once your service has started producing data on its Datomic database, double check that it's not [blacklisted on correnteza](https://github.com/nubank/correnteza/blob/config/src/prod/correnteza_config.json). If it is, create a PR to remove it from the blacklist and submit to #squad-data-infra for review
+
 ### Updating an Existing Contract
 
 A Clojure service that already has generated contract Scala files will store them in `/resources/[DB-NAME]/*.scala`.
 When running unit tests on a service with generated contracts, any change to an attribute that is included in a contract
-(or any addition of an attribute without `:contract/include false`) will cause the generated Scala file to no longer
-match.
+(or any addition of an attribute without `:contract/include false`) will cause the generated Scala file to no longer match.
 
 If you want to add, change or remove an attribute:
 
@@ -168,7 +170,7 @@ below.
 [itaipu/src/main/scala/etl/dataset/](https://github.com/nubank/itaipu/tree/master/src/main/scala/etl/dataset):
     1. Create the (sub)folder, e.g., `folder_name`
     1. Create a package file called `package.scala` inside the new (sub)folder with the following content (assuming that
-    the file that you will create in the next step is called `FileName.scala`):
+      the file that you will create in the next step is called `FileName.scala`):
         ```scala
         package etl.dataset.parent_folder_name_if_subfolder
 
@@ -196,8 +198,9 @@ below.
         }
         ```
     1. Add `folder_name.allOps` to `opsToRun` in
-    [itaipu/src/main/scala/etl/itaipu/Itaipu.scala](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/itaipu/Itaipu.scala)
+      [itaipu/src/main/scala/etl/itaipu/Itaipu.scala](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/itaipu/Itaipu.scala)
 1. Create the dataset file in the same folder as the package file
+    
     - The filename must be in PascalCase format (e.g., `FileName.scala`) and must be the same as the object name
 1. Create the dataset object:
     - To create a dataset basically you need to create a SparkOp, which has mainly 3 methods:
@@ -207,12 +210,14 @@ below.
     - Write the code for the new dataset following the code from existing datasets or use the template shown here:
     https://wiki.nubank.com.br/index.php/Scala
 1. Add the object to the output of `allOps` in the `package.scala` file
+    
     - It's possible to [make the dataset available in Redshift](#make-the-dataset-available-in-redshift)
 1. Follow the instructions about [editing datasets](#editing-an-existing-dataset)
 
 ### Editing an existing dataset
 For a faster iterative process, run the code from Itaipu directly in the Databricks notebook:
 1. Paste the raw Itaipu Scala code into a cell in the Databricks notebook
+    
     - **Important:** Remove the package name from the top of the file
 1. Manually set up the `df` value. For example, assuming your object name is `Whatever`:
     ```scala
@@ -359,6 +364,7 @@ Itaipu downloads them from [Maven](https://maven.apache.org/) and nu-maven (Nuba
 
 To check the latest versions:
 * In Maven: https://search.maven.org/
+    
     * Go to the Advanced Search and use the GroupId and ArtifactId. It's possible that you need to append the Scala version to the `artifactID` (e.g., `_2.11` for Scala 2.11). For example: `g:"org.typelevel" AND a:"cats_2.11"`.
 * In nu-maven:
     ```sh
