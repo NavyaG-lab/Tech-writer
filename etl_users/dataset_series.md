@@ -266,7 +266,7 @@ Once all versions (including the contract) have been processed, the engine union
     }
     ```
 
-**NB: The deduplication step can be skipped by using `override val deduplication = false` in the `DatasetSeriesContractOp` declaration**
+**NB: The deduplication step can be skipped by using `override val deduplicate = false` in the `DatasetSeriesContractOp` declaration**
 
 ### Final steps
 
