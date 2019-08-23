@@ -6,3 +6,18 @@
 * Check that data being produced by production services is reaching the ETL:
   * Check that the upstream production services are indeed producing the data
   * Check that there are `:in-message`s for your dataset series in Riverbend. You can use [this Splunk query]([https://nubank.splunkcloud.com/en-US/app/search/search?q=search%20index%3Dmain%20source%3Driverbend%20%3Ain-message%20%7C%20rex%20%22%3Adataset-series%20%5C%22series%2F(%3F%3Cseries_name%3E%5Ba-zA-Z0-9-_%5D%2B)%22%20%7C%20search%20series_name%3D%22customer-tracking%22%20prototype%3D*&display.page.search.mode=fast&dispatch.sample_ratio=1&earliest=-30m%40m&latest=now&sid=1560431829.286083](https://nubank.splunkcloud.com/en-US/app/search/search?q=search index%3Dmain source%3Driverbend %3Ain-message | rex "%3Adataset-series \"series%2F(%3F[a-zA-Z0-9-_]%2B)" | search series_name%3D"customer-tracking" prototype%3D*&display.page.search.mode=fast&dispatch.sample_ratio=1&earliest=-30m%40m&latest=now&sid=1560431829.286083)) for this, or, if you can search by CID if you have CIDs of messages you know were produced
+
+### I'm getting deprecation warning messages. What does that mean? ###
+
+If you see a warning message when you're working on Itaipu or running a notebook on Databricks that says `something is deprecated`, like the following one:
+
+```
+[warn] itaipu/src/main/scala/etl/dataset/team/dataset/DatasetOp.scala:186:44: method historyEntity in trait DatomicEntity is deprecated: If you're trying to get the dataset name of an entity attribute's history, use: nu.data.infra.api.datasets.v1.Names.entityAttributeHistory
+[warn]     DatabaseContractOps.lookup(Entity.historyEntity("something__status")).name
+```
+
+This means that you're trying to use code that the platform is trying to move away from. **It's okay if you use it. It's not an error messages. Your code is not broken because of it.** 
+
+This is our way of evolving the platform APIs without breaking existing code, and that is frequently necessary in order to accommodate our changing needs and requirements for how we ingest, process and present data.
+
+The warning messages usually include an alternative way of doing what you're trying to do, and it would be best if you could follow its suggestion in a timely manner. If the warning message is not clear or helpful enough, please feel free to ask about it in [#data-help](https://nubank.slack.com/messages/C06F04CH1) and we will do our best to help.
