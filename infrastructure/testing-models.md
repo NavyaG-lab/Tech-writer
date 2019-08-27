@@ -40,10 +40,26 @@ You can now run the model in staging using our CLI tool `sabesp`. To install sab
 
 #### Scale up a cluster
 
-First, you need to scale a _cluster_ to run the model. This basically means spinning up one (or more) instances on which the model code will run. To do that, clone the [aurora-jobs](https://github.com/nubank/aurora-jobs) repository, as `sabesp` uses the job definitions from that project to create the tasks in aurora. After that, run the following `sabesp` command (don't forget to replace the two occurrences of `<YOUR_NAME>` with your lowercase first or last name, to make it easier to identity whose instance is this):
+First, you need to scale a _cluster_ to run the model. This basically
+means spinning up one (or more) instances on which the model code will
+run. To do that, clone the
+[aurora-jobs](https://github.com/nubank/aurora-jobs) repository, as
+`sabesp` uses the job definitions from that project to create the
+tasks in aurora. After that, run the following `sabesp` command. Don’t forget to:
+
+  * Replace the two occurrences of `<YOUR_NAME>` with your lowercase
+    first or last name, to make it easier to identity the instances
+  * Replace `<DOCKER_IMAGE_TAG>` with the latest value of the value
+    found in [the corresponding Docker repo](https://quay.io/repository/nubank/nu-scale-cluster)
+
 
 ```
-sabesp --verbose --aurora-stack=cantareira-dev jobs create staging scale-ec2-<YOUR_NAME> SLAVE_TYPE=<YOUR_NAME> INSTANCE_TYPE=m4.xlarge NODE_COUNT=1 --job-version "scale_cluster=a93e3c8" --filename scale-ec2 --check
+sabesp --verbose --aurora-stack=cantareira-dev jobs create staging scale-ec2-<YOUR_NAME> \
+    SLAVE_TYPE=<YOUR_NAME> \
+    INSTANCE_TYPE=m4.xlarge NODE_COUNT=1 \
+    --job-version "scale_cluster=<DOCKER_IMAGE_TAG>" \
+    --filename scale-ec2 \
+    --check
 ```
 
 When the command finishes successfully (`finished with end_time` present in the output), you are ready to run the model code in those instances.
@@ -58,7 +74,7 @@ Now, you can use the command below:
 sabesp --verbose --aurora-stack cantareira-dev jobs create staging <MODEL_NAME> \
   TARGET_DATE=<TARGET_DATE> \
   METAPOD_REPO=s3://nu-spark-devel/<YOUR_NAME> \
-  METAPOD_TRANSACTION=<METAPOD_TRANSACTION_ID> 
+  METAPOD_TRANSACTION=<METAPOD_TRANSACTION_ID>
   SLAVE_TYPE=mesos-on-demand-<YOUR_NAME> \
   METAPOD_ENVIRONMENT=staging \
   --job-version <MODEL_NAME>=<IMAGE_VERSION>
@@ -79,7 +95,7 @@ Variable | What it is | Example
 You can follow the task progress and success/failure status via the Aurora UI: https://cantareira-dev-mesos-master.nubank.com.br:8080/scheduler/jobs
 
 Search for your model name (e.g., `contextual-model`) and click it to go to the corresponding task page.
-There you will see two tabs: **Active Tasks**, and **Completed Tasks**. Depending on the progress, the task will be in one of the two tabs. 
+There you will see two tabs: **Active Tasks**, and **Completed Tasks**. Depending on the progress, the task will be in one of the two tabs.
 
 Once you find it, click at the IP address to the right of the row where the task is displayed. You will see a web interface for the host. You can check the task status, command, duration, and check the `stdout` and `stderr` links to see the log output for that task.
 

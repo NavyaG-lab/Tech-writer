@@ -104,13 +104,31 @@ nu datainfra sabesp -- --aurora-stack=cantareira-dev jobs itaipu staging midea s
 ### Manually run job
 
 ```
-nu datainfra sabesp -- --aurora-stack=<stack> jobs create <env> <job> <binds> --metapod-transaction <transaction-id> --job-version "<job>=<version>"
+nu datainfra sabesp -- ---aurora-stack=<stack> jobs create <env> <job> \
+    <binds> \
+    --metapod-transaction <transaction-id> \
+    --job-version "<job>=<version>"
 ```
 
-e.g:
+Where `<job>` is the idenfier used inside the job definition as the
+argument for the `get_version` function and `<version>` is the tag of
+the corresponding Docker image. E.g:
+
 ```shell
-nu datainfra sabesp -- --aurora-stack=cantareira-dev jobs create staging capivara-clj DEPLOY_NON_DIMENSIONAL_MODELING=true OUTPUT_PREFIX=s3a://nu-spark-devel COPY_REDSHIFT_MAX_ERRORS=100 TARGET_DATE="2018-06-14" METAPOD_ENVIRONMENT=staging METAPOD_TRANSACTION=e25faed2-6578-4a57-a15a-01ec33642d5c --metapod-transaction e25faed2-6578-4a57-a15a-01ec33642d5c --job-version "capivara_clj=e6fbb31"
+nu datainfra sabesp -- --aurora-stack=cantareira-dev jobs create staging capivara-clj \
+    DEPLOY_NON_DIMENSIONAL_MODELING=true \
+    OUTPUT_PREFIX=s3a://nu-spark-devel \
+    COPY_REDSHIFT_MAX_ERRORS=100 \
+    TARGET_DATE="2018-06-14" \
+    METAPOD_ENVIRONMENT=staging \
+    METAPOD_TRANSACTION=e25faed2-6578-4a57-a15a-01ec33642d5c \
+    --metapod-transaction=e25faed2-6578-4a57-a15a-01ec33642d5c \
+    --job-version="capivara_clj=e6fbb31"
 ```
+
+In this example, inside `capivara-clj.aurora` you should find a call
+to `get_version` which in turn is going to be used to look the desired
+Docker image in [the corresponding repo](https://quay.io/repository/nubank/nu-capivara-clj).
 
 ### Manually run cluster scale up job
 
