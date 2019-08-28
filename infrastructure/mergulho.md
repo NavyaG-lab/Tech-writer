@@ -43,16 +43,20 @@ to [here](#i-want-mergulho-run-on-my-data).**
 
 ## Design
 
-Mergulho is currently in a POC phase. This means that a basic set of [Metrics](# Metrics)
+Mergulho is currently in a POC phase. This means that a basic set of [Metrics](#metrics)
 is available and there is a small API to run these metrics on a single column
 of interest or an entire dataset.
 
 ### Metrics
 
-[Metrics](https://github.com/nubank/common-etl/blob/master/src/main/scala/mergulho/Mergulho.scala#L11) are currently limited in the following ways:
+Mergulho defines a set of [metrics](https://github.com/nubank/common-etl/blob/master/src/main/scala/mergulho/Metric.scala)
+that can currently be selected to run on our data. Moreover, these metrics are
+grouped into subsets that are sensible for certain content types of data. These
+subsets are selected by mergulho as described [below](#metric-application).
+Available metrics are currently limited in the following ways:
 
 * There are only metrics for the most basic data types (no nested types for example)
-* Metrics only return a single value (serialized as a string)
+* Metrics only return a single value (no intervals such as an inter-quartile range)
 * Metrics are first pass metrics. That means that more complex metrics that
   involve multiple runs over the data or metrics that are based on other
   metrics are not implemented as of now.
@@ -66,7 +70,7 @@ Each metric defines:
 2. A compute mechanism which **must be expressed as a spark transformation**.
 3. What data it is valid for
 4. It's scope (Dataset, SingleColumn...)
-5. It's output type as a common-etl.schema.LogicalType
+5. It's output type as a `common-etl.schema.LogicalType`
 
 Applying a metric returns an 7-column dataframe with the following columns:
 
@@ -79,7 +83,7 @@ Applying a metric returns an 7-column dataframe with the following columns:
 7. Metric value (serialized as string)
 
 Other columns might be added but they are enrichments for convenience. These
-seven output columns are intended to be reduced to nubank's
+seven output columns are intended to be reduced to a datomic-like
 EntityAttributeValue (EAV) structure, where columns 1-2 define the entity, 3-5
 the attribute and 6-7 make up the value.
 
@@ -114,7 +118,7 @@ to adjust that behavior:
    syntactic checks in the ETL.
 3. If a numeric column has less than `CUTOFF` values in it (low cardinality),
    it is considered a dimension column where the category levels are expressed
-   as numbers.
+   as numbers. The current `CUTOFF` is set at `20`.
 
 
 ## Current deployment state
@@ -123,7 +127,7 @@ At the time of writing, the Mergulho code is in common-etl. There is however no
 mechanism for integrating Mergulho into `SparkOps` in itaipu. We are running
 Mergulho in a [databricks
 job/notebook](https://nubank.cloud.databricks.com/#job/15438) that is triggered
-nightly via airflow. Results are stored in a table `meta.florian`. Obviously,
+nightly via airflow. Results are stored in a table named `meta.florian`. Obviously,
 this setup is fine for a POC phase but never a final solution.
 
 
