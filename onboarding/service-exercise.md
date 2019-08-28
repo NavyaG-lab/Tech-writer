@@ -28,7 +28,7 @@ Nubank has a problem with dealing with bills. For some unknown reason, it has be
 
 ---
 
-Before starting you should read this glossary of our [service architecture](https://github.com/nubank/playbooks/blob/master/docs/glossary.md#microservice-structure-and-hexagonal-architecture-terms).
+Before starting you should read this glossary of our [service architecture](https://github.com/nubank/playbooks/blob/master/docs/code-organization.md#microservice-structure-and-hexagonal-architecture-terms).
 
 Best Nubank tool: adding `#nu/tapd` before an s-exp will print the value returned by this s-exp everytime your code execute this s-exp. That's great for debugging or to just know WTH is going on in a piece of code. To add in the middle of a thread macro (this print the value being passed in the thread macro at a certain point) add `nu/tapd` (without the `#`). More about `nu/tapd` and other helpful debug macros can be found in the [cljdev readme](https://github.com/nubank/cljdev#functionsmacros).
 
