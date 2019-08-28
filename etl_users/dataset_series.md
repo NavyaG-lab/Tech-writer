@@ -2,7 +2,13 @@
 
 ## Background
 
-At Nubank, Datomic is the main/preferred way to store data. But it's not the only one. Data that is high throughput is usually not stored on Datomic so as not to clutter it. While Itaipu [Contracts](../itaipu/contracts.md) are used as an entry point for data stored in Datomic, DatasetSeries are the mechanism we use in Itaipu to make high throughput events available for computation as input datasets.
+At Nubank, Datomic is the main/preferred way to store data. But it's
+not the only one. High-throughput data, i.e. click streams, is usually
+not stored on Datomic so as not to clutter it. While Itaipu
+[Contracts](../itaipu/contracts.md) are used as an entry point for
+data stored in Datomic, DatasetSeries are the mechanism we use in
+Itaipu to make high throughput events available for computation as
+input datasets.
 
 | Input type     | Type of data                                                 |
 | -------------- | ------------------------------------------------------------ |
@@ -11,7 +17,7 @@ At Nubank, Datomic is the main/preferred way to store data. But it's not the onl
 
 #### Source of the data
 
-Dataset series data is produced by services by calling the `common-schemata.wire.etl/produce-to-etl!` function ([source](https://codesearch.nubank.com.br/search/linux?q=defn%20produce-to-etl!&fold_case=auto&regex=false&context=true&repo%5B%5D=nubank%2Fcommon-schemata)) . The resulting data is then handled by the *Ingestion Layer* – a set of services linked to the `EVENT-TO-ETL` Kafka topic:
+Dataset series data is produced by services by calling the `common-schemata.wire.etl/produce-to-etl!` function ([source](https://codesearch.nubank.com.br/search/linux?q=defn%20produce-to-etl!&fold_case=auto&regex=false&context=true&repo%5B%5D=nubank%2Fcommon-schemata)) . The resulting data is then handled by the *Ingestion Layer* – a set of services linked to the `EVENT-TO-ETL` Kafka topic:
 
 * The [Riverbend](https://github.com/nubank/riverbend) service is responsible for producing dataset series. It does so by consuming the `EVENT-TO-ETL` Kafka topic and serialising its messages to `.avro` files suitable for ingestion by Itaipu. A technical description for how data goes from Kafka all the way to being processed in Itaipu can be found in the [Annexes](#annexes) section. The `dataset-name` should be in the format `series/dataset-name`.
 * The [Curva de Rio](https://github.com/nubank/curva-de-rio) service exposes an HTTP endpoint which allows services not connected to Kafka to send data to Riverbend.
@@ -95,7 +101,8 @@ The name of your series, the same used by your service when posting data via the
 
 ###### `contractSchema`
 
-What the final schema of your dataset series should be once it's done computing.
+What the final schema of your dataset series should be once it's done
+computing. See also #metadata.
 
 ###### `alternativeSchemas`
 
@@ -184,7 +191,7 @@ as one of the possible versions and as the final version of the
 dataset**
 
 Missing columns are added, and backfilled using the attribute's
-`defaultValue` (a `Column` expression) – `defaultValue` defaults to
+`defaultValue` (a `Column` expression) – `defaultValue` defaults to
 `lit(null)`
 
 ```scala
@@ -242,6 +249,26 @@ val alternativeSchemas = Seq(
 ```
 
 Columns which do not appear in the contract are dropped.
+
+### Metadata
+
+Every dataset series can be stored with an additional set of metadata.
+This addition is transparent to the user and it‘s relevant here
+because, effectively, every schema has a corresponding “metadata
+enriched” version. For all intents and purposes these are just version
+like every other.
+
+Currently, the metadata fields are the following:
+
+  * `series_event_cid`
+  * `series_event_prototype`
+  * `series_event_produced_at`
+  * `series_event_processed_at`
+  * `series_event_service_name`
+  * `metadata_id`
+
+See [RFC-9878](https://github.com/nubank/riverbend/blob/master/doc/rfc-9878.md)
+for more details.
 
 ### Primary keys and deduplication
 
