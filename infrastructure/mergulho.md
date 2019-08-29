@@ -69,8 +69,8 @@ Each metric defines:
 1. A name
 2. A compute mechanism which **must be expressed as a spark transformation**.
 3. What data it is valid for
-4. It's scope (Dataset, SingleColumn...)
-5. It's output type as a `common-etl.schema.LogicalType`
+4. Its scope (Dataset, SingleColumn...)
+5. Its output type as a `common-etl.schema.LogicalType`
 
 Applying a metric returns an 7-column dataframe with the following columns:
 
@@ -127,8 +127,8 @@ At the time of writing, the Mergulho code is in common-etl. There is however no
 mechanism for integrating Mergulho into `SparkOps` in itaipu. We are running
 Mergulho in a [databricks
 job/notebook](https://nubank.cloud.databricks.com/#job/15438) that is triggered
-nightly via airflow. Results are stored in a table named `meta.florian`. Obviously,
-this setup is fine for a POC phase but never a final solution.
+nightly via airflow. Results are stored in a table named `meta.mergulho`.
+Obviously, this setup is fine for a POC phase but never a final solution.
 
 
 ## Roadmap
