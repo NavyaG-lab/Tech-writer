@@ -96,9 +96,7 @@ Now you should have to sign into Quay.io using docker. Quay.io was originally cr
 Since appending involves talking directly to `metapod`, you need still need to have read and write access to a particular bucket where our metadata store has access. For this step fo to #squad-data-infra and ask for them to run the following command:
 
 ```
-nu iam allow <your.name> bucket read bucket nu-spark-metapod-manual-dataset-series/your-dataset-series/*
-
-nu iam allow <your.name> bucket write bucket nu-spark-metapod-manual-dataset-series/your-dataset-series/*
+nu iam allow <your.name> write bucket nu-spark-metapod-manual-dataset-series/your-dataset-series/* --until=1week
 ```
 
 ## Appending your dataset to your manual dataset series
