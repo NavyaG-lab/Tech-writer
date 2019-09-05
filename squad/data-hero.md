@@ -2,46 +2,28 @@
 
 ## What is a Data Hero?
 
-The Data Access team is one of the main problem solvers for data related issues at Nubank, and one
-of the main channels that people can rely on to ask a question about data is the Slack channel
-[#data-help](https://nubank.slack.com/messages/C06F04CH1/). Nubank is growing up in size really fast
+The Data Access team is one of the main problem solvers for data related issues at Nubank, and one of the main channels that people can rely on to ask a question about our data access' tools is the Slack channel [#squad-data-access](https://nubank.slack.com/messages/C06F04CH1/). Nubank is growing up in size really fast
 and, as a consequence, the number of data related problems is growing with it, which results in
 members of data access team receiving more questions than they can respond in parallel to their
 normal workday.
 
 Worried about the constant context switch between squad's internal work to answering questions
 related to data, the Data Access team decided to create the role of the "data hero". Data hero is a
-person who will be in charge of resolving the problems of other nubankers that need help with data,
-while the rest of the team can focus on the squad objectives. By creating the role of Data Hero,
-Data Access will be able to benefit from more power hours of work without losing the ability to
-support other nubankers.
+person who will be in charge of resolving the problems of other nubankers that need help with our tools,
+while the rest of the team can focus on the squad objectives.
 
 ## Responsibilities
 
 ### Monitoring
 
-Check and fix (if possible):
-* [Redshift](https://console.aws.amazon.com/redshift/home?region=us-east-1#cluster-list:)
-    * In the "Cluster Performance" tab of the cluster, monitor mainly "Queries" (user queries
-    running for a long time), "Percentage disk space used" and "CPU utilization"
-    * Investigate queries in the "Queries" tab, and maybe terminate some
-    * If you need to restart the cluster, check before if there is no query from `sao_pedro`
-    running. In the "Configuration" tab, click on "Cluster" --> "Reboot cluster"
-    * Reactively perform the monitoring if someone complains about the BI tool or other means of
-    accessing Redshift
+* [BigQuery](https://console.cloud.google.com/bigquery?project=nubank-data-access)
 * [Databricks](https://nubank.cloud.databricks.com/#setting/clusters)
-* [Metabase](https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:search=metabase;sort=tag:Name)
-    * Cycling the machines will solve many problems: `nu ser cycle metabase --env cantareira --region us-east-1 --suffix s`
 * [Looker](https://nubank.looker.com/admin)
 * [Mordor](https://console.aws.amazon.com/ec2/v2/home?region=sa-east-1#Instances:search=mordor;sort=tag:Name)
     * Cycling the machines will solve many problems: `nu ser cycle s0 mordor --env prod --suffix x`
 
 ### Support our clients
-Over the course of the week our customers, Nubank's data users, often encounter issues while using
-our services. To support their effectiveness, the data hero is responsible for communicating with
-these users; looking into their issues in a timely manner; routing questions made via private
-messages and other channels to the proper one (_always respecting the current data hero technical
-limitations_).
+Over the course of the week our customers, Nubank's data users, often encounter issues while using our services. To support their effectiveness, the data hero is responsible for communicating with these users; looking into their issues in a timely manner; routing questions made via private messages and other channels to the proper one (_always respecting the current data hero technical limitations_).
 
 Slack channels you should monitor for questions:
 
@@ -56,26 +38,18 @@ Slack channels you should monitor for questions:
 * Guide people on the creation of new datasets
 * Move StaticOp's to the appropriate AWS S3 bucket and prefix
 
-### Guide people on the use and setup of:
-* Sonar: https://wiki.nubank.com.br/index.php/Sonar
-* belomonte (python library): https://wiki.nubank.com.br/index.php/Belo_Monte
-* IMordor: https://wiki.nubank.com.br/index.php/IMordor
-* Mordor: https://wiki.nubank.com.br/index.php/Mordor
-* Dbeaver: https://github.com/nubank/playbooks/tree/master/squads/data-access/dbeaver and https://wiki.nubank.com.br/index.php/SQL_client
+### BigQuery
 
-### Metabase
-* If someone asks if Metabase is down, make sure:
-    * you can open Metabase
-    * the user is in the correct network or in the VPN (with it
-    [correctly set up](https://wiki.nubank.com.br/index.php/VPN))
-* if someone tells that a schema (e.g., `origin`) is missing, trigger a "Sync database schema now"
-in https://metabase.nubank.com.br/admin/databases/2 (admin access only)
+* [Usage dashboard](https://nubank.looker.com/dashboards/gcp_bigquery_logs::bigquery_audit)
+* [Monsoon](https://github.com/nubank/monsoon#monitoring)
 
 ### Databricks
 * Detach notebooks older than 1 day
 * Restart clusters that are not working as expected
 * Attach, detach, add and remove libraries, especially itaipu. There are some instructions
 [here](https://github.com/nubank/data-infra-docs/tree/master/databricks)
+* Automated notebooks:
+ - Autobump libraries
 
 ### Escalating
 Do not be afraid of asking for help if you need to. Here are some non-comprehensive guidelines on
