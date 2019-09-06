@@ -2,9 +2,46 @@
 
 Work-in-progress, please add placeholders or info as you come across new terminology
 
+Table of contents
+
+* [transaction](#transaction)
+  * [reference and target date](#reference-and-target-date)
+  * [transaction-type](#transaction-type)
+* [dataset](#dataset)
+* [logical type schema](#logical-type-schema)
+* [Permanence of a dataset](#Permanence-of-a-dataset)
+
 #### transaction
 
 A **metapod transaction** is a concept present in metapod, which is composed by a set of datasets and it's used to group those together in a logical semantic unit, such as a daily batch of data consumed and processed.
+
+##### reference and target date
+
+ETL transactions have several date fields:
+
+ * target date: the date for which Itaipu begins to run
+ * reference date: the day for which we have the most complete data, i.e. `targetDate - 1`
+ * started at: the datetime that the ETL run began
+
+This is some standard values for an ETL transaction:
+
+```
+"startedAt": "2019-09-05T00:02:54.189Z"
+"targetDate": "2019-09-05"
+"referenceDate": "2019-09-04"
+```
+
+##### transaction type
+
+ETL transactions can be run for different reasons and hence are given different types. These are important so that we know what to do with the computed data.
+
+Types
+ * Daily: The normal daily ETL run, data will be loaded into BigQuery, serving layer, databricks, etc.
+ * Hotfix: A manual run meant to fix an issue in production. Will trigger downstream logic in data warehouse, serving layer, etc.
+ * Debug, Custom, Unknown: A custom manual run used for debugging and testing
+ * Compaction: for compacting dataset series
+ * Copied: Represents a transaction that was (partially) created by copying another. Usually for debugging
+
 
 #### dataset
 
