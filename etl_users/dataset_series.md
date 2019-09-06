@@ -252,11 +252,15 @@ Columns which do not appear in the contract are dropped.
 
 ### Metadata
 
-Every dataset series can be stored with an additional set of metadata.
-This addition is transparent to the user and it‘s relevant here
-because, effectively, every schema has a corresponding “metadata
-enriched” version. For all intents and purposes these are just version
-like every other.
+Every dataset series can be stored with an additional set of metadata
+by overriding the flag `DatasetSeriesContractOp.addIngestionMetadata`
+and setting it to `true`.
+
+When this flag is enabled, every schema has a corresponding “metadata
+enriched” version. This applies to `contractSchema`, too, in the
+following way: `contractSchema` as defined by the user will be added
+to the set of alternative schemas; the effective schema enforced at
+runtime will be `contractSchema` plus the metadata fields.
 
 Currently, the metadata fields are the following:
 
