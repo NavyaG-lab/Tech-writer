@@ -29,13 +29,7 @@ Scala 101: https://wiki.nubank.com.br/index.php/Scala
 
 Independently of your editor of choice, is always a good idea to default to IDEA when coding in **Scala,** download it here [https://www.jetbrains.com/idea/download/#section=linux](https://www.jetbrains.com/idea/download/#section=linux) , you can use the community edition, which is free and works for working with **scala** .
 
-After installing IDEA, let's set up our main project, [Itaipu](https://github.com/nubank/itaipu/) :
-
-- At this point in time, you already have **[nucli](https://github.com/nubank/nucli/)** installed, so let's use it.
-- `nu projects clone itaipu` this command you clone Itaipu to into your **$NU_HOME**
-- now `cd` into itaipu's dir, and run `sbt test it:test` sbt is going to download all necessary dependencies and run Itaipu's tests.
-
-Importing Itaipu on IDEA:
+Configuring IDEA:
 
 1. Open idea, click in **Configure -> Plugins**
 
@@ -46,20 +40,32 @@ Importing Itaipu on IDEA:
   ![](https://static.notion-static.com/6224eb2fb911420bbafca0019e283e0a/Screenshot_2017-12-01_12-00-42.png)
 
 3. Restart IDEA
-4. Now, click on **Import Project** and select **itaipu's directory**
+4. Open idea, click on **Configure -> Preferences**
+5. Navigate to **Build, Execution, Deployment -> Compiler -> Scala Compiler -> Scala Compiler Server**
+6. Change **JVM maximum heap size, MB** to `8192`
+7. Restart IDEA
 
-  ![](https://static.notion-static.com/83b9fb8bf0384dafb15400821f4af401/Screenshot_2017-12-01_12-01-54.png)
+Importing projects on IDEA:
 
-5. Select **Import Project from external Model -> SBT**
+After configuring IDEA, let's set up the **[common-etl](https://github.com/nubank/common-etl)** project, Afterwards, we will repeat the same steps for our main project: **[Itaipu](https://github.com/nubank/itaipu/)**.
+
+8. At this point in time, you already have **[nucli](https://github.com/nubank/nucli/)** installed, so let's use it.
+9. `nu projects clone common-etl` with this command you clone common-etl to into your **$NU_HOME**
+10. Now, click on **Import Project** and select **common-etl's directory**
+11. Select **Import Project from external Model -> SBT**
 
   ![](https://static.notion-static.com/c5d12ddcbd2f45c1a76f6a6515fe6526/Screenshot_2017-12-01_13-53-31.png)
 
-6. Select the Java SDK that is installed on your machine. If you don't have one, click on **NEW** and select from your local machine.
+12. Select the Java SDK that is installed on your machine. If you don't have one, click on **NEW** and select from your local machine.
+13. On **General settings**, change **Maximum heap size, MB** to `8192`
 
-  ![](https://static.notion-static.com/7a4b466d0c1a4ce1be1bf78122f7abc0/Screenshot_2017-12-01_13-56-33.png)
+  ![](https://user-images.githubusercontent.com/39742656/64537666-a3e29e80-d2f1-11e9-88f9-153dd590e4ba.png)
 
-7. Next, Next, Finish. Wait a little bit for IDEA to download all dependencies and build the project.
-8. Repeat the process with **common-etl**
+14. Click on Finish. Wait a little bit for IDEA to download all dependencies and build the project.
+15. If prompted, choose to use scalafmt for formatting
+16. Repeat steps 8-15 for our main project: **itaipu**
+- If you run into trouble, make sure common-etl has built successfully
+- If you get errors related to dependencies of the project, force IntelliJ to reload them from build.sbt: Go to menu **View --> Tool Windows --> sbt** and click on the button to Refresh (arrows in a circle).
 
 All done.
 
