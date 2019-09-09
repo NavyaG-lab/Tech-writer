@@ -45,7 +45,7 @@ This DAG is parameterized, which means it requires extra parameters to be passed
 Then, use the following command (connected to the VPN), replacing `DATASET_SERIES_NAME`:
 
 ```
-nu datainfra compaction DATASET_SERIES_NAME
+nu datainfra compaction --itaipu-version <ITAIPU_VERSION> DATASET_SERIES_NAME
 ```
 
 You can check the progress in the DAG page: https://airflow.nubank.com.br/admin/airflow/graph?dag_id=dataset-series-compaction
