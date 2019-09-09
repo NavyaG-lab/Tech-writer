@@ -2,7 +2,9 @@
 
 ## What is a Data Hero?
 
-The Data Access team is one of the main problem solvers for data related issues at Nubank, and one of the main channels that people can rely on to ask a question about our data access' tools is the Slack channel [#squad-data-access](https://nubank.slack.com/messages/C06F04CH1/). Nubank is growing up in size really fast
+The Data Access team is one of the main problem solvers for data related issues at Nubank, and one
+of the main channels that people can rely on to ask a question about our data access' tools is the Slack
+channel [#squad-data-access](https://nubank.slack.com/messages/C06F04CH1/). Nubank is growing up in size really fast
 and, as a consequence, the number of data related problems is growing with it, which results in
 members of data access team receiving more questions than they can respond in parallel to their
 normal workday.
@@ -16,8 +18,9 @@ while the rest of the team can focus on the squad objectives.
 
 ### Monitoring
 
-* [BigQuery](https://console.cloud.google.com/bigquery?project=nubank-data-access)
-* [Databricks](https://nubank.cloud.databricks.com/#setting/clusters)
+* [#data-access-alarms](https://nubank.slack.com/messages/C8TENL0C8)
+* [BigQuery](#BigQuery)
+* [Databricks](#Databricks)
 * [Looker](https://nubank.looker.com/admin)
 * [Mordor](https://console.aws.amazon.com/ec2/v2/home?region=sa-east-1#Instances:search=mordor;sort=tag:Name)
     * Cycling the machines will solve many problems: `nu ser cycle s0 mordor --env prod --suffix x`
@@ -40,16 +43,25 @@ Slack channels you should monitor for questions:
 
 ### BigQuery
 
+* [Data access project](https://console.cloud.google.com/bigquery?project=nubank-data-access)
 * [Usage dashboard](https://nubank.looker.com/dashboards/gcp_bigquery_logs::bigquery_audit)
-* [Monsoon](https://github.com/nubank/monsoon#monitoring)
+* [Loader monitoring](https://github.com/nubank/monsoon#monitoring)
 
 ### Databricks
+* [Clusters management](https://nubank.cloud.databricks.com/#setting/clusters)
+
+Things to keep an eye:
 * Detach notebooks older than 1 day
 * Restart clusters that are not working as expected
-* Attach, detach, add and remove libraries, especially itaipu. There are some instructions
-[here](https://github.com/nubank/data-infra-docs/tree/master/databricks)
-* Automated notebooks:
- - Autobump libraries
+* Attach, detach, add and remove libraries. There are some instructions [here](https://github.com/nubank/data-infra-docs/tree/master/databricks)
+* Automated jobs:
+    - [Autobump itaipu and restart clusters](https://nubank.cloud.databricks.com/#job/8737)
+        - Runs daily at 5:30am (UTC-2)
+    - [Databricks BR loader](https://nubank.cloud.databricks.com/#notebook/1321846)
+        - Runs daily every 3 hours
+    - [Databricks MX loader](https://nubank.cloud.databricks.com/#notebook/1223300/)
+        - Manually triggered
+        
 
 ### Escalating
 Do not be afraid of asking for help if you need to. Here are some non-comprehensive guidelines on
@@ -60,9 +72,13 @@ when to escalate:
 
 ## Schedule
 
-Two members of data access will be scheduled to work as data hero for each week. In this week, the
-priority of the data heroes will be to help other nubankers. It should be harder for them to work on
-side projects, but they can if they want.
+| Day of the week | Data Hero          |
+|-----------------|--------------------|
+| Monday          | @leonardo.matsuura |
+| Tuesday         | @gasbicalho        |
+| Wednesday       | @rodolferreira     |
+| Thursday        | @guzz              |
+| Friday          | @sabino            |
 
 ## *NOT* responsibilities
 
