@@ -18,7 +18,6 @@ while the rest of the team can focus on the squad objectives.
 
 ### Monitoring
 
-* [#data-access-alarms](https://nubank.slack.com/messages/C8TENL0C8)
 * [BigQuery](#BigQuery)
 * [Databricks](#Databricks)
 * [Looker](https://nubank.looker.com/admin)
@@ -26,7 +25,10 @@ while the rest of the team can focus on the squad objectives.
     * Cycling the machines will solve many problems: `nu ser cycle s0 mordor --env prod --suffix x`
 
 ### Support our clients
-Over the course of the week our customers, Nubank's data users, often encounter issues while using our services. To support their effectiveness, the data hero is responsible for communicating with these users; looking into their issues in a timely manner; routing questions made via private messages and other channels to the proper one (_always respecting the current data hero technical limitations_).
+Over the course of the week our customers, Nubank's data users, often encounter issues while using
+our services. To support their effectiveness, the data hero is responsible for communicating with
+these users; looking into their issues in a timely manner; routing questions made via private
+messages and other channels to the proper one (_always respecting the current data hero technical limitations_).
 
 Slack channels you should monitor for questions:
 
@@ -34,6 +36,7 @@ Slack channels you should monitor for questions:
 * [#squad-data-access](https://nubank.slack.com/messages/C84FAS7L6/)
 * [#guild-data-eng](https://nubank.slack.com/messages/C1SNEPL5P/)
 * [#data-announcements](https://nubank.slack.com/messages/C20GTK220/)
+* [#data-access-alarms](https://nubank.slack.com/messages/C8TENL0C8) (alarms only)
 
 ### Itaipu
 
@@ -50,7 +53,7 @@ Slack channels you should monitor for questions:
 ### Databricks
 * [Clusters management](https://nubank.cloud.databricks.com/#setting/clusters)
 
-Things to keep an eye:
+Things to keep an eye on:
 * Detach notebooks older than 1 day
 * Restart clusters that are not working as expected
 * Attach, detach, add and remove libraries. There are some instructions [here](https://github.com/nubank/data-infra-docs/tree/master/databricks)
