@@ -22,12 +22,71 @@ The solution we implemented was to write a batch job which reads all data from a
 
 Even though the problem is on having larger and fewer partition files, calculating how many of these exist requires running a databricks notebook, which takes some time.
 A good proxy for finding out which dataset series are "too big" is looking how many datasets they have.
+
 This light weight [mordor query](https://backoffice.nubank.com.br/eye-of-mauron/#/s0/mordor/5ccab752-2e3d-40c9-8a76-543ed5ed5ee2) get us the largest dataset series.
 
 You can order by size by clicking in the title of the column `(count ?dataset)`.
 An ok heuristic is to run compaction for all dataset series that have more than 30k datasets.
 
-Even though it's possible I don't recommend running more than one compaction in parallel because this is a very heavy process for metapod's transactor.
+Another way is to run this notebook code:
+
+```python
+from metapod_client import helper
+from metapod_client import metapod_factory
+from metapod_client.client import Client
+from mypy_extensions import TypedDict
+from typing import List
+
+DatasetsCountInSeries = TypedDict("DatasetsCountInSeries", {
+                                  'series': str, 'datasets_count': int})
+
+
+def get_client(env, country):
+    return helper.get_metapod_client(env=env, country=country, service="airflow")
+
+
+def get_local_client(env, country):
+    system = metapod_factory.token_system(env, country, "metapod-client")
+    return Client(system['config'], system['http'], system['auth'].service)
+
+
+def get_num_requests_in_series(env, country="br") -> List[DatasetsCountInSeries]:
+    query = """
+    query GetDatasetSeries    {
+        allDatasetSeries {
+        edges {
+            name
+            numDatasets
+        }
+      }
+    }
+    """
+    mc = get_local_client(env, country)
+    response = mc._graphql_request(payload=query)
+
+    return response
+
+
+bla = get_num_requests_in_series("prod")['allDatasetSeries']['edges']
+sortedd = sorted(bla, key=lambda item: item['numDatasets'] or 0)
+top10_to_compact = list(reversed(sortedd))[:10]
+
+[print(i['name']) for i in top10_to_compact]
+```
+
+And you can check the size directly via this metapod query:
+
+```
+{
+    datasetSeries(datasetSeriesName: "<SERIES_NAME>") {
+    name
+    numDatasets
+    datasets {
+      id
+    }
+  }
+}
+```
 
 ### Starting a compaction run
 
@@ -42,14 +101,14 @@ Currently, there is an airflow DAG which will:
 
 This DAG is parameterized, which means it requires extra parameters to be passed in to its execution. Currently, that's only supported via a cURL call to its API (clicking the 'Play' button in the airflow UI will not pass the correct parameters). To execute it, first get the name of the desired Dataset Series to compact (e.g. `series/dataset-partitions`).
 
-Then, use the following command (connected to the VPN), replacing `DATASET_SERIES_NAME`:
+Then, use the following command, replacing `DATASET_SERIES_NAME`:
 
 ```
 nu datainfra compaction --itaipu-version <ITAIPU_VERSION> DATASET_SERIES_NAME
 ```
 
-You can check the progress in the DAG page: https://airflow.nubank.com.br/admin/airflow/graph?dag_id=dataset-series-compaction
-And also the task page in aurora: https://cantareira-stable-mesos-master.nubank.com.br:8080/scheduler/jobs/prod/dataset-series-compaction
+You can check the progress in the [compaction DAG page](https://airflow.nubank.com.br/admin/airflow/graph?dag_id=dataset-series-compaction)
+And also the task page in aurora: https://cantareira-stable-mesos-master.nubank.com.br:8080/scheduler/jobs/prod/compaction-<SERIES_NAME_WITHOUT_SERIES_PREFIX>
 
 #### Unapply compactions
 
