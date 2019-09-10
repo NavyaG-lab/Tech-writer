@@ -4,7 +4,7 @@
 
 The Data Access team is one of the main problem solvers for data related issues at Nubank, and one
 of the main channels that people can rely on to ask a question about our data access' tools is the Slack
-channel [#squad-data-access](https://nubank.slack.com/messages/C06F04CH1/). Nubank is growing up in size really fast
+channel [#data-help](https://nubank.slack.com/messages/C06F04CH1/). Nubank is growing up in size really fast
 and, as a consequence, the number of data related problems is growing with it, which results in
 members of data access team receiving more questions than they can respond in parallel to their
 normal workday.
@@ -32,11 +32,12 @@ messages and other channels to the proper one (_always respecting the current da
 
 Slack channels you should monitor for questions:
 
-* [#data-help](https://nubank.slack.com/messages/C06F04CH1/)
-* [#squad-data-access](https://nubank.slack.com/messages/C84FAS7L6/)
-* [#guild-data-eng](https://nubank.slack.com/messages/C1SNEPL5P/)
+* [#data-access-alarms](https://nubank.slack.com/messages/C8TENL0C8/) (on call engineers only)
 * [#data-announcements](https://nubank.slack.com/messages/C20GTK220/)
-* [#data-access-alarms](https://nubank.slack.com/messages/C8TENL0C8) (alarms only)
+* [#data-help](https://nubank.slack.com/messages/C06F04CH1/)
+* [#guild-data-eng](https://nubank.slack.com/messages/C1SNEPL5P/)
+* [#looker-bq-migration](https://nubank.slack.com/messages/CB9S1LPEZ/)
+* [#squad-data-access](https://nubank.slack.com/messages/C84FAS7L6/)
 
 ### Itaipu
 
@@ -47,8 +48,8 @@ Slack channels you should monitor for questions:
 ### BigQuery
 
 * [Data access project](https://console.cloud.google.com/bigquery?project=nubank-data-access)
-* [Usage dashboard](https://nubank.looker.com/dashboards/gcp_bigquery_logs::bigquery_audit)
 * [Loader monitoring](https://github.com/nubank/monsoon#monitoring)
+* [Usage dashboard](https://nubank.looker.com/dashboards/gcp_bigquery_logs::bigquery_audit)
 
 ### Databricks
 * [Clusters management](https://nubank.cloud.databricks.com/#setting/clusters)
