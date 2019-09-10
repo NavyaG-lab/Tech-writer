@@ -1,9 +1,10 @@
 # On-Call Runbook
 
-This document is a resource for engineers *on-call*.  The general layout of
-this document is Alert: Reasoning: Action(s). All the alert entries here
-should be linked with the alerts being dispatched from our alerting platform.
-The "ALERT" string should be verbatim the same string that is dispatched.
+This document is a resource for engineers *on-call*. The general
+layout of each is “alert, reason, action”. All the alert entries here
+should be linked with the alerts being dispatched from our alerting
+platform. The "ALERT" string should be verbatim the same string that
+is dispatched. See also [writing-runbooks].
 
 ## Alarms
 
@@ -330,3 +331,4 @@ important bits for this purpose are highlighted in the screenshot.
 [correnteza-docstore]: https://sa-east-1.console.aws.amazon.com/dynamodb/home?region=sa-east-1#tables:selected=prod-correnteza-docstore;tab=items
 [correnteza-extractor-dashboard]: https://prod-grafana.nubank.com.br/d/A8ULVDTmz/correnteza-datomic-extractor-service?orgId=1&var-stack_id=All&var-host=All&var-database=skyler&var-prototype=s0&var-prometheus=prod-thanos
 [correnteza-extractor-dashboard-img]: images/correnteza_extractor_dashboard_highlighted.png
+[writing-runbooks]: writing_runbooks.md
