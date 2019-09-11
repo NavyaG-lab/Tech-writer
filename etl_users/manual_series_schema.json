@@ -1,0 +1,118 @@
+{
+            "attributes": [
+              {
+                "name": "example_enum",
+                "primaryKey": false,
+                "logicalType": "DOUBLE",
+                "logicalSubType": null
+              },
+              {
+                "name": "id",
+                "primaryKey": true,
+                "logicalType": "UUID",
+                "logicalSubType": null
+              },
+              {
+                "name": "example_uuid",
+                "primaryKey": false,
+                "logicalType": "UUID",
+                "logicalSubType": null
+              },
+              {
+                "name": "example_doubles",
+                "primaryKey": false,
+                "logicalType": "ARRAY",
+                "logicalSubType": "DOUBLE"
+              },
+              {
+                "name": "example_integer",
+                "primaryKey": false,
+                "logicalType": "INTEGER",
+                "logicalSubType": null
+              },
+              {
+                "name": "example_uuids",
+                "primaryKey": false,
+                "logicalType": "ARRAY",
+                "logicalSubType": "UUID"
+              },
+              {
+                "name": "example_dates",
+                "primaryKey": false,
+                "logicalType": "ARRAY",
+                "logicalSubType": "DATE"
+              },
+              {
+                "name": "example_boolean",
+                "primaryKey": false,
+                "logicalType": "BOOLEAN",
+                "logicalSubType": null
+              },
+              {
+                "name": "example_strings",
+                "primaryKey": false,
+                "logicalType": "ARRAY",
+                "logicalSubType": "STRING"
+              },
+              {
+                "name": "example_double",
+                "primaryKey": false,
+                "logicalType": "DOUBLE",
+                "logicalSubType": null
+              },
+              {
+                "name": "example_decimals",
+                "primaryKey": false,
+                "logicalType": "ARRAY",
+                "logicalSubType": "DECIMAL"
+              },
+              {
+                "name": "example_enums",
+                "primaryKey": false,
+                "logicalType": "ARRAY",
+                "logicalSubType": "ENUM"
+              },
+              {
+                "name": "example_string",
+                "primaryKey": false,
+                "logicalType": "STRING",
+                "logicalSubType": null
+              },
+              {
+                "name": "example_integers",
+                "primaryKey": false,
+                "logicalType": "ARRAY",
+                "logicalSubType": "INTEGER"
+              },
+              {
+                "name": "example_date",
+                "primaryKey": false,
+                "logicalType": "DATE",
+                "logicalSubType": null
+              },
+              {
+                "name": "example_booleans",
+                "primaryKey": false,
+                "logicalType": "ARRAY",
+                "logicalSubType": "BOOLEAN"
+              },
+              {
+                "name": "example_timestamp",
+                "primaryKey": false,
+                "logicalType": "TIMESTAMP",
+                "logicalSubType": null
+              },
+              {
+                "name": "example_decimal",
+                "primaryKey": false,
+                "logicalType": "DECIMAL",
+                "logicalSubType": null
+              },
+              {
+                "name": "example_timestamps",
+                "primaryKey": false,
+                "logicalType": "ARRAY",
+                "logicalSubType": "TIMESTAMP"
+              }
+            ]
+}

@@ -29,13 +29,7 @@ Scala 101: https://wiki.nubank.com.br/index.php/Scala
 
 Independently of your editor of choice, is always a good idea to default to IDEA when coding in **Scala,** download it here [https://www.jetbrains.com/idea/download/#section=linux](https://www.jetbrains.com/idea/download/#section=linux) , you can use the community edition, which is free and works for working with **scala** .
 
-After installing IDEA, let's set up our main project, [Itaipu](https://github.com/nubank/itaipu/) :
-
-- At this point in time, you already have **[nucli](https://github.com/nubank/nucli/)** installed, so let's use it.
-- `nu projects clone itaipu` this command you clone Itaipu to into your **$NU_HOME**
-- now `cd` into itaipu's dir, and run `sbt test it:test` sbt is going to download all necessary dependencies and run Itaipu's tests.
-
-Importing Itaipu on IDEA:
+Configuring IDEA:
 
 1. Open idea, click in **Configure -> Plugins**
 
@@ -46,20 +40,32 @@ Importing Itaipu on IDEA:
   ![](https://static.notion-static.com/6224eb2fb911420bbafca0019e283e0a/Screenshot_2017-12-01_12-00-42.png)
 
 3. Restart IDEA
-4. Now, click on **Import Project** and select **itaipu's directory**
+4. Open idea, click on **Configure -> Preferences**
+5. Navigate to **Build, Execution, Deployment -> Compiler -> Scala Compiler -> Scala Compiler Server**
+6. Change **JVM maximum heap size, MB** to `8192`
+7. Restart IDEA
 
-  ![](https://static.notion-static.com/83b9fb8bf0384dafb15400821f4af401/Screenshot_2017-12-01_12-01-54.png)
+Importing projects on IDEA:
 
-5. Select **Import Project from external Model -> SBT**
+After configuring IDEA, let's set up the **[common-etl](https://github.com/nubank/common-etl)** project, Afterwards, we will repeat the same steps for our main project: **[Itaipu](https://github.com/nubank/itaipu/)**.
+
+8. At this point in time, you already have **[nucli](https://github.com/nubank/nucli/)** installed, so let's use it.
+9. `nu projects clone common-etl` with this command you clone common-etl to into your **$NU_HOME**
+10. Now, click on **Import Project** and select **common-etl's directory**
+11. Select **Import Project from external Model -> SBT**
 
   ![](https://static.notion-static.com/c5d12ddcbd2f45c1a76f6a6515fe6526/Screenshot_2017-12-01_13-53-31.png)
 
-6. Select the Java SDK that is installed on your machine. If you don't have one, click on **NEW** and select from your local machine.
+12. Select the Java SDK that is installed on your machine. If you don't have one, click on **NEW** and select from your local machine.
+13. On **General settings**, change **Maximum heap size, MB** to `8192`
 
-  ![](https://static.notion-static.com/7a4b466d0c1a4ce1be1bf78122f7abc0/Screenshot_2017-12-01_13-56-33.png)
+  ![](https://user-images.githubusercontent.com/39742656/64537666-a3e29e80-d2f1-11e9-88f9-153dd590e4ba.png)
 
-7. Next, Next, Finish. Wait a little bit for IDEA to download all dependencies and build the project.
-8. Repeat the process with **common-etl**
+14. Click on Finish. Wait a little bit for IDEA to download all dependencies and build the project.
+15. If prompted, choose to use scalafmt for formatting
+16. Repeat steps 8-15 for our main project: **itaipu**
+- If you run into trouble, make sure common-etl has built successfully
+- If you get errors related to dependencies of the project, force IntelliJ to reload them from build.sbt: Go to menu **View --> Tool Windows --> sbt** and click on the button to Refresh (arrows in a circle).
 
 All done.
 
@@ -70,7 +76,7 @@ Go to `https://nubank.cloud.databricks.com/` and create your own Notebook. There
 
 Give it a nice name, because you're going to share with us later and we need to know what you're trying to do here.
 
-Create it using `Scala` as the language and the `enginees-cluster` as the cluster.
+Create it using `Scala` as the language and the `we-the-people` as the cluster.
 
 In Databricks, if you want to use another language that isn't the default, you can simply begin your block with %name_of_language. In here, let us create a simple query to check on calls from Ouvidoria. It will be our example throughout the rest of the tutorial.
 
@@ -92,11 +98,13 @@ Every dataset you find in Itaipu is a SparkOp. The SparkOp class has six importa
 
 - `name` property. It decides how your new dataset will be called in places such as Metabase or Databricks once Itaipu runs. If `name = "dataset/name-of-dataset"`, then you'll be able to find it by querying dataset.name_of_dataset.
 
+- `description` property. Description of what the dataset does, and why. This is useful to avoid confusion and help users to understand your dataset.
+
 - `inputs` property. This is a set with the names of all the datasets you'll use in your query. **DON'T HARDCODE THEM.** Use the values we'll set further on.
 
 - `definition` method. This is the core of your object. All the logic involved in creating your dataset will be placed here. Well, hopefully not **all** your logic, because you'll divide your code neatly into small functions that can be easily tested, won't you? Good.
 
-- `attributeOverrides` property. This Set contains the definition of what your output will be. The collumn names, if any field is primary key or not, if it is nullable, the collumn **description** field etc.
+- `attributes` property. This Set contains the definition of what your output will be. The column names, if any field is primary key or not, if it is nullable, the column **description** field etc.
 
 - `ownerSquad` property. That's the squad that owns that dataset.
 
@@ -117,7 +125,7 @@ package etl.dataset.${PACKAGE_NAME}
 import etl.static.StaticOp
 
 // if you are going to use some contract
-import etl.contract.ContractOp
+import etl.contract.DatabaseContractOps
 import etl.contract._folder_._contractFileName_
 
 // If you are going to use some dataset, you need to import it if it isn''t on the same folder
@@ -131,7 +139,7 @@ import java.time.LocalDate
 import java.util.{Date, UUID}
 
 import common_etl.implicits._
-import common_etl.metadata.Squad
+import common_etl.metadata.{Country, Squad}
 import common_etl.metadata.Squad.SquadName
 import common_etl.metapod.{Attribute, MetapodAttribute}
   import common_etl.operator.{SparkOp, WarehouseMode}
@@ -145,6 +153,11 @@ object ${NAME} extends SparkOp with DeclaredSchema {
   //This is how you`ll access this database on the future, in Metabase or Databricks
   //It must be on the form prefix-you-want-name-of-your-dataset
   override val name = "dataset/name-of-your-dataset"
+  
+  //Description of what the dataset does
+  override def description: Option[String] = Some("Description Here")
+  
+  override val country = Country.BR
   
   //This sets the name of the squad who owns the dataset.
   //If your squad isn't in common_etl.metadata.Squad, please add it
@@ -162,7 +175,7 @@ object ${NAME} extends SparkOp with DeclaredSchema {
     myFunc(foo)
   }
 
-  override def attributeOverrides: Set[Attribute] = Set(
+  override def attributes: Set[Attribute] = Set(
     MetapodAttribute("some__id", LogicalType.UUIDType, nullable = false, primaryKey = true, description = Some("")),
     MetapodAttribute("another__id", LogicalType.UUIDType, nullable = false, description = Some("")),
     MetapodAttribute("some_amount", LogicalType.DecimalType, nullable = false, description = Some("")))
@@ -171,7 +184,7 @@ object ${NAME} extends SparkOp with DeclaredSchema {
   def myFunc(df: DataFrame): DataFrame = df
 
   // If you want to use a contract, you get its name like this
-  def barName: String = ContractOp(contractFileName).name
+  def barName: String = DatabaseContractOps.lookup(contractFileName).name
   
   // If you're using just another dataset, get the name like this
   def bazName: String = datasetFileName.name
@@ -191,6 +204,8 @@ import etl.contract.stevie.Calls
 
 object OuvidoriaCalls extends SparkOp with DeclaredSchema {
   override val name = "dataset/ouvidoria-calls"
+  override def description: Option[String] = Some("Dataset to list all calls made to Nubank's Ouvidoria.")
+  override val country = Country.BR
   override val ownerSquad: Squad = Squad....
   override val inputs: Set[String] = Set(callsName)
 
@@ -204,9 +219,9 @@ object OuvidoriaCalls extends SparkOp with DeclaredSchema {
   
   }
   
-  override def attributeOverrides: Set[Attribute] = Set()
+  override def attributes: Set[Attribute] = Set()
 
-  def callsName: String = ContractOp(Calls).name
+  def callsName: String = DatabaseContractOps.lookup(Calls).name
 }
 ```
 Pretty barebones, right? All we do is say we use the `ContractOp` `Calls`, located at `etl.contract.stevie.Calls`. Then we call the `filterCalls` function, passing the `calls` Dataframe. But right now the `filterCalls` function is empty.
@@ -280,16 +295,16 @@ Just like that. Now we need to rename the columns. The Dataset object has the me
 ```
 Boom! Your definition is done!
 
-We're still not done, though. Now we need to define what exactly are the types of the columns we output in our `definition` method. We do so in the `attributeOverrides`.
+We're still not done, though. Now we need to define what exactly are the types of the columns we output in our `definition` method. We do so in the `attributes`.
 Take a look in the [LogicalType](https://github.com/nubank/common-etl/blob/master/src/main/scala/common_etl/schema/LogicalType.scala) class. It has all the types of objects you can have in your table. Our first field will be the `call_id`, which will be the primary key. As for the type, we check in the [Calls Contract](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/contract/stevie/Calls.scala) and see that the column `call__id` is of type UUIDType.
 ```scala
- override def attributeOverrides: Set[Attribute] = Set(
+ override def attributes: Set[Attribute] = Set(
     MetapodAttribute("call_id", LogicalType.UUIDType, primaryKey = true)
   )
 ```
 Next, the `time` column and the `our_number` columnn. They come, respectively, from the `call__started_at` and `call__our_number` columns in Calls, which are TimestampType and StringType.
 ```scala
- override def attributeOverrides: Set[Attribute] = Set(
+ override def attributes: Set[Attribute] = Set(
     MetapodAttribute("call_id", LogicalType.UUIDType, primaryKey = true),
     MetapodAttribute("time", LogicalType.TimestampType),
     MetapodAttribute("our_number", LogicalType.StringType)
@@ -311,7 +326,7 @@ That finishes our definition.
 
 ## 6 - The Final Product
 ```scala
-import etl.contract.ContractOp
+import etl.contract.DatabaseContractOps
 import etl.contract.EnumAttribute
 import etl.contract.stevie.Calls
 import common_etl.implicits._
@@ -322,6 +337,8 @@ import org.apache.spark.sql.DataFrame
 
 object OuvidoriaCalls extends SparkOp with DeclaredSchema {
   override val name = "dataset/ouvidoria-calls"
+  override def description: Option[String] = Some("Dataset to list all calls made to Nubank's Ouvidoria.")
+  override val country = Country.BR
   override val ownerSquad: Squad            = Squad....
   override val inputs: Set[String]          = Set(callsName)
   override val warehouseMode: WarehouseMode = WarehouseMode.Loaded
@@ -339,7 +356,7 @@ object OuvidoriaCalls extends SparkOp with DeclaredSchema {
       select($"call__started_at" as "time", $"call__id" as "call_id", $"call__our_number" as "our_number", $"call__reason" as "reason"))
   }
 
-  override def attributeOverrides: Set[Attribute] = Set(
+  override def attributes: Set[Attribute] = Set(
     MetapodAttribute("call_id", LogicalType.UUIDType, nullable = false, primaryKey = true, description = Some("Unique, UUID for each call")),
     MetapodAttribute("time", LogicalType.TimestampType, nullable = false, description = Some("UTC Timestamp for when the call started")),
     MetapodAttribute("our_number", LogicalType.StringType, nullable = false, description = Some("The number called to contact us")),
@@ -349,7 +366,7 @@ object OuvidoriaCalls extends SparkOp with DeclaredSchema {
     }), description = Some("Reason selected by the xpeer"))
   )
 
-  def callsName: String = ContractOp(Calls).name
+  def callsName: String = DatabaseContractOps.lookup(Calls).name
 }
 ```
 We've removed the date and the phone number we're searching for and put them into variables, se we don'have any "magical numbers" floating around. This way, if we ever need to change it, we won't have to scour the whole code looking for them.
@@ -596,25 +613,25 @@ To try to avoid branch conflicts. Also, remember to format everything with scala
 ### 10.2 - If you used an existing folder
 If you used an existing folder, all you have to do is go to the folder's `package.scala` file and add your subfolder.allOps to its allOps.
 
-Do try to simply add a new line and not change any of the existing ones. That means, if you have:
+Do try to simply add a new line and not change any of the existing ones, and keep it into alphabetical order. That means, if you have:
 ```scala
-subfolder1.allOps ++
-subfolder2.allOps ++
-subfolder3.allOps)
+a_subfolder1.allOps ++
+b_subfolder2.allOps ++
+d_subfolder3.allOps)
 ```
 Do this:
 ```scala
-subfolder1.allOps ++
-subfolder2.allOps ++
-your_subfolder.allOps ++
-subfolder3.allOps)
+a_subfolder1.allOps ++
+b_subfolder2.allOps ++
+c_your_subfolder.allOps ++
+d_subfolder3.allOps)
 ```
 Instead of this
 ```scala
-subfolder1.allOps ++
-subfolder2.allOps ++
-subfolder3.allOps ++
-your_subfolder.allOps)
+a_subfolder1.allOps ++
+b_subfolder2.allOps ++
+d_subfolder3.allOps ++
+c_your_subfolder.allOps)
 ```
 To try to avoid branch conflicts. Also, remember to format everything with scalafmt.
 
@@ -630,7 +647,7 @@ MainClass:
  - Is the attribute "name" int this format "dataset/folder-class-name"?
  - Are the Datasets you use imported? Are their name stored into a "datasetName" variable, which is then used to retreive them from the "datasets" variable?
  - Is your code well partitioned in small functions?
- - Does your code return the columns with the names and types you declared in attributeOverrides?
+ - Does your code return the columns with the names and types you declared in attributes?
 
 TestClass
   - Do you have a test class?

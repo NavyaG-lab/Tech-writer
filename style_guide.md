@@ -273,7 +273,7 @@ Of course, the situation in which a class grows this long is strongly discourage
   * common-etl
   * Project classes (`etl.itaipu`)
 - Within each group, imports should be sorted in alphabetic ordering.
-- You can use IntelliJ's import organizer to handle this automatically, using the following config:
+- You can use IntelliJ's import organizer (Settings > Editor > Code Style > Scala > Imports) to handle this automatically, using the following config:
 
   ```
   java
@@ -314,7 +314,7 @@ Of course, the situation in which a class grows this long is strongly discourage
   ```scala
   case class Pokemon(name: String, weight: Int, hp: Int, attack: Int, defense: Int)
   case class Human(name: String, hp: Int)
-  
+
   // Do NOT do the following, because
   // 1. When a new field is added to Pokemon, we need to change this pattern matching as well
   // 2. It is easy to mismatch the arguments, especially for the ones that have the same data types
@@ -325,7 +325,7 @@ Of course, the situation in which a class grows this long is strongly discourage
     case target @ Human(_, hp) =>
       target.copy(hp = hp - myAttack)
   }
-  
+
   // Do this:
   targets.foreach {
     case target: Pokemon =>
@@ -598,7 +598,7 @@ __Avoid using implicits__, unless:
 - you are using it for implicit type parameters (e.g. `ClassTag`, `TypeTag`)
 - you are using it private to your own class to reduce verbosity of converting from one type to another (e.g. Scala closure to Java closure)
 
-When implicits are used, we must ensure that another engineer who did not author the code can understand the semantics of the usage without reading the implicit definition itself. Implicits have very complicated resolution rules and make the code base extremely difficult to understand. From Twitter's Effective Scala guide: "If you do find yourself using implicits, always ask yourself if there is a way to achieve the same thing without their help."
+When implicits are used, we must ensure that another engineer who did not author the code can understand the semantics of the usage without reading the implicit definition itself. Implicits have very complicated resolution rules and make the code base extremely difficult to understand. From [Twitter's Effective Scala guide](http://twitter.github.io/effectivescala/): "If you do find yourself using implicits, always ask yourself if there is a way to achieve the same thing without their help."
 
 If you must use them (e.g. enriching some DSL), do not overload implicit methods, i.e. make sure each implicit method has distinct names, so users can selectively import them.
 ```scala
@@ -688,11 +688,6 @@ def getAddress(name: String): Option[String] = {
 
 
 ## <a name='concurrency'>Concurrency</a>
-
-### <a name='concurrency-scala-collection'>Scala concurrent.Map</a>
-
-__Prefer `java.util.concurrent.ConcurrentHashMap` over `scala.collection.concurrent.Map`__. In particular the `getOrElseUpdate` method in `scala.collection.concurrent.Map` is not atomic (fixed in Scala 2.11.6, [SI-7943](https://issues.scala-lang.org/browse/SI-7943)). Since all the projects we work on require cross-building for both Scala 2.10 and Scala 2.11, `scala.collection.concurrent.Map` should be avoided.
-
 
 ### <a name='concurrency-sync-vs-map'>Explicit Synchronization vs Concurrent Collections</a>
 
@@ -881,7 +876,7 @@ The [equality check](http://docs.oracle.com/javase/7/docs/api/java/net/URL.html#
 
 ### <a name='misc_well_tested_method'>Prefer existing well-tested methods over reinventing the wheel</a>
 
-When there is an existing well-tesed method and it doesn't cause any performance issue, prefer to use it. Reimplementing such method may introduce bugs and requires spending time testing it (maybe we don't even remember to test it!).
+When there is an existing well-tested method and it doesn't cause any performance issue, prefer to use it. Reimplementing such method may introduce bugs and requires spending time testing it (maybe we don't even remember to test it!).
 
   ```scala
   val beginNs = System.nanoTime()
@@ -902,5 +897,5 @@ When there is an existing well-tesed method and it doesn't cause any performance
   ```
 
 Exceptions:
-- Using an existing well-tesed method requires adding a new dependency. If such method is pretty simple, reimplementing it is better than adding a dependency. But remember to test it.
+- Using an existing well-tested method requires adding a new dependency. If such method is pretty simple, reimplementing it is better than adding a dependency. But remember to test it.
 - The existing method is not optimized for our usage and is too slow. But benchmark it first, avoid premature optimization.

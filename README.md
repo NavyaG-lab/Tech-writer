@@ -17,14 +17,24 @@ This repository is the canonical place to put all documentation related to how t
 * [Data Infra Glossary](glossary.md)
 * [General Glossary](https://github.com/nubank/playbooks/blob/master/docs/glossary.md)
 
-## Ops
+## ETL User references
+
+* [FAQ](etl_users/FAQ.md)
+* [Dataset Series](etl_users/dataset_series.md)
+* [Archived Datasets](etl_users/archived_datasets.md)
+
+## ETL Operations
+
 * [Hausmeister](squad/hausmeister.md) (a.k.a on-call rotation)
 * [Monitoring the nightly run](monitoring_nightly_run.md)
 * [On Call Runbook](on-call_runbook.md)
 * [Ops How To](ops_how_to.md)
+* [Incident Response Checklist](./etl_operators/incident_response_checklist.md)
+* [Getting help from other squads](./etl_operators/getting_help_from_other_squads.md)
 * [CLI usage examples](cli_examples.md)
 * [GraphQL clients](ops/graphql_clients.md)
 * [Airflow](airflow.md)
+* [Metapod](metapod.md)
 
 ## Itaipu
 * [Primer](itaipu/primer.md)
@@ -32,6 +42,8 @@ This repository is the canonical place to put all documentation related to how t
 * [Workflow](itaipu/workflow.md)
 * [Bumping Itaipu on Databricks](itaipu/databricks_bump.md)
 * [Updating the Log Cache](itaipu/log_cache_update.md)
+* [Dataset Series Compaction](itaipu/dataset_series_compaction.md)
+* [Pororoca](itaipu/pororoca.md)
 
 ## Infrastructure
 * [Inventory](infrastructure/inventory.md)
@@ -40,7 +52,14 @@ This repository is the canonical place to put all documentation related to how t
 * [Testing models in staging](infrastructure/testing-models.md)
 * [The Serving Layer](infrastructure/serving_layer.md)
 
-## Onboarding
+## Squad
+
+### Working groups
+
+* [Index of working groups and their outputs](squad/working_groups/index.md)
+
+### Onboarding
+
 * [Introduction and setup](onboarding/introduction.md)
 * [Exercise Part I: Creating a dataset](onboarding/dataset-exercise.md)
 * [Exercise Part II: Creating a service to expose a dataset via API](onboarding/service-exercise.md)

@@ -1,5 +1,23 @@
 # Contributing to Itaipu (workflow)
 
+ * [Contracts Workflow](#contracts-workflow)
+   * [Creating a New Contract](#creating-a-new-contract)
+   * [Updating an Existing Contract](#updating-an-existing-contract)
+ * [Datasets, Dimensions, and Fact Tables Workflow](#datasets,-dimensions,-and-fact-tables-workflow)
+   * [Bus matrix](#bus-matrix)
+   * [Databricks Approach](#databricks-approach)
+   * [Creating a new dataset](#creating-a-new-dataset)
+   * [Editing an existing dataset](#editing-an-existing-dataset)
+   * [Make the dataset available in Redshift](#make-the-dataset-available-in-redshift)
+ * [Running Tests](#running-tests)
+ * [How Itaipu is deployed to the Dagao](#how-itaipu-is-deployed-to-the-dagao)
+ * [Publishing an itaipu build](#publishing-an-itaipu-build)
+   * [Locally](#locally)
+   * [On GoCD](#on-gocd)
+ * [Other sources](#other-sources)
+ * [Dependencies](#dependencies)
+   * [Bumping libraries on itaipu](#bumping-libraries-on-itaipu)
+
 ## Contracts Workflow
 
 ### Creating a New Contract
@@ -19,7 +37,8 @@ Creating a new contract is different than updating an existing contract because 
         - `src/[SERVICE-NAME]/models/*.clj`:
             1. Annotate the relevant Datomic models with contract attributes as appropriate, similar to
             [this](https://github.com/nubank/forex/pull/93))
-            1. Ensure every attribute in the `skeleton` has an example (`:eg`) and documentation (`:doc`)
+            1. Ensure every attribute in the `skeleton` has documentation (`:doc`)
+            1. Ensure the skeleton itself has documentation (`(def skeleton ^{:contract/doc "Lorem ipsum"} ...)`)
             1. Potentially add:
                 - a `:contract/name` if you want to alias the attribute for ETL purposes
                 - `:contract/include false` if you want to remove the attribute from the ETL
@@ -29,10 +48,20 @@ Creating a new contract is different than updating an existing contract because 
             1. Add a call to function `common-datomic.contract.test-helpers/enforce-contracts!`
     1. Run `$ lein gen-contracts` to generate the initial contracts in `resources/contract/[DB-NAME]/`. Give the data
     infra squad a heads up that you are working on it, and then answer `Y` to the command line prompt.
+        - If you receive the following error:
+        
+          ```
+          java.lang.AssertionError: Assert failed: Either `:contract/ref-ids` or `:skeleton` must explicitly specified as metadata on a schema.
+          ```
+        
+          It is probably because it cannot infer some references inside your skeletons. You can fix it by explicitly declaring it in your schema.
+          Look at the file `src/tyriel/models/payment_source.clj` from this PR as a reference: <https://github.com/nubank/tyrael/pull/54>.
     1. Open a pull request similar to [this one](https://github.com/nubank/forex/pull/93).
 
-1. Make sure that the database exists in prod before adding the contract to Itaipu.
-
+1. Make sure that the database exists in prod and is being extracted before adding the contract to Itaipu.
+    
+- [Example query of this on Thanos](https://prod-thanos.nubank.com.br/graph?g0.range_input=1h&g0.expr=max(datomic_extractor_basis_t%7Bdatabase%3D~%22metapod%22%7D)&g0.tab=0) You should see line chart showing the growing amount of data extracted with time. _NB. In this example we are referring to the `metapod` service. You have to replace it with the name of your service._
+    
 1. On Itaipu create a Scala object for the database:
     1. If this is the first contract for this database, create a new package (aka folder) under
     [itaipu/src/main/scala/etl/contract](https://github.com/nubank/itaipu/tree/master/src/main/scala/etl/contract) named
@@ -41,8 +70,8 @@ Creating a new contract is different than updating an existing contract because 
     contract entities - similar to
     https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/contract/proximo/Proximo.scala.
     1. Only if the database is not sharded (that is, it is mapped to global), add the `prototypes` attribute:
-    `override val prototypes: Seq[Prototype] = Seq(Prototype.Global)`. Otherwise, leave only the attributes `name` and
-    `entities`,
+    `override val prototypes: Seq[Prototype] = Seq(Prototype.Global)`. Otherwise, leave only the attributes `name`,
+    `entities` and `qualityAssessment`,
 
 1. Create a new Scala object for each new contract entity you are adding.
     1. The code should be a direct copy paste from contract Scala file(s) generated in the Clojure project (generated
@@ -55,16 +84,17 @@ Creating a new contract is different than updating an existing contract because 
 
 1. Follow the instructions about [running tests](#running-tests)
 
-1. Open a pull request on Itaipu and ask someone from data infra to review it alongside the PR on the Clojure service.
+1. Open a pull request on Itaipu. There’s no need to ask for reviews on Itaipu, we monitor new PRs multiple times a day as the repo is very active.
 
 1. Follow the instructions about [merging pull requests](#merging-pull-requests)
+
+1. Once your service has started producing data on its Datomic database, double check that it's not [blacklisted on correnteza](https://github.com/nubank/correnteza/blob/config/src/prod/correnteza_config.json). If it is, create a PR to remove it from the blacklist and submit to #squad-data-infra for review
 
 ### Updating an Existing Contract
 
 A Clojure service that already has generated contract Scala files will store them in `/resources/[DB-NAME]/*.scala`.
 When running unit tests on a service with generated contracts, any change to an attribute that is included in a contract
-(or any addition of an attribute without `:contract/include false`) will cause the generated Scala file to no longer
-match.
+(or any addition of an attribute without `:contract/include false`) will cause the generated Scala file to no longer match.
 
 If you want to add, change or remove an attribute:
 
@@ -85,7 +115,7 @@ If you want to add, change or remove an attribute:
 ## Datasets, Dimensions, and Fact Tables Workflow
 
 Creating datasets:
-- [See quotes from Kimball on designing dimensional models here](dimensional_modeling/kimball.md)
+- [See quotes from Kimball on designing dimensional models here](../dimensional_modeling/kimball.md)
 
 ### Bus matrix
 
@@ -140,7 +170,7 @@ below.
 [itaipu/src/main/scala/etl/dataset/](https://github.com/nubank/itaipu/tree/master/src/main/scala/etl/dataset):
     1. Create the (sub)folder, e.g., `folder_name`
     1. Create a package file called `package.scala` inside the new (sub)folder with the following content (assuming that
-    the file that you will create in the next step is called `FileName.scala`):
+      the file that you will create in the next step is called `FileName.scala`):
         ```scala
         package etl.dataset.parent_folder_name_if_subfolder
 
@@ -168,8 +198,9 @@ below.
         }
         ```
     1. Add `folder_name.allOps` to `opsToRun` in
-    [itaipu/src/main/scala/etl/itaipu/Itaipu.scala](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/itaipu/Itaipu.scala)
+      [itaipu/src/main/scala/etl/itaipu/Itaipu.scala](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/itaipu/Itaipu.scala)
 1. Create the dataset file in the same folder as the package file
+    
     - The filename must be in PascalCase format (e.g., `FileName.scala`) and must be the same as the object name
 1. Create the dataset object:
     - To create a dataset basically you need to create a SparkOp, which has mainly 3 methods:
@@ -179,12 +210,14 @@ below.
     - Write the code for the new dataset following the code from existing datasets or use the template shown here:
     https://wiki.nubank.com.br/index.php/Scala
 1. Add the object to the output of `allOps` in the `package.scala` file
+    
     - It's possible to [make the dataset available in Redshift](#make-the-dataset-available-in-redshift)
 1. Follow the instructions about [editing datasets](#editing-an-existing-dataset)
 
 ### Editing an existing dataset
 For a faster iterative process, run the code from Itaipu directly in the Databricks notebook:
 1. Paste the raw Itaipu Scala code into a cell in the Databricks notebook
+    
     - **Important:** Remove the package name from the top of the file
 1. Manually set up the `df` value. For example, assuming your object name is `Whatever`:
     ```scala
@@ -236,7 +269,7 @@ edit in an IDE because of type checking, autocompletion, etc.), then go back to 
 If you want to make the dataset available in Redshift, you need to:
 1. [Override the `SparkOp` member `warehouseMode`](https://github.com/nubank/itaipu/blob/a206527f34acf419cdbb70acfbc145d5899d6be8/src/main/scala/etl/dataset/billing_cycles/BillingCycles.scala#L15) with the value `WarehouseMode.Loaded`.
 2. [Extend the class](https://github.com/nubank/itaipu/blob/a206527f34acf419cdbb70acfbc145d5899d6be8/src/main/scala/etl/dataset/billing_cycles/BillingCycles.scala#L15) with the trait `DeclaredSchema`
-3. [Override the `attributeOverrides` member](https://github.com/nubank/itaipu/blob/a206527f34acf419cdbb70acfbc145d5899d6be8/src/main/scala/etl/dataset/billing_cycles/BillingCycles.scala#L21-L34).
+3. [Override the `attributes` method](https://github.com/nubank/itaipu/blob/a206527f34acf419cdbb70acfbc145d5899d6be8/src/main/scala/etl/dataset/billing_cycles/BillingCycles.scala#L21-L34).
 
 ## Running tests
 
@@ -299,11 +332,21 @@ This change triggers a build of [`itaipu-stable`](https://go.nubank.com.br/go/ta
 The [`dagao`](https://go.nubank.com.br/go/tab/pipeline/history/dagao) pipeline depends on `itaipu-stable`, so it must finish before the `dagao` pipeline runs to deploy the dag.
 Sometimes `itaipu-stable` will fail (for instance when it fails to download dependencies, which happens sometimes). In this case, the `dagao` will get deployed with an old version of `itaipu`.
 
+## Publishing an itaipu build
+
+### Locally
+
+You can follow [these instructions](../onboarding/dataset-exercise.md).
+
+### On GoCD
+
+Force-push your changes to the `debug-build` branch of `itaipu` and trigger the [`itaipu-debug-build`](https://go.nubank.com.br/go/tab/pipeline/history/itaipu-debug-build) job on GoCD. This will build the image and once the downstream `itaipu-debug-build-publish` is done the image should appear on [quay.io](https://quay.io/repository/nubank/nu-itaipu?tab=tags)
+
 ## Other sources
 
 When you have a dataset that doesn't originate from a Datomic service and you
 want to utilize Spark to process it (periodically), you can build with
-itaipu.  See `curva-de-rio`, `dataset-series`, and `StaticOp` for more information.
+`itaipu`.  See [`dataset-series`](itaipu/dataset_series.md) and `StaticOp` for more information.
 
 Parquet files are mainly used for accessing data from Spark / Databricks. Avro files are used for loading into Redshift.
 
@@ -321,6 +364,7 @@ Itaipu downloads them from [Maven](https://maven.apache.org/) and nu-maven (Nuba
 
 To check the latest versions:
 * In Maven: https://search.maven.org/
+    
     * Go to the Advanced Search and use the GroupId and ArtifactId. It's possible that you need to append the Scala version to the `artifactID` (e.g., `_2.11` for Scala 2.11). For example: `g:"org.typelevel" AND a:"cats_2.11"`.
 * In nu-maven:
     ```sh

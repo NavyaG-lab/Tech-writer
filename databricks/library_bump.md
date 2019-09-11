@@ -13,7 +13,9 @@ involves these steps:
 
 ## Getting a JAR
 
-### Via CircleCI
+### Itaipu
+
+#### Via CircleCI
 
 One way to get a JAR is through Circle CI. Circle CI packages
 [itaipu](https://circleci.com/gh/nubank/itaipu/tree/master) during every build that successfuly ran
@@ -26,9 +28,8 @@ click on the build number, then on `build_test_package` under "Workflow" (in the
 1. Click on the `package` step in the workflow (it should be green). You
 will see something like this: ![](../images/circleci_workflow.png)
 1. Download the JAR by going to the `Artifacts` tab: ![](../images/circleci_artifacts.png)
-1. Rename it from `itaipu_2.11-1.0.0-SNAPSHOT.jar` to `itaipu_2.11-1.0.0-SNAPSHOT-<YYYYMMDD>-<GITSHA>.jar`, where `<YYYYMMDD>` is the current date, and `GITSHA` are the first 7 characters of the git commit SHA (in the case shown in the figure, `103f895`).
 
-### Via sbt
+#### Via sbt
 
 The alternative is to create the file locally (example below with `itaipu`, but
 works with any Scala project):
@@ -54,6 +55,33 @@ the file `target/scala-2.11/etl-runner.jar` (as defined in
 [build.sbt](https://github.com/nubank/itaipu/blob/28a63912d5d49b382bd0dcae41eccb4db7b4bb37/build.sbt#L8)).
 This file is a fat JAR (aka uber JAR) of your project with all of its dependencies.
 Databricks already contains these dependencies in separate JAR files.
+
+### common-etl library
+
+#### Via S3
+
+Assuming it's being compiled against the `2.11` scala version, replace `VERSION` with what's in the `build.sbt` in the root of the `common-etl` repo, to download the jar in a folder (using `~/Downloads` as an example):
+
+
+
+```
+aws s3 cp s3://nu-maven/releases/common-etl/common-etl_2.11/VERSION/common-etl_2.11-VERSION.jar ~/Downloads
+```
+
+Another way to check what is the exact location of the jar is by looking at the log output in the `common-etl-release` pipeline in GoCD: https://go.nubank.com.br/go/tab/pipeline/history/common-etl-release
+
+- Click the Info icon for details of the pipeline run
+
+![Pipeline details page](https://user-images.githubusercontent.com/1674699/53018459-b3cc8b00-3452-11e9-9e2c-45c08123bdd8.png)
+
+- Click on the release under the Passed section of the JOBS sidebar
+![release job page](https://user-images.githubusercontent.com/1674699/53018389-854eb000-3452-11e9-8964-930a3884105f.png)
+
+- Check the log output for the location of the file on S3:
+
+![Log output](https://user-images.githubusercontent.com/1674699/53018372-7b2cb180-3452-11e9-91ac-34bf0d80622c.png)
+
+- Download the file using the location you found and the `aws s3` command above, and proceed to the steps below.
 
 ## Install into Databricks
 

@@ -1,0 +1,435 @@
+# Dataset Series
+
+## Background
+
+At Nubank, Datomic is the main/preferred way to store data. But it's
+not the only one. High-throughput data, i.e. click streams, is usually
+not stored on Datomic so as not to clutter it. While Itaipu
+[Contracts](../itaipu/contracts.md) are used as an entry point for
+data stored in Datomic, DatasetSeries are the mechanism we use in
+Itaipu to make high throughput events available for computation as
+input datasets.
+
+| Input type     | Type of data                                                 |
+| -------------- | ------------------------------------------------------------ |
+| Contracts      | Datomic entities, historical attributes (e.g. Customer entity) |
+| Dataset Series | High throughput attributes, very granular events (e.g. Click streams) |
+
+#### Source of the data
+
+Dataset series data is produced by services by calling the `common-schemata.wire.etl/produce-to-etl!` function ([source](https://codesearch.nubank.com.br/search/linux?q=defn%20produce-to-etl!&fold_case=auto&regex=false&context=true&repo%5B%5D=nubank%2Fcommon-schemata)) . The resulting data is then handled by the *Ingestion Layer* – a set of services linked to the `EVENT-TO-ETL` Kafka topic:
+
+* The [Riverbend](https://github.com/nubank/riverbend) service is responsible for producing dataset series. It does so by consuming the `EVENT-TO-ETL` Kafka topic and serialising its messages to `.avro` files suitable for ingestion by Itaipu. A technical description for how data goes from Kafka all the way to being processed in Itaipu can be found in the [Annexes](#annexes) section. The `dataset-name` should be in the format `series/dataset-name`.
+* The [Curva de Rio](https://github.com/nubank/curva-de-rio) service exposes an HTTP endpoint which allows services not connected to Kafka to send data to Riverbend.
+
+## Using Dataset Series
+
+In order to use the data from a Dataset Series in an Itaipu `SparkOp`, you'll first need to define a `DatasetSeriesContractOp`. In this Op you'll explicitly declare the schema ([why?](#why-do-i-need-all-these-different-schemas)) you expect to be receiving from the Series, as well as perform a number of standard data cleaning operations to make working with the data safer and more convenient.
+
+### Creating a new dataset series
+
+#### Code organization
+
+Given a `DatasetSeriesContractOp` called `YourOp`:
+
+* An `object` called `YourOp` extending `common_etl.operator.dataset_series.DatasetSeriesContractOp` should be placed in the `etl.dataset_series` [package](https://github.com/nubank/itaipu/tree/master/src/main/scala/etl/dataset_series). See [Code Generation](#code-generation) below for best practices on generating it from scratch.
+* The object should be added to this package's `package.scala` file in the `allSeries` set [here](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/dataset_series/package.scala).
+
+#### Code generation
+
+A code generator helper can be found in `common-databricks`:
+
+```scala
+import common_databricks.dataset_series.DatasetSeriesContractOpGenerator
+import common_databricks.DatabricksHelpers
+import common_etl.metadata.Squad
+import common_etl.operator.dataset_series.SeriesType
+
+val metapod = DatabricksHelpers.getMetapod()
+
+DatasetSeriesContractOpGenerator.renderOp("your-series-name",
+                                          SeriesType.Events,
+                                          Squad.YourSquad,
+                                          "description of your dataset series",
+                                          metapod)
+
+/* Output:
+
+import common_etl.metadata.Squad
+import common_etl.operator.dataset_series.{DatasetSeriesAttribute, DatasetSeriesContractOp}
+import common_etl.schema.LogicalType
+
+object YourSeriesName extends DatasetSeriesContractOp {
+
+  override val seriesName: String = "your-series-name"
+  override val seriesType: SeriesType = SeriesType.Events
+
+  override val ownerSquad: Squad = Squad.YourSquad
+  override val description: Option[String]= Some("description of your dataset series")
+
+  override val contractSchema: Set[DatasetSeriesAttribute] = Set(
+    DatasetSeriesAttribute("index", LogicalType.UUIDType, description = Some("")),
+    DatasetSeriesAttribute("attr1", LogicalType.StringType, description = Some("")),
+    DatasetSeriesAttribute("attr2", LogicalType.IntegerType, description = Some(""))
+  )
+
+  override val alternativeSchemas: Seq[Set[DatasetSeriesAttribute]] = Seq(
+    Set(
+      DatasetSeriesAttribute("index", LogicalType.UUIDType),
+      DatasetSeriesAttribute("attr1", LogicalType.StringType)
+    ),
+    Set(
+      DatasetSeriesAttribute("index", LogicalType.UUIDType)
+    )
+  )
+
+ */
+```
+
+Usage of the generator is highly recommended as it:
+
+* Discovers for you all schemas existing in Metapod for your dataset series
+* Follows the latest versions and idioms of the API
+
+Feel free to use and copy the [example databricks notebook](https://nubank.cloud.databricks.com/#notebook/463279/command/463286) for this purpose.
+
+#### Anatomy of a DatasetSeriesContractOp
+
+###### `seriesName`
+
+The name of your series, the same used by your service when posting data via the `common-schemata.wire.etl/produce-to-etl!` function ([source](https://github.com/nubank/common-schemata/blob/master/src/common_schemata/wire/etl.clj#L133-L137)) but without the `series/`.
+
+###### `contractSchema`
+
+What the final schema of your dataset series should be once it's done
+computing. See also #metadata.
+
+###### `alternativeSchemas`
+
+Override this optional field to declare other existing schemas for your dataset series. Usually, these will be past versions which use obsolete names or datatypes. See [Dealing with Versions](#dealing-with-versions) for an overview of the version reconciliation metadata DSL.
+
+#### Why do I need all these different schemas?
+
+Over time, producers of the data in your dataset series ~~might~~ will introduce changes in its schema: adding/removing columns, renaming them, or even changing their types. Whenever a schema change is introduced, you will need to modify your `DatasetSeriesContractOp` accordingly to ensure that:
+
+* it knows how to handle and reconcile the different schemas of your data
+* aligns 100% with the schema *you* wish to pass down to downstream `SparkOps` (the `contractSchema` field)
+
+### Dealing with versions
+
+When your dataset series' schema has changed over time, you'll have to
+add metadata to your schema declarations so that the computing engine
+may reconcile them into the final contract version. When processing
+various versions, the engine will go through the following steps:
+
+1. Transform values of existing attributes
+2. Rename attributes
+3. Coerce values
+
+#### Transform values of existing attributes
+The engine looks for attributes with `transform` fields and applies
+the transforms to these fields.
+
+```scala
+...
+DatasetSeriesAttribute("field", LogicalType.IntegerType)
+    .withTransform($"field" + 10) // values of this field will have `10` added to them
+...
+```
+
+`withTransform` accepts any valid Spark `Column` expression.
+
+**NB**: don't abuse transforms; a `DatasetSeriesContractOp`'s primary
+purpose is to reconcile versions. Other logic can be implemented with
+a normal SparkOp consuming your `DatasetSeriesContractOp`
+
+#### Rename attributes
+The engine looks for attributes that can be renamed using their `as`
+field. In this example `ndex` becomes `index`, `user_id` becomes
+`user__id`, so that they match an attribute from the `contractSchema`:
+
+```scala
+import org.apache.spark.sql.functions._
+
+...
+val contractSchema = Set(
+    DatasetSeriesAttribute("ndex", LogicalType.UUIDType, isPrimaryKey = true)
+                .as("index"),
+    DatasetSeriesAttribute("user__id",
+                            LogicalType.StringType)
+)
+
+val alternativeSchemas = Seq(
+    Set(
+        // Will not be renamed as `ndex` is in the contractVersion
+        DatasetSeriesAttribute("ndex", LogicalType.UUIDType, isPrimaryKey = true)
+                .as("index"),
+        // Will be renamed prior to merging with other datasets, as `user__id` is
+        // in the contract version
+        DatasetSeriesAttribute("user_id",
+                               LogicalType.StringType,)
+            .as("user__id")
+    )
+)
+...
+```
+
+See [Final Steps](#final-steps) for `as` fields declared on
+`contractSchema` attributes (which would be ignored in the above
+phase).
+
+#### Coerce values
+
+We have three possible cases:
+  * The column is missing
+  * The column has a different type
+  * The column does not appear in any schema
+
+**NB: both the `alternativeSchemas` and the `contractSchema` go
+through this step; in other words, the `contractSchema` is both used
+as one of the possible versions and as the final version of the
+dataset**
+
+Missing columns are added, and backfilled using the attribute's
+`defaultValue` (a `Column` expression) – `defaultValue` defaults to
+`lit(null)`
+
+```scala
+import org.apache.spark.sql.functions._
+
+...
+
+val contractSchema = Set(
+    // Will be added to alternative version schemas which do not have
+    // a `cpf` attribute, and backfilled with "N/A"
+    // In schemas which do have it but with a different type, it will
+    // be recast to string
+    DatasetSeriesAttribute("cpf",
+                           LogicalType.StringType,
+                           defaultValue = lit("N/A"))
+)
+
+...
+```
+
+Existing columns which match the contract by name but not by type are
+coerced to the contract's type. Coercions are currently supported for:
+
+  * Number to number (e.g. double to decimal)
+  * any to string
+  * string to uuid-format string. If the original string cannot be
+    parsed as a UUID, it will be converted to one using
+    `java.util.UUID/nameUUIDFromBytes` ([source][1])
+
+```scala
+import org.apache.spark.sql.functions._
+
+...
+val contractSchema = Set(
+    DatasetSeriesAttribute("customer__id", LogicalType.UUIDType, isPrimaryKey = true),
+    DatasetSeriesAttribute("precise_amount", LogicalType.DecimalType),
+)
+
+val alternativeSchemas = Seq(
+    Set(
+        // This will be automatically recast to UUID prior to
+        // merging with other versions
+        DatasetSeriesAttribute("customer_id",
+                               LogicalType.StringType),
+        // This will be automatically recast to Decimal prior to
+        // merging with other versions
+        DatasetSeriesAttribute("precise_amount",
+                               LogicalType.DoubleType),
+        // This will be dropped as it does not appear in the contract
+        DatasetSeriesAttribute("amount",
+                               LogicalType.IntegerType)
+    )
+)
+...
+```
+
+Columns which do not appear in the contract are dropped.
+
+### Metadata
+
+Every dataset series can be stored with an additional set of metadata
+by overriding the flag `DatasetSeriesContractOp.addIngestionMetadata`
+and setting it to `true`.
+
+When this flag is enabled, every schema has a corresponding “metadata
+enriched” version. This applies to `contractSchema`, too, in the
+following way: `contractSchema` as defined by the user will be added
+to the set of alternative schemas; the effective schema enforced at
+runtime will be `contractSchema` plus the metadata fields.
+
+Currently, the metadata fields are the following:
+
+  * `series_event_cid`
+  * `series_event_prototype`
+  * `series_event_produced_at`
+  * `series_event_processed_at`
+  * `series_event_service_name`
+  * `metadata_id`
+
+See [RFC-9878](https://github.com/nubank/riverbend/blob/master/doc/rfc-9878.md)
+for more details.
+
+### Primary keys and deduplication
+
+Once all versions (including the contract) have been processed, the engine unions all the datasets (which now have identical schema) and runs a deduplication step:
+
+* Rows are grouped by primary key. A column can be made a primary key
+  by marking its corresponding `DatasetSeriesAttribute` as
+  `isPrimaryKey = true`
+* When several rows have the same primary key, they are sorted and the
+  first row in the resulting sequence is kept, the others are dropped.
+  Sorting is done either:
+  * Using the primary key columns sorted alphabetically
+  * By passing a list of column objects in the *optional*
+    `orderByColumns` field:
+    ```scala
+    import org.apache.spark.sql.functions._
+
+    object MyDatasetSeriesOp extends DatasetSeriesContractOp {
+        ...
+        override val orderByColumns: Seq[Column] = Seq($"key1", desc($"key2"))
+        ...
+    }
+    ```
+
+**NB: The deduplication step can be skipped by using `override val deduplication = false` in the `DatasetSeriesContractOp` declaration**
+
+### Final steps
+
+After deduplication, two more steps are run on the resulting data:
+
+* The engine looks for any ``contractSchema`` attribute with the `isPii = true` parameter, and hashes the corresponding columns:
+
+  ```scala
+  import common_etl.operator.dataset_series.DatasetSeriesAttribute
+
+  // `cpf` and `customer_name` will be hashed
+  val contractSchema = Set(
+      DatasetSeriesAttribute("customer_id", LogicalType.UUIDType, isPrimaryKey = true),
+      DatasetSeriesAttribute("cpf", LogicalType.StringType,
+                             isPrimaryKey = true,
+                             isPii = true),
+      DatasetSeriesAttribute("customer_name",
+                             LogicalType.StringType,
+                             isPii = true)
+  )
+  ```
+
+* The engine looks for any `contractSchema` attribute with renaming metadata and renames the relevant columns. An attribute can be marked as renamed using the `as` method on `DatasetSeriesAttribute`
+
+  ```scala
+  import common_etl.operator.dataset_series.DatasetSeriesAttribute
+
+  // `customer_id` and `cpf` will be renamed to `customer__id` and `id_number` in the
+  // final dataframe
+  val contractSchema = Set(
+      DatasetSeriesAttribute("customer_id", LogicalType.UUIDType, isPrimaryKey = true)
+      	.as("customer__id"),
+      DatasetSeriesAttribute("cpf", LogicalType.StringType)
+      	.as("id_number"),
+      DatasetSeriesAttribute("customer_name",
+                             LogicalType.StringType)
+  )
+  ```
+
+### `droppedSchemas`
+
+#### Explicitly dropping schemas
+
+Sometimes, you'll want to ignore certain versions of your series altogether. If this is the case, instead of declaring a schema in `alternativeSchemas`, you can declare it in `droppedSchemas`:
+
+```scala
+import common_etl.operator.dataset_series.DatasetSeriesAttribute
+
+override val droppedSchemas = Seq(
+    Set(
+        DatasetSeriesAttribute("customer_id", LogicalType.UUIDType, isPrimaryKey = true),
+        DatasetSeriesAttribute("corrupted_attribute",
+                               LogicalType.StringType,
+                               isPii = true)
+    )
+)
+```
+
+It is fairly important to declare schemas you wish to drop on purpose in this `droppedSchemas` field; otherwise Itaipu will alert on them and you won't be able to differentiate between schemas you're ignoring intentionally and schemas you're accidentally missing.
+
+#### Troubleshooting dropped schemas
+
+Ideally, you'd want all datasets to be either processed normally, or intentionally dropped through the `droppedSchemas` attribute described above. If Itaipu is unable to match a given dataset against one of the schemas defined in the op, it will log a warning and ignore the dataset.
+
+To track these, the `Dropped Series Versions` table in the [ETL Monitoring Dashboard](https://nubank.splunkcloud.com/en-US/app/search/etl__dataset_issues_monitoring) indicates which dataset series experienced datasets being dropped. If your series appears in this table, it means that Itaipu found an existing dataset series in S3, but could not match all of its datasets with a schema declared in the relevant `DatasetSeriesContractOp` (including schemas in `droppedSchemas`). The `dropped_count` column shows how many datasets were dropped, and the `schemas` column indicates how many distinct schemas were found in these datasets, which could not be reconciled against the contract schema.
+
+In order to remedy this, you will need to update the existing schemas or add new schema in the op to match these dropped datasets. This can be achieved by using the [Dropped DatasetSeries Troubleshooting notebook](https://nubank.cloud.databricks.com/#notebook/574720) on Databricks. This notebook handles querying Metapod and comparing the schemas of existing loaded datasets against.
+
+When running the notebook, you will obtain an output which will look like:
+
+```
+2 schemas were dropped for a total of 149 dropped datasets
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+40 datasets were dropped for a schema most similar to declared schema 'series-raw/policy-reactive-limit-v3-contract'
+
+	Attributes found only in the dropped schema:
+
+	Attributes found only in the declared schema:
+
+		* Attribute(name = "was_negativated", logicalType = LogicalType.BooleanType, nullable = None, primaryKey = None)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+109 datasets were dropped for a schema most similar to declared schema 'series-raw/policy-reactive-limit-v3-contract'
+
+	Attributes found only in the dropped schema:
+
+	Attributes found only in the declared schema:
+
+		* Attribute(name = "hyoga_prediction_ecdf", logicalType = LogicalType.DoubleType, nullable = None, primaryKey = None)
+		* Attribute(name = "hyoga_prediction", logicalType = LogicalType.DoubleType, nullable = None, primaryKey = None)
+		* Attribute(name = "cronno_prediction", logicalType = LogicalType.DoubleType, nullable = None, primaryKey = None)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+```
+
+This output indicates that it found 2 schemas in existing dataset series on S3 that couldn't be matched with one of the schemas of your op. Then, for each schema, it indicates which schema of the op looks most like these dropped schemas (so as to give you something to work from), as well as a description of the differences between the dropped schema and that closest matching schema.
+
+In the example above, a simple fix for the first dropped schema would be to add a new `alternativeSchema` which looks like the contract schema, but removing the `was_negativated` attribute.
+
+#### Troubleshooting very big dataset series
+
+One issue you might encounter when using this notebook is that the Metapod query will timeout (in case of very big series); in this case, you can solve the dropped datasets issue by:
+- Going to this [Splunk query](https://nubank.splunkcloud.com/en-US/app/search/search?q=search%20index%3Dcantareira%20%22Dropping%20dataset-series%22&display.page.search.mode=fast&dispatch.sample_ratio=1&earliest=-24h%40h&latest=now&sid=1549617293.5429746) and change it to search for the name of the series you're looking to troubleshoot
+- Finding the message for dropped datasets, which contains the schema that was dropped
+- Adding it to the schemas of the op (usually alternative schemas)
+
+## Annexes
+
+### Technical description of the ingestion pipeline
+
+1. Riverbend consumes the `EVENT-TO-ETL` Kafka topic using Kafka streams, constantly its content into `.avro` files.
+
+   * Each `.avro` file corresponds to one schema for one dataset series, over a window of either 90 minutes or 50,000 messages (whichever happens first)
+
+   * Upon writing the `.avro` files, Riverbend commits them to Metapod. As separate datasets under a DatasetSeries GraphQL query endpoint, which can be queried like so:
+
+   ```graph
+   {
+     datasetSeries(datasetSeriesName: "series/itaipu-spark-stage-metrics") {
+       datasets {
+         id
+         committedAt
+         path
+       }
+     }
+   }
+   ```
+
+   One dataset corresponding to one generated `.avro` file.
+
+2. At the start of each run, Itaipu starts by [generating 'root datasets'](https://github.com/nubank/itaipu/blob/dc8fa20fc9af26b29dd3eb5cff6ed43496b7e083/src/main/scala/etl/itaipu/package.scala#L36-L46), which include the Dataset Series. It iterates through the DatasetSeriesContractOps listed in [etl.dataset_series.AllSeries](https://github.com/nubank/itaipu/blob/dc8fa20fc9af26b29dd3eb5cff6ed43496b7e083/src/main/scala/etl/dataset_series/package.scala#L12-L87), and for each Op:
+
+   1. Queries Metapod to obtain a `DatasetSeries` object. The structure of this object is directly equivalent to the structure returned by the query, so that it contains a `datasets` field listing all avro file paths.
+   2. Groups the avro files by Schema, and for each schema that matches one of the version declared in the `DatasetSeriesContractOp`, persists a dataset suitable for input into a `SparkOp` & identified by a combination of the series name and the version number. These datasets are identified by the prefix `series-raw
+
+[1]: https://codesearch.nubank.com.br/search/linux?q=val%20toUUIDUdf

@@ -7,6 +7,7 @@
 * [Post-mortems](https://github.com/nubank/morgue)
 * [Infrastructure Overivew](infrastructure/guide-to-the-runtime-environment.md)
 
+
 ## Languages/stack overview
 
 We currently use three different programming languages for most of our work, each of them with a certain purpose:
@@ -105,7 +106,7 @@ More stuff at [Airflow maintenance](./airflow.md)
     * The services we have running on Mesos have no network access to Kafka clusters running in the São Paulo region;
     * Currently, our Kafka clusters are associated with [Immutable Infrastructure stacks](https://github.com/nubank/playbooks/blob/db4cc8939289c513228ff99b6050fe840bd17fa4/admin/infra/stack-spin.md), which get blue-green deployed from time to time. The problem is that Capivara does not know what stacks are, so it is not prepared to switch over to a new one, when it gets deployed.
   * **Batch mode** - it is scheduled to run by Airflow and it runs twice per transaction.
-  The first run happens after dimensional modelling is ready. The dimensional model needs to be made available atomically, and this job is responsible for the cutover. 
+  The first run happens after dimensional modelling is ready. The dimensional model needs to be made available atomically, and this job is responsible for the cutover.
   The second run happens at the end of the transaction with the goal of loading datasets that were skipped by the reactive mode. There are [some pecularities in the way Metapod commits datasets](https://github.com/nubank/metapod/blob/master/README.md#idempotency-and-at-least-once-semantics), which make it possible for the reactive mode to wrongly ignore datasets, so this run can be seen as a failsafe mechanism.
 * Cutia lives inside Capivara. Cutia is a piece of functionality responsible for appending archived datasets into a dataset series. It's worth noting that it does this directly, bypassing Curva de Rio or Riverbend - the services responsible to appending to dataset series.
 It could have been deployed as a separate service, and that's the reason why it has a different name, but it wasn't, presumably due to time constraints.
@@ -126,7 +127,6 @@ It could have been deployed as a separate service, and that's the reason why it 
 
 ## Sonar overview
   * [Sonar](https://github.com/nubank/sonar-js) is a static frontend (written in pure JavaScript) that interfaces with Metapod's GraphQL API to give visibility into the datasets that are tracked by Metapod.
-  * To access Sonar, you need to have `metapod-user` scope, which you can request in #access-request channel on Slack.
   * [Nubank's Sonar URL](https://backoffice.nubank.com.br/sonar-js/) (requires VPN)
   * You can access the sonar output for a given metapod transaction by placing the transaction id in the URL: https://backoffice.nubank.com.br/sonar-js/#/sonar-js/transactions/2d1a7d12-0023-5de5-a437-36409b45f4c2
 
@@ -190,3 +190,7 @@ In Data Infra, we can use an admin user for administrative tasks (e.g. querying 
 ## Permissions / accounts needed to contribute on data infra
 
 Moved to https://github.com/nubank/data-infra-docs/blob/master/onboarding/introduction.md#getting-accounts-and-permissions
+
+## Deep dive
+
+[This video](https://www.youtube.com/watch?v=V2fbkBzFrAM) shows how and where datasets are actually calculated and explain the current dataset series DSL

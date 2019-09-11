@@ -22,7 +22,7 @@ You can follow this nice tutorial on [how to write a dataset](/itaipu/create_bas
 
  - Make sure your dataset has the [serving layer mode](https://github.com/nubank/common-etl/blob/97d640d6c280f4dcedd7b65eae4a64b875f213f2/src/main/scala/common_etl/operator/ServingLayerMode.scala) set up properly; [for example](https://github.com/nubank/itaipu/blob/a77ca6e81c19e3331a96a1de3567a44671c2f7f9/src/main/scala/etl/dataset/policy/mgm_offenders/MgmOffendersPolicy.scala#L18). This will ensure your dataset is saved in the Avro format, with a number of partitions that is optimal for loading.
  - The serving layer mode has three modes right now: `NotUsed` (the default), `LoadedOnly` and `LoadedAndPropagated`, which define how the dataset should be sent to the serving layer. `LoadedOnly` datasets are available to be queried by normal production services, while `LoadedAndPropagated` datasets are also propagated via Kafka to notify other services whenever new data is available.
- - If you use the `LoadedAndPropagated` mode, you also have to specify a propagation key: it ensures we can find the appropriate prototype each row of your dataset belongs to, which is required to route them to the proper Kafka cluster (see [note](#note-on-prototype-column) below). The current valid propagation keys are `CreditCardAccount`, `Customer` and `Prospect`, and they require columns called `account__id`, `customer__id` and `prospect__id` to be available in the dataset, respectively.
+ - If you use the `LoadedAndPropagated` mode, you also have to specify a propagation key: it ensures we can find the appropriate prototype each row of your dataset belongs to, which is required to route them to the proper Kafka cluster (see [note](#note-on-prototype-column) below). The current valid propagation keys are listed [here](https://github.com/nubank/common-etl/blob/master/src/main/scala/common_etl/operator/ServingLayerPropagationKey.scala) (eg: `CreditCardAccount`, `Customer` and `Prospect` that require the columns called `account__id`, `customer__id` and `prospect__id`, respectively). If you want your all the rows to be propagated to the `global` prototype you should use the `Global` key.
  - Make sure your dataset's primary key ([for example](https://github.com/nubank/itaipu/blob/3e270152cc9f51200ad8423d7baf6d574c3aea57/src/main/scala/etl/dataset/policy/collections_policy/CollectionsUnionPolicy.scala#L53)) is distinct per row. This is necessary because the dataset's primary key is how you will access the row on `conrado`. The primary key is generally something like customer id, account id, cpf, etc.
  - Tests that fail if you change the schema [like here](https://github.com/nubank/itaipu/blob/93709a89e4243e56b048586a5dba0a8160007284/src/it/scala/etl/itaipu/ItaipuSchemaSpec.scala#L54).
    This is necessary because if we change the schema of a dataset loaded by `tapir` we need to ensure all downstream consumers of the data (your microservices) can handle this schema change.
@@ -66,14 +66,21 @@ Data is served either via HTTP or Kafka as [`DatasetRow`](https://github.com/nub
  - `:dataset`: the dataset name defined in itaipu, but with the prefix dropped. So `policy/collections-union` becomes `collections-union`
  - `:transaction-id`: the [metapod transaction](/glossary.md#transaction) that the dataset was a part of.
  - `:dataset-id`: the id for the dataset on metapod
- - `:prototype`: what shard the customer/account is associated with (not required)
+ - `:prototype`: what prototype (eg: global, s0, s1, ...) the customer/account is associated with (not required)
  - `:expires-at`: loose proxy for when the data may become overwritten. We suggest you ignore this as it doesn't mean data will necessarily be overwritten before or after this time.
  - `:target-date`: the day that the data was loaded
  - `:value`: a map representing the row of the dataset
 
+## Plumatic schemas for the payload
+
+The [Sarcophagus](https://github.com/nubank/sarcophagus) project publishes the Plumatic schemas of the serving layer datasets as artifacts to the `nu-maven` repository. You can use theses schemas as a dependency in your service if you don't want write them yourself. Take a look at this [guide](https://github.com/nubank/sarcophagus#how-can-i-use-a-dataset-artifact) to learn more about how to use those artifacts.
+
 ## Conrado
 
 `conrado` is a service that runs in the prod environment. It serves data out the DynamoDB table that `tapir` loaded data into, via an HTTP interface, described below:
+
+- _coerce one_ `GET /api/dataset/:dataset/row/:id`: gets the row of a dataset given the primary key id, supports coercion and Sachem
+- _coerce many_ `POST /api/dataset/:dataset/rows`: gets the rows of a dataset given the primary key ids under the :ids parameter of the request body, supports coercion and Sachem
 
  - _fetch many_ `/api/dataset/:id`: gets the results for all datasets loaded into `conrado`'s table with the provided id/entry primary key (i.e. customer ID or account ID)
  - _fetch one_ `/api/dataset/:id/:dataset`: gets the row of a dataset given the primary key id
@@ -103,8 +110,18 @@ will result in
 
 ## Kafka
 
-`tapir` can serve datasets via Kafka, publishing to the `DATASET-UPDATE` with the subtopic set to the dataset name. The payload schema is the same as the http endpoints in `conrado`, which is [`common-schemata.wire.tapir/DatasetRow`](https://github.com/nubank/common-schemata/blob/9cf054a6665341e0b44495151fa7ca2f744f5886/src/common_schemata/wire/tapir.clj#L6-L14).
+When a dataset is declared to be propagated, Tapir serves the rows of a dataset through Kafka. There are 2 approaches at the moment, a single topic for all datasets, and a dedicated topic per dataset.
 
+### Single topic for all datasets
+
+Tapir serves the rows of all datasets to the `DATASET-UPDATE` Kafka topic. The subtopic for each message is set to the name of the dataset. The messages in this topic conform to the generic [`common-schemata.wire.tapir/DatasetRow`](https://github.com/nubank/common-schemata/blob/9cf054a6665341e0b44495151fa7ca2f744f5886/src/common_schemata/wire/tapir.clj#L6-L14) schema. Note: Since this topic is used for all datasets, the map under the `:value` key of the `DatasetRow` is not coerced or checked against any schema. Please consider using the dedicated topic per dataset if you need this.
+
+### Dedicated topic per dataset
+
+Tapir also serves the rows of datasets to a dedicated Kafka topic per dataset. The name of the Kafka topic is derived from the name of the dataset, and is called `SERVING-<DATASET-NAME>`. The messages in the dedicated Kafka topics conform to an extended version for the `DatasetRow` schema. The row of a dataset under the `:value` key of the `DatasetRow` is coerced and checked against the Metapod schema of the dataset. The dedicated topic per dataset is the preferred way to consume a dataset from Tapir. It has the following benefits:
+- **Less bandwidth consumption**, because your service reads only the rows of the dataset you are interested in, and not all rows of all datasets.
+- Deeper **integration with Sachem**, provided your consumer uses a Plumatic schema that also has definitions for the map under the `:value` key of the `DatasetRow` schema. If you are looking for the Plumatic schema of a dataset, take a look at the [Sarcophagus](https://github.com/nubank/sarcophagus) project.
+- **Proper type coercion**, because Tapir uses the Metapod schema of a dataset to serialize the rows. If you use one of the Plumatic dataset schemas provided by [Sarcophagus](https://github.com/nubank/sarcophagus), types like UUIDs, dates, timestamps, etc. will be coerced to their proper Clojure types.
 
 #### note on prototype column
 
