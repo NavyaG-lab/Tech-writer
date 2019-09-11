@@ -13,7 +13,7 @@ On `common-datomic` version `5.42.2` the capability of generating contracts for 
 
 ### Step 1: Bump common-datomic and update generate contracts function
 
-[Refecence PR][1]
+[Reference PR][1]
 
 - Bump `common-datomic` on the clojure service to a version > `5.42.2`
 - Update the [main function][2] in `contract/contract_main.clj` to accept `country` as a parameter.
