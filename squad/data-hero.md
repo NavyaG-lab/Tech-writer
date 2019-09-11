@@ -3,35 +3,23 @@
 ## What is a Data Hero?
 
 The Data Access team is one of the main problem solvers for data related issues at Nubank, and one
-of the main channels that people can rely on to ask a question about data is the Slack channel
-[#data-help](https://nubank.slack.com/messages/C06F04CH1/). Nubank is growing up in size really fast
+of the main channels that people can rely on to ask a question about our data access' tools is the Slack
+channel [#data-help](https://nubank.slack.com/messages/C06F04CH1/). Nubank is growing up in size really fast
 and, as a consequence, the number of data related problems is growing with it, which results in
 members of data access team receiving more questions than they can respond in parallel to their
 normal workday.
 
 Worried about the constant context switch between squad's internal work to answering questions
 related to data, the Data Access team decided to create the role of the "data hero". Data hero is a
-person who will be in charge of resolving the problems of other nubankers that need help with data,
-while the rest of the team can focus on the squad objectives. By creating the role of Data Hero,
-Data Access will be able to benefit from more power hours of work without losing the ability to
-support other nubankers.
+person who will be in charge of resolving the problems of other nubankers that need help with our tools,
+while the rest of the team can focus on the squad objectives.
 
 ## Responsibilities
 
 ### Monitoring
 
-Check and fix (if possible):
-* [Redshift](https://console.aws.amazon.com/redshift/home?region=us-east-1#cluster-list:)
-    * In the "Cluster Performance" tab of the cluster, monitor mainly "Queries" (user queries
-    running for a long time), "Percentage disk space used" and "CPU utilization"
-    * Investigate queries in the "Queries" tab, and maybe terminate some
-    * If you need to restart the cluster, check before if there is no query from `sao_pedro`
-    running. In the "Configuration" tab, click on "Cluster" --> "Reboot cluster"
-    * Reactively perform the monitoring if someone complains about the BI tool or other means of
-    accessing Redshift
-* [Databricks](https://nubank.cloud.databricks.com/#setting/clusters)
-* [Metabase](https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:search=metabase;sort=tag:Name)
-    * Cycling the machines will solve many problems: `nu ser cycle metabase --env cantareira --region us-east-1 --suffix s`
+* [BigQuery](#BigQuery)
+* [Databricks](#Databricks)
 * [Looker](https://nubank.looker.com/admin)
 * [Mordor](https://console.aws.amazon.com/ec2/v2/home?region=sa-east-1#Instances:search=mordor;sort=tag:Name)
     * Cycling the machines will solve many problems: `nu ser cycle s0 mordor --env prod --suffix x`
@@ -40,15 +28,16 @@ Check and fix (if possible):
 Over the course of the week our customers, Nubank's data users, often encounter issues while using
 our services. To support their effectiveness, the data hero is responsible for communicating with
 these users; looking into their issues in a timely manner; routing questions made via private
-messages and other channels to the proper one (_always respecting the current data hero technical
-limitations_).
+messages and other channels to the proper one (_always respecting the current data hero technical limitations_).
 
 Slack channels you should monitor for questions:
 
-* [#data-help](https://nubank.slack.com/messages/C06F04CH1/)
-* [#squad-data-access](https://nubank.slack.com/messages/C84FAS7L6/)
-* [#guild-data-eng](https://nubank.slack.com/messages/C1SNEPL5P/)
+* [#data-access-alarms](https://nubank.slack.com/messages/C8TENL0C8/) (on call engineers only)
 * [#data-announcements](https://nubank.slack.com/messages/C20GTK220/)
+* [#data-help](https://nubank.slack.com/messages/C06F04CH1/)
+* [#guild-data-eng](https://nubank.slack.com/messages/C1SNEPL5P/)
+* [#looker-bq-migration](https://nubank.slack.com/messages/CB9S1LPEZ/)
+* [#squad-data-access](https://nubank.slack.com/messages/C84FAS7L6/)
 
 ### Itaipu
 
@@ -56,26 +45,27 @@ Slack channels you should monitor for questions:
 * Guide people on the creation of new datasets
 * Move StaticOp's to the appropriate AWS S3 bucket and prefix
 
-### Guide people on the use and setup of:
-* Sonar: https://wiki.nubank.com.br/index.php/Sonar
-* belomonte (python library): https://wiki.nubank.com.br/index.php/Belo_Monte
-* IMordor: https://wiki.nubank.com.br/index.php/IMordor
-* Mordor: https://wiki.nubank.com.br/index.php/Mordor
-* Dbeaver: https://github.com/nubank/playbooks/tree/master/squads/data-access/dbeaver and https://wiki.nubank.com.br/index.php/SQL_client
+### BigQuery
 
-### Metabase
-* If someone asks if Metabase is down, make sure:
-    * you can open Metabase
-    * the user is in the correct network or in the VPN (with it
-    [correctly set up](https://wiki.nubank.com.br/index.php/VPN))
-* if someone tells that a schema (e.g., `origin`) is missing, trigger a "Sync database schema now"
-in https://metabase.nubank.com.br/admin/databases/2 (admin access only)
+* [Data access project](https://console.cloud.google.com/bigquery?project=nubank-data-access)
+* [Loader monitoring](https://github.com/nubank/monsoon#monitoring)
+* [Usage dashboard](https://nubank.looker.com/dashboards/gcp_bigquery_logs::bigquery_audit)
 
 ### Databricks
+* [Clusters management](https://nubank.cloud.databricks.com/#setting/clusters)
+
+Things to keep an eye on:
 * Detach notebooks older than 1 day
 * Restart clusters that are not working as expected
-* Attach, detach, add and remove libraries, especially itaipu. There are some instructions
-[here](https://github.com/nubank/data-infra-docs/tree/master/databricks)
+* Attach, detach, add and remove libraries. There are some instructions [here](https://github.com/nubank/data-infra-docs/tree/master/databricks)
+* Automated jobs:
+    - [Autobump itaipu and restart clusters](https://nubank.cloud.databricks.com/#job/8737)
+        - Runs daily at 5:30am (UTC-2)
+    - [Databricks BR loader](https://nubank.cloud.databricks.com/#notebook/1321846)
+        - Runs daily every 3 hours
+    - [Databricks MX loader](https://nubank.cloud.databricks.com/#notebook/1223300/)
+        - Manually triggered
+        
 
 ### Escalating
 Do not be afraid of asking for help if you need to. Here are some non-comprehensive guidelines on
@@ -86,9 +76,13 @@ when to escalate:
 
 ## Schedule
 
-Two members of data access will be scheduled to work as data hero for each week. In this week, the
-priority of the data heroes will be to help other nubankers. It should be harder for them to work on
-side projects, but they can if they want.
+| Day of the week | Data Hero          |
+|-----------------|--------------------|
+| Monday          | @leonardo.matsuura |
+| Tuesday         | @gasbicalho        |
+| Wednesday       | @rodolferreira     |
+| Thursday        | @guzz              |
+| Friday          | @sabino            |
 
 ## *NOT* responsibilities
 
