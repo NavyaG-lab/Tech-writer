@@ -163,3 +163,9 @@ make it helpful for you, feel free to contact data infra. For example, you can
 suggest new metrics or to send us a PR with the newly proposed metrics for
 review.
 
+
+## Resources
+
+Here is a link to a [talk](https://docs.google.com/presentation/d/1EVG6_zpc_79txV-CB4Jr5L0zV-_-JFzryQlbSekC8ic/edit#slide=id.p)
+I gave in the Data Tribe all-hands about mergulho. Note that you need access to
+the data tribe shared drive to access this.
