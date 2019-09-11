@@ -16,8 +16,7 @@ On `common-datomic` version `5.42.2` the capability of generating contracts for 
 [Refecence PR][1]
 
 - Bump `common-datomic` on the clojure service to a version > `5.42.2`
-- Update the [main function][2] in `contract/contract_main.clj` to include the service's country.
-  - For services in multiple countries duplicate this line for each country.
+- Update the [main function][2] in `contract/contract_main.clj` to accept `country` as a parameter.
 - Update the test function in `db/datomic/config_test.clj` to include the service's country
   - For services in multiple countries duplicate this line for each country.
 - Delete the old contracts from `resources/contract`
