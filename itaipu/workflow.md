@@ -167,12 +167,12 @@ below.
 ### Creating a new dataset
 
 1. If the folder or subfolder which will contain the dataset doesn't exist in
-[itaipu/src/main/scala/etl/dataset/](https://github.com/nubank/itaipu/tree/master/src/main/scala/etl/dataset):
+[itaipu/src/main/scala/nu/data/<country>/datasets/](https://github.com/nubank/itaipu/tree/master/src/main/scala/etl/dataset):
     1. Create the (sub)folder, e.g., `folder_name`
     1. Create a package file called `package.scala` inside the new (sub)folder with the following content (assuming that
       the file that you will create in the next step is called `FileName.scala`):
         ```scala
-        package etl.dataset.parent_folder_name_if_subfolder
+        package nu.data.<country>.datasets.parent_folder_name_if_subfolder
 
         import common_etl.operator.SparkOp
 
