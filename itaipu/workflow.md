@@ -167,7 +167,7 @@ below.
 ### Creating a new dataset
 
 1. If the folder or subfolder which will contain the dataset doesn't exist in
-[itaipu/src/main/scala/nu/data/<country>/datasets/](https://github.com/nubank/itaipu/tree/master/src/main/scala/etl/dataset):
+[itaipu/src/main/scala/nu/data/[country]/datasets/](https://github.com/nubank/itaipu/tree/master/src/main/scala/nu/data/br/datasets/):
     1. Create the (sub)folder, e.g., `folder_name`
     1. Create a package file called `package.scala` inside the new (sub)folder with the following content (assuming that
       the file that you will create in the next step is called `FileName.scala`):
@@ -197,8 +197,8 @@ below.
             subfolder3.allOps(referenceDate)
         }
         ```
-    1. Add `folder_name.allOps` to `opsToRun` in
-      [itaipu/src/main/scala/etl/itaipu/Itaipu.scala](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/itaipu/Itaipu.scala)
+    1. Add `folder_name.allOps` to `all` in
+      [itaipu/src/main/scala/nu/data/[country]/datasets/package.scala](https://github.com/nubank/itaipu/blob/master/src/main/scala/nu/data/br/datasets/package.scala)
 1. Create the dataset file in the same folder as the package file
 
     - The filename must be in PascalCase format (e.g., `FileName.scala`) and must be the same as the object name
@@ -244,7 +244,7 @@ For a faster iterative process, run the code from Itaipu directly in the Databri
 edit in an IDE because of type checking, autocompletion, etc.), then go back to step 1.
 1. Unit tests:
     1. The functions that you created in the dataset need to have unit tests in
-    [itaipu/src/test/scala/etl/dataset](https://github.com/nubank/itaipu/tree/master/src/test/scala/etl/dataset). If the
+    [itaipu/src/test/scala/nu/data/[country]/datasets](https://github.com/nubank/itaipu/tree/master/src/test/scala/nu/data/br/datasets/). If the
     corresponding folder for your dataset doesn't exist, create it with the same name and subfolder structure as in
     [itaipu/src/main/scala/etl/dataset/](https://github.com/nubank/itaipu/tree/master/src/main/scala/etl/dataset).
     1. The filename must be the same as the object name plus `Spec`, e.g., `WhateverSpec.scala`
