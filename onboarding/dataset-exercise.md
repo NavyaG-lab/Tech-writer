@@ -37,7 +37,6 @@ For this walkthrough, you'll need to obtain the following permissions:
   * `eng`
   * `prod-eng`
   * `data-infra`
-  * `belomonte`
 * Metapod
   * `metapod-admin` scope – ask `#access-request` (any engineer can also provide it for you on staging)
   * ensure your certs are set up properly by running `nu certs setup
