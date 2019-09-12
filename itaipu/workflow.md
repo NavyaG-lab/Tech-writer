@@ -3,6 +3,7 @@
  * [Contracts Workflow](#contracts-workflow)
    * [Creating a New Contract](#creating-a-new-contract)
    * [Updating an Existing Contract](#updating-an-existing-contract)
+   * [Migrating from V0 to V1 Contracts](guides/contracts_migration_v0_to_v1.md)
  * [Datasets, Dimensions, and Fact Tables Workflow](#datasets,-dimensions,-and-fact-tables-workflow)
    * [Bus matrix](#bus-matrix)
    * [Databricks Approach](#databricks-approach)
@@ -25,7 +26,7 @@
 Creating a new contract is different than updating an existing contract because you'll need to create some new files.
 
 1. On the relevant Clojure service:
-    1. Create or edit the following files (there is an example [here](https://github.com/nubank/forex/pull/93)):
+    1. Create or edit the following files (there is an example [here](https://github.com/nubank/metapod/pull/365/files):
         - `contract/contract_main.clj`:
             1. Create it if it doesn't exist, with the correct content
         - `project.clj`:
@@ -45,42 +46,42 @@ Creating a new contract is different than updating an existing contract because 
                 - `:contract/history true` if you want to include the historical values of that attribute (a separate
                 table with columns `audit__cid`, `audit__tags`, `audit__user`, `audit__version`, `db__tx_instant`)
         - `test/[SERVICE-NAME]/db/datomic/config_test.clj`:
-            1. Add a call to function `common-datomic.contract.test-helpers/enforce-contracts!`
-    1. Run `$ lein gen-contracts` to generate the initial contracts in `resources/contract/[DB-NAME]/`. Give the data
+            1. Add a call to function `common-datomic.contract.test-helpers/enforce-contracts! <country>` for each country that needs to have contracts.
+    1. Run `$ lein gen-contracts <country>` to generate the initial contracts in `resources/nu/data/<country>/dbcontracts/<DB-NAME>/entities`. Give the data
     infra squad a heads up that you are working on it, and then answer `Y` to the command line prompt.
         - If you receive the following error:
-        
+
           ```
           java.lang.AssertionError: Assert failed: Either `:contract/ref-ids` or `:skeleton` must explicitly specified as metadata on a schema.
           ```
-        
+
           It is probably because it cannot infer some references inside your skeletons. You can fix it by explicitly declaring it in your schema.
           Look at the file `src/tyriel/models/payment_source.clj` from this PR as a reference: <https://github.com/nubank/tyrael/pull/54>.
     1. Open a pull request similar to [this one](https://github.com/nubank/forex/pull/93).
 
 1. Make sure that the database exists in prod and is being extracted before adding the contract to Itaipu.
-    
+
 - [Example query of this on Thanos](https://prod-thanos.nubank.com.br/graph?g0.range_input=1h&g0.expr=max(datomic_extractor_basis_t%7Bdatabase%3D~%22metapod%22%7D)&g0.tab=0) You should see line chart showing the growing amount of data extracted with time. _NB. In this example we are referring to the `metapod` service. You have to replace it with the name of your service._
-    
+
 1. On Itaipu create a Scala object for the database:
     1. If this is the first contract for this database, create a new package (aka folder) under
-    [itaipu/src/main/scala/etl/contract](https://github.com/nubank/itaipu/tree/master/src/main/scala/etl/contract) named
+    [itaipu/src/main/scala/nu/data/<country>/dbcontracts/<database>](https://github.com/nubank/itaipu/tree/master/src/main/scala/nu/data/br/dbcontracts) named
     after the new database. If the relevant folder already exists, proceed to the next step.
     1. Create a Scala object for the database (using PascalCase, aka upper camel case) that will reference each of the
     contract entities - similar to
-    https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/contract/proximo/Proximo.scala.
+    https://github.com/nubank/itaipu/pull/6299/files#diff-2e9855c468c7e57c2c4376cd090df220R10
     1. Only if the database is not sharded (that is, it is mapped to global), add the `prototypes` attribute:
     `override val prototypes: Seq[Prototype] = Seq(Prototype.Global)`. Otherwise, leave only the attributes `name`,
     `entities` and `qualityAssessment`,
 
 1. Create a new Scala object for each new contract entity you are adding.
     1. The code should be a direct copy paste from contract Scala file(s) generated in the Clojure project (generated
-    using `$ lein gen-contracts` and found in `resources/contract/[DB-NAME]/*.scala`) into folder
-    `itaipu/src/main/scala/etl/contract/[DB-NAME]`.
+    using `$ lein gen-contracts <country>` and found in `resources/nu/data/<country>/<DB-NAME>/entities/*.scala`) into folder
+    `itaipu/src/main/scala/nu/data/<country>/dbcontracts/<DB-NAME>/entities/`.
     1. Ensure all objects are referenced by the `entities` val in the database object (mentioned in the previous step).
 
 1. If this is the first contract for this database, add a reference to the database object to
-[`allDatabases` in `contract/package.scala`](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/contract/package.scala). If not add a reference of your new contract to the [existing database object](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/contract/proximo/Proximo.scala) (entities attribute).
+[`all` in `nu/data/<country>/dbcontracts/V1.scala`](https://github.com/nubank/itaipu/blob/master/src/main/scala/nu/data/br/dbcontracts/V1.scala#L8). If not add a reference of your new contract to the [existing database object](https://github.com/nubank/itaipu/pull/6299/files#diff-2e9855c468c7e57c2c4376cd090df220R14) (entities attribute).
 
 1. Follow the instructions about [running tests](#running-tests)
 
@@ -92,7 +93,7 @@ Creating a new contract is different than updating an existing contract because 
 
 ### Updating an Existing Contract
 
-A Clojure service that already has generated contract Scala files will store them in `/resources/[DB-NAME]/*.scala`.
+A Clojure service that already has generated contract Scala files will store them in `/resources/nu/data/<country>/dbcontracts/<DB-NAME>/entities/*.scala`.
 When running unit tests on a service with generated contracts, any change to an attribute that is included in a contract
 (or any addition of an attribute without `:contract/include false`) will cause the generated Scala file to no longer match.
 
@@ -167,12 +168,12 @@ below.
 ### Creating a new dataset
 
 1. If the folder or subfolder which will contain the dataset doesn't exist in
-[itaipu/src/main/scala/etl/dataset/](https://github.com/nubank/itaipu/tree/master/src/main/scala/etl/dataset):
+[itaipu/src/main/scala/nu/data/[country]/datasets/](https://github.com/nubank/itaipu/tree/master/src/main/scala/nu/data/br/datasets/):
     1. Create the (sub)folder, e.g., `folder_name`
     1. Create a package file called `package.scala` inside the new (sub)folder with the following content (assuming that
       the file that you will create in the next step is called `FileName.scala`):
         ```scala
-        package etl.dataset.parent_folder_name_if_subfolder
+        package nu.data.<country>.datasets.parent_folder_name_if_subfolder
 
         import common_etl.operator.SparkOp
 
@@ -197,10 +198,10 @@ below.
             subfolder3.allOps(referenceDate)
         }
         ```
-    1. Add `folder_name.allOps` to `opsToRun` in
-      [itaipu/src/main/scala/etl/itaipu/Itaipu.scala](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/itaipu/Itaipu.scala)
+    1. Add `folder_name.allOps` to `all` in
+      [itaipu/src/main/scala/nu/data/[country]/datasets/package.scala](https://github.com/nubank/itaipu/blob/master/src/main/scala/nu/data/br/datasets/package.scala)
 1. Create the dataset file in the same folder as the package file
-    
+
     - The filename must be in PascalCase format (e.g., `FileName.scala`) and must be the same as the object name
 1. Create the dataset object:
     - To create a dataset basically you need to create a SparkOp, which has mainly 3 methods:
@@ -210,14 +211,14 @@ below.
     - Write the code for the new dataset following the code from existing datasets or use the template shown here:
     https://wiki.nubank.com.br/index.php/Scala
 1. Add the object to the output of `allOps` in the `package.scala` file
-    
+
     - It's possible to [make the dataset available in Redshift](#make-the-dataset-available-in-redshift)
 1. Follow the instructions about [editing datasets](#editing-an-existing-dataset)
 
 ### Editing an existing dataset
 For a faster iterative process, run the code from Itaipu directly in the Databricks notebook:
 1. Paste the raw Itaipu Scala code into a cell in the Databricks notebook
-    
+
     - **Important:** Remove the package name from the top of the file
 1. Manually set up the `df` value. For example, assuming your object name is `Whatever`:
     ```scala
@@ -244,7 +245,7 @@ For a faster iterative process, run the code from Itaipu directly in the Databri
 edit in an IDE because of type checking, autocompletion, etc.), then go back to step 1.
 1. Unit tests:
     1. The functions that you created in the dataset need to have unit tests in
-    [itaipu/src/test/scala/etl/dataset](https://github.com/nubank/itaipu/tree/master/src/test/scala/etl/dataset). If the
+    [itaipu/src/test/scala/nu/data/[country]/datasets](https://github.com/nubank/itaipu/tree/master/src/test/scala/nu/data/br/datasets/). If the
     corresponding folder for your dataset doesn't exist, create it with the same name and subfolder structure as in
     [itaipu/src/main/scala/etl/dataset/](https://github.com/nubank/itaipu/tree/master/src/main/scala/etl/dataset).
     1. The filename must be the same as the object name plus `Spec`, e.g., `WhateverSpec.scala`
@@ -364,7 +365,7 @@ Itaipu downloads them from [Maven](https://maven.apache.org/) and nu-maven (Nuba
 
 To check the latest versions:
 * In Maven: https://search.maven.org/
-    
+
     * Go to the Advanced Search and use the GroupId and ArtifactId. It's possible that you need to append the Scala version to the `artifactID` (e.g., `_2.11` for Scala 2.11). For example: `g:"org.typelevel" AND a:"cats_2.11"`.
 * In nu-maven:
     ```sh
