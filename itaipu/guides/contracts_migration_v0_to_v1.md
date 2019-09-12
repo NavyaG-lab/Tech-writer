@@ -1,6 +1,6 @@
 # Contracts Migration - V0 to V1 (AKA Multi-Country Contracts)
 
-On `common-datomic` version `5.42.2` the capability of generating contracts for multiple countries, including the following changes:
+On `common-datomic` version `5.42.2` the capability of generating contracts for multiple countries was added, including the following changes:
 
 - use `nu.data.infra.api.dbcontracts.v1` as base for contracts generation.
 - package structure changed from `contract.etl` to `nu.data.infra.{country}.dbcontracts`
@@ -15,7 +15,7 @@ On `common-datomic` version `5.42.2` the capability of generating contracts for 
 
 [Reference PR][1]
 
-- Bump `common-datomic` on the clojure service to a version > `5.42.2`
+- Bump `common-datomic` on the clojure service to a version >= `5.42.2`
 - Update the [main function][2] in `contract/contract_main.clj` to accept `country` as a parameter.
 - Update the test function in `db/datomic/config_test.clj` to include the service's country
   - For services in multiple countries duplicate this line for each country.
