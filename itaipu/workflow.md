@@ -3,6 +3,7 @@
  * [Contracts Workflow](#contracts-workflow)
    * [Creating a New Contract](#creating-a-new-contract)
    * [Updating an Existing Contract](#updating-an-existing-contract)
+   * [Migrating from V0 to V1 Contracts](guides/contracts_migration_v0_to_v1.md)
  * [Datasets, Dimensions, and Fact Tables Workflow](#datasets,-dimensions,-and-fact-tables-workflow)
    * [Bus matrix](#bus-matrix)
    * [Databricks Approach](#databricks-approach)
