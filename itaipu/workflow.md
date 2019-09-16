@@ -82,6 +82,15 @@ Creating a new contract is different than updating an existing contract because 
 
 1. If this is the first contract for this database, add a reference to the database object to
 [`all` in `nu/data/<country>/dbcontracts/V1.scala`](https://github.com/nubank/itaipu/blob/master/src/main/scala/nu/data/br/dbcontracts/V1.scala#L8). If not add a reference of your new contract to the [existing database object](https://github.com/nubank/itaipu/pull/6299/files#diff-2e9855c468c7e57c2c4376cd090df220R14) (entities attribute).
+    example imports for the creating the DatabaseContract
+    ```scala
+    import java.time.LocalDate
+
+    import nu.data.infra.api.dbcontracts.v1.{DatabaseContract, DatomicEntity, QualityAssessment}
+    import nu.data.infra.api.core.{Country, Prototype, Squad}
+    import nu.data.br.dbcontracts.<service>.entities._
+    import nu.data.infra.api.core.Squad
+    ```
 
 1. Follow the instructions about [running tests](#running-tests)
 
