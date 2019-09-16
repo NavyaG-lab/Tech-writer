@@ -54,15 +54,22 @@ NOTE: this issue can be addressed by fixing `capivara` to have a timeout to the 
 
 ## Restart Aurora
 
-Every once in a while, aurora goes down. This will prevent anything that uses `sabesb` to work, like running the DAG.
+Every once in a while, Aurora goes down. `sabesp` commands, such as ones involved in running the DAG, won't work in this case .
 
-You can tell when aurora is down when the [aurora web UI](https://cantareira-stable-mesos-master.nubank.com.br:8080) won't load, but the [mesos web UI](https://cantareira-stable-mesos-master.nubank.com.br) will.
+**Symptoms of a non-responsive Aurora**
+
+- The [aurora web UI](https://cantareira-stable-mesos-master.nubank.com.br:8080) does not load, but the [mesos web UI](https://cantareira-stable-mesos-master.nubank.com.br) does.
+- A lot of pending jobs in the [aurora web UI](https://cantareira-stable-mesos-master.nubank.com.br:8080)
 
 Try to look into the issue, potentially by ssh'ing into `mesos-master`, via `nu ser ssh mesos-master --suffix dev --env cantareira --region us-east-1` and looking at the aurora logs via `journalctl -u aurora-scheduler`.
 
-To get aurora back up, cycle `mesos-master`:
+To restart Aurora, you could do either of the following:
 
-`nu ser cycle mesos-master --env cantareira --suffix stable --region us-east-1`
+- cycle `mesos-master`: `nu ser cycle mesos-master --env cantareira --suffix stable --region us-east-1`
+- restart `aurora-scheduler` alone:
+  - Check current status: `sudo systemctl status aurora-scheduler`
+  - Start the service: `sudo systemctl restart aurora-scheduler`
+  - Verify that the service restarted: `journalctl -f -u aurora-scheduler`
 
 Most likely you will need to [restart Airflow](airflow.md#restarting-the-airflow-process) after this happens.
 
