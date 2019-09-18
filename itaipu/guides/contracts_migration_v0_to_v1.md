@@ -33,6 +33,7 @@ On `common-datomic` version `5.42.2` the capability of generating contracts for 
 - Delete old contracts from `src/main/scala/etl/contract/{service_name}`
 - Create a new `DatabaseContract` that includes the entities generated in the previous step, the entities are generated on `src/main/scala/nu/data/{country}/dbcontracts/{service_name}/entities`. [Example][5]
 - Add the `DatabaseContract` to the respective Country's list of the databases. [Example][6]
+- PS: Remember to add a `private [country]` to your `DatabaseContract` definition, that will make importing the right country easier.
 
 ### Step 4: Migrate references to the old contract
 
@@ -48,6 +49,10 @@ When migrating you might face some compilation errors by using the V1 api, those
 - `DatabaseContractOps.lookup(Entity.historyEntity("attribute_name")).name` -> `Names.entityAttributeHistory(Entity, "attribute_name")`
 - `PIILookupTable.opName(Employees, "employee__customer_id")` -> `Names.piiLookup(Employees, "employee__customer_id")`
 
+### More Examples
+
+- [Migrating CCLedgerMX, Maat, Mordor][7]
+- [Migrating Aloka][8]
 
 
 
@@ -55,5 +60,7 @@ When migrating you might face some compilation errors by using the V1 api, those
 [2]: https://github.com/nubank/metapod/pull/365/files#diff-75982a7c03f1fa94300796c6649430a4R6
 [3]: https://github.com/nubank/metapod/pull/365/files#diff-925b3593e886902ddc596b82072b6c62R5
 [4]: https://github.com/nubank/itaipu/pull/6299
-[5]: https://github.com/nubank/itaipu/pull/6299/files#diff-2e9855c468c7e57c2c4376cd090df220R10
-[6]: https://github.com/nubank/itaipu/pull/6299/files#diff-1cd94cecc13a02d4f603ca213f6e3f7cR9
+[5]: https://github.com/nubank/itaipu/blob/master/src/main/scala/nu/data/mx/dbcontracts/aloka/Aloka.scala
+[6]: https://github.com/nubank/itaipu/blob/master/src/main/scala/nu/data/mx/dbcontracts/V1.scala#L11
+[7]: https://github.com/nubank/itaipu/pull/6483/
+[8]: https://github.com/nubank/itaipu/pull/6481
