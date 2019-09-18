@@ -41,6 +41,13 @@ On `common-datomic` version `5.42.2` the capability of generating contracts for 
 - *Non-standard imports might required manual changes.*
 
 
+### Common Migrations
+
+When migrating you might face some compilation errors by using the V1 api, those are simple changes like the ones below, they involve changing the usage of a deprecated function to its up to date version.
+
+- `DatabaseContractOps.lookup(Entity.historyEntity("attribute_name")).name` -> `Names.entityAttributeHistory(Entity, "attribute_name")`
+- `PIILookupTable.opName(Employees, "employee__customer_id")` -> `Names.piiLookup(Employees, "employee__customer_id")`
+
 
 
 
