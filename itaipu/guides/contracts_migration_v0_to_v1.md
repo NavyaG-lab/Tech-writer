@@ -48,6 +48,7 @@ When migrating you might face some compilation errors by using the V1 api, those
 
 - `DatabaseContractOps.lookup(Entity.historyEntity("attribute_name")).name` -> `Names.entityAttributeHistory(Entity, "attribute_name")`
 - `PIILookupTable.opName(Employees, "employee__customer_id")` -> `Names.piiLookup(Employees, "employee__customer_id")`
+- `DatabaseContractOps.lookup(Entity).name` -> `Names.contract(Entity)`
 
 ### More Examples
 
