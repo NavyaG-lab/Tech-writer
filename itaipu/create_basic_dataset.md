@@ -47,11 +47,11 @@ Configuring IDEA:
 
 Importing projects on IDEA:
 
-After configuring IDEA, let's set up the **[common-etl](https://github.com/nubank/common-etl)** project, Afterwards, we will repeat the same steps for our main project: **[Itaipu](https://github.com/nubank/itaipu/)**.
+After configuring IDEA, let's set up the **[Itaipu](https://github.com/nubank/itaipu/)** project.
 
 8. At this point in time, you already have **[nucli](https://github.com/nubank/nucli/)** installed, so let's use it.
 9. `nu projects clone common-etl` with this command you clone common-etl to into your **$NU_HOME**
-10. Now, click on **Import Project** and select **common-etl's directory**
+10. Now, click on **Import Project** and select **itaipu's directory**
 11. Select **Import Project from external Model -> SBT**
 
   ![](https://static.notion-static.com/c5d12ddcbd2f45c1a76f6a6515fe6526/Screenshot_2017-12-01_13-53-31.png)
@@ -59,12 +59,10 @@ After configuring IDEA, let's set up the **[common-etl](https://github.com/nuban
 12. Select the Java SDK that is installed on your machine. If you don't have one, click on **NEW** and select from your local machine.
 13. On **General settings**, change **Maximum heap size, MB** to `8192`
 
-  ![](https://user-images.githubusercontent.com/39742656/64537666-a3e29e80-d2f1-11e9-88f9-153dd590e4ba.png)
+  ![](https://user-images.githubusercontent.com/39742656/65346653-9233ad80-dbb3-11e9-86ec-a2678f57ef28.png)
 
 14. Click on Finish. Wait a little bit for IDEA to download all dependencies and build the project.
 15. If prompted, choose to use scalafmt for formatting
-16. Repeat steps 8-15 for our main project: **itaipu**
-- If you run into trouble, make sure common-etl has built successfully
 - If you get errors related to dependencies of the project, force IntelliJ to reload them from build.sbt: Go to menu **View --> Tool Windows --> sbt** and click on the button to Refresh (arrows in a circle).
 
 All done.
