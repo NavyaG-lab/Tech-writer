@@ -242,9 +242,11 @@ Then select the downstream nodes that have failed due to the upstream `fx-model`
 There are two ways to determine downstream datasets/models to a given dataset.
 #### Using either `sbt console` or `ammonite repl`
 ```
-cd $NU_HOME/itaipu && export NU_COUNTRY=br && ./amm-repl
+cd $NU_HOME/itaipu
 
 git checkout release
+
+export NU_COUNTRY=br && ./amm-repl
 
 val params = common_etl.RunParams(common_etl.Environment.devel("itaipu", common_etl.InfrastructureCountry.BR), java.time.LocalDate.now(), java.time.LocalDate.now(), "18ce1d9", java.util.UUID.randomUUID())
 
