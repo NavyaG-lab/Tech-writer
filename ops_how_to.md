@@ -13,6 +13,7 @@
   * [Dealing with dataset failures](#dealing-with-dataset-failures)
   * [Dealing with model failures](#dealing-with-model-failures)
   * [Making downstream jobs run when an upstream job fails](#making-downstream-jobs-run-when-an-upstream-job-fails)
+  * [Determining downstream datasets to a failed dataset](#determining-downstream-datasets-to-a-failed-dataset)
 * [Keep machines up after a model fails](#keep-machines-up-after-a-model-fails)
 * [Manually commit a dataset to metapod](#manually-commit-a-dataset-to-metapod)
 * [Checking a dataset loaded](#checking-a-dataset-loaded)
@@ -235,6 +236,37 @@ In this case you can select `fx-model` and mark it as successful:
 Then select the downstream nodes that have failed due to the upstream `fx-model` failure and clear them so that when other running dependencies finish, they will run these nodes. In this case, clear both `databricks_load-models` and `scale-ec2-rest`. The resulting DAG should look like this:
 
 ![resulting dag](images/recovered_dag.png)
+
+### Determining downstream datasets to a failed dataset
+
+There are two ways to determine downstream datasets/models to a given dataset.
+#### Using either `sbt console` or `ammonite repl`
+```
+cd $NU_HOME/itaipu && export NU_COUNTRY=br && ./amm-repl
+
+git checkout release
+
+val params = common_etl.RunParams(common_etl.Environment.devel("itaipu", common_etl.InfrastructureCountry.BR), java.time.LocalDate.now(), java.time.LocalDate.now(), "18ce1d9", java.util.UUID.randomUUID())
+
+val ops = etl.itaipu.Itaipu.opsToRun(params)
+
+import common_etl.operator.GraphOps
+val graph = GraphOps.createGraphFromOps(ops).get
+
+/*The particular dataset you want to compute the successors of*/
+import etl.dataset_series.archived.Contextual
+val op = Contextual
+
+val node = graph.get(op)
+val successors = node.withSubgraph().toSet - op
+```
+
+#### Using `spark_ops.json`
+`spark_ops.json` is generated as part of the integration tests which run on CircleCI. You will have to navigate to the integration tests run against the specific version of `release` branch. Download `spark_ops.json` by clicking on the link, as shown below.
+
+![spark_ops_json](images/spark_ops_json.png)
+
+```cat Downloads/spark_ops.json | jq '[.[] | select(.name == "series-contract/scr-operacao") | {name: .name, inputs: .inputs, downstream: .successors}] '```
 
 ## Keep machines up after a model fails
 
