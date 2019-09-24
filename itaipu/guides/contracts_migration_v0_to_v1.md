@@ -3,7 +3,8 @@
 On `common-datomic` version `5.42.2` the capability of generating contracts for multiple countries was added, including the following changes:
 
 - use `nu.data.infra.api.dbcontracts.v1` as base for contracts generation.
-- package structure changed from `contract.etl` to `nu.data.infra.{country}.dbcontracts`
+- package structure changed from `contract.etl` to `nu.data.{country}.dbcontracts`
+- `etl.contract` package structure remains unchanged (e.g. `etl.contract.DatabaseContractOps`)
 - Documentation in all fields and contracts is now **required**
 - non-optional fields in the `DatomicEntity` data structure
 - the function `gen-helpers/generate-contracts!` now accepts a country as an argument.
