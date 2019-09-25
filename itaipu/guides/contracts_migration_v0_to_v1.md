@@ -35,6 +35,7 @@ On `common-datomic` version `5.42.2` the capability of generating contracts for 
 - Create a new `DatabaseContract` that includes the entities generated in the previous step, the entities are generated on `src/main/scala/nu/data/{country}/dbcontracts/{service_name}/entities`. [Example][5]
 - Add the `DatabaseContract` to the respective Country's list of the databases. [Example][6]
 - PS: Remember to add a `private [country]` to your `DatabaseContract` definition, that will make importing the right country easier.
+- PS2: Remember to override the `prototypes` val to the prototypes where the service run in each country. Check out the options available at `nu.data.infra.Prototypes`. [Example][7]
 
 ### Step 4: Migrate references to the old contract
 
@@ -53,8 +54,8 @@ When migrating you might face some compilation errors by using the V1 api, those
 
 ### More Examples
 
-- [Migrating CCLedgerMX, Maat, Mordor][7]
-- [Migrating Aloka][8]
+- [Migrating CCLedgerMX, Maat, Mordor][8]
+- [Migrating Aloka][9]
 
 
 
@@ -64,5 +65,6 @@ When migrating you might face some compilation errors by using the V1 api, those
 [4]: https://github.com/nubank/itaipu/pull/6299
 [5]: https://github.com/nubank/itaipu/blob/master/src/main/scala/nu/data/mx/dbcontracts/aloka/Aloka.scala
 [6]: https://github.com/nubank/itaipu/blob/master/src/main/scala/nu/data/mx/dbcontracts/V1.scala#L11
-[7]: https://github.com/nubank/itaipu/pull/6483/
-[8]: https://github.com/nubank/itaipu/pull/6481
+[7]: https://github.com/nubank/itaipu/pull/6483/files#diff-1f2479d5d9b07a1866c38d182c6b24a6R34
+[8]: https://github.com/nubank/itaipu/pull/6483/
+[9]: https://github.com/nubank/itaipu/pull/6481/
