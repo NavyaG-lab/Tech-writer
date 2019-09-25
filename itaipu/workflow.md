@@ -98,8 +98,6 @@ Creating a new contract is different than updating an existing contract because 
 
 1. Follow the instructions about [merging pull requests](#merging-pull-requests)
 
-1. Once your service has started producing data on its Datomic database, double check that it's not [blacklisted on correnteza](https://github.com/nubank/correnteza/blob/config/src/prod/correnteza_config.json). If it is, create a PR to remove it from the blacklist and submit to #squad-data-infra for review
-
 ### Updating an Existing Contract
 
 A Clojure service that already has generated contract Scala files will store them in `/resources/nu/data/<country>/dbcontracts/<DB-NAME>/entities/*.scala`.
