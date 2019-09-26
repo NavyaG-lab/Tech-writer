@@ -26,7 +26,7 @@ TO BE DONE
 
 1. `[itaipu-path]/itaipu/Itaipu.scala`: `main` is the entry-point and it calls
    `Runner.main`. It also provides functionality to build the `opsToRun` (see
-   details [here](#how-the-`opsToRun`-are-created).
+   details [here](#how-the-opsToRun-are-created)).
 2. `[itaipu-path]/runner/Runner.scala`: `main` uses `CLI` to parse the config
    that is sent from the outside world. It then creates all of the services
    around itaipu that it has to interact with:
@@ -45,7 +45,7 @@ TO BE DONE
    services to the executor. It then lets the executor run and raises if the
    results are not all successes.
 
-## common-etl: Executing the sparkops
+## common-etl
 
 3. `[common-etl-path]/operator/ETLExecutor.scala`:
    1. Calls `SparkPipelineEvaluator.[defaultStepsBuilder/evaluator]` to create
@@ -54,13 +54,14 @@ TO BE DONE
    2. Grabs the transaction, commits a few empty `RootOps` datasets.
    3. Creates an `OpRunner` and runs it on the `opsToRun`.
 4. `[common-etl-path]/operator/OpRunner.scala`:
-   1. Does a topological sort on the `opsToRun` (see details [here](#graphops). Parallelizes execution into
-      futures (dependencies are futures within futures and so forth).
+   1. Does a topological sort on the `opsToRun` (see details
+      [here](#graphops)). Parallelizes execution into futures (dependencies are
+      futures within futures and so forth).
    2. Runs them all using the `SparkPipelineEvaluator.evaluator` function.
 
-## How the `opsToRun` are created
+## How the opsToRun are created
 
-Starts in the beginning of the Runner (step 2 in [itaipu](#itaipu)).
+Step 2 in [itaipu](#itaipu).
 
 1. `[itaipu-path]/itaipu/CLI.scala`: Basically there are many ways to filter
    the entire set of ops down to those one wants:
@@ -85,8 +86,7 @@ Starts in the beginning of the Runner (step 2 in [itaipu](#itaipu)).
 
 ## Evaluator steps
 
-Starts in the beginning of the Executor (step 1 in
-[common-etl](#common-etl:-executing-the-sparkops)).
+Step 1 in [common-etl](#common-etl).
 
 The `SparkPipelineEvaluator` defines a series of steps that are run in sequence
 to process a sparkOp. They each have a `shoudRun` condition to see if they are
@@ -127,7 +127,7 @@ to do. The steps are as follows:
 
 ## GraphOps
 
-Step 4.1 in [common-etl](#common-etl:-executing-the-sparkops).
+Step 4.1 in [common-etl](#common-etl).
 
 Uses the `scalax.collection.Graph` library to construct a DAG from all SparkOps
 and run a topological sorting (As a side-effect perk, this also checks that the
