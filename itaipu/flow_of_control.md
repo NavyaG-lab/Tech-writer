@@ -61,7 +61,7 @@ TO BE DONE
 
 ## How the opsToRun are created
 
-Step 2 in [itaipu](#itaipu).
+Step 1 in [itaipu](#itaipu).
 
 1. `[itaipu-path]/itaipu/CLI.scala`: Basically there are many ways to filter
    the entire set of ops down to those one wants:
@@ -86,7 +86,7 @@ Step 2 in [itaipu](#itaipu).
 
 ## Evaluator steps
 
-Step 1 in [common-etl](#common-etl).
+Step 3.1 in [common-etl](#common-etl).
 
 The `SparkPipelineEvaluator` defines a series of steps that are run in sequence
 to process a sparkOp. They each have a `shoudRun` condition to see if they are
