@@ -50,7 +50,7 @@ Importing projects on IDEA:
 After configuring IDEA, let's set up the **[Itaipu](https://github.com/nubank/itaipu/)** project.
 
 8. At this point in time, you already have **[nucli](https://github.com/nubank/nucli/)** installed, so let's use it.
-9. `nu projects clone common-etl` with this command you clone common-etl to into your **$NU_HOME**
+9. `nu projects clone itaipu` with this command you clone common-etl to into your **$NU_HOME**
 10. Now, click on **Import Project** and select **itaipu's directory**
 11. Select **Import Project from external Model -> SBT**
 
