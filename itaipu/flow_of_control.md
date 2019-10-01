@@ -13,14 +13,47 @@ grand scheme of things.
 ### Glossary
 
 * **itaipu-path**: `github.com/nubank/itaipu/src/main/scala/etl`
-* **common-etl-path**: `github.com/nubank/itaipu/common-etl/src/main/scala/common_etl/`
+* **common-etl-path**: `github.com/nubank/itaipu/common-etl/src/main/scala/common_etl`
+* **aurora-jobs-path**: `github.com/nubank/aurora-jobs`
+* **sabesp-path**: `github.com/nubank/sabesp`
+
 
 ## The outside world
 
-TO BE DONE
+### Airflow
 
-* airflow (aurora-jobs repo)
-* sabesp
+Airflow is used to trigger executions of the ETL. Instead of triggering the
+entire ETL at once, airflow tasks trigger parts of itaipu. Hence, some of the
+dependency structure of our DAG is reproduced here in groups in order to enable
+more parallelism. Code lives in `[aurora-jobs-path]/airflow/dagao.py` (for now
+this documentation refers to the BR job only. There is also a `daguito.py` for
+MX data).
+
+1. Within the `dagao.py` file, jobs are generated calling `itaiput_dag` from
+   `../airflow/itaipu.py`.
+2. `itaipu_dag` creates a small airflow dag with four jobs and dependencies
+   between them:
+   1. scale up instances
+   2. run the itaipu job (using `gen_itaipu` function)
+   3. scale down
+   4. load results to databricks
+3. `gen_itaipu` packs supplied config arguments and default arguments for the
+   itaipu execution into a joint argument structure and passes them to a
+   `[aurora-jobs-path]/airflow/operators/sabesp_operator`.
+4. `SabespOperator` is a class that interfaces to our sabesp repo. In this call
+   instance, it creates an itaipu-job and sends its specs along with a call to
+   its `main` to aurora.
+
+### Sabesp (see step 4 above)
+
+Sabesp is a CLI to interact with anything in our environment:
+
+* our cluster resource manager _mesos_ and it's job scheduling framework _aurora_
+* our storage _s3_
+* services such as _metapod_
+
+`[sabesp-path]/context/jobs/itaipu.py` holds the job definition for an itaipu job.
+
 
 ## itaipu
 
@@ -45,6 +78,7 @@ TO BE DONE
    services to the executor. It then lets the executor run and raises if the
    results are not all successes.
 
+
 ## common-etl
 
 3. `[common-etl-path]/operator/ETLExecutor.scala`:
@@ -58,6 +92,7 @@ TO BE DONE
       [here](#graphops)). Parallelizes execution into futures (dependencies are
       futures within futures and so forth).
    2. Runs them all using the `SparkPipelineEvaluator.evaluator` function.
+
 
 ## How the opsToRun are created
 
@@ -83,6 +118,7 @@ Step 1 in [itaipu](#itaipu).
    the filters passed to it to filter the list down to what should run. We run
    multiple sub-dags (see airflow for definition of those) in order to
    parallelize or split the entire huge dag sensibly.
+
 
 ## Evaluator steps
 
@@ -124,6 +160,7 @@ to do. The steps are as follows:
     `None`.
 15. Commit - Commit in metapod. Schema info, storage location, transaction
     id...
+
 
 ## GraphOps
 
