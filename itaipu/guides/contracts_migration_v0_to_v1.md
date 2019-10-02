@@ -1,6 +1,6 @@
 # Contracts Migration - V0 to V1 (AKA Multi-Country Contracts)
 
-On `common-datomic` version `5.42.2` the capability of generating contracts for multiple countries was added, including the following changes:
+On `common-datomic` version `5.44.2` the capability of generating contracts for multiple countries was added, including the following changes:
 
 - use `nu.data.infra.api.dbcontracts.v1` as base for contracts generation.
 - package structure changed from `contract.etl` to `nu.data.{country}.dbcontracts`
