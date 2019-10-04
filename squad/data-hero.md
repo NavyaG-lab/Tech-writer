@@ -41,7 +41,7 @@ Slack channels you should monitor for questions:
 
 ### Itaipu
 
-* Review and merge PR's using [this filter](https://github.com/nubank/itaipu/pulls?q=is%3Apr+is%3Aopen+-label%3A%22-PR+WIP%22+-label%3A%22-PR+Changes+Requested%22+-label%3A%22-PR+Hold%22+-label%3A%22-PR+Teammate+Review+Requested%22+sort%3Acreated-asc)
+* Review and merge PR's using [this filter](https://github.com/nubank/itaipu/pulls?q=is%3Apr+is%3Aopen+-label%3A%22-PR+WIP%22+-label%3A%22-PR+Changes+Requested%22+-label%3A%22-PR+Hold%22+-label%3A%22-PR+Teammate+Review+Requested%22+sort%3Acreated-asc+draft%3Afalse)
 * Guide people on the creation of new datasets
 * Move StaticOp's to the appropriate AWS S3 bucket and prefix
 
