@@ -1,6 +1,5 @@
 # Operations HOWTO
 
-* [Restart redshift cluster](#restart-redshift-cluster)
 * [Restart aurora](#restart-aurora)
 * [Hot-deploying rollbacks](#hot-deploying-rollbacks)
 * [Re-deploying the DAG during a run](#re-deploying-the-dag-during-a-run)
@@ -28,30 +27,6 @@
 * [Serve a dataset again](#serve-a-dataset-again)
 * [Checks before old Prod stack teardown](#checks-before-old-prod-stack-teardown)
 
-## Restart redshift cluster
-
-When `capivara-clj` loads data into Redshift it creates temporary tables, loads the data into them, drops the old tables and renames the temp ones.
-This requires `capivara-clj` to get a lock on all tables to then be able to drop them.
-It will kill any open connections then run the commit transaction.
-There is a small chance that a query is made in between these two steps. This will cause `capivara-clj` to hang forever.
-The logs will indicate this by showing something like the following. It is hanging because it has a `0` in `wip-count` (what is left to do), so it has reached the drop/rename command.
-
-```
-2018-01-18T09:02:49.654Z [CAPIVARA:main] INFO capivara.components.redshift - {:line 124, :cid "DEFAULT", :log :killing-schema-query, :pid 19805, :username "sandrews"}
-2018-01-18T09:02:49.790Z [CAPIVARA:main] INFO capivara.components.redshift - {:line 91, :cid "DEFAULT", :log :execute-statement, :statement ["DROP SCHEMA IF EXISTS fact CASCADE"]}
-2018-01-18T09:03:01.133Z [CAPIVARA:main] INFO capivara.components.redshift - {:line 91, :cid "DEFAULT", :log :execute-statement, :statement ["DROP SCHEMA IF EXISTS dimension CASCADE"]}
-2018-01-18T09:03:06.077Z [CAPIVARA:async-dispatch-8] INFO capivara.components.progress - {:line 20, :cid "DEFAULT", :log :progress-reporter, :wip {}, :done-count 24, :wip-count 0, :transaction-info {:total-count 24, :transaction-id "556b5e98-60a1-5743-ad2e-da82d4798170", :target-date "2018-01-18"}}
-2018-01-18T09:03:36.077Z [CAPIVARA:async-dispatch-1] INFO capivara.components.progress - {:line 20, :cid "DEFAULT", :log :progress-reporter, :wip {}, :done-count 24, :wip-count 0, :transaction-info {:total-count 24, :transaction-id "556b5e98-60a1-5743-ad2e-da82d4798170", :target-date "2018-01-18"}}
-2018-01-18T09:04:06.078Z [CAPIVARA:async-dispatch-2] INFO capivara.components.progress - {:line 20, :cid "DEFAULT", :log :progress-reporter, :wip {}, :done-count 24, :wip-count 0, :transaction-info {:total-count 24, :transaction-id "556b5e98-60a1-5743-ad2e-da82d4798170", :target-date "2018-01-18"}}
-
-...
-```
-
-The easiest fix is to restart Redshift for `cantareira-k-redshift-redshiftcluster-...` via AWS ([here](https://console.aws.amazon.com/redshift/home?region=us-east-1#cluster-list:))
-
-Other way, if you have superuser access (e.g. `sao_pedro`), is to run `pg_terminate_backend( pid )` on the appropriate transaction `pid`s ([details here](https://docs.aws.amazon.com/redshift/latest/dg/PG_TERMINATE_BACKEND.html))
-
-NOTE: this issue can be addressed by fixing `capivara` to have a timeout to the transaction and retrying the connection kill + table drop logic together.
 
 ## Restart Aurora
 
