@@ -454,6 +454,21 @@ sabesp --aurora-stack cantareira-stable jobs itaipu prod phillip s3a://nu-spark-
 
 The `QUAY_DOCKER_IMAGE` can be the version of `itaipu` listed on `#etl-updates` or chosen from images listed [on quay.io](https://quay.io/repository/nubank/nu-itaipu?tab=tags)
 
+## Run an itaipu job with more executor memory
+
+In some cases, datasets with large skews will cause executors to run out of memory and cause a chain reaction of executor failures, leading to severe slowdown of the node, or even its crash. A usual symptom is repeated log lines like:
+
+```
+org.apache.spark.shuffle.FetchFailedException: failed to allocate 16777216 byte(s) of direct memory (used: 23857201152, max: 23861395456)
+```
+
+When this happens you will need to run the impacted datasets with more executor memory to allow the run to proceed (as well as fix the underlying issue). In order to do so, you can:
+
+- First, check [the node's configuration in aurora](https://github.com/nubank/aurora-jobs/blob/master/airflow/dagao.py) to know which instance was used
+- Using sabesp, run the job using the same parameters as the node, but passing in the extra parameter `--instance-type=<instance_type>`, where `<instance_type>` should be replaced by the instance you're looking to use. You can view available instances and their memory allocations in [Sabesp's `common` file](https://github.com/nubank/sabesp/blob/13a5e1dc8fd560ad61b41107553d5259d423de8c/src/sabesp/utils/common.py#L18-L87)
+
+NB: one thing to be aware of is that, given an instance type with N cores and M GBs of memory, the actual memory of each executor will be M / N. This means you should be careful to pick your new instance type in a way that the ratio will go _up_ (this means sometimes you might want to pick an instance with fewer cores).
+
 ## Deploy a hot-fix to itaipu
 
 - Merge a PR into the `release` branch of `itaipu`. Aside from hotfixes, the `release` branch should only be updated once a day right before the `dagao` is automatically deployed ([see here for details](/itaipu/workflow.md#how-itaipu-is-deployed-to-the-dagao)).
