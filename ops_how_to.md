@@ -26,6 +26,7 @@
 * [Deploy a hot-fix to itaipu](#deploy-a-hot-fix-to-itaipu)
 * [Serve a dataset again](#serve-a-dataset-again)
 * [Checks before old Prod stack teardown](#checks-before-old-prod-stack-teardown)
+* [Retracting Manual Appends to Dataset Series](#retracting-manual-appends-to-dataset-series)
 
 
 ## Restart Aurora
@@ -531,3 +532,10 @@ If a dataset is served with bad data, and you need to quickly revert to yesterda
    --use-cache \
    --include-placeholder-ops
    ```
+   
+   ## Retracting Manual Appends to Dataset Series
+   You will occassionally receive requests from users to retract datasets which were manually appended to a dataset-series. This usually happens in the #manual-dataset-series channel.
+   
+- Use `insomnia`/ `sonar` to get the id of the dataset you want to retract. For eg., `5d94b837-c31e-4109-ac73-b904bbc7bf17`.
+- Retract using this end-point on metapod:
+  `nu ser curl POST global metapod /api/migrations/retract/dataset-series/dataset/5d94b837-c31e-4109-ac73-b904bbc7bf17`
