@@ -362,7 +362,7 @@ run and downscale the cluster using just one command:
 ```
 nu datainfra sabesp -- \
     --aurora-stack=cantareira-dev \
-    jobs itaipu staging **your_name** s3a://nu-spark-metapod-test/ s3a://nu-spark-metapod-test/ 100 \
+    jobs itaipu staging **your_name** s3a://nu-spark-metapod-test/ s3a://nu-spark-metapod-test/ 5 \
     --itaipu=**repository_tag** \
     --filter-by-prefix **dataset_name** \
     --scale=48abb11
@@ -382,7 +382,7 @@ Here‘s an example:
 ```
 nu datainfra sabesp -- \
     --aurora-stack=cantareira-dev \
-    jobs itaipu staging rodrigo s3a://nu-spark-metapod-test/ s3a://nu-spark-metapod-test/ 100 \
+    jobs itaipu staging rodrigo s3a://nu-spark-metapod-test/ s3a://nu-spark-metapod-test/ 5 \
     --itaipu=be24227a \
     --filter-by-prefix dataset/on-boarding-exercise-part-i \
     --scale=48abb11
@@ -395,7 +395,7 @@ If your proccess fails, you can run the same command again adding your `transact
 **Tip**: Actually, save the transaction ID somewhere or keep it accessible. You'll need it on the next steps.
 
 eg:
-`sabesp --aurora-stack=cantareira-dev jobs itaipu staging rodrigo s3a://nu-spark-metapod-test/ s3a://nu-spark-metapod-test/ 100 --itaipu=be24227a --filter-by-prefix dataset/on-boarding-exercise-part-i --transaction 56078219-e6e0-43ec-a7a0-0bcc59600473`
+`sabesp --aurora-stack=cantareira-dev jobs itaipu staging rodrigo s3a://nu-spark-metapod-test/ s3a://nu-spark-metapod-test/ 5 --itaipu=be24227a --filter-by-prefix dataset/on-boarding-exercise-part-i --transaction 56078219-e6e0-43ec-a7a0-0bcc59600473`
 
 **IMPORTANT**: Make sure that your [AWS instances are terminating](https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:tag:Name=cantareira-dev-mesos-on-demand-;sort=instanceId) at the end of the process.
 
