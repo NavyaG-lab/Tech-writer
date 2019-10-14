@@ -136,3 +136,29 @@ If it does exist, note number of datasets in the series so we can verify the num
 ## Questions
 
 checkout `#manual-dataset-series` channel on slack.
+
+## Troubleshooting
+
+### I appended a file to my dataset series but it's not appearing in the next run, how can I fix this?
+The most common reason for this is due to your dataset being dropped by Itaipu due to a mismatch between the schema you declared and the schema encoded in the `DatasetSeriesContractOp`. See the [dataset series dropped schemas documentation](https://github.com/nubank/data-infra-docs/blob/4bc2d41242c3c4ce4fe333dfe77b3f9e8e030de6/etl_users/dataset_series.md#troubleshooting-dropped-schemas) for more information and how to remedy
+
+### I appended wrong data to my series. How can I remove it?
+
+Data Infra can retract bad data you accidentally added to your series. However, in order for this process to be as smooth and quick as possible, you'll need to follow these steps:
+
+- Go to [Sonar](https://backoffice.nubank.com.br/sonar-js/#/sonar-js/graphiql) (our dataset query interface) and use the following graphql query:
+```
+query GetManualSeries {
+  datasetSeries(datasetSeriesName: "series/<my-series>") {
+    datasets {
+      id
+      committedAt
+      path
+    }
+  }
+}
+```
+- Running the above should return a list of datasets and their ids. Find the dataset you want to delete there (usually you'd look for the data at which you appended it) and get a hold of its `id` attribute
+- On #squad-data-infra, ask for the deletion by providing:
+  - your dataset series' precise name (e.g. `series/direct-mail`)
+  - the id(s) of the dataset(s) you wish deleted
