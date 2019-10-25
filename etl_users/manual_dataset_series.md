@@ -144,7 +144,29 @@ The most common reason for this is due to your dataset being dropped by Itaipu d
 
 ### I appended wrong data to my series. How can I remove it?
 
-Data Infra can retract bad data you accidentally added to your series. However, in order for this process to be as smooth and quick as possible, you'll need to follow these steps:
+Data Infra can retract bad data you accidentally added to your series. **Please bear in mind that this is a fairly manual and non-scalable process for us at this stage, and so requesting deletion should be a last-resort in cases when you can't do it any other way.** Among alternative ways to achieve the same result, you can:
+- Add a batch id column to your dataset series, which you populate with a random id whenever generating the parquet files, and then use to blacklist selected batches using a downstream ops, e.g.:
+
+```scala
+// when generating the parquet file, first add a batch id
+val batchId = '<batch_id>'
+val annotatedDf = myDf.withColumn('batch_id', lit(batchId))
+
+// later on you can create an op downstream from the series contract:
+
+def batchBlacklist: Set[String] = Set(...)
+def definition(datasets) = {
+ val df = ...
+ df.filter(!batchBlackList.contains($"batch_id"))
+}
+
+```
+
+- use the [dropped schemas api](https://github.com/nubank/data-platform-docs/blob/master/etl_users/dataset_series.md#droppedschemas) to get rid of files appended with incorrect schemas
+
+- create a new version of the series (e.g. `my-series-v2`) when you wish to start from scratch. This is an especially good approach if you know you'll be iterating a lot on your series, and will ensure you don't need to depend to much on us to clear its state between each iteration.
+
+In order for this process to be as smooth and quick as possible, you'll need to follow these steps:
 
 - Go to [Sonar](https://backoffice.nubank.com.br/sonar-js/#/sonar-js/graphiql) (our dataset query interface) and use the following graphql query:
 ```
@@ -162,3 +184,6 @@ query GetManualSeries {
 - On #squad-data-infra, ask for the deletion by providing:
   - your dataset series' precise name (e.g. `series/direct-mail`)
   - the id(s) of the dataset(s) you wish deleted
+  - the reason for wishing to delete the data
+  
+
