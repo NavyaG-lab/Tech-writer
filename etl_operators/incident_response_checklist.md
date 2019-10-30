@@ -67,7 +67,7 @@ To prevent more bad data from being computed, and avoid wasting money on computi
 1. Go to the [Airflow UI](https://airflow.nubank.com.br/admin/airflow/graph?dag_id=prod-dagao)
 2. Select the most upstream node which has produced bad data, mark this node and its downstreams as failed. This will ensure Airflow doesn't re-attempt killed jobs
 3. Kill all active jobs:
-   1. Go to the [Aurora UI](https://cantareira-stable-mesos-master.nubank.com.br:8080/scheduler/jobs/prod)
+   1. Go to the [Aurora UI](https://cantareira-stable-aurora-scheduler.nubank.com.br:8080/scheduler/jobs/prod)
    2. Click on 'sort by : active' to get the list of currently active jobs
    3. For each job, run `nu datainfra sabesp -- --aurora-stack cantareira-stable jobs kill jobs prod <job-name>`
 4. Downscale EC2 instances for all killed jobs:
@@ -120,7 +120,7 @@ In cases when bad data has already been committed, this step is necessary if you
 2. If you retract Dataset Series, make sure you also retract all datasets involved in computing them (upstreams):
 
    - The `series-contract/*`
-   - The `series-raw/*` 
+   - The `series-raw/*`
 
 3. Obtain the ids of the datasets you wish to retract.
 
@@ -138,7 +138,7 @@ In cases when bad data has already been committed, this step is necessary if you
        }
      }
    }
-   
+
    ```
 
 4. Assuming you've saved the output of the above query in a file called `result.json`, run the following command:
@@ -251,6 +251,3 @@ If you paused the run using the instructions above, then all you should have to 
 Once you're satisfied that the run is outputting correct data, remove the `kafka_auto_start_consumers` entry in `tapir` and `cutia`'s configs and `to-prod` them.
 
 There's a chance that you might have retracted the archives for correct datasets which won't get recomputed by your resumed run. Even though we have an alarm to prevent this happening, it can be a good idea to run.
-
-
-

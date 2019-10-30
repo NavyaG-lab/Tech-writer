@@ -72,13 +72,13 @@ We have several types of mesos slaves, one for each kind of workload. They can b
 - Bump sabesp version of aurora-client [eg](https://github.com/nubank/sabesp/pull/80)
 - Bump aurora-jobs versions of aurora-client and sabesp [eg](https://github.com/nubank/aurora-jobs/pull/709)
 - Bump all models that depend on `nu-mesos-python` or `nu-mesos-python-spark` (*you can use [source graph](https://sourcegraph.nubank.com.br/search) to find the repositores and `sed` + `hub` to open the PRs*)
-- Create a test cluster using deploy's console [see here](#deployment) 
+- Create a test cluster using deploy's console [see here](#deployment)
 - Run a successfull job in the new cluster (using sabesp + itaipu filtered run)
 - Merge all the stuff
 - Update cantareira-dev and cantareira-stable clusters (using deploy's console as well)
 
 ### Reverting Bump
- - Revert and merge: 
+ - Revert and merge:
    - `aurora-jobs`
    - `scale-cluster`
    -  deploy
@@ -90,11 +90,11 @@ We have several types of mesos slaves, one for each kind of workload. They can b
 
 ### Checking running instances
 
-You can check if the instances are running on the [AWS Console](https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:tag:Name=cantareira-dev-mesos-on-demand-;sort=instanceId) and check the status of your jobs [here](https://cantareira-dev-mesos-master.nubank.com.br:8080/scheduler/jobs). Now wait, it might take a while.
+You can check if the instances are running on the [AWS Console](https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:tag:Name=cantareira-dev-mesos-on-demand-;sort=instanceId) and check the status of your jobs [here](https://cantareira-dev-aurora-scheduler.nubank.com.br:8080/scheduler/jobs). Now wait, it might take a while.
 
 ### Executor logs
 
-Most of the logs relevant to issues are found on [aurora](https://cantareira-stable-mesos-master.nubank.com.br:8080/scheduler/jobs/prod).
+Most of the logs relevant to issues are found on [aurora](https://cantareira-stable-aurora-scheduler.nubank.com.br:8080/scheduler/jobs/prod).
 
 In the rare case that you want to see executor logs, navigate to [https://cantareira-stable-mesos-master.nubank.com.br/](https://cantareira-stable-mesos-master.nubank.com.br/)
 

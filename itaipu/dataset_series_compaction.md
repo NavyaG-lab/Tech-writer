@@ -108,7 +108,7 @@ nu datainfra compaction --itaipu-version <ITAIPU_VERSION> DATASET_SERIES_NAME
 ```
 
 You can check the progress in the [compaction DAG page](https://airflow.nubank.com.br/admin/airflow/graph?dag_id=dataset-series-compaction)
-And also the task page in aurora: https://cantareira-stable-mesos-master.nubank.com.br:8080/scheduler/jobs/prod/compaction-<SERIES_NAME_WITHOUT_SERIES_PREFIX>
+And also the task page in aurora: https://cantareira-stable-aurora-scheduler.nubank.com.br:8080/scheduler/jobs/prod/compaction-<SERIES_NAME_WITHOUT_SERIES_PREFIX>
 
 #### Running a compaction during a run
 
@@ -119,7 +119,7 @@ When running a compaction in this context, extra care should be taken to avoid i
 The recommended approach for compacting a series that's midway through being computed is:
 
 - Ensure the relevant dataset-series job is not running (beware that dowstream nodes can also compute this series)
-- Start the compaction: 
+- Start the compaction:
 
 ```
 nu datainfra compaction --itaipu-version <ITAIPU_VERSION> DATASET_SERIES_NAME

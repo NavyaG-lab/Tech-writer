@@ -40,7 +40,7 @@ You should also check [Airflow](https://airflow.nubank.com.br/admin/airflow/grap
 
 ![image](https://user-images.githubusercontent.com/726169/33066455-9a8e8020-ceab-11e7-9853-eb755881fe27.png)
 
-If you see any node with a red (failed) or yellow (retrying), you can dive deeper by digging deeper into [logs on splunk](https://nubank.splunkcloud.com/en-US/app/search/etl_job_logs?form.the_time.earliest=-24h%40h&form.the_time.latest=now&form.search=*) or [Mesos logs](https://cantareira-stable-mesos-master.nubank.com.br:8080/scheduler/jobs):
+If you see any node with a red (failed) or yellow (retrying), you can dive deeper by digging deeper into [logs on splunk](https://nubank.splunkcloud.com/en-US/app/search/etl_job_logs?form.the_time.earliest=-24h%40h&form.the_time.latest=now&form.search=*) or [Mesos logs](https://cantareira-stable-aurora-scheduler.nubank.com.br:8080/scheduler/jobs):
 
 ![image](https://user-images.githubusercontent.com/726169/33066845-b10242e6-ceac-11e7-946d-2bc15441a828.png)
 

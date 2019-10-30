@@ -30,7 +30,7 @@ _You need VPN access to follow the steps below._
 
 Check what was the reason for the failure, by following these steps:
 
-1. Access https://cantareira-stable-mesos-master.nubank.com.br:8080/scheduler/jobs/prod/itaipu-contracts?jobView=history
+1. Access https://cantareira-stable-aurora-scheduler.nubank.com.br:8080/scheduler/jobs/prod/itaipu-contracts?jobView=history
 1. You'll see the past instances of that task. Check if the first entry has failed around the time you got the alarm. If this entry indicates the task finished too long ago (15-23 hours ago), that was the previous run. That means the task was failed to be created in Aurora. In this case, refer to the section further below [Checking errors directly in Airflow](#checking-errors-directly-in-airflow).
 1. To see the logs, click on the link that is an IP address that starts like `10.` ![image](https://user-images.githubusercontent.com/1674699/37596958-2dd3da18-2b7e-11e8-8b12-9ea541753656.png)
 1. Click the `stderr` link in the right end of the screen that will appear. `stdout` might also have useful info.
@@ -171,7 +171,7 @@ It's safe to always tell `tapir` to re-process the entire transaction, since it 
 
 You can check this [Grafana dashboard](https://prod-grafana.nubank.com.br/d/waGZJY2mk/serving-layer-monitoring?orgId=1&var-prometheus=prod-prometheus) for progress after you've triggered the re-processing.
 
-You can also check the [Splunk dashboard](https://nubank.splunkcloud.com/en-US/app/search/etl_serving_layer_tapir) and find the dataset(s) that are in the `stdout` of the failed job in [aurora job page](https://cantareira-stable-mesos-master.nubank.com.br:8080/scheduler/jobs/prod/check-serving-layer?jobView=history). If they appear in the dashboard, it's possible that they have been processed only partially.
+You can also check the [Splunk dashboard](https://nubank.splunkcloud.com/en-US/app/search/etl_serving_layer_tapir) and find the dataset(s) that are in the `stdout` of the failed job in [aurora job page](https://cantareira-stable-aurora-scheduler.nubank.com.br:8080/scheduler/jobs/prod/check-serving-layer?jobView=history). If they appear in the dashboard, it's possible that they have been processed only partially.
 
 You can also check the [Splunk error logs](https://nubank.splunkcloud.com/en-US/app/search/search?sid=1538150037.2995655) for errors in general. Keep in mind that some instances of `ProvisionedThroughputExceededException` are expected, as explained below.
 

@@ -92,7 +92,7 @@ Variable | What it is | Example
 
 #### Checking whether the task was successful
 
-You can follow the task progress and success/failure status via the Aurora UI: https://cantareira-dev-mesos-master.nubank.com.br:8080/scheduler/jobs
+You can follow the task progress and success/failure status via the Aurora UI: https://cantareira-dev-aurora-scheduler.nubank.com.br:8080/scheduler/jobs
 
 Search for your model name (e.g., `contextual-model`) and click it to go to the corresponding task page.
 There you will see two tabs: **Active Tasks**, and **Completed Tasks**. Depending on the progress, the task will be in one of the two tabs.
@@ -101,7 +101,7 @@ Once you find it, click at the IP address to the right of the row where the task
 
 > If you don't see an IP address, that could mean Aurora was not able to allocate the task to a host (yet). Double-check whether the `SLAVE_TYPE` passed was correct - it should be composed by `mesos-on-demand-` and the same name which was used to scale up the cluster.
 
-> You can also check how are the agents' `SLAVE_TYPE` attributes registered in Mesos (also using the Aurora UI) via [this page](https://cantareira-dev-mesos-master.nubank.com.br:8080/agents). The `slave-type` attribute should be equal to what is being passed in the `sabesp` command.
+> You can also check how are the agents' `SLAVE_TYPE` attributes registered in Mesos (also using the Aurora UI) via [this page](https://cantareira-dev-aurora-scheduler.nubank.com.br:8080/agents). The `slave-type` attribute should be equal to what is being passed in the `sabesp` command.
 
 #### Scale down
 

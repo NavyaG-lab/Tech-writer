@@ -35,12 +35,12 @@ Every once in a while, Aurora goes down. `sabesp` commands, such as ones involve
 
 **Symptoms of a non-responsive Aurora**
 
-- The [aurora web UI](https://cantareira-stable-mesos-master.nubank.com.br:8080) does not load, but the [mesos web UI](https://cantareira-stable-mesos-master.nubank.com.br) does.
-- A lot of pending jobs in the [aurora web UI](https://cantareira-stable-mesos-master.nubank.com.br:8080)
+- The [aurora web UI](https://cantareira-stable-aurora-scheduler.nubank.com.br:8080) does not load, but the [mesos web UI](https://cantareira-stable-mesos-master.nubank.com.br) does.
+- A lot of pending jobs in the [aurora web UI](https://cantareira-stable-aurora-scheduler.nubank.com.br:8080)
 
 Try to look into the issue, potentially by ssh'ing into `mesos-master`, via `nu ser ssh mesos-master --suffix dev --env cantareira --region us-east-1` and looking at the aurora logs via `journalctl -u aurora-scheduler`.
 
-To restart Aurora, you could do either of the following:
+To restart Mesos Master, you could do either of the following:
 
 - cycle `mesos-master`: `nu ser cycle mesos-master --env cantareira --suffix stable --region us-east-1`
 - restart `aurora-scheduler` alone:
@@ -532,10 +532,10 @@ If a dataset is served with bad data, and you need to quickly revert to yesterda
    --use-cache \
    --include-placeholder-ops
    ```
-   
+
    ## Retracting Manual Appends to Dataset Series
    You will occassionally receive requests from users to retract datasets which were manually appended to a dataset-series. This usually happens in the #manual-dataset-series channel.
-   
+
 - Use `insomnia`/ `sonar` to get the id of the dataset you want to retract. For eg., `5d94b837-c31e-4109-ac73-b904bbc7bf17`.
 - Retract using this end-point on metapod:
   `nu ser curl POST global metapod /api/migrations/retract/dataset-series/dataset/5d94b837-c31e-4109-ac73-b904bbc7bf17`
