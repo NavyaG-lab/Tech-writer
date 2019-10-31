@@ -1,7 +1,7 @@
 # Mergulho
 
-Mergulho is a top-level package within
-[common-etl](https://github.com/nubank/common-etl) to increase observability of
+Mergulho is a package within
+[itaipu](https://github.com/nubank/itaipu) to increase observability of
 our semantic data processing by computing metadata for our data.
 
 
@@ -49,7 +49,7 @@ of interest or an entire dataset.
 
 ### Metrics
 
-Mergulho defines a set of [metrics](https://github.com/nubank/common-etl/blob/master/src/main/scala/mergulho/Metric.scala)
+Mergulho defines a set of [metrics](https://github.com/nubank/itaipu/blob/master/common-etl/src/main/scala/mergulho/Metric.scala)
 that can currently be selected to run on our data. Moreover, these metrics are
 grouped into subsets that are sensible for certain content types of data. These
 subsets are selected by mergulho as described [below](#metric-application).
@@ -89,7 +89,7 @@ the attribute and 6-7 make up the value.
 
 ### Metric application
 
-[API](https://github.com/nubank/common-etl/blob/master/src/main/scala/mergulho/Mergulho.scala#L11)
+[API](https://github.com/nubank/itaipu/blob/master/common-etl/src/main/scala/mergulho/Mergulho.scala#L11)
 
 There are currently four ways to get Mergulho to run metrics on your data:
 
@@ -125,10 +125,10 @@ to adjust that behavior:
 
 At the time of writing, the Mergulho code is in common-etl. There is however no
 mechanism for integrating Mergulho into `SparkOps` in itaipu. We are running
-Mergulho in a [databricks
-job/notebook](https://nubank.cloud.databricks.com/#job/15438) that is triggered
-nightly via airflow. Results are stored in a table named `meta.mergulho`.
-Obviously, this setup is fine for a POC phase but never a final solution.
+Mergulho in a [databricks job/notebook](https://nubank.cloud.databricks.com/#job/15438)
+that is triggered nightly via airflow. Results are stored in a table named
+`meta.mergulho`.  Obviously, this setup is fine for a POC phase but never a
+final solution.
 
 
 ## Roadmap
@@ -150,13 +150,8 @@ sanity checks based on the metrics.
 
 ## I want Mergulho run on my data
 
-If you want mergulho to be run on your data, you can contact data infra and
-someone can help you. In principle, there are two ways:
-
-1. You can ask us to just add your dataset to the list of datasets that the
-   nightly job covers. That is the most easy way.
-2. You can check out the code and the notebook to do everything yourself in
-   databricks, which should also work.
+If you want mergulho to be run on your data, you can contact data infra (more
+specifically the cortex pack) and someone can help you.
 
 If you as a stakeholder have needs/suggestions for extending the current MVP to
 make it helpful for you, feel free to contact data infra. For example, you can
