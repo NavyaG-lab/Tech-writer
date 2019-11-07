@@ -62,7 +62,7 @@ When a DAG is deployed while another is running, airflow will use the current st
 
 ### Updating Airflow
 
-To update Airflow you need to first bump it's [Dockerfile](https://github.com/nubank/dockerfiles/blob/master/airflow/Dockerfile), merge it and wait until go has finished building it, then, you need to change the version on [deploy](https://github.com/nubank/deploy/blob/master/lib/recipes/airflow.rb#L21), open the deploy console in the cantareira environment and run:
+To update Airflow you need to first bump the `base-airflow` [Dockerfile](https://github.com/nubank/dockerfiles/blob/master/base-airflow/Dockerfile), merge it and wait until go has finished building it, then, you need to change the version on [deploy](https://github.com/nubank/deploy/blob/master/lib/recipes/airflow.rb#L21), open the deploy console in the cantareira environment and run:
 
 `Airflow.create!("x")`
 
