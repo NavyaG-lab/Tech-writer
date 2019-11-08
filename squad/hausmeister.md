@@ -9,9 +9,6 @@
    Same as weekday, but not responsible for customer inqueries
  * Level 2 (_Monday - Monday_):
    A supporting engineer with more ops experience to support the Level 1. This is the first person the hausmeister can elevate an issue to if he/she needs assistance.
- * Backlog Weekday: Monday 6pm - Friday 6pm
-   The week after completing your Level 1 Weekday rotation you should dedicate to tackling issues on the [hausmeister backlog](https://app.clubhouse.io/nubank/project/352/data-infra-hausmeister) or other issues that cause
-   Once going off The hausmeister from the previous is resourced as a backlog hausmeister
 
 ## Level 1 Responsibilities
 
