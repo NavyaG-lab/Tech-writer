@@ -89,48 +89,69 @@ This alert means that [Riverbend](https://github.com/nubank/riverbend) is not pr
 If you see a `ops_health_failure` alarm on `#squad-di-alarms` for `component: database-claimer` then you can get more info by running
 
 ```bash
-nu ser curl GET global correnteza /ops/health/database-claimer | jq .
+nu ser curl GET global correnteza --env prod /ops/health/database-claimer | jq .
 ```
 
-Usually this means that the database claimer, which is responsible for acquiring zookeeper locks that correspond to datomic databases, has somehow failed to acquire the appropriate number of locks.
+Usually this means that the database claimer, which is responsible for acquiring zookeeper locks that correspond to datomic databases, has somehow failed to acquire the appropriate number of locks. The claimer state contains two metrics that are important to us: `locked` indicates how many databases this instance of correnteza has acquired, and `lowest_acceptable` indicates how many it needs to acquire to be considered healthy (it's normally the same as the total number of existing databases for this shard). In other words `database-claimer` will be unhealthy when `locked` is below `lowest_acceptable`.
 
-If you cycle the service it should acquire the locks within 30 or so minutes:
+The most common cause is for a given instance of `correnteza` to finish boostrapping before all locks were released. As a result, it reaches a state where it no longer attempts to get new locks, without having acquired all of them.
 
-`nu ser cycle global correnteza`
+In this context, the first thing you'll want to do is run:
 
-You can see the databases that have been claimed via:
+```bash
+nu k8s ctl <prototype> --env prod -- get pods -l nubank.com.br/name=correnteza
+```
 
-`nu ser curl GET --env prod global correnteza /ops/database-claimer/list -- -v | jq .`
+and verify that there is only a single instance of `correnteza` running for this protoype. If there are two, you will need to either wait for it to get back to a normal number of pods (1 in the current setup), or force a scale down with:
+
+```bash
+nu k8s scale <prototype> --env prod correnteza 1 --min 1 --max 1
+```
+
+To monitor the scale down, you can use:
+
+```bash
+watch -n 10 'nu k8s ctl <prototype> --env prod -- get pods -l nubank.com.br/name=correnteza'
+```
+
+Once there's only one instance, and if it's still unhealthy, you can:
+
+- run `nu ser curl POST <prototype> correnteza --env prod /ops/database-claimer/acquire-new` which will schedule a new round of lock acquisition attempts. Depending on how many locks it needs to catch up on, this may take up to 30 minutes. Use `watch -n 10 'nu ser curl GET <prototype> correnteza --env prod /ops/health | jq ".[1].database_claimer.checks"'` to monitor whether the count increases. Remember that you want `locked` to become equal to `lowest_acceptable`
+
+- cycle the service with `nu ser cycle <prototype> correnteza --env prod`. Bear in mind that this has the potential of making correnteza more unstable (due to the above-mentioned issue of having several instances up at the same time), so you really should first attempt the `acquire-new` approach first.
+
+If the above doesn't solve the issue, you may need to dig into which specific locks are not being acquired are not being extracted, using Splunk to find any error messages which may help you understand what's going on, for example with the query: `source=correnteza prototype=<prototype> error`.
 
 ## Correnteza attempt-checker is failing
 
-Correnteza has several instances that coordinate via zookeeper to extract from all the datomic databases discovered. If for some reason these instances fail to connect to a datomic database it has extracted from in the past it means that either: there is a bug or the database has been deprecated. In order to check for this we always log in a little docstore when we try to extract from a database. Then every hour we have a healthcheck that ensures that every database listed in that docstore has had an extraction attempt in the last 2 or so hours.
+Correnteza has several instances that coordinate via zookeeper to extract from all the datomic databases discovered. If for some reason these instances fail to connect to a datomic database it has extracted from in the past it means that either: there is a bug or the database has been deprecated. In order to check for this we always log in a little docstore when we try to extract from a database. Then every 20 minutes we have a healthcheck that ensures that every database listed in that docstore has had an extraction attempt in the last 10 minutes.
 
 When this healthcheck fails you'll see a `ops_health_failure` alarm on `#squad-di-alarms` for `component: attempt-checker`. For more info run:
 
 ```bash
-nu ser curl GET global correnteza /ops/health/attempt-checker | jq .
+nu ser curl GET global correnteza /ops/health/attempt-checker | jq .[1].attempt-checker
 ```
 
-Generally this failure means that out of all the `correnteza` instances, one of them somehow failed to start extracting from a database that has been extracted from before.
+The output will give you a list of which databases haven't had any recent extractions. The first thing you can do is to run `nu ser curl POST <prototype> --env prod correnteza /ops/attempt-checker/force` to force a refresh of the component and verify that it wasn't a temporary issue.
 
-You can see the databases that have been claimed via:
+If the component is still unhealthy, the first thing you should check is whether the `database-claimer` component may also be unhealthy, using `nu ser curl GET global correnteza --env prod /ops/health/database-claimer | jq .`. If it is the case, then it's very likely the issues may be related, and you should fix the `database-claimer` first. Use the section above about the `database-claimer` to do this. Don't forget to run `nu ser curl POST <prototype> --env prod correnteza /ops/attempt-checker/force` again once you've fixed the `database-claimer` to get the `attempt-checker` into a fresh state.
 
-`nu ser curl GET --env prod global correnteza /ops/database-claimer/list -- -v | jq .`
+If/once the claimer is healthy, and if the `attempt-checker` is still failing, you'll need to investigate each database listed in the health-check message individually. The first thing to check is Splunk, using a query such as `source=correnteza prototype=prototype error <database>`. A common thing to look for here is messages indicating issues when attempting to connect to these databases, such as:
 
-You can try to cycle the service to see if it acquires the left out database (takes 30 or so minutes to get all the locks):
+- `... :error :connecting, :url "datomic:ddb://sa-east-1/prod-<database>-datomic/<database>" ...`: usually means the table doesn't exist.
+- `Could not find <database> in catalog`: usually means the table does exist, but the service is still being bootstrapped and hasn't started transacting anything yet.
 
-`nu ser cycle global correnteza`
+You can then look through the commit of the service's repo, or of their definition file for their datomic transactor, to assess whether this is likely a service under construction. You can also ask the owner squad directly (use `nu ser owner <service>` to find out who it is), though depending on the time of the day this may not be the most efficient way to get information.
 
-If the database that isn't being extracted from has been deprecated, you can remove it from the attempt checker list:
+If you strongly suspect, or discover that the database that isn't being extracted from has been deprecated or isn't really live yet, you can remove it from the attempt checker list:
 
-`nu ser curl DELETE --env prod global correnteza /api/admin/delete-attempt/waldo-s0`
+`nu ser curl DELETE --env prod <prototype> correnteza /api/admin/delete-attempt/<database>`
 
-where `waldo-s0` is the name of the database+prototype.
+You can then force the healthcheck to recompute its state via:
 
-You can force the healthcheck to recompute its state via:
+`nu ser curl POST <prototype> --env prod correnteza /ops/attempt-checker/force`
 
-`nu ser curl POST global --env prod correnteza /ops/attempt-checker/force`
+If the service in question has been live for a long time, or if you know it to be a critical service AND if the last extraction attempt is more than 1 day old, you should reach out to the owner squad urgently to find out what's going on and work with them to solve the situation.
 
 
 ## "check-serving-layer" triggered on Airflow
