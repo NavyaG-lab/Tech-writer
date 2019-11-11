@@ -198,7 +198,7 @@ Jump back to your Databricks notebook and copy your class to a new cell. (Leave 
 
 ```scala
 import ...
-import etl.contract.stevie.Calls
+import nu.data.br.dbcontracts.stevie.entities.Calls
 
 object OuvidoriaCalls extends SparkOp with DeclaredSchema {
   override val name = "dataset/ouvidoria-calls"
@@ -222,7 +222,7 @@ object OuvidoriaCalls extends SparkOp with DeclaredSchema {
   def callsName: String = DatabaseContractOps.lookup(Calls).name
 }
 ```
-Pretty barebones, right? All we do is say we use the `ContractOp` `Calls`, located at `etl.contract.stevie.Calls`. Then we call the `filterCalls` function, passing the `calls` Dataframe. But right now the `filterCalls` function is empty.
+Pretty barebones, right? All we do is say we use the `ContractOp` `Calls`, located at `nu.data.br.dbcontracts.stevie.entities.Calls`. Then we call the `filterCalls` function, passing the `calls` Dataframe. But right now the `filterCalls` function is empty.
 
 That `filterCalls` function is where we'll put our logic.
 
@@ -324,14 +324,16 @@ That finishes our definition.
 
 ## 6 - The Final Product
 ```scala
-import etl.contract.DatabaseContractOps
-import etl.contract.EnumAttribute
-import etl.contract.stevie.Calls
 import common_etl.implicits._
+import common_etl.metadata.{Country, Squad}
 import common_etl.metapod.{Attribute, MetapodAttribute}
-import common_etl.operator.{SparkOp, WarehouseMode}
+import common_etl.operator.{QualityAssessment, SparkOp, WarehouseMode}
 import common_etl.schema.{DeclaredSchema, LogicalType}
 import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.functions._
+import org.apache.spark.sql.{Column, DataFrame}
+import etl.contract.DatabaseContractOps
+import nu.data.br.dbcontracts.stevie.entities.Callse
 
 object OuvidoriaCalls extends SparkOp with DeclaredSchema {
   override val name = "dataset/ouvidoria-calls"
@@ -356,13 +358,8 @@ object OuvidoriaCalls extends SparkOp with DeclaredSchema {
 
   override def attributes: Set[Attribute] = Set(
     MetapodAttribute("call_id", LogicalType.UUIDType, nullable = false, primaryKey = true, description = Some("Unique, UUID for each call")),
-    MetapodAttribute("time", LogicalType.TimestampType, nullable = false, description = Some("UTC Timestamp for when the call started")),
-    MetapodAttribute("our_number", LogicalType.StringType, nullable = false, description = Some("The number called to contact us")),
-    MetapodAttribute("call__reason", LogicalType.EnumType(enums = Calls.attributes.find(_.source == "call__reason") match {
-      case Some(EnumAttribute(_, _, _, _, LogicalType.EnumType(possibleReason), _, _)) => possibleReason
-      case _ => throw new Exception("Invalid Attribute in Calls")
-    }), description = Some("Reason selected by the xpeer"))
-  )
+    MetapodAttribute("time", LogicalType.TimestampType, nullable = false, description = Some("UTC Timestamp for when the call started")),
+    MetapodAttribute("our_number", LogicalType.StringType, nullable = false, description = Some("The number called to contact us")))
 
   def callsName: String = DatabaseContractOps.lookup(Calls).name
 }
