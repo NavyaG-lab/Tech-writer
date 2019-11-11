@@ -18,6 +18,9 @@ is dispatched. See also [writing-runbooks].
 - [Datomic backup - No successful backup](#no-successful-backup-for-database-in-the-last-96-hours-please-take-a-look)
 - [Warning: [PROD] correnteza_last_t_greater_than_basis_t](#warning-prod-correnteza_last_t_greater_than_basis_t)
 
+## Frequent Dataset Failures
+- [Dataset partition not found on s3](#dataset-partition-not-found-on-s3)
+
 ## alert-itaipu-contracts triggered on Airflow
 
 This means the first task in our daily DAG failed. This task is a dependency
@@ -353,3 +356,16 @@ important bits for this purpose are highlighted in the screenshot.
 [correnteza-extractor-dashboard]: https://prod-grafana.nubank.com.br/d/A8ULVDTmz/correnteza-datomic-extractor-service?orgId=1&var-stack_id=All&var-host=All&var-database=skyler&var-prototype=s0&var-prometheus=prod-thanos
 [correnteza-extractor-dashboard-img]: images/correnteza_extractor_dashboard_highlighted.png
 [writing-runbooks]: writing_runbooks.md
+
+## Dataset partition not found on s3
+### Symptomps ###
+  * A thrown `java.io.FileNotFoundException: No such file or directory` on a Spark executor for a file on S3. 
+  * The the partition file in question is accounted for in the mentioned bucket via the AWS console web UI (because the AWS CLI is usually unable to find it either), and it has no permissions listed then it's most likely this issue.
+
+Some instances of this happening include:
+  - [1] https://nubank.slack.com/archives/CE98NE603/p1566893108104300
+  - [2] https://nubank.slack.com/archives/CE98NE603/p1566115955069000?thread_ts=1566105267.068700&cid=CE98NE603
+  - [3] https://nubank.slack.com/archives/CE98NE603/p1573363471193700
+
+### Solution ###
+[Retracting](https://github.com/nubank/data-platform-docs/blob/master/ops_how_to.md#retracting-datasets-in-bulk) the inputs for the failing datasets in order to recompute the inputs and re-store them on s3 ususally fixes it.
