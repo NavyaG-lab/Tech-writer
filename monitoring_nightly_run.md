@@ -4,7 +4,11 @@ We currently recompute all datasets (from scratch) every night at midnight UTC. 
 
 ![image](https://user-images.githubusercontent.com/726169/33067668-2786662a-ceaf-11e7-89bb-14d787268c4b.png)
 
-The goal of monitoring the nightly run is to make sure that data is loaded into DataBricks and Redshift every day before the work day begins in Nubank's Sao Paulo HQ (before 08:30).  It is important to have the load finished before 08:30 in order to provide fresh data, but also because query performance is degraded while a load is happening on Redshift, so a late load hurts user experience even for querying stale data because most of the cluster CPU is spent on the data load will have bad query performance.  It is also important for finance related datasets to be computed every day, as the numbers in these reports have real implications for Nubank cashflow (especially related to the "FIDC" securitization vehicle).
+The goal of monitoring the nightly run is to try to achieve the SLOs as much as possible, which are:
+  - 95% of the contracts are committed by 05:00 UTC
+  - 95% of the serving layer datasets are loaded by 20:00 UTC
+
+It is also important for finance related datasets to be computed every day, as the numbers in these reports have real implications for Nubank cashflow (especially related to the "FIDC" securitization vehicle).
 
 When checking on the progress of the run, first check [Sonar](https://backoffice.nubank.com.br/sonar-js/). Sonar gives visibility into the percent completion of the current run and the datasets that comprise it. (<i>Note: To use Sonar you must be on the VPN and route <b>ALL TRAFFIC</b> through the VPN</i>)
 
@@ -51,31 +55,6 @@ For Spark jobs (e.g., normal SparkOps / datasets), the relevant logs to investig
 ![image](https://user-images.githubusercontent.com/726169/33066851-b3f5f8f8-ceac-11e7-9e68-b4dd8d5ca463.png)
 
 Next steps depend on the error that you see.
-
-The following is a common SQL data load error from `capivara-clj`:
-
-![image](https://user-images.githubusercontent.com/726169/33066853-b5f2ba2e-ceac-11e7-94d4-d47fa6459adf.png)
-
-We can see that the error is with the `temporary_fact_payment`, which is associated with the [payment fact table](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/dataset/fact/PaymentFact.scala).  For "dimensional modeling" loads, we first load a temporary version of each table, hence the `temporary_` prefix.
-
-For Redshift load errors in general, we can use an SQL client (such as DataGrip) connected to `etl@cantareira-redshift.nubank.com.br` (see #access-request on Slack for credentials) to view what went wrong via the `stl_load_errors` table:
-
-```sql
-select *
-from stl_load_errors
-order by starttime desc
-limit 100;
-```
-
-![image](https://user-images.githubusercontent.com/726169/33068823-c5bba744-ceb2-11e7-8757-6ba2b44c3a4c.png)
-
-After understanding the error that occurred when loading (often a NULL value in a NON NULL column), you can dig deeper to understand how a NULL value could arise.  In this case, the next thing to check might be the source dataset where the problematic column came from to see if it is was also NULL upstream (for the rows with the data load).
-
-You can use DataBricks to check on the source dataset with [these instructions](ops_how_to.md#load-a-run-dataset-in-databricks).
-
-Things that may have gone wrong:
-- Itaipu can not complete because (early)
-- Redshift load failed (late)
 
 ## Dealing with DAG errors
 
