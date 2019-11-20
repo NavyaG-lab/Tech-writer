@@ -1,10 +1,12 @@
 # On-Call Runbook
 
-This document is a resource for engineers *on-call*. The general
-layout of each is “alert, reason, action”. All the alert entries here
-should be linked with the alerts being dispatched from our alerting
-platform. The "ALERT" string should be verbatim the same string that
-is dispatched. See also [writing-runbooks].
+This document is a resource for engineers *on-call*. 
+
+The general layout of the Alerts part is “alert, reason, action”. All the alert entries here should be linked with the alerts being dispatched from our alerting platform. The "ALERT" string should be verbatim the same string that is dispatched.
+
+The frequent dataset failures should enumerate the symptoms of the particular failure, along with the best known way to mitigate it. Links to Slack threads about the previous failures are appreciated for traceability.
+
+*Before contributing, please keep in mind [the following guidelines](writing-runbooks).*
 
 ## Alarms
 
@@ -20,6 +22,7 @@ is dispatched. See also [writing-runbooks].
 
 ## Frequent Dataset Failures
 - [Dataset partition not found on s3](#dataset-partition-not-found-on-s3)
+- [Leaf dataset is failing because of bad definition](#leaf-dataset-is-failing-because-of-bad-definition)
 
 ## alert-itaipu-contracts triggered on Airflow
 
@@ -357,8 +360,28 @@ important bits for this purpose are highlighted in the screenshot.
 [correnteza-extractor-dashboard-img]: images/correnteza_extractor_dashboard_highlighted.png
 [writing-runbooks]: writing_runbooks.md
 
+## Leaf dataset is failing because of bad definition
+### Symptoms ###
+  * Any of the steps during running the dataset is failing
+  * It's not an environment issue, but purely specific to how the dataset is defined
+  * The dataset has been recently modified/introduced
+
+### Solution ###
+  * Revert the most recent commits modifying the failing datasets along with any other commits that depend on 
+    those recent changes.
+  * [Commit an empty dataset](ops_how_to.md#manually-commit-a-dataset-to-metapod) in place of the failing 
+    datasets in order to ignore this dataset for the rest of the ETL run.
+  * Announce in [#guild-data-eng](https://nubank.slack.com/archives/C1SNEPL5P) about the reverted changes.
+
+### Notes ###
+  * You should be aware that reverting changes spanning more than one dataset might cause problems if some of 
+    the datasets have already been committed but are then consumed by the reverted-to earlier versions of the 
+    other datasets.
+  * This solution doesn't apply to non-leaf datasets since then the situation is more complicated and it would
+    require different actions based on the kinds of datasets involved.
+
 ## Dataset partition not found on s3
-### Symptomps ###
+### Symptoms ###
   * A thrown `java.io.FileNotFoundException: No such file or directory` on a Spark executor for a file on S3. 
   * The the partition file in question is accounted for in the mentioned bucket via the AWS console web UI (because the AWS CLI is usually unable to find it either), and it has no permissions listed then it's most likely this issue.
 
