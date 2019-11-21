@@ -8,7 +8,6 @@ Table of contents
 * [Updating Airflow](#updating-airflow)
 * [Restarting the Airflow process](#restarting-the-airflow-process)
 * [Dry run tests](#dry-run-tests)
-* [Add new model to dagão dependencies](#add-new-model-to-dagão-dependencies)
 
 ### Useful links
 * [Monitoring the run on Airflow](./monitoring_nightly_run.md)
@@ -43,7 +42,7 @@ When a job is changed on [`aurora-jobs`](https://github.com/nubank/aurora-jobs),
  that is run in this pipeline is called [`dry-run-tests`](#dry-run-tests). This needs to be
  manually `release` in order for Airflow to have access to it.
 
- ### *Don't do this during an active DAG run.*
+ *Don't do this during an active DAG run unless you know what you are doing ([see below](#additional-details-on-deploying-a-new-dag)).*
 
    ![releasing dagao](images/release_dagao.png)
 
@@ -59,6 +58,11 @@ You can check this by comparing the versions of repositories to the versions in 
 All upstream dependencies to `dagao` are built off their `master` branches, except for `itaipu`, which uses the `release` branch.
 
 When a DAG is deployed while another is running, airflow will use the current state of the running DAG on the new DAG. Every new task will use the service versions provided by the newly deployed DAG.
+
+##### Some dangerous `itaipu` changes to deploy while the DAG is running include:
+ - Adding new datasets `itaipu` after the transaction that has already started. You can't register or remove datasets from a transaction that has already been started
+ - A change that affects multiple datasets where half the datasets affected have already been committed in the transaction. This can lead to data being in an inconsistent state. In this case you should retract all datasets and rerun them with the new changes.
+ - A change to core `itaipu` processes or cross-service communication logic that might require coordinated deploys with other code.
 
 ### Updating Airflow
 
@@ -147,26 +151,3 @@ differently in the past).
 Side note: obviously the docker in docker in docker approach is
 undesirable. Because of this, I think that this part of our architecture should
 be considered for a refactoring soon.
-
-### Add new model to dagão dependencies
-
-When users want to add new models to the nightly run we will need to make some updates to the dagão pipeline.
-
-Let's say you are adding a model called `your-model-name`.
- - Check that there is a [go pipeline](https://go.nubank.com.br/go/tab/pipeline/history/your-model-name) for it. Someone should have created it via the [`batch-models-python-template`](https://github.com/nubank/batch-models-python-template/) repository.
- - Add the model pipeline as one of the dagão dependencies, and fetch model version from s3:
-
-    Open a [`gocd-config-dsl`](https://github.com/nubank/gocd-config-dsl) PR that adds the model to [`common_batch_models.clj`](https://github.com/nubank/gocd-config-dsl/blob/master/src/gocd_config_dsl/pipelines/common_batch_models.clj). It will look similar to [this](https://github.com/nubank/gocd-config-dsl/pull/904).
-
- - Add model version to the json provided to airflow
-
-   Open a [`data-tribe-go-scripts`](https://github.com/nubank/data-tribe-go-scripts) PR that adds the following to the [`bin/dagao/create-push-das.sh` file](https://github.com/nubank/data-tribe-go-scripts/blob/master/bin/dagao/create-push-das.sh)
-    ```
-    # to set the version variable using a value provided by the gocd-artifacts material
-    your_model_name_version="$(cat your-model-name/model-version.json | jq '."your-model-name"' -r | cut -c 1-7 )"
-    ...
-    # to add the version to the json sent to airflow
-    "your-model-name" : "$your_model_name_version"
-    ```
-
- - Add the model to the DAG definition in `aurora-jobs`. It will look something like [this](https://github.com/nubank/aurora-jobs/pull/606/files)

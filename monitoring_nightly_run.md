@@ -16,9 +16,17 @@ When checking on the progress of the run, first check [Sonar](https://backoffice
 
 ## Finding the transaction id
 
-To check Sonar, first get the [metapod transaction](glossary.md#transaction) ID for the run.
+In order to use Sonar to check the run, you'll need the relevant [metapod transaction](glossary.md#transaction) ID.
 
-One way to get the Transaction ID is from the daily Slack notification posted in [#etl-updates](https://nubank.slack.com/messages/CCYJHJHR9/) when the nightly run begins (see the Metapod transaction line):
+If you have `nucli` and `quay.io`, you can do the following for today's transaction id:
+```
+nu datainfra sabesp -- utils tx-id
+```
+
+Or something like `nu datainfra sabesp -- utils tx-id --date 2019-11-19` or `nu datainfra sabesp -- utils tx-id --delta 1` for older days.
+
+
+Another way to get the Transaction ID is from the daily Slack notification posted in [#etl-updates](https://nubank.slack.com/messages/CCYJHJHR9/) when the nightly run begins (see the Metapod transaction line):
 
 ![image](https://user-images.githubusercontent.com/726169/33165581-a8d1169c-d037-11e7-9062-40d678b9800d.png)
 
@@ -62,6 +70,3 @@ Next steps depend on the error that you see.
 
 ## Commonly run commands
 [common sabesp CLI commands](cli_examples.md)
-
-## Schedule
-https://docs.google.com/a/nubank.com.br/spreadsheets/d/1Gmi2oyxzlMc-a4sgwx_r8W5S-708MmXmr1yLRN8BoLo/edit
