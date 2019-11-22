@@ -1,4 +1,33 @@
-# Merging a PR on Itaipu
+# Reviewing and Merging a PR on Itaipu
+
+## Checklist
+
+* New Dataset:
+    * Metadata
+        * Name makes sense
+        * Description makes sense
+        * Attribute names make sense given dataset's purpose
+        * Attribute's name matches attribute's description
+        * All attributes have descriptions (unless it is a model with 100s of attributes)
+    * Code
+        * Logic is mainly reviewed by the teammate
+        * Stop usage of hard-coded values in the middle of the code (magic numbers) and enforce that all fixed values are stored in variables that are passed by parameter
+        * Enforce naming standards
+    * Tests
+        * Ensure all functions are properly tested
+        * Ensure no `null`s are used in tests
+        * Ensure tests cover edge-cases
+
+    * Things to look out for
+        * People change a function but do not change the test. This usually indicates the function is poorly tested.
+
+
+* New StaticOps:
+    * Check if they are in the new format (https://github.com/nubank/itaipu/pull/4254/files)
+
+* StaticOp change:
+    * People sometimes want us to delete the files from a StaticOp and replace them. We do not do that. Instead, whe ask them to change the `name` attribute of the StaticOp, putting the date of the change at the end, and upload the new files to the new folder.
+
 
 ## bors
 
@@ -6,30 +35,33 @@
 
 For an updated documentation on bors, please check: https://bors.tech/
 
-## Deploy
+### Deploy
 
 `bors` is hosted on the Mobile Platform's Kubernetes cluster. It lives on the `staging` prototype, stack id `indigo` and shard `mobile`.
 
 To update bors, you can follow the instructions [here](https://github.com/nubank/mobile-k8s-recipes/blob/master/recipes/bors/README.md) and simply killing the pod should be enough to update it to the latest version. `bors` maintain its state in a Database, so there isn't any problem in killing the pod.
 
-## Interface
+### Interface
 
 `bors` has an UI to interact with it and to check the queue status: https://bors.nubank.com.br/repositories/8
 
 The [history tab](https://bors.nubank.com.br/repositories/8/log) should provide status and errors if there are any when interacting with `bors`. Feel free to reach #squad-data-access in Slack if you have any questions.
 
-## Itaipu
+### Itaipu
 
 Currently, `bors` is being used as the only to get a PR merged in [Itaipu](https://github.com/nubank/itaipu/). You can check the configuration used by `bors` here: https://github.com/nubank/itaipu/blob/master/bors.toml
 
 `bors` enforces the [Github Labels](https://github.com/nubank/data-platform-docs/blob/master/itaipu/pr_review.md#github-labels) are properly set, if there are at least a [CODEOWNER](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/about-code-owners) review before allowing a PR to enter its queue.
 
-## Code Owners
+### CircleCI
 
-Itaipu uses a [CODEOWNERS](https://github.com/nubank/itaipu/blob/master/.github/CODEOWNERS) file to validate if a user can approve a PR or not . The later entries have precedence over the ones inserted first. You can check more about Code Owners [here](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/about-code-owners).
+We use CircleCI for ensuring tests are run for every PR on Itaipu. Currently, `bors` is responsible to ensure all the tests are run in CircleCI before merging to `master`.
 
+`bors` uses the `staging` branch to batch PRs and run all the tests before merging the PR. We only run all the tests on this branch, so in the Github Interface you might not see all tests we run on `staging`. `bors` will report all the tests in a comment before merging your PR. 
 
-## Permissions
+The reason we did this is because we have a lot of users creating PRs and pushing to several branches and running tests for everyone is very costly. So we reduced the amount of tests running in users' branches. 
+
+### Permissions
 
 Any user that has access to Itaipu, should be able to interact with `bors`. If you are not able to interact with it, bors will comment the following:
 
@@ -43,15 +75,7 @@ This will redirect, to a page: https://bors.nubank.com.br/repositories/8/add-rev
 
 The user can also be added to the Reviewers list in the settings: https://bors.nubank.com.br/repositories/8/settings
 
-## CircleCI
-
-We use CircleCI for ensuring tests are run for every PR on Itaipu. Currently, `bors` is responsible to ensure all the tests are run in CircleCI before merging to `master`.
-
-`bors` uses the `staging` branch to batch PRs and run all the tests before merging the PR. We only run all the tests on this branch, so in the Github Interface you might not see all tests we run on `staging`. `bors` will report all the tests in a comment before merging your PR. 
-
-The reason we did this is because we have a lot of users creating PRs and pushing to several branches and running tests for everyone is very costly. So we reduced the amount of tests running in users' branches. 
-
-## Commands
+### Commands
 
 `bors` by receiving commands done by commenting in PRs. Any user can use any command:
 
@@ -67,6 +91,11 @@ The reason we did this is because we have a lot of users creating PRs and pushin
 | bors p=[priority] | Set the priority of the current pull request. Pull requests with different priority are never batched together. The pull request with the bigger priority number goes first.
 | bors r+ p=[priority] | Set the priority, run the test suite, and push to master (shorthand for doing p= and r+ one after the other).
 
-## bors try
+### bors try
 
 `bors try` is a special command. In our setup, you only need to use if you working on subprojects inside of Itaipu and want to run the tests through Github/Circle CI.
+
+
+## Code Owners
+
+Itaipu uses a [CODEOWNERS](https://github.com/nubank/itaipu/blob/master/.github/CODEOWNERS) file to validate if a user can approve a PR or not . The later entries have precedence over the ones inserted first. You can check more about Code Owners [here](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/about-code-owners).

@@ -164,32 +164,7 @@ Don't send.
 * You want to see what the plans are for new classes: check on `#guild-data-support`
 * You want to see what classes related to programming and data are being taught: check on `#learn-code`
 
-## Github Pull Request Reviews
+## Opening a Github Pull Request
 
 * Follow instructions in the [PR Template](https://github.com/nubank/itaipu/blob/master/.github/PULL_REQUEST_TEMPLATE.md)
 
-* New Dataset:
-    * Metadata
-        * Name makes sense
-        * Description makes sense
-        * Attribute names make sense given dataset's purpose
-        * Attribute's name matches attribute's description
-        * All attributes have descriptions (unless it is a model with 100s of attributes)
-    * Code
-        * Logic is mainly reviewed by the teammate
-        * Stop usage of hard-coded values in the middle of the code (magic numbers) and enforce that all fixed values are stored in variables that are passed by parameter
-        * Enforce naming standards
-    * Tests
-        * Ensure all functions are properly tested
-        * Ensure no `null`s are used in tests
-        * Ensure tests cover edge-cases
-
-    * Things to look out for
-        * People change a function but do not change the test. This usually indicates the function is poorly tested.
-
-
-* New StaticOps:
-    * Check if they are in the new format (https://github.com/nubank/itaipu/pull/4254/files)
-
-* StaticOp change:
-    * People sometimes want us to delete the files from a StaticOp and replace them. We do not do that. Instead, whe ask them to change the `name` attribute of the StaticOp, putting the date of the change at the end, and upload the new files to the new folder.
