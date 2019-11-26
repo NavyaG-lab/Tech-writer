@@ -42,7 +42,7 @@ A code generator helper can be found in `common-databricks`:
 ```scala
 import common_databricks.dataset_series.DatasetSeriesContractOpGenerator
 import common_databricks.DatabricksHelpers
-import common_etl.metadata.Squad
+import common_etl.metadata.{Country, Squad}
 import common_etl.operator.dataset_series.SeriesType
 
 val metapod = DatabricksHelpers.getMetapod()
@@ -51,11 +51,12 @@ DatasetSeriesContractOpGenerator.renderOp("your-series-name",
                                           SeriesType.Events,
                                           Squad.YourSquad,
                                           "description of your dataset series",
-                                          metapod)
+                                          metapod,
+					  Country.BR)
 
 /* Output:
 
-import common_etl.metadata.Squad
+import common_etl.metadata.{Country, Squad}
 import common_etl.operator.dataset_series.{DatasetSeriesAttribute, DatasetSeriesContractOp}
 import common_etl.schema.LogicalType
 
@@ -63,6 +64,7 @@ object YourSeriesName extends DatasetSeriesContractOp {
 
   override val seriesName: String = "your-series-name"
   override val seriesType: SeriesType = SeriesType.Events
+  override val country: Country = Country.BR
 
   override val ownerSquad: Squad = Squad.YourSquad
   override val description: Option[String]= Some("description of your dataset series")
