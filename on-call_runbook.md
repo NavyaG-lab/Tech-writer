@@ -23,6 +23,7 @@ The frequent dataset failures should enumerate the symptoms of the particular fa
 ## Frequent Dataset Failures
 - [Dataset partition not found on s3](#dataset-partition-not-found-on-s3)
 - [Leaf dataset is failing because of bad definition](#leaf-dataset-is-failing-because-of-bad-definition)
+- [Manual dataset-series failing with merge-schema error](#manual-dataset-series-failing-with-merge-schema-error)
 
 ## alert-itaipu-contracts triggered on Airflow
 
@@ -392,3 +393,14 @@ Some instances of this happening include:
 
 ### Solution ###
 [Retracting](https://github.com/nubank/data-platform-docs/blob/master/ops_how_to.md#retracting-datasets-in-bulk) the inputs for the failing datasets in order to recompute the inputs and re-store them on s3 ususally fixes it.
+
+## Manual dataset-series failing with merge-schema error
+### Symptoms
+ * Failures in running the contracts of manual dataset-series : `Caused by: org.apache.spark.SparkException: Failed to merge fields 'opt_out' and 'opt_out'. Failed to merge incompatible data types int and bigint`
+ 
+ Some instances of this happening include:
+  - [1] https://nubank.slack.com/archives/C1SNEPL5P/p1574839974192700
+  
+### Solution
+  This issue has been handled within Itaipu by the use of `LogicalType.stricterType`. But this error surfaces when manual dataset-series which have not been migrated have conflicting schema. The process of migrating is outlined within this [notebook](https://nubank.cloud.databricks.com/#notebook/1732044/command/1967677). 
+  Also check the [documentation](/ops_how_to.md#retracting-manual-appends-to-dataset-series) on retracting the uploads to manual dataset-series.
