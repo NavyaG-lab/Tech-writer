@@ -403,4 +403,4 @@ Some instances of this happening include:
   
 ### Solution
   This issue has been handled within Itaipu by the use of `LogicalType.stricterType`. But this error surfaces when manual dataset-series which have not been migrated have conflicting schema. The process of migrating is outlined within this [notebook](https://nubank.cloud.databricks.com/#notebook/1732044/command/1967677). 
-  Also check the [documentation](/ops_how_to.md#retracting-manual-appends-to-dataset-series) on retracting the uploads to manual dataset-series.
+  In case this issue is blocking the run, and leaves you no time to script a migration notebook, check the [documentation](/ops_how_to.md#retracting-manual-appends-to-dataset-series) on retracting the latest uploads to manual dataset-series.
