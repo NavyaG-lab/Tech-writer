@@ -539,3 +539,12 @@ If a dataset is served with bad data, and you need to quickly revert to yesterda
 - Use `insomnia`/ `sonar` to get the id of the dataset you want to retract. For eg., `5d94b837-c31e-4109-ac73-b904bbc7bf17`.
 - Retract using this end-point on metapod:
   `nu ser curl POST global metapod /api/migrations/retract/dataset-series/dataset/5d94b837-c31e-4109-ac73-b904bbc7bf17`
+  
+If the uploaded dataset has been committed to a transaction, we will also need to retract the raw datasets for that dataset-series.The raw datasets have a naming convention: `series-raw/{dataset-series-name}-*` For eg., for a dataset-series `series/direct-mail`, we may also have to retract
+
+- "series-raw/direct-mail-contract-avro"
+- "series-raw/direct-mail-contract-parquet"
+- "series-raw/direct-mail-alt-version-0-avro"
+- "series-raw/direct-mail-alt-version-0-parquet"
+
+To retract these raw datasets, we follow the same procedure as above for each one of them: get the `id` of the dataset, and retract using the metapod endpoint.
