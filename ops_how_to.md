@@ -539,7 +539,7 @@ If a dataset is served with bad data, and you need to quickly revert to yesterda
 - Use `insomnia`/ `sonar` to get the id of the dataset you want to retract. For eg., `5d94b837-c31e-4109-ac73-b904bbc7bf17`.
 - Retract using this end-point on metapod:
   `nu ser curl POST global metapod /api/migrations/retract/dataset-series/dataset/5d94b837-c31e-4109-ac73-b904bbc7bf17`
-  
+
 If the uploaded dataset has been committed to a transaction, we will also need to retract the raw datasets for that dataset-series.The raw datasets have a naming convention: `series-raw/{dataset-series-name}-*` For eg., for a dataset-series `series/direct-mail`, we may also have to retract
 
 - "series-raw/direct-mail-contract-avro"
@@ -548,3 +548,18 @@ If the uploaded dataset has been committed to a transaction, we will also need t
 - "series-raw/direct-mail-alt-version-0-parquet"
 
 To retract these raw datasets, we follow the same procedure as above for each one of them: get the `id` of the dataset, and retract using the metapod endpoint.
+
+## Replaying Deadletters
+**Deadletter:** when something goes wrong in a service, it creates a deadletter. That information is captured by a service (called `Mortician`) including the service that created the message, the recipient, the payload, and the error information. This is very important for debugging, and also allows us to just replay the same message -- as if the message creator had just done it.
+
+You will notice soft-alarms on [#squad-di-alarms](https://app.slack.com/client/T024U97V8/C51LWJ0SK) warning of new deadletters.
+
+![deadletter-warning](images/deadletter-warning.png)
+
+Head to [Mortician](https://backoffice.nubank.com.br/mortician-gui/) and input the query parameters as shown below. Information on the particular query parameters to use can be found in the Slack alarm.
+
+![mortician-gui](images/mortician-gui.png)
+
+Mortician GUI lists the deadletters as shown below. They are grouped by error message. You can choose to either replay them or discard them, depending on the specifics of the service & the error.
+
+![deadletter-mortician](images/deadletter-mortician.png)
