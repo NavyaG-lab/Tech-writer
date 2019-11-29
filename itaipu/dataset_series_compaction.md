@@ -20,73 +20,18 @@ The solution we implemented was to write a batch job which reads all data from a
 
 ### Finding out which dataset series should be compacted
 
-Even though the problem is on having larger and fewer partition files, calculating how many of these exist requires running a databricks notebook, which takes some time.
-A good proxy for finding out which dataset series are "too big" is looking how many datasets they have.
+The candidate dataset-series' for compaction are the ones with large number of partition files. However, it is time-consuming to calculate how many partitions exist for a series, and it requires running a Databricks notebook. Instead, a good proxy for the size of a dataset-series is the number of datasets they contain.
 
-This light weight [mordor query](https://backoffice.nubank.com.br/eye-of-mauron/#/s0/mordor/5ccab752-2e3d-40c9-8a76-543ed5ed5ee2) get us the largest dataset series.
+This light-weight [Mordor query](https://backoffice.nubank.com.br/eye-of-mauron/#/s0/mordor/5ccab752-2e3d-40c9-8a76-543ed5ed5ee2) lists the size of dataset-series by number of datasets. You can order by the number of datasets by clicking on the column header `(count ?dataset)`.
 
-You can order by size by clicking in the title of the column `(count ?dataset)`.
-An ok heuristic is to run compaction for all dataset series that have more than 30k datasets.
-
-Another way is to run this notebook code:
-
-```python
-from metapod_client import helper
-from metapod_client import metapod_factory
-from metapod_client.client import Client
-from mypy_extensions import TypedDict
-from typing import List
-
-DatasetsCountInSeries = TypedDict("DatasetsCountInSeries", {
-                                  'series': str, 'datasets_count': int})
-
-
-def get_client(env, country):
-    return helper.get_metapod_client(env=env, country=country, service="airflow")
-
-
-def get_local_client(env, country):
-    system = metapod_factory.token_system(env, country, "metapod-client")
-    return Client(system['config'], system['http'], system['auth'].service)
-
-
-def get_num_requests_in_series(env, country="br") -> List[DatasetsCountInSeries]:
-    query = """
-    query GetDatasetSeries    {
-        allDatasetSeries {
-        edges {
-            name
-            numDatasets
-        }
-      }
-    }
-    """
-    mc = get_local_client(env, country)
-    response = mc._graphql_request(payload=query)
-
-    return response
-
-
-bla = get_num_requests_in_series("prod")['allDatasetSeries']['edges']
-sortedd = sorted(bla, key=lambda item: item['numDatasets'] or 0)
-top10_to_compact = list(reversed(sortedd))[:10]
-
-[print(i['name']) for i in top10_to_compact]
+An alternative to using the Mordor query is to using this `nu` command:
+```
+nu datainfra series-to-compact --cutoff 10000 |sort
 ```
 
-And you can check the size directly via this metapod query:
+*A heuristic is to run compaction for all dataset-series' that have more than 10k datasets.*
 
-```
-{
-    datasetSeries(datasetSeriesName: "<SERIES_NAME>") {
-    name
-    numDatasets
-    datasets {
-      id
-    }
-  }
-}
-```
+
 
 ### Starting a compaction run
 
