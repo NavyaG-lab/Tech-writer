@@ -20,6 +20,9 @@ cd itaipu
   - required **metapod-admin** scope on *staging*.
 - `databricks` token available on `$DATABRICKS_TOKEN`. see: [generating a token][3]
 
+#### Troubleshooting
+- If you see weird errors like the ones described in [this Slack thread](https://nubank.slack.com/archives/GHSTWS9QC/p1574865769060900), something that seems to indicate to classpath issues, you can move your current Spark installation aside and let Pororoca re-install it for you.
+
 ### Implicit dependencies
 
 - Metapod is running on staging
