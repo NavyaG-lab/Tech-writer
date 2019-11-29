@@ -27,6 +27,7 @@
 * [Serve a dataset again](#serve-a-dataset-again)
 * [Checks before old Prod stack teardown](#checks-before-old-prod-stack-teardown)
 * [Retracting Manual Appends to Dataset Series](#retracting-manual-appends-to-dataset-series)
+* [Replaying Deadletters](#replaying-deadletters)
 
 
 ## Restart Aurora
@@ -562,4 +563,4 @@ Head to [Mortician](https://backoffice.nubank.com.br/mortician-gui/) and input t
 
 Mortician GUI lists the deadletters as shown below. They are grouped by error message. You can choose to either replay them or discard them, depending on the specifics of the service & the error.
 
-![deadletter-mortician](images/deadletter-mortician.png)
+![deadletter-mortician](images/deadletters-mortician.png)
