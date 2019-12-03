@@ -1,32 +1,145 @@
 # Reviewing and Merging a PR on Itaipu
 
+Table of Contents
+=================
+
+* [Workflow](#workflow)
+* [Checklist](#checklist)
+     * [General](#general)
+     * [Dataset](#dataset)
+     * [Contracts](#contracts)
+     * [StaticOps](#staticops)
+     * [DatasetSeries](#datasetseries)
+  * [Macros](#macros)
+     * [Unsure about PII leakage in SparkOp](#unsure-about-pii-leakage-in-sparkop)
+     * [Unsure about PII leakage in StaticOp](#unsure-about-pii-leakage-in-staticop)
+     * [StaticOp command not correctly pasted](#staticop-command-not-correctly-pasted)
+     * [StaticOp command not correctly pasted, but you did it for them](#staticop-command-not-correctly-pasted-but-you-did-it-for-them)
+     * [Contract Migration to V1](#contract-migration-to-v1)
+     * [Check for Global Services on Contracts](#check-for-global-services-on-contracts)
+     * [PRs without Tags](#prs-without-tags)
+     * [PR tagged with Ready For Merge, not reviewed by Committer](#pr-tagged-with-ready-for-merge-not-reviewed-by-committer)
+     * [Check if using current_date, current_timestamp](#check-if-using-current_date-current_timestamp)
+  * [bors](#bors)
+     * [Basic Usage](#basic-usage)
+     * [Deploy](#deploy)
+     * [Interface](#interface)
+     * [Itaipu](#itaipu)
+     * [CircleCI](#circleci)
+     * [Permissions](#permissions)
+     * [Commands](#commands)
+     * [bors try](#bors-try)
+* [Code Owners](#code-owners)
+
+## Workflow
+The normal flow is:
+
+1. PR WIP  -> "you finish pushing all the changes and making sure the tests are passing" 
+1. PR Teammate Review Requested -> "teammate reviews" 
+1. PR Review Requested  -> "itaipu committer reviews"
+1. PR Ready For Merge -> "someone merges the PR (either bors or an itaipu committer)"
+1. PR Merged
+
+You can read more about the tags [here](https://docs.google.com/document/d/1YRCKqAb0Zt0d_Hf5-xWxgNCXHi4Q5TtD1kMXlBe0pUY/edit?usp=sharing
+).
+
 ## Checklist
+### General
 
-* New Dataset:
-    * Metadata
-        * Name makes sense
-        * Description makes sense
-        * Attribute names make sense given dataset's purpose
-        * Attribute's name matches attribute's description
-        * All attributes have descriptions (unless it is a model with 100s of attributes)
-    * Code
-        * Logic is mainly reviewed by the teammate
-        * Stop usage of hard-coded values in the middle of the code (magic numbers) and enforce that all fixed values are stored in variables that are passed by parameter
-        * Enforce naming standards
-    * Tests
-        * Ensure all functions are properly tested
-        * Ensure no `null`s are used in tests
-        * Ensure tests cover edge-cases
+* When in doubt, ask [#itaipu-reviewers](https://app.slack.com/client/T024U97V8/GQU8K9RFF)
+* A teammate has reviewed the PR
+* PR description is clear (changes committed, affected datasets etc)
+* PR is small (not a lot of files changed all at once)
 
-    * Things to look out for
-        * People change a function but do not change the test. This usually indicates the function is poorly tested.
+### Dataset
+* Metadata
+   * Possible PII columns not properly tagged (email, cpf, etc)
+    * Name makes sense
+    * Description makes sense
+    * Attribute names make sense given dataset's purpose
+    * Attribute's name matches attribute's description
+    * All attributes have descriptions (unless it is a model with 100s of attributes)
+* Code
+    * Functions are idempotent (no use of random, current_date, etc)  
+	* Added to package file in alphabetical order 
+    * Stop usage of hard-coded values in the middle of the code (magic numbers) and enforce that all fixed values are stored in variables that are passed by parameter
+    * Enforce naming standards
+* Tests
+    * If a change is being made in an important dataset, or the logic inside the definition seems too complex, and there are no unit tests, ask for unit tests
+    * Ensure no `null`s are used in tests
+    * Ensure tests cover edge-cases
+    * People change a function but do not change the test. This usually indicates the function is poorly tested.
+
+### Contracts
+* Using V1 API
+* Global services must override `prototypes`
+* Documentation on attributes
 
 
-* New StaticOps:
-    * Check if they are in the new format (https://github.com/nubank/itaipu/pull/4254/files)
+### StaticOps
+* If you are a committer not from data-access squad, ask on #squad-data-access to run the cp command
+Check for PII columns
+* People sometimes want us to delete the files from a StaticOp and replace them. We do not do that. Instead, whe ask them to change the `name` attribute of the StaticOp, putting the date of the change at the end, and upload the new files to the new folder.
 
-* StaticOp change:
-    * People sometimes want us to delete the files from a StaticOp and replace them. We do not do that. Instead, whe ask them to change the `name` attribute of the StaticOp, putting the date of the change at the end, and upload the new files to the new folder.
+### DatasetSeries
+* Warn people about PII data (if a column is tagged as PII, only the hash value will be available) -> another solution for this is to tag the entire dataset as PII
+* There shouldn't be many transformations inside the DatasetSeriesOp apart from renamings and replaces -> advise people to create a separate SparkOp for that
+
+
+## Macros
+Since the issues faced when reviewing a PR are recurring and the changes requested in those cases are usually standard, there are some macros we can use. You can set up your github macros using [this tutorial](https://help.github.com/en/github/writing-on-github/creating-a-saved-reply).
+
+### Unsure about PII leakage in SparkOp
+Does this sparkOp contain PII information? If so, it should have a clearance PII
+
+### Unsure about PII leakage in StaticOp
+Does this staticOp contain PII information? If so, it should have a clearance PII (and it would go to s3://nu-spark-static/pii/staticop-name/)
+
+### StaticOp command not correctly pasted
+Can you pass the exact command to copy the files? This helps a lot the person reviewing the PRs and speeds up the process =) (PR for reference https://github.com/nubank/itaipu/pull/6851)
+
+The command follows the structure: aws s3 cp --recursive s3://path/to/my/staticop/staticop-name/ s3://nu-spark-static/general/staticop-name/
+
+### StaticOp command not correctly pasted, but you did it for them
+Next time, can you pass the exact command to copy the files? This helps a lot the person reviewing the PRs and speeds up the process =) (PR for reference https://github.com/nubank/itaipu/pull/6851)
+
+Example: aws s3 cp --recursive s3://path/to/my/staticop/staticop-name/ s3://nu-spark-static/general/staticop-name/
+
+### Contract Migration to V1
+It would be really nice if you could follow these docs: https://github.com/nubank/data-infra-docs/blob/master/itaipu/guides/contracts_migration_v0_to_v1.md to migrate the contracts to the V1 (which includes country).
+
+If you find that too be too much work, you can leave for later, it won't break anything 😉
+
+### Check for Global Services on Contracts
+I had a look on definition and it seems this service is global.
+
+By our docs you need to add override val prototypes: Seq[Prototype] = Seq(Prototype.Global) to the contract or it won't work.
+
+### PRs without Tags
+Can you add a tag to this PR? I will preemptively add it as -PR WIP for now. You can also create a PR as a [draft](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/about-pull-requests#draft-pull-requests), in case you are not done with it.
+
+### PR tagged with Ready For Merge, not reviewed by Committer
+Can you please add the tag `-PR Review Requested` when you are waiting for an itaipu committer to review your PR?
+
+The normal flow is:
+PR WIP  -> "you finish pushing all the changes and making sure the tests are passing" 
+-> PR Teammate Review Requested -> "teammate reviews" 
+-> PR Review Requested  -> "itaipu committer reviews"
+-> PR Ready For Merge -> "someone merges the PR (either bors or an itaipu committer)"
+-> PR Merged
+
+You can read more about the tags here:
+https://docs.google.com/document/d/1YRCKqAb0Zt0d_Hf5-xWxgNCXHi4Q5TtD1kMXlBe0pUY/edit?usp=sharing
+
+### Check if using current_date, current_timestamp
+Please don’t use current\_timestamp, current_date or any other non deterministic function in Itaipu. It breaks the assumption that sparkOps are pure functions and when there are errors and we need to reprocess something you will have wrong data.
+
+The recommended way is to use targetDate and/or referenceDate. You can see their implementation here: [https://github.com/nubank/itaipu/blob/4f89194ea3f42d9ca4bc946f578c3ffe395ac137/src/main/scala/etl/itaipu/CLI.scala#L155](https://github.com/nubank/itaipu/blob/4f89194ea3f42d9ca4bc946f578c3ffe395ac137/src/main/scala/etl/itaipu/CLI.scala#L155)
+
+targetDate = today (the date Itaipu begins to run)
+referenceDate = yesterday (the day where we have almost complete data)
+
+here’s an example that uses targetDate [https://github.com/nubank/itaipu/blob/11237a945856f7481685e89e85e28c00e26328ff/src/main/scala/etl/dataset/policy/lending/LendingInputDataset.scala#L45](https://github.com/nubank/itaipu/blob/11237a945856f7481685e89e85e28c00e26328ff/src/main/scala/etl/dataset/policy/lending/LendingInputDataset.scala#L45)
 
 
 ## bors
@@ -34,6 +147,9 @@
 `bors` is a merge automation tool that helps merging several PRs at the same time. It's an open source tool available [here](https://github.com/bors-ng/bors-ng).
 
 For an updated documentation on bors, please check: https://bors.tech/
+
+### Basic Usage
+After a PR is approved and ready for merge comment on the PR `bors r+`
 
 ### Deploy
 
