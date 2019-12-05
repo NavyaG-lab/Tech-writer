@@ -78,7 +78,7 @@ You can read more about the tags [here](https://docs.google.com/document/d/1YRCK
 
 ### StaticOps
 * If you are a committer not from data-access squad, ask on #squad-data-access to run the cp command
-Check for PII columns
+Check for [PII](https://github.com/nubank/data-platform-docs/itaipu/pii_and_personal_data.md) columns
 * People sometimes want us to delete the files from a StaticOp and replace them. We do not do that. Instead, whe ask them to change the `name` attribute of the StaticOp, putting the date of the change at the end, and upload the new files to the new folder.
 
 ### DatasetSeries
@@ -89,11 +89,11 @@ Check for PII columns
 ## Macros
 Since the issues faced when reviewing a PR are recurring and the changes requested in those cases are usually standard, there are some macros we can use. You can set up your github macros using [this tutorial](https://help.github.com/en/github/writing-on-github/creating-a-saved-reply).
 
-### Unsure about PII leakage in SparkOp
-Does this sparkOp contain PII information? If so, it should have a clearance PII
+### Unsure about [PII](https://github.com/nubank/data-platform-docs/itaipu/pii_and_personal_data.md) leakage in SparkOp
+Does this sparkOp contain PII information? If so, it should have a clearance PII. Please also refer to: https://github.com/nubank/data-platform-docs/itaipu/pii_and_personal_data.md.
 
-### Unsure about PII leakage in StaticOp
-Does this staticOp contain PII information? If so, it should have a clearance PII (and it would go to s3://nu-spark-static/pii/staticop-name/)
+### Unsure about [PII](https://github.com/nubank/data-platform-docs/itaipu/pii_and_personal_data.md) leakage in StaticOp
+Does this staticOp contain PII information? If so, it should have a clearance PII (and it would go to s3://nu-spark-static/pii/staticop-name/). Please also refer to: https://github.com/nubank/data-platform-docs/itaipu/pii_and_personal_data.md.
 
 ### StaticOp command not correctly pasted
 Can you pass the exact command to copy the files? This helps a lot the person reviewing the PRs and speeds up the process =) (PR for reference https://github.com/nubank/itaipu/pull/6851)
@@ -211,7 +211,6 @@ The user can also be added to the Reviewers list in the settings: https://bors.n
 
 `bors try` is a special command. In our setup, you only need to use if you working on subprojects inside of Itaipu and want to run the tests through Github/Circle CI.
 
-
-## Code Owners
+## Code Owners	
 
 Itaipu uses a [CODEOWNERS](https://github.com/nubank/itaipu/blob/master/.github/CODEOWNERS) file to validate if a user can approve a PR or not . The later entries have precedence over the ones inserted first. You can check more about Code Owners [here](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/about-code-owners).
