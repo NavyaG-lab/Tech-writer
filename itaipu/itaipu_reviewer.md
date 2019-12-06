@@ -211,6 +211,33 @@ The user can also be added to the Reviewers list in the settings: https://bors.n
 
 `bors try` is a special command. In our setup, you only need to use if you working on subprojects inside of Itaipu and want to run the tests through Github/Circle CI.
 
-## Code Owners	
+## Code Owners
 
 Itaipu uses a [CODEOWNERS](https://github.com/nubank/itaipu/blob/master/.github/CODEOWNERS) file to validate if a user can approve a PR or not . The later entries have precedence over the ones inserted first. You can check more about Code Owners [here](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/about-code-owners).
+
+
+## Itaipu Committers
+[Itaipu committer](https://github.com/orgs/nubank/teams/itaipu-committer) is a group of people with merge rights on Itaipu. Currently, they are able to merge PRs involving files inside the folders dataset and dataset_series, as seen in [CODEOWNERS](https://github.com/nubank/itaipu/blob/master/.github/CODEOWNERS).
+
+If you want to become an itaipu committer, the steps you must follow are:
+* Do a self-assessment about how much you feel confortable reviewing a PR by filling up some questions in this forms (https://forms.gle/ptkK1ByKpjRChMSKA)
+* Pair up with another reviewer for two sessions of the daily PR review rotation
+* Review PRs on your own for one session of the daily PR review rotation
+
+This form will be regularly reviewed by either [#itaipu-reviewers](https://app.slack.com/client/T024U97V8/GQU8K9RFF) or [#squad-data-access](https://app.slack.com/client/T024U97V8/C84FAS7L6), who will check the requirements bellow, and also manage the pairing up between new reviewers and existing ones. 
+
+* Should have at least exited the onboarding period
+* Should have actively contributed to the repo
+* Should know about good practices and advocate for them (unit tests, readable code, etc)
+* Should know about:
+  * [StaticOps](https://github.com/nubank/ds-knowledge/blob/master/dataset-tutorial/8-StaticOp.md)
+  * [Dataset Series](https://github.com/nubank/data-platform-docs/blob/master/etl_users/dataset_series.md)
+  * [Unit Tests](https://github.com/nubank/data-platform-docs/blob/master/itaipu/create_basic_dataset.md#7---testing)
+  * [PII](https://github.com/nubank/data-platform-docs/blob/master/itaipu/pii_and_personal_data.md)
+  * [Contracts](https://github.com/nubank/data-platform-docs/blob/master/itaipu/contracts.md)
+  * [Metapod](https://github.com/nubank/data-platform-docs/blob/master/metapod.md)
+  * [SparkOp](https://github.com/nubank/data-platform-docs/blob/master/itaipu/create_basic_dataset.md#3---understanding-the-sparkop-class)
+  * [Bors](https://github.com/bors-ng/bors-ng)
+  * [Serving Layer](https://github.com/nubank/data-platform-docs/blob/master/infrastructure/serving_layer.md)
+  * [GitHub tags](https://github.com/nubank/data-platform-docs/blob/master/itaipu/itaipu_reviewer.md#workflow)
+
