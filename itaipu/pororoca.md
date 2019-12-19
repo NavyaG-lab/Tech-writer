@@ -51,7 +51,7 @@ only the resulting contracts (contract,pii,history tables) as not to couple with
 
 ```bash
 cd itaipu
-./pororoca cluster --version SHA
+./pororoca cluster --itaipu-version SHA
 ```
 
 To run in a cluster, a version that was pushed to quay.io must be provided. By default it will run sabesp using the `cantareira-dev` cluster, the verification step is the same.
