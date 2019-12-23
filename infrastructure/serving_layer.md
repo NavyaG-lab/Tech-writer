@@ -36,31 +36,33 @@ If the ETL run gets delayed, some datasets get delayed, and if your dataset depe
 
 As an engineer that would like to get data from ETL land into microservices land, you need to take the following into account:
 
-### tell tapir to load the dataset
+### Tell Tapir to load the dataset
 
 Your dataset is served automatically by Tapir according to the [Serving Layer Mode](#making-your-dataset-ready-for-the-serving-layer) associated with it, so no extra work is necessary.
 
-### primary key
+### Primary key
 
 The primary key used when inserting rows of a dataset into the DynamoDB table is a conjunction of the primary key from the itaipu dataset (used as the dynamo hash key) along with the dataset name (used as the dynamo sort key).
 Hence, if you have duplicate values in your primary key column, your dataset will fail while running the dataset SparkOp as it wouldn't be loadable from DynamoDB afterwards. This key is how you will access rows of the dataset when querying through `conrado`, via HTTP ([see below](#conrado)).
 
-### setting serving style
+### Setting serving style
 
 The serving style is based on the [Serving Layer Mode](#making-your-dataset-ready-for-the-serving-layer) associated with the dataset.
 
 The value of `LoadedOnly` instructs Tapir to load your dataset in the DynamoDB store where it will be available via http in `conrado`, which your service can hit.
 
-You can alternatively set the Serving Layer Mode to `LoadedAndPropagated` to have the dataset rows be served via Kafka messages, as well as loaded in the db to queried from `conrado`. The dataset would be published to the `dataset-update` topic.
+You can alternatively set the Serving Layer Mode to `LoadedAndPropagated` to have the dataset rows be served via Kafka messages, as well as loaded in the db to queried from `conrado`.
 
-### when is data overwritten?
+### When is data overwritten?
 
 The ETL pipeline runs once a day and will load the results of the datasets in the list into the dynamo table. Data from previous loads is not cleared, but when new data is inserted at a primary key that already exists, it will be overwritten for that primary key. So if your dataset `recalculate-customer-limits` produces a new limit for every customer every day, then the data in the dynamo table will be updated for every customer every day. But if your dataset includes a customer only once a month, similar to what is done with `proactive-limit-increases`, then the data for a customer will only get refreshed once a month.
 
+## Dataset Row Schema
 
-## Payload schema
-
-Data is served either via HTTP or Kafka as [`DatasetRow`](https://github.com/nubank/common-schemata/blob/9cf054a6665341e0b44495151fa7ca2f744f5886/src/common_schemata/wire/tapir.clj#L6-L14)s, which contain some metadata and a `:value` key which is a map containing:
+Data is served either via HTTP or Kafka. The payload is a [`dataset
+row`](https://github.com/nubank/common-etl-spec/blob/master/src/tapir/schemata/dataset.clj#L30),
+which contain some metadata and a `:value` key. The row is a map
+containing the following fields:
 
  - `:identifier`: the primary key value of the itaipu dataset
  - `:dataset`: the dataset name defined in itaipu, but with the prefix dropped. So `policy/collections-union` becomes `collections-union`
@@ -71,7 +73,63 @@ Data is served either via HTTP or Kafka as [`DatasetRow`](https://github.com/nub
  - `:target-date`: the day that the data was loaded
  - `:value`: a map representing the row of the dataset
 
-## Plumatic schemas for the payload
+##### Note on the prototype column
+
+Using the propagation key, `itaipu` automatically looks up the
+prototype each rows belongs to and adds this information in a
+`prototype` column. `tapir` then uses this `prototype` column to know
+which shard to produce the message on. In case the dataset row ends up
+not containing a value for the `prototype` column, `tapir` ignores the
+row and does not propagate it.
+
+##### Example
+
+Here's an example of the row with id
+`11111111-1111-1111-1111-111111111111` of the `dummy-served` dataset
+fetched from Conrado with the following command:
+
+```shell
+nu ser curl GET global conrado --accept application/edn /api/dataset/dummy-served/row/11111111-1111-1111-1111-111111111111 | zprint
+```
+
+The response for this dataset looks like this:
+
+```clojure
+{:dataset "dummy-served",
+ :dataset-id #uuid "5ddc6b92-ec4c-46e6-828d-1c5069cdcf11",
+ :expires-at #nu/time "2019-11-27T23:59:59Z",
+ :identifier "11111111-1111-1111-1111-111111111111",
+ :prototype "global",
+ :schema-id #uuid "5dc98514-491a-452a-ad6d-4e66eb111727",
+ :target-date #nu/date "2019-11-26",
+ :transaction-id #uuid "91848d54-c42c-5d77-b1d6-d51cc3d11f3b",
+ :value {:example-boolean true,
+         :example-booleans [true false],
+         :example-date #nu/date "1970-01-01",
+         :example-dates [#nu/date "1970-01-01" #nu/date "1970-01-01"],
+         :example-decimal 0E-18M,
+         :example-decimals [1.000000000M 2.000000000M],
+         :example-double 0N,
+         :example-doubles [1N 2N],
+         :example-enum "enum-1",
+         :example-enums ["enum-1" "enum-2"],
+         :example-integer 0,
+         :example-integers [1 2],
+         :example-keyword :keyword-1,
+         :example-keywords [:keyword-1 :my-ns/keyword-2],
+         :example-string "aaa",
+         :example-strings ["aaa" "bbb"],
+         :example-timestamp #nu/time "1970-01-01T00:00:00Z",
+         :example-timestamps [#nu/time "1970-01-01T00:00:00.001Z"
+                              #nu/time "1970-01-01T00:00:00.002Z"],
+         :example-uuid #uuid "11111111-1111-1111-1111-111111111111",
+         :example-uuids [#uuid "22222222-2222-2222-2222-222222222222"
+                         #uuid "33333333-3333-3333-3333-333333333333"],
+         :id #uuid "11111111-1111-1111-1111-111111111111",
+         :prototype "global"}}
+```
+
+## Plumatic Schemas
 
 The [Sarcophagus](https://github.com/nubank/sarcophagus) project publishes the Plumatic schemas of the serving layer datasets as artifacts to the `nu-maven` repository. You can use theses schemas as a dependency in your service if you don't want write them yourself. Take a look at this [guide](https://github.com/nubank/sarcophagus#how-can-i-use-a-dataset-artifact) to learn more about how to use those artifacts.
 
@@ -79,53 +137,77 @@ The [Sarcophagus](https://github.com/nubank/sarcophagus) project publishes the P
 
 `conrado` is a service that runs in the prod environment. It serves data out the DynamoDB table that `tapir` loaded data into, via an HTTP interface, described below:
 
-- _coerce one_ `GET /api/dataset/:dataset/row/:id`: gets the row of a dataset given the primary key id, supports coercion and Sachem
-- _coerce many_ `POST /api/dataset/:dataset/rows`: gets the rows of a dataset given the primary key ids under the :ids parameter of the request body, supports coercion and Sachem
+##### GET /api/dataset/:name/row/:id
 
- - _fetch many_ `/api/dataset/:id`: gets the results for all datasets loaded into `conrado`'s table with the provided id/entry primary key (i.e. customer ID or account ID)
- - _fetch one_ `/api/dataset/:id/:dataset`: gets the row of a dataset given the primary key id
+Gets a single row of a dataset given the `:name` of the dataset and
+the `:id` of a row in the path parameters in the URL. Use this
+endpoint if the `:id` is not PII data, and you don't mind that it
+shows up in logs (Splunk for example). This endpoint supports Sachem
+and schema coercion.
 
-For example, running
-
+```shell
+nu ser curl GET global conrado --accept application/edn /api/dataset/dummy-served/row/11111111-1111-1111-1111-111111111111 | zprint
 ```
-nu ser curl GET global conrado /api/dataset/beefbeef-dead-beef-94fb-79cf00d68730/reactive-limit-optimal-limits -- -v
+
+##### POST /api/dataset/:name/row
+
+Gets a single row of a dataset given the `:name` of the dataset in the
+path, and the `:id` of the row in the body parameters of the
+request. Use this endpoint if the `:id` is PII data and should NOT
+show up in any logs. This endpoint supports Sachem and schema
+coercion.
+
+```shell
+nu ser curl POST global conrado --accept application/edn /api/dataset/dummy-served/row -d '{"id": "11111111-1111-1111-1111-111111111111"}' | zprint
 ```
 
-will result in
+##### POST /api/dataset/:name/rows
 
-```json
-{
-  "identifier": "beefbeef-dead-beef-94fb-79cf00d68730",
-  "transaction_id": "f6c45ccc-11f5-5717-99e8-3dc10221e531",
-  "dataset_id": "5b19c743-13cf-4ffe-89bd-5413d2b58e0d",
-  "expires_at": "2018-06-09T23:59:59Z",
-  "target_date": "2018-06-08",
-  "dataset": "reactive-limit-optimal-limits",
-  "value": {
-    "amount": 400,
-    "account__id": "5ab2b6b4-723e-47db-94fb-79cf00d68730"
-  }
-}
+Gets multiple rows of a dataset given the `:name` of the dataset in
+the path, and the `:ids` of the rows in the body parameters of the
+request. The `:ids` will not show up in the logs, so it is also safe
+to use for PII data. This endpoint supports Sachem and schema
+coercion.
+
+```shell
+nu ser curl POST global conrado --accept application/edn /api/dataset/dummy-served/rows -d '{"ids": ["11111111-1111-1111-1111-111111111111", "22222222-2222-2222-2222-222222222222"]}' | zprint
+```
+
+##### GET /api/dataset/:id/:name (deprecated soon)
+
+Gets the row of a dataset given the primary key id. This endpoint does
+not support Sachem, nor schema coercion.
+
+```shell
+nu ser curl GET global conrado  --accept application/edn /api/dataset/11111111-1111-1111-1111-111111111111/dummy-served | zprint
+```
+
+##### GET /api/dataset/:id (deprecated soon)
+
+Gets the results for all datasets loaded into `conrado`'s table with
+the provided id/entry primary key (i.e. customer ID or account
+ID). This endpoint does not support Sachem, nor schema coercion.
+
+```shell
+nu ser curl GET global conrado  --accept application/edn /api/dataset/11111111-1111-1111-1111-111111111111 | zprint
 ```
 
 ## Kafka
 
-When a dataset is declared to be propagated, Tapir serves the rows of a dataset through Kafka. There are 2 approaches at the moment, a single topic for all datasets, and a dedicated topic per dataset.
+When a dataset is declared to be propagated, Tapir serves the rows of
+a dataset through a dedicated Kafka topic for each dataset. The name
+of the Kafka topic is derived from the dataset name suffix, and is
+called `SERVING-<DATASET-SUFFIX>`. If the name of your dataset is
+`dataset/dummy-served`, the name of the Kafka topic would be
+`SERVING-DUMMY-SERVED`.
 
-### Single topic for all datasets
+The messages in the dedicated Kafka topics conform to an extended
+version of Tapir's dataset row schema. The row of a dataset lives
+under the `:value` key of Tapir's dataset `Row` schema and is coerced
+and checked against the schema declared in Itaipu.
 
-Tapir serves the rows of all datasets to the `DATASET-UPDATE` Kafka topic. The subtopic for each message is set to the name of the dataset. The messages in this topic conform to the generic [`common-schemata.wire.tapir/DatasetRow`](https://github.com/nubank/common-schemata/blob/9cf054a6665341e0b44495151fa7ca2f744f5886/src/common_schemata/wire/tapir.clj#L6-L14) schema. Note: Since this topic is used for all datasets, the map under the `:value` key of the `DatasetRow` is not coerced or checked against any schema. Please consider using the dedicated topic per dataset if you need this.
-
-### Dedicated topic per dataset
-
-Tapir also serves the rows of datasets to a dedicated Kafka topic per dataset. The name of the Kafka topic is derived from the name of the dataset, and is called `SERVING-<DATASET-NAME>`. The messages in the dedicated Kafka topics conform to an extended version for the `DatasetRow` schema. The row of a dataset under the `:value` key of the `DatasetRow` is coerced and checked against the Metapod schema of the dataset. The dedicated topic per dataset is the preferred way to consume a dataset from Tapir. It has the following benefits:
-- **Less bandwidth consumption**, because your service reads only the rows of the dataset you are interested in, and not all rows of all datasets.
-- Deeper **integration with Sachem**, provided your consumer uses a Plumatic schema that also has definitions for the map under the `:value` key of the `DatasetRow` schema. If you are looking for the Plumatic schema of a dataset, take a look at the [Sarcophagus](https://github.com/nubank/sarcophagus) project.
-- **Proper type coercion**, because Tapir uses the Metapod schema of a dataset to serialize the rows. If you use one of the Plumatic dataset schemas provided by [Sarcophagus](https://github.com/nubank/sarcophagus), types like UUIDs, dates, timestamps, etc. will be coerced to their proper Clojure types.
-
-#### note on prototype column
-
-Using the propagation key, `itaipu` automatically looks up the prototype each rows belongs to and adds this information in a `prototype` column. `tapir` then uses this `prototype` column to know which shard to produce the message on. In case the dataset row ends up not containing a value for the `prototype` column, `tapir` ignores the row and does not propagate it.
+The `SERVING-<DATASET-NAME>` Kafka topics have Sachem integration and
+data types are coerced to their schema types.
 
 ## Monitoring
 
