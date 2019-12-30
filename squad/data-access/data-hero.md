@@ -79,8 +79,8 @@ Data Access schedules can be found [here](https://nubank.app.opsgenie.com/teams/
 
 Other way to find who is on call is to use Slack Opsgenie Integration, just run the command anywhere on Slack:
 
-`/genie whoisoncall Data Hero`
-`/genie whoisoncall Data Hero Backup`
+`/genie whoisoncall Data Access Level 1`
+`/genie whoisoncall Data Access Level 2`
 
 ## Overrides
 

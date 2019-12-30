@@ -19,4 +19,4 @@ Data Access schedules can be found [here](https://nubank.app.opsgenie.com/teams/
 
 Other way to find who is the Data Support is to use Slack Opsgenie Integration, just run the command anywhere on Slack:
 
-`/genie whoisoncall Data Support`
+`/genie whoisoncall Data Access Support`
