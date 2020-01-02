@@ -14,6 +14,10 @@ Along with the Weekly Data Hero, we also have a Data Hero Backup rotation to hel
 
 During idle time, on-call engineers can work on normal backlogs tasks.
 
+## Playbooks
+
+If you are in the middle of an incident go here for common failure scenarios and solutions: [playbooks](https://github.com/nubank/playbooks/tree/master/squads/data-access)
+
 ## Responsibilities
 
 ### Monitoring
