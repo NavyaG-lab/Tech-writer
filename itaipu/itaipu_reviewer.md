@@ -191,6 +191,8 @@ This will redirect, to a page: https://bors.nubank.com.br/repositories/8/add-rev
 
 The user can also be added to the Reviewers list in the settings: https://bors.nubank.com.br/repositories/8/settings
 
+Ask #squad-data-acess for help if you can't be added to reviewers list.
+
 ### Commands
 
 `bors` by receiving commands done by commenting in PRs. Any user can use any command:
