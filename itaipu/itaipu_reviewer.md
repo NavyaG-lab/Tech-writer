@@ -40,6 +40,10 @@ The normal flow is:
 1. PR Ready For Merge -> "someone merges the PR (either bors or an itaipu committer)"
 1. PR Merged
 
+You can use [this link](https://github.com/nubank/itaipu/issues?q=is%3Aopen+label%3A%22-PR+Review+Requested%22+sort%3Aupdated-desc) to see PRs that are waiting for approval.
+
+Also, check [this link](https://github.com/nubank/itaipu/pulls?utf8=%E2%9C%93&q=is%3Apr+is%3Aopen+-label%3A%22-PR+WIP%22+-label%3A%22-PR+Changes+Requested%22+-label%3A%22-PR+Hold%22+-label%3A%22-PR+Teammate+Review+Requested%22+sort%3Acreated-asc+draft%3Afalse+-label%3A%22-PR+Review+Requested%22+) for PRs with no status, and use [this macro](#prs-without-tags) to respond.
+
 You can read more about the tags [here](https://docs.google.com/document/d/1YRCKqAb0Zt0d_Hf5-xWxgNCXHi4Q5TtD1kMXlBe0pUY/edit?usp=sharing
 ).
 
