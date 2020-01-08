@@ -84,13 +84,14 @@ Data Access schedules can be found [here](https://nubank.app.opsgenie.com/teams/
 Other way to find who is on call is to use Slack Opsgenie Integration, just run the command anywhere on Slack:
 
 `/genie whoisoncall Data Access Level 1`
+
 `/genie whoisoncall Data Access Level 2`
 
 ## Overrides
 
 Whenever there is someone on a leave, vacations, or if the person asked someone to take their place on the schedule, create an override on the respective On-call schedule:
 
-![Override Ops Genie Data Hero](/images/override-ops-genie-data-hero.png)
+![Override OpsGenie Data Hero](/images/override-opsgenie-data-hero.png)
 
 ## Escalating
 
