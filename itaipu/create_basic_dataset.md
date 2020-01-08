@@ -94,7 +94,7 @@ SELECT calls.call__started_at AS time
 
 Every dataset you find in Itaipu is a SparkOp. The SparkOp class has six important parts:
 
-- `name` property. It decides how your new dataset will be called in places such as Metabase or Databricks once Itaipu runs. If `name = "dataset/name-of-dataset"`, then you'll be able to find it by querying dataset.name_of_dataset.
+- `name` property. It decides how your new dataset will be called in places such as Looker or Databricks once Itaipu runs. If `name = "dataset/name-of-dataset"`, then you'll be able to find it by querying dataset.name_of_dataset.
 
 - `description` property. Description of what the dataset does, and why. This is useful to avoid confusion and help users to understand your dataset.
 
@@ -148,7 +148,7 @@ import org.apache.spark.sql.expressions.Window
 import org.apache.spark.sql.functions._
 
 object ${NAME} extends SparkOp with DeclaredSchema {
-  //This is how you`ll access this database on the future, in Metabase or Databricks
+  //This is how you`ll access this database in the future, in Bigquery or Databricks
   //It must be on the form prefix-you-want-name-of-your-dataset
   override val name = "dataset/name-of-your-dataset"
   

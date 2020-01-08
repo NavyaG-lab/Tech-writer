@@ -112,46 +112,6 @@ Label names start with "-PR" to make the labels appear on the top of the list.
 
 In addition to the labels above, use -PR Hold and/or -PR Old when necessary.
 
-## Communication
-
-### Direct messages on Slack
-
-Don't send.
-
-### Slack Channels
-
-#### Description
-
-* `#data-access-alarms:`
-    * Alarms for squad data-access: aws-cloud-watch-alarm (mordor), MetaBot, Promotion (go), Security Bot, Service cycler/scale (metabase, mordor), Tio Patinhas
-    * Mostly for internal use (data-access and data-infra squads)
-* `#data-announcements`:
-    * Announcements about ETL runs, Mordor, Belomonte, Metabase, Databricks, etc.
-* `#data-crash`:
-    * For issues in the ETL (failure, updates and actions taken)
-    * https://github.com/nubank/data-infra-docs/blob/master/squad/hausmeister.md#visibility
-* `#data-help`:
-    * Questions about Python, Scala, SQL, Datalog, Belomonte, Metabase, Databricks, Mordor, Spark
-* `#etl-updates`:
-    * Automated updates regarding the ETL pipeline
-* `#guild-data-eng`:
-    * Where you can ask or request about your PRs (???)
-* `#guild-data-eng-prs`:
-    * Mostly PRs opened and merged in GitHub repositories related to the ETL (e.g., itaipu and common-etl)
-* `#guild-data-support`:
-    * Specific discussions of the guild, whose interest is share knowledge related to accessing data and writing code
-* `#learn-code`:
-    * Announcements and requests for classes related to programming and data access
-* `#squad-data-access`:
-    * Squad specific discussion (dailies, OKRs, presentations, etc)
-    * Ask for access to specific S3 buckets
-    * Integration with GitHub repositories owned exclusively by data-access
-* `#squad-data-infra`:
-    * Questions, requests, comments, issues, … related specifically with data infra, such as cantareira's runtime environment and the ETL serving layer
-* `#squad-di-alarms`:
-    * Alarms for squad data-infra: aws-cloud-watch-alarm (Redshift), Databricks Loader, OpsGenie, Promotion (go), Service cycler (mesos-master), Splunk
-    * Mostly for internal use (data-infra squad)
-
 #### How to use
 
 * You have a question: post on `#data-help`

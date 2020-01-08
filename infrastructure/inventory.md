@@ -20,17 +20,15 @@ These are "normal" Clojure services that get deployed in our main infrastructure
 #### Javascript
 - [sonar-js](https://github.com/nubank/sonar-js), ([overview](/primer.md#sonar-overview))
 #### 3rd-party
-- [metabase](/primer.md#metabase)
+- [Looker](https://nubank.looker.com/)
+- [Databricks](https://nubank.cloud.databricks.com/login.html)
+- [Google BigQuery Console](https://console.cloud.google.com/bigquery?project=nubank-data-access)
 
 ### Python services in the prod stack
 
 These are Python services to support online machine learning models in production.
 - [charlotte](https://github.com/nubank/charlotte)
 - [lusa](https://github.com/nubank/lusa)
-
-### Clojure services in production, but outside of the prod stack
-
-- [capivara](https://github.com/nubank/capivara), ([overview](/primer.md#capivara-clj-overview))
 
 ### Deprecated services not currently running
 - [weissman](https://github.com/nubank/weissman)
@@ -50,12 +48,9 @@ These are Python services to support online machine learning models in productio
 ## Daily batch-related projects
 
 - [itaipu](https://github.com/nubank/itaipu), [primer](/itaipu/primer.md), [dev workflow](/itaipu/workflow.md), [overview](/primer.md#itaipu-overview)
-- [capivara](https://github.com/nubank/capivara)
 - [scale-cluster](https://github.com/nubank/scale-cluster)
 - [deploy-airflow](https://github.com/nubank/deploy-airflow)
 - [aurora-jobs](https://github.com/nubank/aurora-jobs), ([overview](/primer.md#aurora-overview))
-- [parsa](https://github.com/nubank/parsa)
-- [truta](https://github.com/nubank/truta)
 
 ## Other projects
 
@@ -66,6 +61,6 @@ These are Python services to support online machine learning models in productio
 ## Infrastructure
 
 - Mesos clusters (`stable`, `test`, `dev`, `dev2`)
-- Redshift clusters (`stable`, `dev2`)
 - Databricks
+- Google BigQuery (`nubank-data-access`, `staging-nubank-data-access`)
 - Airflow, ([overview](/primer.md#airflow-overview))

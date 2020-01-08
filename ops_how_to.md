@@ -268,11 +268,7 @@ Note: this tactic mostly applies to models. For Spark, most of the interesting l
 
 ## Checking a dataset loaded
 
-When datasets are loaded into redshift the load is logged in the `Loads` table.
-To check if a dataset has been loaded, look it up in `Belo Monte - Meta - Loads` on metabase, filtering by `Table Name`.
-For a dataset called `policy/fraud-report-policy` the table name will be `fraud_report_policy`.
-
-![dataset load info](images/metabase_loads.png)
+When datasets are loaded into BigQuery the load is logged in the `meta.itaipu_loads` table.
 
 ## Manually commit a dataset to metapod
 
