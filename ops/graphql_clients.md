@@ -21,14 +21,14 @@ https://prod-metapod.nubank.com.br/api/graphql/query
 In the request settings tabs bar below the URL, click `Bearer` (might be `Auth`, then choose `Bearer Token` in the dropdown) and add the output of running this command, excluding the `Bearer ` at the beginning
 
 ```
-nu auth token prod
+nu auth token --env prod
 ```
 
 Note you may, from time to time, need to run ([more info](https://github.com/nubank/playbooks/blob/master/squads/infosec/faq.md#im-getting-http-401-unauthorized-errors-what-can-i-do)):
 
 ```
-nu auth get-refresh-token
-nu auth refresh-token
+nu auth get-refresh-token --env prod
+nu auth refresh-token --env prod
 ```
 
 Alternatively, you can also add a new _Environment_ in Insomnia, which will allow you to set environment variables across all saved requests. To access the Manage Environments window, click the `No Environment` dropdown below the Insomnia logo on the top-left.
@@ -41,7 +41,8 @@ For instance, you can setup a `prod` environment such as:
 }
 ```
 
-And then in the Bearer token setting, you can type `{{token}}` and it will use the env vars for the environment.
+In the Bearer token setting, you can type `{{token}}` and it will use the env vars for the environment.
+And in the URL field change it to `{{metapod_base_url}}/graphql/query`.
 
 #### client cert and key
 
@@ -49,8 +50,8 @@ And then in the Bearer token setting, you can type `{{token}}` and it will use t
  - Within the `Client certificates` tab select `New Certificate`
  - Configure the certificate to have
     - a `HOST` set to  `*.nubank.com.br`
-    - a `CRT` set to the file `$NU_HOME/.nu/certificates/prod/cert.pem`
-    - a `KEY` set to the file `$NU_HOME/.nu/certificates/prod/key.pem`
+    - a `CRT` set to the file `$NU_HOME/.nu/certificates/br/prod/cert.pem`
+    - a `KEY` set to the file `$NU_HOME/.nu/certificates/br/prod/key.pem`
     - no `passphrase` or `PFX` are needed
 
 
