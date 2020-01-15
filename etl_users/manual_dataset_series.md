@@ -93,7 +93,10 @@ After that you will need to create an account in quay.io [Here](https://docs.qua
 
 Now you should have to sign into Quay.io using docker. Quay.io was originally created out of necessity when the company wanted to use Docker containers with an original IDE product, it is a private container registry that stores, builds, and deploys container images. It analyzes your images for security vulnerabilities, identifying potential issues that can help you mitigate security risks. In order to login run the command ```docker login quay.io ```.
 
-Since appending involves talking directly to `metapod`, you need still need to have read and write access to a particular bucket where our metadata store has access. For this step, ask `#squad-data-infra` to run the following command. Note: due to limitations with our permission infrastructure, we can only grant access for 1 week at a time.
+Since appending involves talking directly to `metapod`, you will need the `admin` scope for your AWS user. Use `nu sec scope show <your-firstname.your-lastname>` to see if you have the `admin` scope. If you don't, ask for it using the access request form pinned to the `#access-request` channel. After getting it you may need to run `nu auth get-refresh-token --env prod --country br`.
+
+
+Lastly, you will need to have read and write access the particular bucket where the dataset file will copied to. For this step, ask `#squad-data-infra` to run the following command. Note: due to limitations with our permission infrastructure, we can only grant access for 1 week at a time.
 
 ```
 nu iam allow <your.name> write bucket nu-spark-metapod-manual-dataset-series/<your-dataset-series>/* --until=1week
