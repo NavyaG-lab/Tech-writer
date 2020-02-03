@@ -38,6 +38,8 @@ $ sed -i 's/nu-spark-metapod-ephemeral-1-raw/nu-spark-datomic-logs\/cache/g' $NU
  ```
 
  - open the `dataset/cache-validations` in databricks and validate that all the rows have `is_valid` set to `true`. For invalid rows, remove the updates from the json.
+
+ - Make sure you have the `castor-admin` scope. Ask someone from #di-pack-cortex to grant it by running `nu sec scope add YOUR_USERNAME castor-admin`.
  
  - Upload the new cache to [Castor](https://github.com/nubank/castor/) by running the following command: 
  ```nu ser curl --env prod POST global castor /api/static-cache --data "@log_cache_map.json"```
