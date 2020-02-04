@@ -36,8 +36,8 @@ A Datomic log has an `EAVT Tx Added` structure, which stands for:
 * E = entity (Alessandro)
 * A = attribute (Age)
 * V = value (27)
-* T = time (logical time, t-value from Datomic, monotonically increasing)
 * Tx = transaction - a collection of facts that were written atomically
+  * T = time (logical time, t-value from Datomic, monotonically increasing). [Time is a property of the transaction]
 * Added = added or retracted
 
 We rely on the monotonically increasing t-value for the ETL. We extract from the last t-value we already extracted (extracting via transactions, not datoms - we always keep transactions together) up until the current t-value.
