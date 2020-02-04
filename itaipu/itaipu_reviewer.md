@@ -157,7 +157,7 @@ After a PR is approved and ready for merge comment on the PR `bors r+`
 
 ### Deploy
 
-`bors` is hosted on the Mobile Platform's Kubernetes cluster. It lives on the `staging` prototype, stack id `indigo` and shard `mobile`.
+`bors` is hosted on the Mobile Platform's Kubernetes cluster. It lives on the `staging` environment, stack id `indigo` and `mobile` prototype. To use the cluster you need specific certificates.
 
 To update bors, you can follow the instructions [here](https://github.com/nubank/mobile-k8s-recipes/blob/master/recipes/bors/README.md) and simply killing the pod should be enough to update it to the latest version. `bors` maintain its state in a Database, so there isn't any problem in killing the pod.
 
@@ -179,7 +179,7 @@ We use CircleCI for ensuring tests are run for every PR on Itaipu. Currently, `b
 
 `bors` uses the `staging` branch to batch PRs and run all the tests before merging the PR. We only run all the tests on this branch, so in the Github Interface you might not see all tests we run on `staging`. `bors` will report all the tests in a comment before merging your PR. 
 
-The reason we did this is because we have a lot of users creating PRs and pushing to several branches and running tests for everyone is very costly. So we reduced the amount of tests running in users' branches. 
+The reason we did this is because we have a lot of users creating PRs and pushing to several branches and running tests for everyone is very costly. So we reduced the amount of tests running in users' branches. That means if people do not use bors and merge directly to master some bad code could be merged, because not all tests run on the `master` branch.
 
 ### Permissions
 
