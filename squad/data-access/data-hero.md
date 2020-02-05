@@ -14,6 +14,16 @@ Along with the Weekly Data Hero, we also have a Data Hero Backup rotation to hel
 
 During idle time, on-call engineers can work on normal backlogs tasks.
 
+## Configuration
+
+If a new member wants to be added to the rotation, first it needs to be added to OpsGenie. Any admin can add users here: https://nubank.app.opsgenie.com/settings/users/
+The admin should also add the new member to the Data Access Team: https://nubank.app.opsgenie.com/teams/dashboard/7dd354df-4fdf-4b26-8ae1-f4726948afe4/members
+
+Then, go to https://nubank.app.opsgenie.com/teams/dashboard/7dd354df-4fdf-4b26-8ae1-f4726948afe4/main and add the user to the rotations.
+
+Users need to download OpsGenie App on their mobile phone or configure SMS/Voice Notifications here: https://nubank.app.opsgenie.com/settings/user/notification
+Currently, Data Access doesn't have off hours on-call policies, so if you don't want to be disturbed, you need to configure quiet hours: https://nubank.app.opsgenie.com/settings/user/notification
+
 ## Playbooks
 
 If you are in the middle of an incident go here for common failure scenarios and solutions: [playbooks](https://github.com/nubank/playbooks/tree/master/squads/data-access)
