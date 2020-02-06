@@ -18,6 +18,7 @@
 * [Checking a dataset loaded](#checking-a-dataset-loaded)
 * [Removing bad data from Metapod](#removing-bad-data-from-metapod)
   * [Retracting datasets in bulk](#retracting-datasets-in-bulk)
+* [Starting a run from scratch with a fresh `metapod` transaction](#starting-a-run-from-scratch-with-a-fresh-metapod-transaction)
 * [Dealing with Datomic self-destructs](#dealing-with-datomic-self-destructs)
 * [Load a run dataset in Databricks](#load-a-run-dataset-in-databricks)
 * [Restart the backup-restore cluster](#restart-the-backup-restore-cluster)
@@ -374,6 +375,17 @@ You can track the number of committed datasets with the following query
 }
 ```
 
+## Starting a run from scratch with a fresh `metapod` transaction
+
+A common reason to have to do this is if, for some reason, the transaction created by `itaipu-the-first` (the first node of the DAG) has incorrect datasets, or incorrect dates, or more generally if anything has happened which has rendered this transaction unusable. Because `metapod` transactions are immutable and should **NEVER** be modified once created, the only avenue in such contexts is to generate a new metapod transaction and point a fresh run at it.
+
+The steps to do this are:
+
+1. Make sure the run pointing to the bad transaction is fully stopped. You can do this by:
+   1. Marking all its nodes as failed on Airflow. The quickest way to do this is to click on `itaipu-the-first`, find the `Mark failed` button, first click the `Downstream` button on its right to ensure you mark the whole dag as failed, and then click it.
+   1. Killing any aurora job still running (**THIS IS A VERY IMPORTANT STEP**). This can be achieved using sabesp: `nu datainfra sabesp -- --aurora-stack cantareira-stable jobs kill jobs prod <job-name>`
+   1. (Optional, but recommended) downscaling any [orphan on-demand instances in EC2](https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:instanceState=running;search=cantareira-stable-mesos-on-demand;sort=desc:tag:Name)
+1. Trigger a manual run from the [Airflow DAGs page](https://airflow.nubank.com.br/admin/): look for the row for `prod-dagao`, and in the `Links` column, press the play button (normally the first icon). You can verify that the run triggered with the correct parameters by looking in the [#etl-updates](https://nubank.slack.com/archives/CCYJHJHR9) channel on slack for a message from Aurora indicating the run parameters.
 
 ## Dealing with Datomic self-destructs
 
