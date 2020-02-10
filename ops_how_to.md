@@ -541,8 +541,42 @@ If a dataset is served with bad data, and you need to quickly revert to yesterda
    --use-cache \
    --include-placeholder-ops
    ```
+   
+## Retracting record series from Ouroboros
 
-   ## Retracting Manual Appends to Dataset Series
+### Deleting a single resource
+
+```bash
+$ nu ser curl POST --env prod --country br global ouroboros /api/admin/migrations/delete-resource -d'{"resource-id": "<resource-id>"}'
+```
+
+### Deleting an archive from a given transaction in a given series
+
+In cases when an archive from a dataset series is corrupt and you wish to delete it:
+
+```bash
+$ nu ser curl POST --env prod --country br global ouroboros /api/admin/migrations/delete-transaction-archives -d'{"transaction-id": "<transaction-id>", "series-name": "series/<series-name>"}'
+```
+
+### Deleting all archives from a given Metapod transaction
+
+In cases when you suspect most or all data from a transaction was corrupt, and you wish to remove its archives:
+
+```bash
+$ nu ser curl POST --env prod --country br global ouroboros /api/admin/migrations/delete-transaction-archives -d'{"transaction-id": "<transaction-id>"}'
+```
+
+### Deleting a series completely
+
+```bash
+$ nu ser curl POST --env prod --country br global ouroboros /api/admin/migrations/delete-record-series -d'{"series-name": "series/<series-to-delete>"}'
+```
+
+The above is an async request. You can check whether it is completed with [this Mordor query](https://backoffice.nubank.com.br/eye-of-mauron/#/s0/mordor/5e3c3390-9cdb-4752-b03b-71a626b23b6e); simply insert the name of your series in the argument field.
+
+### 
+
+## Retracting Manual Appends to Dataset Series
    You will occassionally receive requests from users to retract datasets which were manually appended to a dataset-series. This usually happens in the #manual-dataset-series channel.
 
 - Use `insomnia`/ `sonar` to get the id of the dataset you want to retract. For eg., `5d94b837-c31e-4109-ac73-b904bbc7bf17`.
