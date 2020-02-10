@@ -1,34 +1,44 @@
 # Operations HOWTO
 
-* [Restart aurora](#restart-aurora)
-* [Hot-deploying rollbacks](#hot-deploying-rollbacks)
-* [Re-deploying the DAG during a run](#re-deploying-the-dag-during-a-run)
-* [Deploying a service in Aurora](#deploying-a-service-in-aurora)
-* [Controlling aurora jobs via the CLI](#controlling-aurora-jobs-via-the-cli)
-* [Basic steps to handling Airflow DAG errors](#basic-steps-to-handling-airflow-dag-errors)
-* [Recover from non-critical model build failures](#recover-from-non-critical-datasetmodel-build-failures)
-  * [Determining if a dataset or model is business critical or can be fixed without time-pressure](#determining-if-a-dataset-or-model-is-business-critical-or-can-be-fixed-without-time-pressure)
-  * [Determining if it was the dataset or model that failed](#determining-if-it-was-the-dataset-or-model-that-failed)
-  * [Dealing with dataset failures](#dealing-with-dataset-failures)
-  * [Dealing with model failures](#dealing-with-model-failures)
-  * [Making downstream jobs run when an upstream job fails](#making-downstream-jobs-run-when-an-upstream-job-fails)
-  * [Determining downstream datasets to a failed dataset](#determining-downstream-datasets-to-a-failed-dataset)
-* [Keep machines up after a model fails](#keep-machines-up-after-a-model-fails)
-* [Manually commit a dataset to metapod](#manually-commit-a-dataset-to-metapod)
-* [Checking a dataset loaded](#checking-a-dataset-loaded)
-* [Removing bad data from Metapod](#removing-bad-data-from-metapod)
-  * [Retracting datasets in bulk](#retracting-datasets-in-bulk)
-* [Starting a run from scratch with a fresh `metapod` transaction](#starting-a-run-from-scratch-with-a-fresh-metapod-transaction)
-* [Dealing with Datomic self-destructs](#dealing-with-datomic-self-destructs)
-* [Load a run dataset in Databricks](#load-a-run-dataset-in-databricks)
-* [Restart the backup-restore cluster](#restart-the-backup-restore-cluster)
-* [Checking status of cluster up/down scales](#checking-status-of-cluster-up-and-down-scales)
-* [Run an itaipu job with a longer healthcheck](#run-an-itaipu-job-with-a-longer-timeout-healthcheck)
-* [Deploy a hot-fix to itaipu](#deploy-a-hot-fix-to-itaipu)
-* [Serve a dataset again](#serve-a-dataset-again)
-* [Checks before old Prod stack teardown](#checks-before-old-prod-stack-teardown)
-* [Retracting Manual Appends to Dataset Series](#retracting-manual-appends-to-dataset-series)
-* [Replaying Deadletters](#replaying-deadletters)
+  * [Restart Aurora](#restart-aurora)
+  * [Hot-deploying service rollbacks](#hot-deploying-service-rollbacks)
+  * [Re-deploying the DAG during a run](#re-deploying-the-dag-during-a-run)
+  * [Controlling aurora jobs via the CLI](#controlling-aurora-jobs-via-the-cli)
+  * [Basic steps to handling Airflow DAG errors](#basic-steps-to-handling-airflow-dag-errors)
+  * [Recover from non-critical dataset/model build failures](#recover-from-non-critical-datasetmodel-build-failures)
+    + [Determining if a dataset or model is business critical or can be fixed without time-pressure](#determining-if-a-dataset-or-model-is-business-critical-or-can-be-fixed-without-time-pressure)
+    + [Determining if it was the dataset or model that failed](#determining-if-it-was-the-dataset-or-model-that-failed)
+    + [Dealing with dataset failures](#dealing-with-dataset-failures)
+    + [Dealing with model failures](#dealing-with-model-failures)
+    + [Making downstream jobs run when an upstream job fails](#making-downstream-jobs-run-when-an-upstream-job-fails)
+    + [Determining downstream datasets to a failed dataset](#determining-downstream-datasets-to-a-failed-dataset)
+      - [Using either `sbt console` or `ammonite repl`](#using-either-sbt-console-or-ammonite-repl)
+      - [Using `spark_ops.json`](#using-spark_opsjson)
+  * [Keep machines up after a model fails](#keep-machines-up-after-a-model-fails)
+  * [Checking if a dataset was loaded into the warehouse](#checking-if-a-dataset-was-loaded-into-the-warehouse)
+  * [Manually commit a dataset to metapod](#manually-commit-a-dataset-to-metapod)
+  * [Removing bad data from Metapod](#removing-bad-data-from-metapod)
+    + [Retracting datasets in bulk](#retracting-datasets-in-bulk)
+  * [Starting a run from scratch with a fresh `metapod` transaction](#starting-a-run-from-scratch-with-a-fresh-metapod-transaction)
+  * [Dealing with Datomic self-destructs](#dealing-with-datomic-self-destructs)
+  * [Load a run dataset in Databricks](#load-a-run-dataset-in-databricks)
+    + [Find the path to the dataset](#find-the-path-to-the-dataset)
+    + [Load it in databricks](#load-it-in-databricks)
+      - [parquet](#parquet)
+      - [avro](#avro)
+  * [Checking status of cluster up and down scales](#checking-status-of-cluster-up-and-down-scales)
+  * [Run an itaipu job with a longer timeout healthcheck](#run-an-itaipu-job-with-a-longer-timeout-healthcheck)
+  * [Run an itaipu job with more executor memory](#run-an-itaipu-job-with-more-executor-memory)
+  * [Deploy a hot-fix to itaipu](#deploy-a-hot-fix-to-itaipu)
+  * [Checks before old prod-stack teardown](#checks-before-old-prod-stack-teardown)
+  * [Serve a dataset again](#serve-a-dataset-again)
+  * [Retracting record series from Ouroboros](#retracting-record-series-from-ouroboros)
+    + [Deleting a single resource](#deleting-a-single-resource)
+    + [Deleting an archive from a given transaction in a given series](#deleting-an-archive-from-a-given-transaction-in-a-given-series)
+    + [Deleting all archives from a given Metapod transaction](#deleting-all-archives-from-a-given-metapod-transaction)
+    + [Deleting a series completely](#deleting-a-series-completely)
+  * [Retracting Manual Appends to Dataset Series](#retracting-manual-appends-to-dataset-series)
+  * [Replaying Deadletters](#replaying-deadletters)
 
 
 ## Restart Aurora
@@ -61,20 +71,9 @@ Another result of restarting aurora is an orphaned mesos framework. To check thi
 curl -XPOST 10.130.1.61:5050/master/teardown -d 'frameworkId=67386329-1fe2-48f4-9457-0d45d924db5d-0000'
 ```
 
-## Hot-deploying rollbacks
+## Hot-deploying service rollbacks
 
-If a buggy version gets deployed of a service that lives in the non-data-infra production space (like `metapod`, `correnteza`, etc.), you can rollback to a stable version using [these deploy console instructions](https://wiki.nubank.com.br/index.php/Hot_deploying_a_service).
-You can also do this directly from `CloudFormation`:
-
-* __Make sure there isn't a `to-prod` running and no stacks are being spun!__ The reasoning for this is [explained here](https://wiki.nubank.com.br/index.php/Hot_deploying_a_service)
-* Access `CloudFormation` and search for your service (say `metapod`)
-* Select the entry that looks something like `prod-global-k-metapod`. If your service doesn't live in `global` you will need to repeat the following steps for every shard it operates on.
-* Click `Update Stack` in the top right
-* On the `Select Template` page leave the default setting as `Use current template` and select `Next`
-* On the `Specify Details` page under parameters, find the prod environment with 0 instances (either `Blue` or `Green`), and update the version to the short SHA of the last non-buggy git commit that was built via Go. You can get this version by looking at the [service's build history on Go](https://go.nubank.com.br/go/tab/pipeline/history/metapod); each build should be the `build-number:full-commit-SHA`. This SHA can be cross-referenced with pull requests to find the desired point to go back to. The shortened SHA can be obtained via `git rev-parse --short 6c957ed851d82103e2b151b04aa8a5ede042c3c5`.
-* Click through the following pages confirming your stack changes.
-* After a few minutes check that the new version has spun up and is healthy. The hacky way to do this is to hit `nu ser curl GET global metapod --suffix k /api/version` several times (due to the load balancer) and see if you eventually get the right SHA.
-* Now you need to take down the buggy version. You can do this by going through the `Update Stack` process and setting the instance size for the buggy versions to 0. This will result in no down-time. If you don't care about having downtime (like if you are data-infra and everything is already gone to shit), you can can do an in-place update of version of the running stack. This will result in the running instances spinning down and a new ones being spun up with the new version, causing ~5min downtime.
+If a buggy version gets deployed of a service that lives in the non-data-infra production space (like `metapod`, `correnteza`, etc.), you can rollback via the gocd service deploy rollback stage or using [these this kubernetes command](https://github.com/nubank/playbooks/tree/master/admin/kubernetes#how-do-i-hot-deploy-a-service-in-kubernetes).
 
 ## Re-deploying the DAG during a run
 
@@ -82,7 +81,7 @@ If the DAG is using a buggy version of a program and you want to deploy a fix, i
 
 Make sure you aren't pulling in non-fix related changes since the last DAG deployment.
 
-In some cases, you will want to retract datasets before re-running jobs with the newly deployed version. For example, if `itaipu-contracts` is broken (the first job in the DAG) and you need to deploy a fix for it, kill the job and retract all the committed datasets before restarting with the new `itaipu` version ([see here](ops_how_to.md#retracting-datasets-in-bulk)).
+In some cases, you will want to retract datasets before re-running jobs with the newly deployed version. For example, if `itaipu-contracts` is broken (one of the first jobs in the DAG) and you need to deploy a fix for it, kill the job and retract all the committed datasets before restarting with the new `itaipu` version ([see here](ops_how_to.md#retracting-datasets-in-bulk)).
 
 1. Push the fix through the pipeline as described [here](airflow.md#deploying-job-changes-to-airflow)
 
@@ -93,13 +92,6 @@ sabesp --aurora-stack cantareira-stable jobs kill jobs prod itaipu-contracts
 ```
 
 3. Once the jobs have been killed manually, you should clear them and let airflow start them anew.
-
-## Deploying a service in Aurora
-
-To manually deploy (first check if you can't just use GOCD for doing this automatically) a new version of a service in Aurora you should run the following command in staging and in prod with the git sha of the commit you wish to deploy
-```shell
-sabesp --aurora-stack=cantareira-stable services upsert staging capivara-clj --sha c0596f1
-```
 
 ## Controlling aurora jobs via the CLI
 
@@ -278,7 +270,7 @@ You can get around this by disabling the scale-down logic on Airflow for a job.
 
 Note: this tactic mostly applies to models. For Spark, most of the interesting logs live in the driver, which runs on a fixed instance. In the rare cases where you want the Spark executor logs, you can also apply this downscale delay strategy.
 
-## Checking a dataset loaded
+## Checking if a dataset was loaded into the warehouse
 
 When datasets are loaded into BigQuery the load is logged in the `meta.itaipu_loads` table.
 
@@ -287,7 +279,7 @@ When datasets are loaded into BigQuery the load is logged in the `meta.itaipu_lo
 In specific cases, when a dataset that doesn't have downstream dependencies fails, you can commit an empty parquet file to the dataset.
 This allows buggy datasets to be skipped so that they don't affect the stability of ETL runs.
 
-- Get the `metapod-transaction-id` from `[#etl-updates](https://nubank.slack.com/messages/CCYJHJHR9/)`.
+- Get the `metapod-transaction-id` from [`#etl-updates`](https://nubank.slack.com/messages/CCYJHJHR9/).
 - Find the name of the failing dataset (`dataset-name`) from the SparkUI page.
 - Get the `dataset-id` from sonar with the following GraphQL query:
 
@@ -435,19 +427,6 @@ val x = spark.read.parquet("dbfs:/mnt/nu-spark-metapod/10b090f0-fda6-4ef3-b091-9
 import com.databricks.spark.avro._
 val x = spark.read.avro("dbfs:/mnt/nu-spark-metapod/UIeeQn58Qi6_6OLQH6li2w")
 ```
-
-## Restart the backup-restore cluster
-If you see bunch of messages like the one below on #squad-di-alarms one of the two problems is happening: splunk is down or the bakcup-restore cluster is unhealthy
-
-```
-No successfull backup for prod-s2-double-entry-t0-datomic-double-entry-t0 in the last 96 hours! Please take a look.
-```
-
-If you can query splunk normally than take a look at the backup-restore cluster.
-
-On AWS UI open the ECS service in us-east-1. On the cluster tab search and open the `backup-restore` cluster.
- - In the `Metrics` tab the CPU and Memory utilization should be more than 50%, if it's lower than that it means that something is wrong with the cluster.
- - Go to the `Tasks` tab and click on `Stop all`. After all the tasks are stopped they will come back to a healthy life.
 
 ## Checking status of cluster up and down scales
 
