@@ -217,7 +217,18 @@ Then select the downstream nodes that have failed due to the upstream `fx-model`
 
 ### Determining downstream datasets to a failed dataset
 
-There are two ways to determine downstream datasets/models to a given dataset.
+There are three ways to determine downstream datasets/models to a given dataset.
+
+#### Using BigQuery Console
+Use a query similar to the following on the [BigQuery console](https://console.cloud.google.com/bigquery?project=nubank-data-access)
+
+```
+select name, successors
+from dataset.spark_ops
+where name = 'policy/brando-risk-curve-v5'
+
+```
+
 #### Using either `sbt console` or `ammonite repl`
 ```
 cd $NU_HOME/itaipu
