@@ -17,6 +17,8 @@ With the Parquet file and the schema file, the CLI command validates the logical
 ## Preparing the data
 In a nutshell, place your parquet file on s3 somewhere (`s3://nu-tmp/me/my-dataset`) and place your logical type json schema in the same directory and name it `schema.json` (`s3://nu-tmp/me/schema.json`)
 
+You need to add these files to a bucket of the country where you want to create the manual series. Examples of buckets: in BR `nu-tmp`, in MX `nu-tmp-mx`
+
 In detail:
 
 ### The Parquet file
@@ -93,19 +95,22 @@ After that you will need to create an account in quay.io [Here](https://docs.qua
 
 Now you should have to sign into Quay.io using docker. Quay.io was originally created out of necessity when the company wanted to use Docker containers with an original IDE product, it is a private container registry that stores, builds, and deploys container images. It analyzes your images for security vulnerabilities, identifying potential issues that can help you mitigate security risks. In order to login run the command ```docker login quay.io ```.
 
-Since appending involves talking directly to `metapod`, you will need the `admin` scope for your AWS user. Use `nu sec scope show <your-firstname.your-lastname>` to see if you have the `admin` scope. If you don't, ask for it using the access request form pinned to the `#access-request` channel. After getting it you may need to run `nu auth get-refresh-token --env prod --country br`.
+Since appending involves talking directly to `metapod`, you will need the `admin` scope for your AWS user. Use `nu-<country> sec scope show <your-firstname.your-lastname>` to see if you have the `admin` scope. If you don't, ask for it using the access request form pinned to the `#access-request` channel. After getting it you may need to run `nu-<country> auth get-refresh-token --env prod --country <country>`. Where `<country>` is the country where you are creating your manual series (eg: br, mx).
 
 
 Lastly, you will need to have read and write access the particular bucket where the dataset file will copied to. For this step, ask `#squad-data-infra` to run the following command. Note: due to limitations with our permission infrastructure, we can only grant access for 1 week at a time.
 
 ```
+For BR:
 nu iam allow <your.name> write bucket nu-spark-metapod-manual-dataset-series/<your-dataset-series>/* --until=1week
+For other countries:
+nu-<country> iam allow <your.name> write bucket nu-spark-metapod-manual-dataset-series-<country>-prod/<your-dataset-series>/* --until=1week
 ```
 
 ## Appending your dataset to your manual dataset series
 
 ```
-nu dataset-series info my-series
+nu-<country> dataset-series info my-series
 ```
 
 Will give you information on the current status of the series in question.
@@ -115,22 +120,22 @@ If it does exist, note number of datasets in the series so we can verify the num
 
  - Do a dry run of the append to check that the schemas match up
    ```
-   nu dataset-series append my-series s3://nu-tmp/me/my-dataset --dry-run
+   nu-<country> dataset-series append my-series s3://nu-tmp/me/my-dataset --dry-run
    ```
 
    If it fails you can get a little more info regarding the schemas by adding the `--verbose` flag.
 
- - Once the schema validation is passing ask on `#squad-data-infra` for write access to the `nu-spark-metapod-manual-dataset-series` bucket if you don't have it already. This will eventually be automated through the `#access-request` form.
+ - Once the schema validation is passing ask on `#squad-data-infra` for write access to the manual series bucket if you don't have it already. This will eventually be automated through the `#access-request` form.
 
  - Run the append command
 
  ```
- nu dataset-series append my-series s3://nu-tmp/me/my-dataset
+ nu-<country> dataset-series append my-series s3://nu-tmp/me/my-dataset
  ```
 
    * If there is an s3 file copy error, save the output of the command and ask on `#manual-dataset-series`
 
- - Run the info command again to see that your dataset was added `nu dataset-series info my-series`
+ - Run the info command again to see that your dataset was added `nu-<country> dataset-series info my-series`
 
 ## Create a dataset series contract op for your new dataset series
 
@@ -188,5 +193,3 @@ query GetManualSeries {
   - your dataset series' precise name (e.g. `series/direct-mail`)
   - the id(s) of the dataset(s) you wish deleted
   - the reason for wishing to delete the data
-  
-

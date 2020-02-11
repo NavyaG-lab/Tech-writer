@@ -32,8 +32,8 @@ In order to use the data from a Dataset Series in an Itaipu `SparkOp`, you'll fi
 
 Given a `DatasetSeriesContractOp` called `YourOp`:
 
-* An `object` called `YourOp` extending `common_etl.operator.dataset_series.DatasetSeriesContractOp` should be placed in the `nu.data.br.dataset_series` [package](https://github.com/nubank/itaipu/tree/master/src/main/scala/nu/data/br/dataset_series). See [Code Generation](#code-generation) below for best practices on generating it from scratch.
-* The object should be added to this package's `package.scala` file in the `allSeries` set [here](https://github.com/nubank/itaipu/blob/master/src/main/scala/nu/data/br/dataset_series/package.scala).
+* An `object` called `YourOp` extending `common_etl.operator.dataset_series.DatasetSeriesContractOp` should be placed in the `nu.data.<country>.dataset_series` [package](https://github.com/nubank/itaipu/tree/master/src/main/scala/nu/data/br/dataset_series) (this link is only for BR series, change the url to the country you neeed). See [Code Generation](#code-generation) below for best practices on generating it from scratch.
+* The object should be added to this package's `package.scala` file in the `allSeries` set [here](https://github.com/nubank/itaipu/blob/master/src/main/scala/nu/data/br/dataset_series/package.scala) (again this file is for BR, change it according to your needs).
 
 #### Code generation
 
@@ -52,7 +52,7 @@ DatasetSeriesContractOpGenerator.renderOp("your-series-name",
                                           Squad.YourSquad,
                                           "description of your dataset series",
                                           metapod,
-					  Country.BR)
+					  Country.<COUNTRY>)
 
 /* Output:
 
