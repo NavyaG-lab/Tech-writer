@@ -14,7 +14,7 @@ This can drastically speed up contract generation.
 
 To do so
  - get the metapod transaction for the last successful nightly run ([see here](monitoring_nightly_run.md#finding-the-transaction-id))
- - run [this databricks notebook](https://nubank.cloud.databricks.com/#notebook/231312) with that transaction (should take ~2-3 hours). This notebook opens all the logs and materialized entities for the specified transaction and looks up the `T` value. This is used to properly populate the LogCache map.
+ - run [this databricks notebook](https://nubank.cloud.databricks.com/#notebook/231312) with that transaction (should take ~2-3 hours). This notebook opens all the logs and materialized entities for the specified transaction and looks up the `T` value. This is used to properly populate the LogCache map. At the end of the notebook there is a command to download a json map with all the updated T info (we'll call it `2019-09-30-log-cache.json`).
  - copy all the parquets from the `ephemeral` bucket (which will eventually be deleted) into a permanent bucket. You can do some scripting like this:
 
 ```
@@ -29,6 +29,8 @@ $ cp ~/2019-09-30-log-cache.json $NU_HOME/itaipu/common-etl/src/main/resources/l
 $ sed -i 's/nu-spark-metapod-ephemeral-1-raw/nu-spark-datomic-logs\/cache/g' $NU_HOME/itaipu/common-etl/src/main/resources/log_cache_map.json
 ```
 
+and also make sure all the T values are numbers not strings.
+
  - build and push an image of `itaipu` using these changes to quay.io
 
  - do a log validation run using the quay.io image, a fresh metapod tx you invent by hand (to get around a limitation setting it dynamically via airflow), and the log-validation dag via the nucli command:
@@ -37,14 +39,14 @@ $ sed -i 's/nu-spark-metapod-ephemeral-1-raw/nu-spark-datomic-logs\/cache/g' $NU
  nu datainfra log-validation <QUAY-IMAGE-HASH> <METAPOD_TX_YOU_INVENT>
  ```
 
- - open the `dataset/cache-validations` in databricks and validate that all the rows have `is_valid` set to `true`. For invalid rows, remove the updates from the json.
+ - open the `dataset/cache-validations` in databricks and validate that all the rows have `is_valid` set to `true`. For invalid rows, remove the updates from the json. You can do this using the python script detailed in [this itaipu pr](https://github.com/nubank/itaipu/pull/9129).
 
  - Make sure you have the `castor-admin` scope. Ask for it at [#access-request](https://nubank.slack.com/archives/C0D3XC9Q8).
- 
- - Upload the new cache to [Castor](https://github.com/nubank/castor/) by running the following command: 
+
+ - Upload the new cache to [Castor](https://github.com/nubank/castor/) by running the following command:
  ```nu ser curl --env prod POST global castor /api/static-cache --data "@log_cache_map.json"```
- 
- - merge the `itaipu` PR!
+
+ - merge the `itaipu` PR! Uploading it to `castor` will cause it to be used, but it is good to have the static fallback in itaipu up to date as well
 
 ## Adapting to do a partial update
 
