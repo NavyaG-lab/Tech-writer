@@ -48,6 +48,7 @@ This repository is the canonical place to put all documentation related to how t
 
 ## Infrastructure
 * [Inventory](infrastructure/inventory.md)
+* [Multi-country pointers](infrastructure/multi-country.md)
 * [Guide to the runtime environment (Mesos & Aurora)](infrastructure/guide-to-the-runtime-environment.md)
 * [Query Engines used/considered at Nubank](infrastructure/query_engines.md)
 * [Testing models in staging](infrastructure/testing-models.md)
