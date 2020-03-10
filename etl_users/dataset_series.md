@@ -37,63 +37,12 @@ Given a `DatasetSeriesContractOp` called `YourOp`:
 
 #### Code generation
 
-A code generator helper can be found in `common-databricks`:
+The databricks code generator helpers are currently broken, which unfortunately means you need to build your dataset series contracts by hand.
+If you would like to see the various schemas registered to your series, this nucli command can help:
 
-```scala
-import common_databricks.dataset_series.DatasetSeriesContractOpGenerator
-import common_databricks.DatabricksHelpers
-import common_etl.metadata.{Country, Squad}
-import common_etl.operator.dataset_series.SeriesType
-
-val metapod = DatabricksHelpers.getMetapod()
-
-DatasetSeriesContractOpGenerator.renderOp("your-series-name",
-                                          SeriesType.Events,
-                                          Squad.YourSquad,
-                                          "description of your dataset series",
-                                          metapod,
-					  Country.<COUNTRY>)
-
-/* Output:
-
-import common_etl.metadata.{Country, Squad}
-import common_etl.operator.dataset_series.{DatasetSeriesAttribute, DatasetSeriesContractOp}
-import common_etl.schema.LogicalType
-
-object YourSeriesName extends DatasetSeriesContractOp {
-
-  override val seriesName: String = "your-series-name"
-  override val seriesType: SeriesType = SeriesType.Events
-  override val country: Country = Country.BR
-
-  override val ownerSquad: Squad = Squad.YourSquad
-  override val description: Option[String]= Some("description of your dataset series")
-
-  override val contractSchema: Set[DatasetSeriesAttribute] = Set(
-    DatasetSeriesAttribute("index", LogicalType.UUIDType, description = Some("")),
-    DatasetSeriesAttribute("attr1", LogicalType.StringType, description = Some("")),
-    DatasetSeriesAttribute("attr2", LogicalType.IntegerType, description = Some(""))
-  )
-
-  override val alternativeSchemas: Seq[Set[DatasetSeriesAttribute]] = Seq(
-    Set(
-      DatasetSeriesAttribute("index", LogicalType.UUIDType),
-      DatasetSeriesAttribute("attr1", LogicalType.StringType)
-    ),
-    Set(
-      DatasetSeriesAttribute("index", LogicalType.UUIDType)
-    )
-  )
-
- */
 ```
-
-Usage of the generator is highly recommended as it:
-
-* Discovers for you all schemas existing in Metapod for your dataset series
-* Follows the latest versions and idioms of the API
-
-Feel free to use and copy the [example databricks notebook](https://nubank.cloud.databricks.com/#notebook/463279/command/463286) for this purpose.
+nu dataset-series info YOUR_DATSET_SERIES -v
+```
 
 #### Anatomy of a DatasetSeriesContractOp
 
@@ -366,37 +315,7 @@ Ideally, you'd want all datasets to be either processed normally, or intentional
 
 To track these, the `Dropped Series Versions` table in the [ETL Monitoring Dashboard](https://nubank.splunkcloud.com/en-US/app/search/etl__dataset_issues_monitoring) indicates which dataset series experienced datasets being dropped. If your series appears in this table, it means that Itaipu found an existing dataset series in S3, but could not match all of its datasets with a schema declared in the relevant `DatasetSeriesContractOp` (including schemas in `droppedSchemas`). The `dropped_count` column shows how many datasets were dropped, and the `schemas` column indicates how many distinct schemas were found in these datasets, which could not be reconciled against the contract schema.
 
-In order to remedy this, you will need to update the existing schemas or add new schema in the op to match these dropped datasets. This can be achieved by using the [Dropped DatasetSeries Troubleshooting notebook](https://nubank.cloud.databricks.com/#notebook/574720) on Databricks. This notebook handles querying Metapod and comparing the schemas of existing loaded datasets against.
-
-When running the notebook, you will obtain an output which will look like:
-
-```
-2 schemas were dropped for a total of 149 dropped datasets
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-40 datasets were dropped for a schema most similar to declared schema 'series-raw/policy-reactive-limit-v3-contract'
-
-	Attributes found only in the dropped schema:
-
-	Attributes found only in the declared schema:
-
-		* Attribute(name = "was_negativated", logicalType = LogicalType.BooleanType, nullable = None, primaryKey = None)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-109 datasets were dropped for a schema most similar to declared schema 'series-raw/policy-reactive-limit-v3-contract'
-
-	Attributes found only in the dropped schema:
-
-	Attributes found only in the declared schema:
-
-		* Attribute(name = "hyoga_prediction_ecdf", logicalType = LogicalType.DoubleType, nullable = None, primaryKey = None)
-		* Attribute(name = "hyoga_prediction", logicalType = LogicalType.DoubleType, nullable = None, primaryKey = None)
-		* Attribute(name = "cronno_prediction", logicalType = LogicalType.DoubleType, nullable = None, primaryKey = None)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-```
-
-This output indicates that it found 2 schemas in existing dataset series on S3 that couldn't be matched with one of the schemas of your op. Then, for each schema, it indicates which schema of the op looks most like these dropped schemas (so as to give you something to work from), as well as a description of the differences between the dropped schema and that closest matching schema.
-
-In the example above, a simple fix for the first dropped schema would be to add a new `alternativeSchema` which looks like the contract schema, but removing the `was_negativated` attribute.
+In order to remedy this, you will need to update the existing schemas or add new schema in the op to match these dropped datasets. Currently you need to debug this by hand, perhaps with the help of the `nu dataset-series info YOUR_DATSET_SERIES -v` command. We hope to soon fix up our databricks helper notebooks that can aid in this.
 
 #### Troubleshooting very big dataset series
 
