@@ -1,5 +1,30 @@
 # Dataset Series
 
+* [Background](#background)
+    - [Source of the data](#source-of-the-data)
+* [Using Dataset Series](#using-dataset-series)
+  + [Creating a new dataset series](#creating-a-new-dataset-series)
+    - [Code organization](#code-organization)
+    - [Code generation](#code-generation)
+    - [Anatomy of a DatasetSeriesContractOp](#anatomy-of-a-datasetseriescontractop)
+        + [`seriesName`](#seriesname)
+        + [`contractSchema`](#contractschema)
+        + [`alternativeSchemas`](#alternativeschemas)
+    - [Why do I need all these different schemas?](#why-do-i-need-all-these-different-schemas)
+  + [Dealing with versions](#dealing-with-versions)
+    - [Transform values of existing attributes](#transform-values-of-existing-attributes)
+    - [Rename attributes](#rename-attributes)
+    - [Coerce values](#coerce-values)
+  + [Metadata](#metadata)
+  + [Primary keys and deduplication](#primary-keys-and-deduplication)
+  + [Final steps](#final-steps)
+  + [`droppedSchemas`](#droppedschemas)
+    - [Explicitly dropping schemas](#explicitly-dropping-schemas)
+    - [Troubleshooting dropped schemas](#troubleshooting-dropped-schemas)
+    - [Troubleshooting very big dataset series](#troubleshooting-very-big-dataset-series)
+* [Annexes](#annexes)
+  + [Technical description of the ingestion pipeline](#technical-description-of-the-ingestion-pipeline)
+
 ## Background
 
 At Nubank, Datomic is the main/preferred way to store data. But it's
@@ -53,7 +78,7 @@ The name of your series, the same used by your service when posting data via the
 ###### `contractSchema`
 
 What the final schema of your dataset series should be once it's done
-computing. See also #metadata.
+computing. See also [metadata](#metadata).
 
 ###### `alternativeSchemas`
 
@@ -203,9 +228,11 @@ Columns which do not appear in the contract are dropped.
 
 ### Metadata
 
-Every dataset series can be stored with an additional set of metadata
-by overriding the flag `DatasetSeriesContractOp.addIngestionMetadata`
+Every event-based dataset series has additional ingestion-related metadata that can
+be made visible by overriding the flag `DatasetSeriesContractOp.addIngestionMetadata`
 and setting it to `true`.
+
+Note that archive and manual dataset series don't have this ingestion data.
 
 When this flag is enabled, every schema has a corresponding “metadata
 enriched” version. This applies to `contractSchema`, too, in the
