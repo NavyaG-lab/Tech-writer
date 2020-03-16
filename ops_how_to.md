@@ -47,7 +47,7 @@ Every once in a while, Aurora goes down. `sabesp` commands, such as ones involve
 
 **Symptoms of a non-responsive Aurora**
 
-- The [aurora web UI](https://cantareira-stable-aurora-scheduler.nubank.com.br:8080) does not load, but the [mesos web UI](https://cantareira-stable-mesos-master.nubank.com.br) does.
+- The [aurora web UI](https://cantareira-stable-aurora-scheduler.nubank.com.br:8080) does not load, but the [mesos web UI](https://cantareira-stable-mesos-master-bypass.nubank.com.br) does.
 - A lot of pending jobs in the [aurora web UI](https://cantareira-stable-aurora-scheduler.nubank.com.br:8080)
 
 Try to look into the issue, potentially by ssh'ing into `mesos-master`, via `nu ser ssh mesos-master --suffix dev --env cantareira --region us-east-1` and looking at the aurora logs via `journalctl -u aurora-scheduler`.
@@ -62,7 +62,7 @@ To restart Mesos Master, you could do either of the following:
 
 Most likely you will need to [restart Airflow](airflow.md#restarting-the-airflow-process) after this happens.
 
-Another result of restarting aurora is an orphaned mesos framework. To check this, look for entries under `Inactive Frameworks` [here](https://cantareira-stable-mesos-master.nubank.com.br/#/frameworks).
+Another result of restarting aurora is an orphaned mesos framework. To check this, look for entries under `Inactive Frameworks` [here](https://cantareira-stable-mesos-master-bypass.nubank.com.br/#/frameworks).
 
 ```shell
 # Use the direct IP to the mesos instance (due to DNS issues) - it's on Leader on the left side of https://cantareira-stable-mesos-master.nubank.com.br/
