@@ -22,6 +22,7 @@
     - [Explicitly dropping schemas](#explicitly-dropping-schemas)
     - [Troubleshooting dropped schemas](#troubleshooting-dropped-schemas)
     - [Troubleshooting very big dataset series](#troubleshooting-very-big-dataset-series)
+* [From dataset to Dataset Series with Squish](#squish)
 * [Annexes](#annexes)
   + [Technical description of the ingestion pipeline](#technical-description-of-the-ingestion-pipeline)
 
@@ -350,6 +351,70 @@ One issue you might encounter when using this notebook is that the Metapod query
 - Going to this [Splunk query](https://nubank.splunkcloud.com/en-US/app/search/search?q=search%20index%3Dcantareira%20%22Dropping%20dataset-series%22&display.page.search.mode=fast&dispatch.sample_ratio=1&earliest=-24h%40h&latest=now&sid=1549617293.5429746) and change it to search for the name of the series you're looking to troubleshoot
 - Finding the message for dropped datasets, which contains the schema that was dropped
 - Adding it to the schemas of the op (usually alternative schemas)
+
+## Squish
+
+### How to create archived schemas with just one line of code with Squish
+
+Considering you set your SparkOp to be archived, all you have to do is add this line to the archives package (considering that Squish is already imported into the package):
+
+```scala
+SparkOpToSeries(etl.dataset.blabla.MyObject)
+```
+
+Or, if you have a case class that receives a date as a parameter:
+
+```scala
+SparkOpToSeries(etl.dataset.blabla.MyCaseClass(squishDate))
+```
+
+Note that the date being passed to `MyCaseClass` is a dummy date and could be any date.
+
+### How to create multiple versions in an archive dataset with Squish
+
+Create a file in the `dataset_series/archived` folder for your Dataset Series. In it, follow the example below:
+
+```scala
+object  DatasetSquishExample  extends  SparkOpToSeries(SquishExample)  {  //Change for the address and names corresponding to your dataset
+  
+  val  v2  =  contractSchema.less("column1")
+  
+  val  v1  =  v2.less("column2")
+  
+  override  val  alternativeSchemas  =  Seq(v1,  v2)
+}
+```
+
+In this example, the current version (`v3`) contains all columns from the SparkOp. The alternative schema `v2` contains all columns from the SparkOp/current version (`v3`), except `column1`, and `v1` contains all columns except `column1` and `column2`.
+
+### How to edit default parameters of Squish
+
+By default Squish copies exactly the parameters as defined in the SparkOp
+
+-   country
+-   description
+-   ownerSquad
+-   warehouseMode
+-   orderByColumns (sortKey in the SparkOp)
+-   clearance
+-   qualityAssessment
+
+If you want to change something (`country`  in the example below), just create a file in the `dataset_series/archived` folder for your Dataset Series and in it, follow the example below:
+
+```scala
+object DatasetSquishExample extends SparkOpToSeries(SquishExample) {
+  
+  override val country: Country = Country.MX
+  
+  val v2 = contractSchema.less("column1")
+  
+  val v1 = v2.less("column2")
+  
+  override val alternativeSchemas = Seq(v1, v2)
+}
+```
+
+In this example, we have overriden the `country` attribute from the SparkOp to `Country.MX`.
 
 ## Annexes
 

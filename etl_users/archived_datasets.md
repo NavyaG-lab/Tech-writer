@@ -61,6 +61,8 @@ object MyDataset extends SparkOp with DeclaredSchema {
 
 #### 2. Setting up a `DatasetSeriesContractOp`
 
+This step is automated when using [Squish](dataset_series.md#squish) (which should work for most Archived Datasets).
+
 You can set up your series normally as described in the [Dataset Series documentation](dataset_series.md), keeping the following in mind:
 
 * We usually try to keep all archives in the `archived` package of the `dataset_series` package
