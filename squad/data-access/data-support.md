@@ -2,16 +2,13 @@
 
 Data Support is an Opsgenie daily rotation schedule for helping support users on Data Tribe channels.
 
-Over the course of the week our customers, Nubank's data users, often encounter issues while using our services. To support their effectiveness, the Data Support is responsible for communicating with these users; looking into their issues in a timely manner; routing questions made via private messages and other channels to the proper one.
-
-If the problem is related to a problem in our platform, you can tag the current [Data Hero](https://github.com/nubank/data-platform-docs/blob/master/squad/data-access/data-hero.md).
+Over the course of the week our customers, Nubank's data users, often encounter issues while using our services. To support their effectiveness, the Data Support is responsible for communicating with these users, look into their issues in a timely manner and routing questions to the most appropriate person to deal with the topic.
 
 Slack channels you should monitor for questions:
 
-#data-announcements
-#data-help
-#looker-bq-migration
-#squad-data-access
+###data-help
+###squad-data-access
+###data-announcements
 
 ## Schedule
 
