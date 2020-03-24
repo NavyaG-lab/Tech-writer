@@ -114,7 +114,7 @@ This should get things going again.
 
 ### Running tests for the Airflow DAGs
 
-Running the command below, will spin a environment similiar to the production one, and will run and check all tasks in the `main.py` dag.
+Running the command below, will spin a environment similar to the production one, and will run and check all tasks in the `main.py` dag.
 
 ```
 ./script/test integration

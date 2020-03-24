@@ -18,7 +18,7 @@ involves these steps:
 #### Via CircleCI
 
 One way to get a JAR is through Circle CI. Circle CI packages
-[itaipu](https://circleci.com/gh/nubank/itaipu/tree/master) during every build that successfuly ran
+[itaipu](https://circleci.com/gh/nubank/itaipu/tree/master) during every build that successfully ran
 its tests.
 
 1. Generally you want to grab the JAR from the last successful master build, which you can find

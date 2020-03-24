@@ -195,7 +195,7 @@ This will redirect, to a page: https://bors.nubank.com.br/repositories/8/add-rev
 
 The user can also be added to the Reviewers list in the settings: https://bors.nubank.com.br/repositories/8/settings
 
-Ask #squad-data-acess for help if you can't be added to reviewers list.
+Ask #squad-data-access for help if you can't be added to reviewers list.
 
 ### Commands
 
@@ -226,7 +226,7 @@ Itaipu uses a [CODEOWNERS](https://github.com/nubank/itaipu/blob/master/.github/
 [Itaipu committer](https://github.com/orgs/nubank/teams/itaipu-committer) is a group of people with merge rights on Itaipu. Currently, they are able to merge PRs involving files inside the folders dataset and dataset_series, as seen in [CODEOWNERS](https://github.com/nubank/itaipu/blob/master/.github/CODEOWNERS).
 
 If you want to become an itaipu committer, the steps you must follow are:
-* Do a self-assessment about how much you feel confortable reviewing a PR by filling up some questions in this forms (https://forms.gle/ptkK1ByKpjRChMSKA)
+* Do a self-assessment about how much you feel comfortable reviewing a PR by filling up some questions in this forms (https://forms.gle/ptkK1ByKpjRChMSKA)
 * Pair up with another reviewer for two sessions of the daily PR review rotation
 * Review PRs on your own for one session of the daily PR review rotation
 

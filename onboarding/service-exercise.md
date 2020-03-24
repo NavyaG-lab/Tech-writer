@@ -91,7 +91,7 @@ We will define an endpoint to trigger the consumption of the data from S3, cache
 In this case, the endpoint should only be accessible to those with the `admin` scope. Add a new endpoint to the `service` namespace. This endpoint should receive a JSON body with the S3 path associated with the key `s3-path`.
 To extract the body parameters on your handler you need to extract the `:body-params` key from the argument list (the key is defined at the same level of the `:components` key). This key is not provided by Pedestal by default - it comes from an interceptor defined [in common-io](https://github.com/nubank/common-io/blob/master/src/common_io/interceptors/wire.clj#L98-L101).
 
-Since this flow will download files from S3 and produce messages to Kafka, we will need to make the handler extract on both the S3 and producer components. But before doing that, we need to add the S3 component as a dependency of the `webapp` component (in the `service.components` namespace). Note that the producer already is a dependecy of this component.
+Since this flow will download files from S3 and produce messages to Kafka, we will need to make the handler extract on both the S3 and producer components. But before doing that, we need to add the S3 component as a dependency of the `webapp` component (in the `service.components` namespace). Note that the producer already is a dependency of this component.
 
 The endpoint you are creating will call a `controller` function that will control the flow. All pure functions go into a `logic` namespace, try to extract as many of these functions as possible.
 

@@ -239,7 +239,7 @@ def filterCalls(calls:DataFrame) : DataFrame = {
  
  Second, there is nothing connecting `calls` to `where`. That is because Scala does not care for `.`. `where` is a function of `calls` and we could have used `calls.where` in exactly the same way.
  
- Third, where are the parenthesis? Calm down, this isn't Clojure. Often times in Scala, parenthesis are optional. When the function you're callin only receives one parameter, for example, you can forego the parenthesis.
+ Third, where are the parentheses? Calm down, this isn't Clojure. Often times in Scala, parentheses are optional. When the function you're calling only receives one parameter, for example, you can remove the parentheses.
  
  Fourth, what's up with the $"call__started_at"? That is our very special way of referencing columns. It basically means "Hey, go into the table you're in and get the column named call__started_at". However, you can also do it like this: `calls("call__started_at")`. The result is the same, and sometimes the second notation is necessary, such as when you're working on joins of tables with columns with the same name.
  
@@ -300,7 +300,7 @@ Take a look in the [LogicalType](https://github.com/nubank/common-etl/blob/maste
     MetapodAttribute("call_id", LogicalType.UUIDType, primaryKey = true)
   )
 ```
-Next, the `time` column and the `our_number` columnn. They come, respectively, from the `call__started_at` and `call__our_number` columns in Calls, which are TimestampType and StringType.
+Next, the `time` column and the `our_number` column. They come, respectively, from the `call__started_at` and `call__our_number` columns in Calls, which are TimestampType and StringType.
 ```scala
  override def attributes: Set[Attribute] = Set(
     MetapodAttribute("call_id", LogicalType.UUIDType, primaryKey = true),
@@ -382,13 +382,13 @@ DatabricksHelpers.runOpAndSaveToTable(spark, OuvidoriaCalls, "your_folder_name",
 ```sql
 select * from your_folder_name.ouvidoria_calls
 ```
-If check if everything looks good, if the table you just generated has the same ammount of rows as the one you created with sql, etc. Check to see if it really does what you think it does.
+If check if everything looks good, if the table you just generated has the same amount of rows as the one you created with sql, etc. Check to see if it really does what you think it does.
 Does everything look good? GREAT! Copy that beauty back into IntelliJ and format it using scalafmt!
 
 But you're still not done. There are tests to be done.
 
 ## 7 - Testing
-Imagine, the **distant future**. The apocallipse has happened! The machines have taken over the world! Aliens are invading! And they all have a single goal:
+Imagine, the **distant future**. The apocalypse has happened! The machines have taken over the world! Aliens are invading! And they all have a single goal:
 To mess your dataset up.
 You can't let them do that, because that would be bad.
 So you're going to make some tests to ensure that, even if the robot-aliens *do* mess your dataset, it won't actually be updated, because it won't pass the tests.
@@ -534,7 +534,7 @@ Then, in sbt, run
 ```
 testOnly etl.dataset.folder.YourDatasetSpec
 ```
-If the test runs successufully, run all the tests (to check if you have managed to somehow break something else) with
+If the test runs successfully, run all the tests (to check if you have managed to somehow break something else) with
 ```
 test
 ```
@@ -640,7 +640,7 @@ MainClass:
  - Is the name of the folder you're going to store it in adequate?
  - Does the name of the Class matched the name of its file?
  - Is the attribute "name" int this format "dataset/folder-class-name"?
- - Are the Datasets you use imported? Are their name stored into a "datasetName" variable, which is then used to retreive them from the "datasets" variable?
+ - Are the Datasets you use imported? Are their name stored into a "datasetName" variable, which is then used to retrieve them from the "datasets" variable?
  - Is your code well partitioned in small functions?
  - Does your code return the columns with the names and types you declared in attributes?
 

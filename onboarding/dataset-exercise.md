@@ -290,7 +290,7 @@ More information about creating a new dataset can be found [HERE](https://github
 
 ## Writing tests for your Dataset
 
-For writting tests we use two libraries, [ScalaTest](http://www.scalatest.org/) and [SparkTestingBase](https://github.com/holdenk/spark-testing-base) .
+For writing tests we use two libraries, [ScalaTest](http://www.scalatest.org/) and [SparkTestingBase](https://github.com/holdenk/spark-testing-base) .
 
 First, create a test class mirroring your dataset class in  `itaipu/src/test/scala/etl/dataset/<YourDatasetName>Spec.scala`
 
@@ -390,7 +390,7 @@ nu datainfra sabesp -- \
 
 You can check if the instances are running on the [AWS Console](https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#Instances:tag:Name=cantareira-dev-mesos-on-demand-;sort=instanceId) and check the status of your jobs [here](https://cantareira-dev-aurora-scheduler.nubank.com.br:8080/scheduler/jobs). Now wait, it will take quite a while for the data to compute. If you're part of data infra, you should move on to [the service exercise](./service-exercise.md) and use the avro files you computed from Databricks as your input. You can come back later once your Itaipu run is done.
 
-If your proccess fails, you can run the same command again adding your `transaction_id`. The process will start again from where it stopped.
+If your process fails, you can run the same command again adding your `transaction_id`. The process will start again from where it stopped.
 
 **Tip**: Actually, save the transaction ID somewhere or keep it accessible. You'll need it on the next steps.
 

@@ -106,4 +106,4 @@ These logical types are encoded using edn and their format is described in [`com
 #### Permanence of a dataset
 
 Datasets are marked as either `ephemeral` or `permanent`, and this dictates what s3 bucket we place them in.
-Ephemeral s3 buckets are configured to delete files that are over 1 week old, while permantent datasets are kept forever.
+Ephemeral s3 buckets are configured to delete files that are over 1 week old, while permanent datasets are kept forever.

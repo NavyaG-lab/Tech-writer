@@ -8,7 +8,7 @@
 
 * [ETL Issues monitoring dashboard](https://nubank.splunkcloud.com/en-US/app/search/etl__dataset_issues_monitoring?earliest=%40d&latest=now&form.squad=*)
 
-## APIS
+## APIs
 
 * [Dataset Series](dataset_series.md)
 

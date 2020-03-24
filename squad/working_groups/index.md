@@ -4,7 +4,7 @@ Working groups are mini taskforces aimed at solving non-tech related problems of
 
 This document tracks working groups and their major decisions, linking to the actual artifacts produced in the process.
 
-It is the responsability of the working group lead to update this document (if applicable) before handing over or closing the working group. Please follow the [instructions on how to maintain the information organised](working_group_output_organisation.md) when updating this document.
+It is the responsibility of the working group lead to update this document (if applicable) before handing over or closing the working group. Please follow the [instructions on how to maintain the information organised](working_group_output_organisation.md) when updating this document.
 
 ## [Index](https://drive.google.com/drive/folders/1r7gBoCtaM2-Qqmc_bhnRCKIMTrb0vWVb)
 

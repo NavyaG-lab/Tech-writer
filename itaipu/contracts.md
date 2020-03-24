@@ -4,7 +4,7 @@ There are currently three kinds of datasets inside the contract layer:
 
 - Entity datasets
 - Attribute history datasets
-- Entity history datasets (as of [2019/07/25][1] these datasest still
+- Entity history datasets (as of [2019/07/25][1] these datasets still
   do not exist in production)
 
 ## Entity datasets
@@ -52,7 +52,7 @@ Example:
 ## Entity history datasets
 
 Entity history datasets represent the evolution of a given entity from an entity from a Datomic database.
-The grain of the dataset is one row per versionf of the entity across time per prototype.
+The grain of the dataset is one row per version of the entity across time per prototype.
 This means it includes information from all prototypes.
 Each row represent a point-in-time snapshot of an entity: this means this is a superset of the entity dataset, i.e. all rows from the entity dataset are included in the snapshot dataset.
 

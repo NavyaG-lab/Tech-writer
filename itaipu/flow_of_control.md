@@ -153,7 +153,7 @@ to do. The steps are as follows:
     to write output to s3.
 11. Persist - Save to a random place in s3. (And remember where, of course)
 12. CheckIntegrity - If defined in config, run integrity checks (such as
-    Uniquiness, NonNull,...)
+    Uniqueness, NonNull,...)
 13. VerifyPartitions - Verify that data were written in the correct amount of
     partitions.
 14. CheckIfEmpty - Check if the data are empty. If so, sets partitions to

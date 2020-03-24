@@ -8,7 +8,7 @@ A new alternative (in beta) is to use the [dataset series abstraction](/etl_user
 
 Standard event-based dataset series take a bunch of kafka messages (with the same schema), put them in an avro, and append that as a new dataset in a dataset series.
 
-With manual dataset series, we pepare by-hand the dataset that will be appended to the dataset series and directly tell `metapod`, our metadata store, to include it in the series.
+With manual dataset series, we prepare by-hand the dataset that will be appended to the dataset series and directly tell `metapod`, our metadata store, to include it in the series.
 
 This is done by running a CLI command that takes a Parquet file on s3 and the associated [logical type schema](/glossary.md#logical-type-schema) encoded as a json. The logical type schema describes the schema of the Parquet file using Nubank's custom type system. In Scala code we define this schema by having our SparkOps extend `DeclaredSchema` and defining the `attributes` field. Since we are working from the command line, we need to write this manually as a json file.
 

@@ -6,7 +6,7 @@
    1. _non-work hours_ the hausmeister is on-call to ensure our services and DAG runs operate smoothly.
    2. _work hours_ the hausmeister is responsible for triaging issues and customer inquiries during work hours.
  * Level 1 Weekend (_Friday 6pm - Monday 6pm_)
-   Same as weekday, but not responsible for customer inqueries
+   Same as weekday, but not responsible for customer inquiries
  * Level 2 (_Monday - Monday_):
    A supporting engineer with more ops experience to support the Level 1. This is the first person the hausmeister can elevate an issue to if he/she needs assistance.
    
@@ -29,7 +29,7 @@ Make sure your work environment is set up and you:
 ### Handling Alerts/Issues
 Check [the runbook](https://github.com/nubank/data-platform-docs/blob/master/on-call_runbook.md) for how to handle the raised alert.
 
-Common maintainance operations are listed in the [Ops HOWTO document](https://github.com/nubank/data-platform-docs/blob/master/ops_how_to.md). Consider contributing back to it if you come across a repeated task that is worth sharing.
+Common maintenance operations are listed in the [Ops HOWTO document](https://github.com/nubank/data-platform-docs/blob/master/ops_how_to.md). Consider contributing back to it if you come across a repeated task that is worth sharing.
 
 Before handling an issue, be sure to go through the [Data Incident Response Checklist](https://github.com/nubank/data-platform-docs/blob/master/etl_operators/incident_response_checklist.md).
 
@@ -77,7 +77,7 @@ Slack channels you should monitor for questions:
 ### Address the Hausmeister Backlog
 We use [clubhouse](https://app.clubhouse.io/nubank/project/352/data-infra-hausmeister) to track hausmeister issues.
 
-From a resourcing perspective, the on-call enginner is resourced exclusively as hausmeister during their rotation. If there aren't any open issues you are working on, feel free to tackle issues in the hausmeister backlog or general tech-debt.
+From a resourcing perspective, the on-call enginer is resourced exclusively as hausmeister during their rotation. If there aren't any open issues you are working on, feel free to tackle issues in the hausmeister backlog or general tech-debt.
 
 ### Gaining familiarity with new areas
 As engineers we tend to specialize. The hausmeister rotation gives us visibility and experience into new parts of the code-base and tech stack.
@@ -86,7 +86,7 @@ As engineers we tend to specialize. The hausmeister rotation gives us visibility
 
 During your Level 1 on-call rotation you usually encounter bugs and corner cases in our system. The following should make it to the Hausmeister backlog:
  * Items about improving the visibility, monitoring, maintenance, and operation of our infrastructure. In short, items which improve the workflow for the primary Hausmeister.
- * Low-hanging non-blocking bugs observed as part of the hausmeister's attempts to keep the DAG running. More labourious fixes should be part of pack backlogs.
+ * Low-hanging non-blocking bugs observed as part of the hausmeister's attempts to keep the DAG running. More laborious fixes should be part of pack backlogs.
 
 Items with non-immediate payoff, such as “good-to-have” features, should be moved to pack backlogs.
 

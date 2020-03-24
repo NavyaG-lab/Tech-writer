@@ -80,7 +80,7 @@ Label names start with "-PR" to make the labels appear on the top of the list.
         * PR approved or changes requested;
         * Update with master makes tests fail or create merge conflict
     * Who should add:
-        * Commiter
+        * Committer
 
 * <b>-PR Teammate Review Requested</b>
     * Description: PR needs reviewing by teammate
@@ -101,7 +101,7 @@ Label names start with "-PR" to make the labels appear on the top of the list.
         * No more changes; and
         * Tests pass
     * Who should add:
-        * Commiter
+        * Committer
 
 ### Label workflow
 

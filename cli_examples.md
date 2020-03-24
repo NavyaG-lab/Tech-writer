@@ -2,7 +2,7 @@
 
 Sabesp's repository: https://github.com/nubank/sabesp
 
-Sabesp is avaiable as a [nucli](https://github.com/nubank/nucli) sub-command. For usage check out:
+Sabesp is available as a [nucli](https://github.com/nubank/nucli) sub-command. For usage check out:
 ```shell
 nu datainfra sabesp -- -h
 ```
@@ -110,7 +110,7 @@ nu datainfra sabesp -- ---aurora-stack=<stack> jobs create <env> <job> \
     --job-version "<job>=<version>"
 ```
 
-Where `<job>` is the idenfier used inside the job definition as the
+Where `<job>` is the identifier used inside the job definition as the
 argument for the `get_version` function and `<version>` is the tag of
 the corresponding Docker image. E.g:
 
@@ -133,7 +133,7 @@ Docker image in [the corresponding repo](https://quay.io/repository/nubank/nu-ca
 ### Manually run cluster scale up job
 
 Occasionally airflow may fail to run a cluster scale up job, which will cause a job to take way longer than usual because it doesn't have enough machines.
-When this happens (instructions on verifying [this here](ops_how_to.md#checking-status-of-cluster-up-and-down-scales)), you may want to manaully run the scale up.
+When this happens (instructions on verifying [this here](ops_how_to.md#checking-status-of-cluster-up-and-down-scales)), you may want to manually run the scale up.
 
 ```shell
 nu datainfra sabesp -- --aurora-stack=<stack> jobs create <env> scale-ec2-<job-name> NODE_COUNT=<nodes> SLAVE_TYPE=<job-name> --filename scale-ec2 --job-version"scale_cluster=<version>"

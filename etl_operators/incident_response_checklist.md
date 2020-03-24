@@ -16,7 +16,7 @@ How this checklist works:
 - [ ] **[If bad data is being computed]** [Pause the run](#Pause-the-run)
 - [ ] Determine the root cause
 - [ ] **[If bad data was committed]** [Determine impacted datasets](#Determine-impacted-datasets)
-- [ ] **[If bad data was served and a stakeholder specificially asks you]** [Serve the previous day's version of specific datasets](#Serve-the-previous-days-version-of-specific-impacted-datasets)
+- [ ] **[If bad data was served and a stakeholder specifically asks you]** [Serve the previous day's version of specific datasets](#Serve-the-previous-days-version-of-specific-impacted-datasets)
 - [ ] **[If bad data was committed]** [Retract impacted datasets](#Retract-impacted-datasets)
 - [ ] **[If bad data was archived]** [Retract archived datasets](#Retract-archived-datasets)
 - [ ] **[If bad data was committed]** [Drain Kafka lag on serving layer services](#Drain-Kafka-lag-on-serving-layer-services)
@@ -65,7 +65,7 @@ To prevent more bad data from being computed, and avoid wasting money on computi
 #### How?
 
 1. Go to the [Airflow UI](https://airflow.nubank.com.br/admin/airflow/graph?dag_id=prod-dagao)
-2. Select the most upstream node which has produced bad data, mark this node and its downstreams as failed. This will ensure Airflow doesn't re-attempt killed jobs
+2. Select the most upstream node which has produced bad data, mark this node and its downstream nodes as failed. This will ensure Airflow doesn't re-attempt killed jobs
 3. Kill all active jobs:
    1. Go to the [Aurora UI](https://cantareira-stable-aurora-scheduler.nubank.com.br:8080/scheduler/jobs/prod)
    2. Click on 'sort by : active' to get the list of currently active jobs
