@@ -50,12 +50,13 @@ Every once in a while, Aurora goes down. `sabesp` commands, such as ones involve
 - The [aurora web UI](https://cantareira-stable-aurora-scheduler.nubank.com.br:8080) does not load, but the [mesos web UI](https://cantareira-stable-mesos-master-bypass.nubank.com.br) does.
 - A lot of pending jobs in the [aurora web UI](https://cantareira-stable-aurora-scheduler.nubank.com.br:8080)
 
-Try to look into the issue, potentially by ssh'ing into `mesos-master`, via `nu ser ssh mesos-master --suffix dev --env cantareira --region us-east-1` and looking at the aurora logs via `journalctl -u aurora-scheduler`.
+Try to look into the issue, potentially by ssh'ing into `aurora-scheduler`, via `nu ser ssh aurora-scheduler --suffix stable --env cantareira --region us-east-1` and looking at the aurora logs via `journalctl -u aurora-scheduler`.
 
-To restart Mesos Master, you could do either of the following:
+To restart Mesos Master:
+  - cycle `mesos-master`: `nu ser cycle mesos-master --env cantareira --suffix stable --region us-east-1`
 
-- cycle `mesos-master`: `nu ser cycle mesos-master --env cantareira --suffix stable --region us-east-1`
-- restart `aurora-scheduler` alone:
+To restart Aurora Scheduler:
+  - `nu ser ssh aurora-scheduler --suffix stable --env cantareira --region us-east-1`
   - Check current status: `sudo systemctl status aurora-scheduler`
   - Start the service: `sudo systemctl restart aurora-scheduler`
   - Verify that the service restarted: `journalctl -f -u aurora-scheduler`
