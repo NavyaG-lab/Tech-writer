@@ -43,16 +43,16 @@ to [here](#i-want-mergulho-run-on-my-data).**
 
 ## Design
 
-Mergulho is currently in a POC phase. This means that a basic set of [Metrics](#metrics)
-is available and there is a small API to run these metrics on a single column
-of interest or an entire dataset.
+A basic set of [Metrics](#metrics) is available and there is a small
+API to run these metrics on a single column of interest or an entire
+dataset.
 
 ### Metrics
 
 Mergulho defines a set of [metrics](https://github.com/nubank/itaipu/blob/master/common-etl/src/main/scala/mergulho/Metric.scala)
 that can currently be selected to run on our data. Moreover, these metrics are
 grouped into subsets that are sensible for certain content types of data. These
-subsets are selected by mergulho as described [below](#metric-application).
+subsets are selected by Mergulho as described [below](#metric-application).
 Available metrics are currently limited in the following ways:
 
 * There are only metrics for the most basic data types (no nested types for example)
@@ -67,7 +67,7 @@ Available metrics are currently limited in the following ways:
 Each metric defines:
 
 1. A name
-2. A compute mechanism which **must be expressed as a spark transformation**.
+2. A compute mechanism which **must be expressed as a Spark transformation**.
 3. What data it is valid for
 4. Its scope (Dataset, SingleColumn...)
 5. Its output type as a `common-etl.schema.LogicalType`
@@ -83,7 +83,7 @@ Applying a metric returns an 7-column dataframe with the following columns:
 7. Metric value (serialized as string)
 
 Other columns might be added but they are enrichments for convenience. These
-seven output columns are intended to be reduced to a datomic-like
+seven output columns are intended to be reduced to a Datomic-like
 EntityAttributeValue (EAV) structure, where columns 1-2 define the entity, 3-5
 the attribute and 6-7 make up the value.
 
@@ -123,44 +123,53 @@ to adjust that behavior:
 
 ## Current deployment state
 
-At the time of writing, the Mergulho code is in common-etl. There is however no
-mechanism for integrating Mergulho into `SparkOps` in itaipu. We are running
-Mergulho in a [databricks job/notebook](https://nubank.cloud.databricks.com/#job/15438)
-that is triggered nightly via airflow. Results are stored in a table named
-`meta.mergulho`.  Obviously, this setup is fine for a POC phase but never a
-final solution.
-
+Mergulho code is in [Itaipu](https://github.com/nubank/itaipu). The
+metrics described above are collected daily at each run and then
+stored in [Escafandro](https://github.com/nubank/itaipu).
 
 ## Roadmap
 
-Currently, we are running Mergulho on more and more datasets to observe if and
-how it scales. The plan is to have it running on all contract tables and all
-tables that stakeholders ask us about. If scaling works well, we will add
-automatic running of metrics to the `ContractOps` and also add mechanisms for
-other `SparkOps`.
+Currently, we are running Mergulho on more and more datasets to
+observe if and how it scales. The plan is to have it running on all
+contract tables and all tables that stakeholders ask us about. If
+scaling works well, we will add automatic running of metrics to the
+`ContractOps` and also add mechanisms for other `SparkOps`. For these
+datasets, we then perform [a set of anomaly
+checks](https://github.com/nubank/itaipu/blob/master/common-etl/src/main/scala/common_etl/evaluator/steps/mergulho/DatasetSelector.scala).
 
-In terms of using the data for it's intended purposes, the next step is a
-conception of two services, one for alerting and one for displaying these
-metadata in a data catalogue. The choice of solution will also impact the final
-decision on where the data will be stored.
+The result of these checks are published in Slack. Currently, the
+message is posted on [the #etl-integrity-checks
+channel](https://nubank.slack.com/archives/CGBLGLYFK) through Splunk.
 
 Another direction of progress is the extension of the set of metrics as well as
 sanity checks based on the metrics.
 
-
 ## I want Mergulho run on my data
 
-If you want mergulho to be run on your data, you can contact data infra (more
-specifically the cortex pack) and someone can help you.
+If you want Mergulho to be run on your data, you need to open a PR
+againts [Itaipu](https://github.com/nubank/itaipu). In particular, you
+will need to add an entry to [the
+`DataseSelector.defaultWhitelist`](https://github.com/nubank/itaipu/blob/master/common-etl/src/main/scala/common_etl/evaluator/steps/mergulho/DatasetSelector.scala)
+like the following:
 
-If you as a stakeholder have needs/suggestions for extending the current MVP to
-make it helpful for you, feel free to contact data infra. For example, you can
-suggest new metrics or to send us a PR with the newly proposed metrics for
-review.
+```
+"<dataset name>" -> AnomalyChecks(Set(<check1, check2, ...>), <LogWarning | FailHard>)
+```
 
+for example:
+
+```scala
+"nu-br/core-alpha/credit-card-billing-cycles" -> AnomalyChecks(Set(IncreasingRowCountChecker), LogWarning)
+```
+
+If you as a stakeholder have needs/suggestions for extending Mergulho
+to make it helpful for you, feel free to contact data infra. For
+example, you can suggest new metrics or to send us a PR with the newly
+proposed metrics for review.
 
 ## Resources
 
-Here is a link to a [talk](https://docs.google.com/presentation/d/1EVG6_zpc_79txV-CB4Jr5L0zV-_-JFzryQlbSekC8ic/edit#slide=id.p)
-I gave in the Data Tribe all-hands about mergulho. Note that you need access to
-the data tribe shared drive to access this.
+Here is a link to a
+[talk](https://docs.google.com/presentation/d/1EVG6_zpc_79txV-CB4Jr5L0zV-_-JFzryQlbSekC8ic/edit#slide=id.p)
+I gave in the Data Tribe all-hands about mergulho. Note that you need
+access to the data tribe shared drive to access this.
