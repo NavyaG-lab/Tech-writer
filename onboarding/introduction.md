@@ -113,9 +113,9 @@ You can find a bunch of relevant engineering links here:  [Onboarding](https://w
   - Clojure is the main programming language used at Nubank. You should know basic clojure well.
   - [Free beginner book](https://www.braveclojure.com/clojure-for-the-brave-and-true/)
   - [Advanced book](https://pragprog.com/book/vmclojeco/clojure-applied)
-- [Service code organization (Ports & Adapters)](http://alistair.cockburn.us/Hexagonal+architecture)
+- [Service code organization (Ports & Adapters)][hexagonal-architecture-article]
   - This [first PR](https://github.com/nubank/savings-accounts/pull/1/files?diff=unified) of this service might help visualize the code organization at Nubank' services
-  - [Microservice structure and hexagonal architecture terms](https://github.com/nubank/playbooks/blob/master/glossary.md#microservice-structure-and-hexagonal-architecture-terms)
+  - [Microservice structure and hexagonal architecture glossary][code-organization-glossary]
   - [Busquem conhecimento (Portuguese)](https://wiki.nubank.cofeedbacksm.br/index.php/Busquem_Conhecimento#Ports_.26_Adapters)
 - [Kafka](http://kafka.apache.org/intro)
   - Kafka is a distributed streaming platform. We use it for async communication between services.
@@ -134,3 +134,6 @@ You can find a bunch of relevant engineering links here:  [Onboarding](https://w
 ## Data Infra's Onboarding Exercise
 
 The goal of this exercise is to make you familiar with Nubank's general and data infrastructures. The exercise is split up into two parts, _Part I_ is ["Creating a dataset"](dataset-exercise.md) and _Part II_ is ["Creating a service to expose a dataset via API"](service-exercise.md).
+
+[hexagonal-architecture-article]: https://alistair.cockburn.us/hexagonal-architecture/
+[code-organization-glossary]: https://github.com/nubank/playbooks/blob/502cd385d5c30f13405f9b481d0557d793c61279/docs/code-organization.md#hexagonal-architecture
