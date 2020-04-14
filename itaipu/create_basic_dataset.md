@@ -106,7 +106,7 @@ Every dataset you find in Itaipu is a SparkOp. The SparkOp class has six importa
 
 - `ownerSquad` property. That's the squad that owns that dataset.
 
-- `warehouseMode` property. This is optional, and you should only set it to make your new dataset available for querying on the data warehouse (Redshift).
+- `warehouseMode` property. This is optional, and you should only set it to make your new dataset available for querying on the data warehouse (BigQuery).
 
 - dataset names section. Here we'll get all the names of all the datasets we'll use and place them on variables with clear names. The reason why we do so will become apparent eventually.
 
@@ -161,7 +161,7 @@ object ${NAME} extends SparkOp with DeclaredSchema {
   //If your squad isn't in common_etl.metadata.Squad, please add it
   override val ownerSquad: Squad = SquadName
 
-  //Optional. This is how you make the dataset available on Redshift for querying
+  //Optional. This is how you make the dataset available on BigQuery for querying
   override val warehouseMode: WarehouseMode = WarehouseMode.Loaded
   
   override val inputs: Set[String] = Set(fooName, barName, bazName)
