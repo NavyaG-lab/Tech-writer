@@ -5,20 +5,29 @@
 ### Clojure services in the prod stack
 
 These are "normal" Clojure services that get deployed in our main infrastructure for production services.
-- [curva-de-rio](https://github.com/nubank/curva-de-rio)
+
+- [barragem](https://github.com/nubank/barragem)
+- [castor](https://github.com/nubank/castor)
 - [conrado](https://github.com/nubank/conrado)
-- [cutia](https://github.com/nubank/cutia)
 - [correnteza](https://github.com/nubank/correnteza), ([overview](/primer.md#correnteza-overview))
+- [curva-de-rio](https://github.com/nubank/curva-de-rio)
+- [cutia](https://github.com/nubank/cutia)
+- [escafandro](https://github.com/nubank/escafandro)
 - [metapod](https://github.com/nubank/metapod), ([overview](/primer.md#metapod-overview))
+- [ouroboros](https://github.com/nubank/ouroboros)
 - [riverbend](https://github.com/nubank/riverbend)
 - [tapir](https://github.com/nubank/tapir)
+- [veiga](https://github.com/nubank/veiga)
 
 ### Front-ends
+
 #### Clojurescript
 - [eye-of-mauron](https://github.com/nubank/eye-of-mauron)
 - [sonar](https://github.com/nubank/sonar): **DEPRECATED** in favor of sonar-js
+
 #### Javascript
 - [sonar-js](https://github.com/nubank/sonar-js), ([overview](/primer.md#sonar-overview))
+
 #### 3rd-party
 - [Looker](https://nubank.looker.com/)
 - [Databricks](https://nubank.cloud.databricks.com/login.html)
@@ -40,7 +49,7 @@ These are Python services to support online machine learning models in productio
 
 ## Common libraries
 
-- [common-etl](https://github.com/nubank/common-etl)
+- [common-etl](https://github.com/nubank/common-etl), moved into the `itaipu` repo
 - [common-etl-spec](https://github.com/nubank/common-etl-spec)
 - [metapod-client](https://github.com/nubank/metapod-client)
 - [common-etl-python](https://github.com/nubank/common-etl-python)
@@ -55,7 +64,7 @@ These are Python services to support online machine learning models in productio
 ## Other projects
 
 - [sabesp](https://github.com/nubank/sabesp), ([overview](/primer.md#sabesp-overview))
-- [datomic-backup-restore](https://github.com/nubank/datomic-backup-restore)
+- [data-tribe-go-scripts](https://github.com/nubank/data-tribe-go-scripts)
 - [data-infra-adr](https://github.com/nubank/data-infra-adr)
 
 ## Infrastructure
