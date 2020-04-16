@@ -8,6 +8,23 @@ The frequent dataset failures should enumerate the symptoms of the particular fa
 
 *Before contributing, please keep in mind [the following guidelines](writing-runbooks).*
 
+## Incident response
+
+The Data Infra issue response procedure is loosely modelled after [Nubank's incident response procedure](https://github.com/nubank/playbooks/blob/master/incident-response/incident-response-procedure.md). The reason that it's different is that Data Infra issues are mostly of the [severity levels](https://github.com/nubank/playbooks/blob/master/incident-response/incident-severity-levels.md) SEV-4 or SEV-5.
+
+When an issue arises, it is expected that you mention the failure, communicate updates and actions taken in [#data-crash](https://nubank.slack.com/messages/CE98NE603/). This allows people to follow along and contribute suggestions.
+
+For serious incidents, also perform these steps:
+
+  - find someone to actively communicate updates about the incident, referred to as the "comms" person. if you're alone, you can take that role.
+  - you are the "point" person, which means you're the first responder and primary person acting on the issue
+  - change the [#data-crash](https://nubank.slack.com/messages/CE98NE603/) channel topic to ":red_circle: -short description of the failure- | point: -your-name- comms: -comms-person-" e.g. "itaipu-dimensional-modeling not finishing"
+  - move any discussions about the issue to this channel (no need for threads)
+
+If the incident affects the time which data will be available for users at Nubank, or availability of some user-facing service (e.g. BigQuery, Looker, Belo Monte, Databricks), post a short message about what is being affected in [#data-announcements](https://nubank.slack.com/messages/C20GTK220/). This way, users know we are aware of the issue. Note that this channel serves a wider audience than engineers, so describe the issue in plain terms and at a high level.
+
+After the incident has been taken care of and resolved, change the topic back to ":green_circle:" (and post an update for users in #data-announcements, if applicable).
+
 ## Alarms
 
 - [alert-itaipu-contracts triggered on Airflow](#alert-itaipu-contracts-triggered-on-airflow)
