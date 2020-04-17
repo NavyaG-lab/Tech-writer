@@ -236,7 +236,7 @@ This form will be regularly reviewed by either [#itaipu-reviewers](https://app.s
 * Should have actively contributed to the repo
 * Should know about good practices and advocate for them (unit tests, readable code, etc)
 * Should know about:
-  * [StaticOps](https://github.com/nubank/ds-knowledge/blob/master/dataset-tutorial/8-StaticOp.md)
+  * [StaticOps](https://github.com/nubank/ds-knowledge/blob/master/tutorials/dataset-tutorial/8-StaticOp.md)
   * [Dataset Series](https://github.com/nubank/data-platform-docs/blob/master/etl_users/dataset_series.md)
   * [Unit Tests](https://github.com/nubank/data-platform-docs/blob/master/itaipu/create_basic_dataset.md#7---testing)
   * [PII](https://github.com/nubank/data-platform-docs/blob/master/itaipu/pii_and_personal_data.md)
