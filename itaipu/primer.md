@@ -58,8 +58,8 @@ Examples:
 
 The definition for any given contract is hardcoded first in a Clojure model (which generates a Datomic schema).  From these models, Scala classes are generated, and they are hardcoded both in production services and in Itaipu.
 * [Credit Card Account Model Example](https://github.com/nubank/credit-card-accounts/blob/master/src/accounts/models/account.clj#L44)
-* [Generated Scala file for Credit Card Account in production](https://github.com/nubank/credit-card-accounts/blob/master/resources/contract/credit_card_accounts/Accounts.scala)
-* [Generated Scala file for Credit Card Account pasted in Itaipu](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/contract/credit_card_accounts/Accounts.scala)
+* [Generated Scala file for Credit Card Account in production](https://github.com/nubank/credit-card-accounts/blob/master/resources/nu/data/br/dbcontracts/credit_card_accounts/entities/Accounts.scala)
+* [Generated Scala file for Credit Card Account pasted in Itaipu](https://github.com/nubank/itaipu/blob/master/src/main/scala/nu/data/br/dbcontracts/credit_card_accounts/entities/Accounts.scala)
 
 ### Dataset
 
