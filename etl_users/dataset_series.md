@@ -385,7 +385,11 @@ object `MyOp` extends SparkOp {
 }
 ```
 
-`DatasetSeriesOpNameLookup` exposes the `datasetSeriesContractOpName`, `datasetSeriesPiiContractOpName` and `datasetSeriesPiiLookupTableOpName` methods to access, respectively, the normal output contract, the pii contract and the PII lookup tables.
+`DatasetSeriesOpNameLookup` exposes the following methods:
+- `datasetSeriesContractOpName` : the name of the normal output contract op
+- `datasetSeriesPiiContractOpName` : the name of the pii contract
+- `datasetSeriesPiiLookupTableOpName` : the name of the PII lookup tables
+- `datasetSeriesContractOpAttributes` : the set of attributes in the normal output contract op
 
 ## Squish
 
