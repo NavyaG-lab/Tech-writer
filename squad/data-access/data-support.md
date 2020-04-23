@@ -6,9 +6,9 @@ Over the course of the week our customers, Nubank's data users, often encounter 
 
 Slack channels you should monitor for questions:
 
-###data-help
-###squad-data-access
-###data-announcements
+- `#data-help`
+- `#squad-data-access`
+- `#data-announcements`
 
 ## Schedule
 

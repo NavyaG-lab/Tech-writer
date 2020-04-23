@@ -81,7 +81,7 @@ We have several types of mesos slaves, one for each kind of workload. They can b
  - Revert and merge:
    - `aurora-jobs`
    - `scale-cluster`
-   -  deploy
+   - `deploy`
  - Wait their pipelines to run in go run
  - Retrigger `dagao` and `dagao-deploy` to send the changes on the two repos to airflow
  - Update mesos cluster [see here](#deployment)

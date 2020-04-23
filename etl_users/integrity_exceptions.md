@@ -1,4 +1,4 @@
-### About this document ###
+# About this document
 
 Here are the steps to follow to get an early warning on Slack when
 your dataset is failing because of an integrity exception.

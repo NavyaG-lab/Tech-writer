@@ -1,7 +1,6 @@
 # Dataset Series
 
-Table of Contents
-=================
+## Table of Contents
 
 * [Background](#background)
     * [Source of the data](#source-of-the-data)
@@ -38,7 +37,7 @@ At Nubank, Datomic is the main/preferred way to store data. But it's not the onl
 | Contracts      | Datomic entities, historical attributes (e.g. Customer entity) |
 | Dataset Series | High throughput attributes, very granular events (e.g. Click streams) |
 
-#### Source of the data
+### Source of the data
 
 Dataset series data is produced by services by calling the `common-schemata.wire.etl/produce-to-etl!` function ([source](https://codesearch.nubank.com.br/search/linux?q=defn%20produce-to-etl!&fold_case=auto&regex=false&context=true&repo%5B%5D=nubank%2Fcommon-schemata)) . The resulting data is then handled by the *Ingestion Layer* – a set of services linked to the `EVENT-TO-ETL` Kafka topic:
 
@@ -60,18 +59,18 @@ Given a `DatasetSeriesContract` called `MySeriesContract`:
 
 #### Anatomy of a DatasetSeriesContract
 
-###### `seriesName`
+##### `seriesName`
 
 The name of your series, the same used by your service when posting data via the `common-schemata.wire.etl/produce-to-etl!` function ([source](https://github.com/nubank/common-schemata/blob/master/src/common_schemata/wire/etl.clj#L133-L137)) but without the `series/`.
 
-###### `contractSchema`
+##### `contractSchema`
 
 What the final schema of your dataset series should be once it's done
 computing. Usually this corresponds to the current schema with which your series is being produced.
 
 See also [metadata](#metadata).
 
-###### `alternativeSchemas`
+##### `alternativeSchemas`
 
 Override this optional field to declare other existing schemas for your dataset series. Usually, these will be past versions which use obsolete names or datatypes. See [Dealing with Versions](#dealing-with-versions) for an overview of the version reconciliation metadata DSL.
 
@@ -430,13 +429,13 @@ In this example, the current version (`v3`) contains all columns from the SparkO
 
 By default Squish copies exactly the parameters as defined in the SparkOp
 
--   country
--   description
--   ownerSquad
--   warehouseMode
--   orderByColumns (sortKey in the SparkOp)
--   clearance
--   qualityAssessment
+- country
+- description
+- ownerSquad
+- warehouseMode
+- orderByColumns (sortKey in the SparkOp)
+- clearance
+- qualityAssessment
 
 If you want to change something (`country`  in the example below), just create a file in the `dataset_series/archived` folder for your Dataset Series and in it, follow the example below:
 

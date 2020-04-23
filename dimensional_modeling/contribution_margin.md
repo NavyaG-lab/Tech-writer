@@ -55,6 +55,5 @@ Get these inputs from the latest VAMP excel file.
 
 
 ### Finance Chart of Accounts 
-- 
--We keep our latest Matera chart of accounts in [Itaipu source code](https://github.com/nubank/itaipu/blob/master/src/main/resources/finance_chart_of_accounts.json) as a JSON file.  Check with the FP&A squad to confirm that they are keeping this up to date.  See the git committers for specific names. 
--
+
+- We keep our latest Matera chart of accounts in [Itaipu source code](https://github.com/nubank/itaipu/blob/master/src/main/resources/finance_chart_of_accounts.json) as a JSON file.  Check with the FP&A squad to confirm that they are keeping this up to date.  See the git committers for specific names. 

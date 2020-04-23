@@ -183,7 +183,7 @@ with the service owners that the database was re-created**.
 
 The solution involves 3 steps:
 
-#### Delete all the extractions for the databases that the alarm is going off for.
+#### Delete all the extractions for the databases that the alarm is going off for
 
 There is an admin endpoint in Correnteza exactly for this purpose, but it's protected with
 the scope `correnteza-extraction-delete`.
@@ -238,19 +238,20 @@ important bits for this purpose are highlighted in the screenshot.
 [writing-runbooks]: writing_runbooks.md
 
 ## Leaf dataset is failing because of bad definition
-### Symptoms ###
+
+### Symptoms
   * Any of the steps during running the dataset is failing
   * It's not an environment issue, but purely specific to how the dataset is defined
   * The dataset has been recently modified/introduced
 
-### Solution ###
+### Solution
   * Revert the most recent commits modifying the failing datasets along with any other commits that depend on
     those recent changes.
   * [Commit an empty dataset](ops_how_to.md#manually-commit-a-dataset-to-metapod) in place of the failing
     datasets in order to ignore this dataset for the rest of the ETL run.
   * Announce in [#guild-data-eng](https://nubank.slack.com/archives/C1SNEPL5P) about the reverted changes.
 
-### Notes ###
+### Notes
   * You should be aware that reverting changes spanning more than one dataset might cause problems if some of
     the datasets have already been committed but are then consumed by the reverted-to earlier versions of the
     other datasets.
@@ -258,14 +259,15 @@ important bits for this purpose are highlighted in the screenshot.
     require different actions based on the kinds of datasets involved.
 
 ## Dataset partition not found on s3
-### Symptoms ###
+
+### Symptoms
   * A thrown `java.io.FileNotFoundException: No such file or directory` on a Spark executor for a file on S3.
-  * The the partition file in question is accounted for in the mentioned bucket via the AWS console web UI (because the AWS CLI is usually unable to find it either), and it has no permissions listed then it's most likely this issue.
+  * The partition file in question is accounted for in the mentioned bucket via the AWS console web UI (because the AWS CLI is usually unable to find it either), and it has no permissions listed then it's most likely this issue.
 
 Some instances of this happening include:
   - [1] https://nubank.slack.com/archives/CE98NE603/p1566893108104300
   - [2] https://nubank.slack.com/archives/CE98NE603/p1566115955069000?thread_ts=1566105267.068700&cid=CE98NE603
   - [3] https://nubank.slack.com/archives/CE98NE603/p1573363471193700
 
-### Solution ###
+### Solution
 [Retracting](https://github.com/nubank/data-platform-docs/blob/master/ops_how_to.md#retracting-datasets-in-bulk) the inputs for the failing datasets in order to recompute the inputs and re-store them on s3 usually fixes it.

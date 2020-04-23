@@ -33,13 +33,14 @@ will see something like this: ![](../images/circleci_workflow.png)
 
 The alternative is to create the file locally (example below with `itaipu`, but
 works with any Scala project):
+
 ```bash
-$ cd $NU_HOME/itaipu
-$ git checkout master
-$ git pull origin master
-$ sbt clean
-$ sbt package
-$ mv target/scala-2.11/itaipu_2.11-1.0.0-SNAPSHOT.jar target/scala-2.11/itaipu_2.11-1.0.0-SNAPSHOT-$(date +'%Y%m%d')-$(git rev-parse --short=7 HEAD).jar
+cd $NU_HOME/itaipu
+git checkout master
+git pull origin master
+sbt clean
+sbt package
+mv target/scala-2.11/itaipu_2.11-1.0.0-SNAPSHOT.jar target/scala-2.11/itaipu_2.11-1.0.0-SNAPSHOT-$(date +'%Y%m%d')-$(git rev-parse --short=7 HEAD).jar
 ```
 Explanation:
 - `sbt clean` removes all generated files from the `target` directory.

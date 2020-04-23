@@ -18,7 +18,7 @@ https://prod-metapod.nubank.com.br/api/graphql/query
 
 #### bearer token
 
-In the request settings tabs bar below the URL, click `Bearer` (might be `Auth`, then choose `Bearer Token` in the dropdown) and add the output of running this command, excluding the `Bearer ` at the beginning
+In the request settings tabs bar below the URL, click `Bearer` (might be `Auth`, then choose `Bearer Token` in the dropdown) and add the output of running this command, excluding the `Bearer` at the beginning
 
 ```
 nu auth token --env prod

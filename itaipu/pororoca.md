@@ -1,5 +1,4 @@
-## Pororoca
-
+# Pororoca
 
 It is a simple command line for improving cycle-time and reducing mistakes whenever changing platform/infra/core code on common-etl and itaipu. 
 
@@ -41,7 +40,8 @@ cd itaipu
  3. Pororoca will trigger a `databricks` notebook matching the current transaction against the `golden-transaction`
  
 
- ### Verify
+### Verify
+
 ![pororoca-verify](../images/pororoca_verify.jpg)
 
 To verify the transaction the databricks notebook compare the `challenger-transaction` against the `golden-transaction` validating

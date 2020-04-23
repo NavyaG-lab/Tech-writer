@@ -24,9 +24,9 @@ grep "s3:\/\/nu-spark-metapod-ephemeral-1-raw\/\K([^\"]*)" -oP 2019-09-30-log-ca
  - open a PR updating the log cache entries in `common-etl`, [similar to this one](https://github.com/nubank/itaipu/pull/6756), using the output of:
 
 ```bash
-$ cp ~/2019-09-30-log-cache.json $NU_HOME/itaipu/common-etl/src/main/resources/log_cache_map.json
+cp ~/2019-09-30-log-cache.json $NU_HOME/itaipu/common-etl/src/main/resources/log_cache_map.json
 
-$ sed -i 's/nu-spark-metapod-ephemeral-1-raw/nu-spark-datomic-logs\/cache/g' $NU_HOME/itaipu/common-etl/src/main/resources/log_cache_map.json
+sed -i 's/nu-spark-metapod-ephemeral-1-raw/nu-spark-datomic-logs\/cache/g' $NU_HOME/itaipu/common-etl/src/main/resources/log_cache_map.json
 ```
 
 and also make sure all the T values are numbers not strings.

@@ -2,7 +2,7 @@
 
 Looker is a BI Tool that Data Access maintains and provides support. The main areas of support of Looker are:
 
-# General Support
+## General Support
 
 Data Access is the one who is responsible for Looker's stability. In case a user has problems using the tool we should provide the first level support. Some examples of these cases are:
 
@@ -19,7 +19,7 @@ For cases that are not related to access, that we don't know how to proceed, or 
 - Help the user enter in contact with [Looker support](https://help.looker.com/hc/en-us/articles/360025685933-Looker-Support-Details)
 - For SQL Runner 2.2 questions enter contact with Looker through our [Slack channel](https://sqlrunner.slack.com)
 
-# Access
+## Access
 
 People need access to Looker in order to use it. Due to third parties using Looker and budget restrictions we cannot create users or open the tool for anyone.
 
@@ -32,7 +32,7 @@ Those that are not covered by this lambda must ask this access on [#access-reque
 
 In case the person still doesn't have access after going to #access-request, Data Access will have to manually intervene. These are the most common requests and how to proceed:
 
-## Xpeers
+### Xpeers
 
 Due to budget restrictions on Looker, and the amount of people on this chapter, we give Viewer Licenses to certain people and Developer Licenses to others. The Viewer Licenses are cheaper and allow people to only view Dashboards.
 
@@ -45,7 +45,7 @@ This logic is based on the Xpeer level, but there are cases when this doesn't wo
 These cases require manual intervention. The `looker-xpeer-basic-user@nubank.com.br` was created for these cases. People that are added to this group automatically are added to the `Basic User`.
 XManagers have the permission to add people to this group and Data Access should redirect Xpeers with this situation to them (they should know how to get in touch with their respective XManagers).
 
-## Third Parties and BPOs
+### Third Parties and BPOs
 
 Nubank hires contractors to perform certain tasks, and these contractors have access to Looker in order to check their own performance. 
 In order for them not be able to see the data that's not related to their own work Data Access created separated Looker models for these use cases:
@@ -60,7 +60,7 @@ The contractors access to these models is controlled by the Looker Lambda. For N
 
 For Third Parties there's usually no need to give access to people since most of them are already on the `Basic User` group. For BPOs the CX Boosters squad has manage permissions on the google group so they are the ones who control the access.
 
-## Permission to view Dashboards
+### Permission to view Dashboards
 
 The default setting for Nubankers is for them to be allowed to view any dashboard. In case someone doesn't have permission, it could be due to:
 
@@ -75,7 +75,7 @@ In this case the person should reach out to the Dashboard owner and ask them to 
 
 There's a [playbook](https://github.com/nubank/playbooks/blob/master/squads/data-access/looker/common_tasks.md#user-doesnt-have-access-to-a-specific-explore-or-dashboard) on how to proceed in these cases.
 
-## Permission to schedule Dashboards
+### Permission to schedule Dashboards
 
 This permission is granted only to people on the `Power User` group. Before giving the user access to this group, ask the person if someone in their squad is from the following chapters:
 

@@ -1,6 +1,6 @@
 # Databricks Playbook
 
-### Table of Contents
+## Table of Contents
 
  - [A Databricks cluster is unhealthy](#A-Databricks-cluster-is-unhealthy)
  - [Identifying notebooks hogging the resources](#Identifying-notebooks-hogging-the-resources)
@@ -22,7 +22,6 @@ Databricks -> Cluster -> (Select the cluster) -> Metrics -> Live Metrics
     - If the cluster is out of memory then the notebooks will be stopping with GC errors.
 
 It is possible that after restarting the cluster, the problem will start again. This is happening because there are notebooks that are hogging the resources of the cluster. Check the section on ["Identifying notebooks hogging the resources"](#Identifying-notebooks-hogging-the-resources)
-
 
 ## Identifying notebooks hogging the resources
 

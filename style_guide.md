@@ -448,11 +448,13 @@ class Child extends Parent {
 ### <a name='destruct_bind'>Destructuring Binds</a>
 
 Destructuring bind (sometimes called tuple extraction) is a convenient way to assign two variables in one expression.
+
 ```scala
 val (a, b) = (1, 2)
 ```
 
 However, do NOT use them in constructors, especially when `a` and `b` need to be marked transient. The Scala compiler generates an extra Tuple2 field that will not be transient for the above example.
+
 ```scala
 class MyClass {
   // This will NOT work because the compiler generates a non-transient Tuple2
@@ -461,12 +463,12 @@ class MyClass {
 }
 ```
 
-
 ### <a name='call_by_name'>Call by Name</a>
 
 __Avoid using call by name__. Use `() => T` explicitly.
 
 Background: Scala allows method parameters to be defined by-name, e.g. the following would work:
+
 ```scala
 def print(value: => Int): Unit = {
   println(value)
@@ -481,8 +483,8 @@ def inc(): Int = {
 
 print(inc())
 ```
-in the above code, `inc()` is passed into `print` as a closure and is executed (twice) in the print method, rather than being passed in as a value `1`. The main problem with call-by-name is that the caller cannot differentiate between call-by-name and call-by-value, and thus cannot know for sure whether the expression will be executed or not (or maybe worse, multiple times). This is especially dangerous for expressions that have side-effect.
 
+in the above code, `inc()` is passed into `print` as a closure and is executed (twice) in the print method, rather than being passed in as a value `1`. The main problem with call-by-name is that the caller cannot differentiate between call-by-name and call-by-value, and thus cannot know for sure whether the expression will be executed or not (or maybe worse, multiple times). This is especially dangerous for expressions that have side-effect.
 
 ### <a name='multi-param-list'>Multiple Parameter Lists</a>
 
@@ -497,7 +499,6 @@ One notable exception is the use of a 2nd parameter list for implicits when defi
 
 Another exception is when writing functions to be used with `transform` in `SparkOps`, where you want the last parameter list to be a `DataFrame`.
 
-
 ### <a name='symbolic_methods'>Symbolic Methods (Operator Overloading)</a>
 
 __Do NOT use symbolic method names__, unless you are defining them for natural arithmetic operations (e.g. `+`, `-`, `*`, `/`). Under no other circumstances should they be used. Symbolic method names make it very hard to understand the intent of the methods. Consider the following two examples:
@@ -510,7 +511,6 @@ stream1 >>= stream2
 channel.send(msg)
 stream1.join(stream2)
 ```
-
 
 ### <a name='type_inference'>Type Inference</a>
 
@@ -601,6 +601,7 @@ __Avoid using implicits__, unless:
 When implicits are used, we must ensure that another engineer who did not author the code can understand the semantics of the usage without reading the implicit definition itself. Implicits have very complicated resolution rules and make the code base extremely difficult to understand. From [Twitter's Effective Scala guide](http://twitter.github.io/effectivescala/): "If you do find yourself using implicits, always ask yourself if there is a way to achieve the same thing without their help."
 
 If you must use them (e.g. enriching some DSL), do not overload implicit methods, i.e. make sure each implicit method has distinct names, so users can selectively import them.
+
 ```scala
 // Don't do the following, as users cannot selectively import only one of the methods.
 object ImplicitHolder {
@@ -619,6 +620,7 @@ object ImplicitHolder {
 ## <a name='exception'>Exception Handling (Try vs try)</a>
 
 - Do NOT catch Throwable or Exception. Use `scala.util.control.NonFatal`:
+
   ```scala
   try {
     ...
@@ -648,7 +650,6 @@ object ImplicitHolder {
 - Do not use None to represent exceptions. Instead, use a `Failure` from `Try`.
 - Do not call `get` directly on an `Option`, unless you know absolutely for sure the `Option` has some value.
 
-
 ### <a name='chaining'>Monadic Chaining</a>
 
 One of Scala's powerful features is monadic chaining. Almost everything (e.g. collections, Option, Future, Try) is a monad and operations on them can be chained together. This is an incredibly powerful concept, but chaining should be used sparingly. In particular:
@@ -658,6 +659,7 @@ One of Scala's powerful features is monadic chaining. Almost everything (e.g. co
 - A chain should almost always be broken after a flatMap (because of the type change).
 
 A chain can often be made more understandable by giving the intermediate result a variable name, by explicitly typing the variable, and by breaking it down into more procedural style. As a contrived example:
+
 ```scala
 class Person(val data: Map[String, String])
 val database = Map[String, Person]
@@ -694,16 +696,19 @@ def getAddress(name: String): Option[String] = {
 There are 3 recommended ways to make concurrent accesses to shared states safe. __Do NOT mix them__ because that could make the program very hard to reason about and lead to deadlocks.
 
 1. `java.util.concurrent.ConcurrentHashMap`: Use when all states are captured in a map, and high degree of contention is expected.
+
   ```scala
   private[this] val map = new java.util.concurrent.ConcurrentHashMap[String, String]
   ```
 
 2. `java.util.Collections.synchronizedMap`: Use when all states are captured in a map, and contention is not expected but you still want to make code safe. In case of no contention, the JVM JIT compiler is able to remove the synchronization overhead via biased locking.
+
   ```scala
   private[this] val map = java.util.Collections.synchronizedMap(new java.util.HashMap[String, String])
   ```
 
 3. Explicit synchronization by synchronizing all critical sections: can used to guard multiple variables. Similar to 2, the JVM JIT compiler can remove the synchronization overhead via biased locking.
+
   ```scala
   class Manager {
     private[this] var count = 0
@@ -717,6 +722,7 @@ There are 3 recommended ways to make concurrent accesses to shared states safe. 
   ```
 
 Note that for case 1 and case 2, do not let views or iterators of the collections escape the protected area. This can happen in non-obvious ways, e.g. when returning `Map.keySet` or `Map.values`. If views or values are required to pass around, make a copy of the data.
+
   ```scala
   val map = java.util.Collections.synchronizedMap(new java.util.HashMap[String, String])
 
@@ -734,6 +740,7 @@ The `java.util.concurrent.atomic` package provides primitives for lock-free acce
 Always prefer Atomic variables over `@volatile`. They have a strict superset of the functionality and are more visible in code. Atomic variables are implemented using `@volatile` under the hood.
 
 Prefer Atomic variables over explicit synchronization when: (1) all critical updates for an object are confined to a *single* variable and contention is expected. Atomic variables are lock-free and permit more efficient contention. Or (2) synchronization is clearly expressed as a `getAndSet` operation. For example:
+
   ```scala
   // good: clearly and efficiently express only-once execution of concurrent code
   val initialized = new AtomicBoolean(false)
@@ -758,6 +765,7 @@ Prefer Atomic variables over explicit synchronization when: (1) all critical upd
 ### <a name='concurrency-private-this'>Private Fields</a>
 
 Note that `private` fields are still accessible by other instances of the same class, so protecting it with `this.synchronized` (or just `synchronized`) is not technically sufficient. Make the field `private[this]` instead.
+
 ```scala
 // The following is still unsafe.
 class Foo {
@@ -795,6 +803,7 @@ Use [jmh](http://openjdk.java.net/projects/code-tools/jmh/) if you are writing m
 ### <a name='perf-whileloops'>Traversal and zipWithIndex</a>
 
 Use `while` loops instead of `for` loops or functional transformations (e.g. `map`, `foreach`). For loops and functional transformations are very slow (due to virtual function calls and boxing).
+
 ```scala
 
 val arr = // array of ints
@@ -817,6 +826,7 @@ while (i < len) {
 ### <a name='perf-private'>private[this]</a>
 
 For performance sensitive code, prefer `private[this]` over `private`. `private[this]` generates a field, rather than creating an accessor method. In our experience, the JVM JIT compiler cannot always inline `private` field accessor methods, and thus it is safer to use `private[this]` to ensure no virtual method call for accessing a field.
+
 ```scala
 class MyClass {
   private val field1 = ...

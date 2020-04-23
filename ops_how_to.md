@@ -538,7 +538,7 @@ If a dataset is served with bad data, and you need to quickly revert to yesterda
 ### Deleting a single resource
 
 ```bash
-$ nu ser curl POST --env prod --country br global ouroboros /api/admin/migrations/delete-resource -d'{"resource-id": "<resource-id>"}'
+nu ser curl POST --env prod --country br global ouroboros /api/admin/migrations/delete-resource -d'{"resource-id": "<resource-id>"}'
 ```
 
 ### Deleting an archive from a given transaction in a given series
@@ -546,7 +546,7 @@ $ nu ser curl POST --env prod --country br global ouroboros /api/admin/migration
 In cases when an archive from a dataset series is corrupt and you wish to delete it:
 
 ```bash
-$ nu ser curl POST --env prod --country br global ouroboros /api/admin/migrations/delete-transaction-archives -d'{"transaction-id": "<transaction-id>", "series-name": "series/<series-name>"}'
+nu ser curl POST --env prod --country br global ouroboros /api/admin/migrations/delete-transaction-archives -d'{"transaction-id": "<transaction-id>", "series-name": "series/<series-name>"}'
 ```
 
 ### Deleting all archives from a given Metapod transaction
@@ -554,18 +554,16 @@ $ nu ser curl POST --env prod --country br global ouroboros /api/admin/migration
 In cases when you suspect most or all data from a transaction was corrupt, and you wish to remove its archives:
 
 ```bash
-$ nu ser curl POST --env prod --country br global ouroboros /api/admin/migrations/delete-transaction-archives -d'{"transaction-id": "<transaction-id>"}'
+nu ser curl POST --env prod --country br global ouroboros /api/admin/migrations/delete-transaction-archives -d'{"transaction-id": "<transaction-id>"}'
 ```
 
 ### Deleting a series completely
 
 ```bash
-$ nu ser curl POST --env prod --country br global ouroboros /api/admin/migrations/delete-record-series -d'{"series-name": "series/<series-to-delete>"}'
+nu ser curl POST --env prod --country br global ouroboros /api/admin/migrations/delete-record-series -d'{"series-name": "series/<series-to-delete>"}'
 ```
 
 The above is an async request. You can check whether it is completed with [this Mordor query](https://backoffice.nubank.com.br/eye-of-mauron/#/s0/mordor/5e3c3390-9cdb-4752-b03b-71a626b23b6e); simply insert the name of your series in the argument field.
-
-### 
 
 ## Retracting Manual Appends to Dataset Series
    You will occassionally receive requests from users to retract datasets which were manually appended to a dataset-series. This usually happens in the #manual-dataset-series channel.

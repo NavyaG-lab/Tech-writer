@@ -1,7 +1,6 @@
 # Reviewing and Merging a PR on Itaipu
 
-Table of Contents
-=================
+## Table of Contents
 
 * [Workflow](#workflow)
 * [Checklist](#checklist)
@@ -10,7 +9,7 @@ Table of Contents
      * [Contracts](#contracts)
      * [StaticOps](#staticops)
      * [DatasetSeries](#datasetseries)
-  * [Macros](#macros)
+* [Macros](#macros)
      * [Unsure about PII leakage in SparkOp](#unsure-about-pii-leakage-in-sparkop)
      * [Unsure about PII leakage in StaticOp](#unsure-about-pii-leakage-in-staticop)
      * [StaticOp command not correctly pasted](#staticop-command-not-correctly-pasted)
@@ -20,7 +19,7 @@ Table of Contents
      * [PRs without Tags](#prs-without-tags)
      * [PR tagged with Ready For Merge, not reviewed by Committer](#pr-tagged-with-ready-for-merge-not-reviewed-by-committer)
      * [Check if using current_date, current_timestamp](#check-if-using-current_date-current_timestamp)
-  * [bors](#bors)
+* [bors](#bors)
      * [Basic Usage](#basic-usage)
      * [Deploy](#deploy)
      * [Interface](#interface)
@@ -34,9 +33,9 @@ Table of Contents
 ## Workflow
 The normal flow is:
 
-1. PR WIP  -> "you finish pushing all the changes and making sure the tests are passing" 
+1. PR WIP -> "you finish pushing all the changes and making sure the tests are passing" 
 1. PR Teammate Review Requested -> "teammate reviews" 
-1. PR Review Requested  -> "itaipu committer reviews"
+1. PR Review Requested -> "itaipu committer reviews"
 1. PR Ready For Merge -> "someone merges the PR (either bors or an itaipu committer)"
 1. PR Merged
 
@@ -48,6 +47,7 @@ You can read more about the tags [here](https://docs.google.com/document/d/1YRCK
 ).
 
 ## Checklist
+
 ### General
 
 * When in doubt, ask [#itaipu-reviewers](https://app.slack.com/client/T024U97V8/GQU8K9RFF)
@@ -56,39 +56,41 @@ You can read more about the tags [here](https://docs.google.com/document/d/1YRCK
 * PR is small (not a lot of files changed all at once)
 
 ### Dataset
+
 * Metadata
-   * Possible PII columns not properly tagged (email, cpf, etc)
-    * Name makes sense
-    * Description makes sense
-    * Attribute names make sense given dataset's purpose
-    * Attribute's name matches attribute's description
-    * All attributes have descriptions (unless it is a model with 100s of attributes)
+  * Possible PII columns not properly tagged (email, cpf, etc)
+  * Name makes sense
+  * Description makes sense
+  * Attribute names make sense given dataset's purpose
+  * Attribute's name matches attribute's description
+  * All attributes have descriptions (unless it is a model with 100s of attributes)
 * Code
-    * Functions are idempotent (no use of random, current_date, etc)  
-	* Added to package file in alphabetical order 
-    * Stop usage of hard-coded values in the middle of the code (magic numbers) and enforce that all fixed values are stored in variables that are passed by parameter
-    * Enforce naming standards
+  * Functions are idempotent (no use of random, current_date, etc)  
+  * Added to package file in alphabetical order 
+  * Stop usage of hard-coded values in the middle of the code (magic numbers) and enforce that all fixed values are stored in variables that are passed by parameter
+  * Enforce naming standards
 * Tests
-    * If a change is being made in an important dataset, or the logic inside the definition seems too complex, and there are no unit tests, ask for unit tests
-    * Ensure no `null`s are used in tests
-    * Ensure tests cover edge-cases
-    * People change a function but do not change the test. This usually indicates the function is poorly tested.
+  * If a change is being made in an important dataset, or the logic inside the definition seems too complex, and there are no unit tests, ask for unit tests
+  * Ensure no `null`s are used in tests
+  * Ensure tests cover edge-cases
+  * People change a function but do not change the test. This usually indicates the function is poorly tested.
 
 ### Contracts
+
 * Using V1 API
 * Global services must override `prototypes`
 * Documentation on attributes
 
-
 ### StaticOps
+
 * If you are a committer not from data-access squad, ask on #squad-data-access to run the cp command
 Check for [PII](https://github.com/nubank/data-platform-docs/itaipu/pii_and_personal_data.md) columns
 * People sometimes want us to delete the files from a StaticOp and replace them. We do not do that. Instead, whe ask them to change the `name` attribute of the StaticOp, putting the date of the change at the end, and upload the new files to the new folder.
 
 ### DatasetSeries
+
 * Warn people about PII data (if a column is tagged as PII, only the hash value will be available) -> another solution for this is to tag the entire dataset as PII
 * There shouldn't be many transformations inside the DatasetSeriesOp apart from renamings and replaces -> advise people to create a separate SparkOp for that
-
 
 ## Macros
 Since the issues faced when reviewing a PR are recurring and the changes requested in those cases are usually standard, there are some macros we can use. You can set up your github macros using [this tutorial](https://help.github.com/en/github/writing-on-github/creating-a-saved-reply).

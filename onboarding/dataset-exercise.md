@@ -351,8 +351,7 @@ nu datainfra sabesp -- --aurora-stack=cantareira-dev jobs ...
 
 Which translates to: create a job on the `cantareira-dev` stack. All
 jobs definition are inside the
-[aurora-jobs](https://github.com/nubank/aurora-jobs) project. (See
-#Auxiliary-projects)
+[aurora-jobs](https://github.com/nubank/aurora-jobs) project. (See "Auxiliary projects" section)
 
 #### Scale, Run and downscale the Cluster
 

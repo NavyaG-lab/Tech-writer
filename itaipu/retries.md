@@ -1,10 +1,12 @@
-### Retry logic in Itaipu ###
+# Retries
+
+### Retry logic in Itaipu
 
 The scale and complexity of the operations in Itaipu requires handling
 the possibility of failures and, hence, retries. We currently have
 four different and independent level of retry.
 
-#### Airflow ####
+#### Airflow
 
 Starting from the top (or from the outside the JVM, if you will).
 `itaipu.py` exposes a `retries` option,[1] which is then passed down
@@ -13,7 +15,7 @@ failure not handled by the JVM triggers a new retry.
 
 The current default values is: **3 attempts**.
 
-#### Itaipu ####
+#### Itaipu
 
 Entering the JVM process itself, we have the following chain of calls,
 roughly:
@@ -40,8 +42,7 @@ With the following default values:
   * `step.retryPolicy.maxAttempts`: **3 attempts**
   * `resiliently`: **5 attempts**
 
-
-#### Interactions ####
+#### Interactions
 
 Given the above architecture, and assumning no overriding of defaults,
 the worst case scenario would be a `Step` calling an unreachable

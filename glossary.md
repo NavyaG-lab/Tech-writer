@@ -42,7 +42,6 @@ Types
  * Compaction: for compacting dataset series
  * Copied: Represents a transaction that was (partially) created by copying another. Usually for debugging
 
-
 #### dataset
 
 It is essentially a piece of data in a table-like structure.

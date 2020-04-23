@@ -203,6 +203,6 @@ the real world!
 
 ---
 
-# Study materials
+## Study materials
 
 First of all read this: [https://github.com/nubank/data-infra-docs/blob/master/primer.md](https://github.com/nubank/data-infra-docs/blob/master/primer.md)

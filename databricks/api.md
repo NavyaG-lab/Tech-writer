@@ -1,6 +1,9 @@
+# Databricks API
+
 To interact with [Databricks REST API 2.0](https://docs.databricks.com/api/latest/index.html) use [Databricks Command Line Interface (CLI)](https://github.com/databricks/databricks-cli). The README contains installation instructions and how to set up authentication
 
 Example of available commands:
+
 ```
 $ databricks
 Usage: databricks [OPTIONS] COMMAND [ARGS]...
@@ -24,4 +27,3 @@ Commands:
   stack      Utility to deploy and download Databricks resource stacks.
   workspace  Utility to interact with the Databricks workspace.
 ```
-  

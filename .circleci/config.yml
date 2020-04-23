@@ -1,0 +1,10 @@
+version: 2.1
+
+orbs:
+  md-sheriff: nubank/md-sheriff@volatile
+
+workflows:
+  build:
+    jobs:
+      - md-sheriff/run-lint:
+          name: run-lint

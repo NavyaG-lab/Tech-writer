@@ -1,3 +1,5 @@
+# Opening PRs
+
 ## Service Level Agreement (SLA)
 
 Data access squad will review PRs in [itaipu](https://github.com/nubank/itapu) during business days, from 9 am until 7 pm, except on days when the squad is not in the office. Some PRs may take up to 2 business days to be reviewed. On Fridays, we will avoid merging changes that may have a negative effect in the ETL run.

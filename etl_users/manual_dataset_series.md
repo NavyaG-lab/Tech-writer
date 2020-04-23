@@ -93,7 +93,7 @@ First you will need to have docker installed, download [Here](https://download.d
 
 After that you will need to create an account in quay.io [Here](https://docs.quay.io/solution/getting-started.html), and ask permission in #access-request channel, to be added in Nubank group. (Do not forget to accept the invitation in quay website.)
 
-Now you should have to sign into Quay.io using docker. Quay.io was originally created out of necessity when the company wanted to use Docker containers with an original IDE product, it is a private container registry that stores, builds, and deploys container images. It analyzes your images for security vulnerabilities, identifying potential issues that can help you mitigate security risks. In order to login run the command ```docker login quay.io ```.
+Now you should have to sign into Quay.io using docker. Quay.io was originally created out of necessity when the company wanted to use Docker containers with an original IDE product, it is a private container registry that stores, builds, and deploys container images. It analyzes your images for security vulnerabilities, identifying potential issues that can help you mitigate security risks. In order to login run the command ```docker login quay.io```.
 
 Since appending involves talking directly to `metapod`, you will need the `admin` scope for your AWS user. Use `nu-<country> sec scope show <your-firstname.your-lastname>` to see if you have the `admin` scope. If you don't, ask for it using the access request form pinned to the `#access-request` channel. After getting it you may need to run `nu-<country> auth get-refresh-token --env prod --country <country>`. Where `<country>` is the country where you are creating your manual series (eg: br, mx).
 

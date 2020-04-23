@@ -9,11 +9,11 @@ Table of contents
 * [Restarting the Airflow process](#restarting-the-airflow-process)
 * [Dry run tests](#dry-run-tests)
 
-### Useful links
+## Useful links
 * [Monitoring the run on Airflow](./monitoring_nightly_run.md)
 * [Airflow DOCS on Creating a new DAG](https://airflow.apache.org/tutorial.html), Basically you need to create a python file, that has the definition of your DAG inside the airflow directory, then just follow the `Deploying job changes to Airflow`
 
-### Manually stopping a run
+## Manually stopping a run
 
 Sometimes a run hangs and you will want to manually stop it. Or a manual run is overwritten by the scheduled run.
 
@@ -33,7 +33,7 @@ Sometimes a run hangs and you will want to manually stop it. Or a manual run is 
    2. For each `task_id` execute the following command
    `sabesp --aurora-stack=cantareira-stable jobs kill jobs prod {{task_name}}`
 
-### Deploying job changes to Airflow
+## Deploying job changes to Airflow
 When a job is changed on [`aurora-jobs`](https://github.com/nubank/aurora-jobs), we need to be careful about how we update the workflow on Airflow because Airflow does not have isolation between runs, so a change to the workflow could affect the *currently running* DAG accidentally if we are not careful.
    1. The [`aurora-jobs` Go Pipeline](https://go.nubank.com.br/go/tab/pipeline/history/aurora-jobs) will build automatically
    2. When the [`aurora-jobs`](https://github.com/nubank/aurora-jobs) pipeline
@@ -51,7 +51,7 @@ When a job is changed on [`aurora-jobs`](https://github.com/nubank/aurora-jobs),
    4. After clicking the link you can check the log and the execution date.
    ![config_downloader details](images/airflow_check.png)
 
-#### Additional details on deploying a new DAG
+### Additional details on deploying a new DAG
 
 You can re-deploy the `dagao` DAG while it is running as long as there aren't changes from upstream dependencies (`aurora-jobs`, `itaipu`, models, etc.) that would effect the run.
 You can check this by comparing the versions of repositories to the versions in the DAG run message on [#etl-updates](https://nubank.slack.com/messages/CCYJHJHR9/).
@@ -59,12 +59,12 @@ All upstream dependencies to `dagao` are built off their `master` branches, exce
 
 When a DAG is deployed while another is running, airflow will use the current state of the running DAG on the new DAG. Every new task will use the service versions provided by the newly deployed DAG.
 
-##### Some dangerous `itaipu` changes to deploy while the DAG is running include:
+#### Some dangerous `itaipu` changes to deploy while the DAG is running include:
  - Adding new datasets `itaipu` after the transaction that has already started. You can't register or remove datasets from a transaction that has already been started
  - A change that affects multiple datasets where half the datasets affected have already been committed in the transaction. This can lead to data being in an inconsistent state. In this case you should retract all datasets and rerun them with the new changes.
  - A change to core `itaipu` processes or cross-service communication logic that might require coordinated deploys with other code.
 
-### Updating Airflow
+## Updating Airflow
 
 To update Airflow you need to first bump the `base-airflow` [Dockerfile](https://github.com/nubank/dockerfiles/blob/master/base-airflow/Dockerfile), merge it and wait until go has finished building it, then, you need to change the version on [deploy](https://github.com/nubank/deploy/blob/master/lib/recipes/airflow.rb#L21), open the deploy console in the cantareira environment and run:
 
@@ -92,7 +92,7 @@ Go to AWS CloudFormation and delete the old roles stack named `cantareira-y-airf
 
 Don't forget to commit the changes you made to deploy, so that we have an up to date view of the changes in a version-control system.
 
-### Restarting the Airflow process
+## Restarting the Airflow process
 
 If you try clearing an airflow dag node and it doesn't actually restart the node, something on airflow may be messed up.
 The way forward is to cycle the airflow process.
@@ -111,8 +111,7 @@ sudo systemctl restart airflow
 
 This should get things going again.
 
-
-### Running tests for the Airflow DAGs
+## Running tests for the Airflow DAGs
 
 Running the command below, will spin a environment similar to the production one, and will run and check all tasks in the `main.py` dag.
 
@@ -120,7 +119,7 @@ Running the command below, will spin a environment similar to the production one
 ./script/test integration
 ```
 
-### Dry run tests
+## Dry run tests
 
 The main thing that we want to test before deploying a new DAS to our Airflow
 instance is the integration between Airflow and Aurora. Airflow starts the

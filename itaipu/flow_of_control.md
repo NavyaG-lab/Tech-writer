@@ -8,7 +8,7 @@ control flow of itaipu/common-etl. It provides a base from which one can dive
 into certain aspects more deeply while keeping a sense of where you are in the
 grand scheme of things.
 
-# The flow of control
+## The flow of control
 
 ### Glossary
 

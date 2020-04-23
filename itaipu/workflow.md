@@ -61,7 +61,7 @@ Creating a new contract is different than updating an existing contract because 
 
 1. Make sure that the database exists in prod and is being extracted before adding the contract to Itaipu.
 
-- [Example query of this on Thanos](https://prod-thanos.nubank.com.br/graph?g0.range_input=1h&g0.expr=max(datomic_extractor_basis_t%7Bdatabase%3D~%22metapod%22%7D)&g0.tab=0) You should see line chart showing the growing amount of data extracted with time. _NB. In this example we are referring to the `metapod` service. You have to replace it with the name of your service._
+    - [Example query of this on Thanos](https://prod-thanos.nubank.com.br/graph?g0.range_input=1h&g0.expr=max(datomic_extractor_basis_t%7Bdatabase%3D~%22metapod%22%7D)&g0.tab=0) You should see line chart showing the growing amount of data extracted with time. _NB. In this example we are referring to the `metapod` service. You have to replace it with the name of your service._
 
 1. On Itaipu create a Scala object for the database:
     1. If this is the first contract for this database, create a new package (aka folder) under
@@ -317,7 +317,7 @@ Running the tests:
 1. Integration tests:
     1. Run all tests:
         ```shell
-        $ sbt it:test | less -r
+        sbt it:test | less -r
         ```
     1. Run the integration tests for a subset of SparkOps ("filtered run"):
         ```shell
@@ -326,7 +326,7 @@ Running the tests:
         ```
         or, from the command line directly:
         ```shell
-        $ sbt "it:testOnly etl.itaipu.ItaipuSchemaSpec -- -DopsToRun=dataset-fact/prospect-junction,dataset-dimension/date"
+        sbt "it:testOnly etl.itaipu.ItaipuSchemaSpec -- -DopsToRun=dataset-fact/prospect-junction,dataset-dimension/date"
         ```
 
 
@@ -364,7 +364,7 @@ The dependencies are listed [here](https://github.com/nubank/itaipu/blob/2977173
 
 To compile the main sources (in `src/main/scala` and `src/main/java` directories) and download the dependencies:
 ```sh
-$ sbt compile
+sbt compile
 ```
 Reference: https://www.scala-sbt.org/1.x/docs/Running.html#Common+commands
 
@@ -376,7 +376,7 @@ To check the latest versions:
     * Go to the Advanced Search and use the GroupId and ArtifactId. It's possible that you need to append the Scala version to the `artifactID` (e.g., `_2.11` for Scala 2.11). For example: `g:"org.typelevel" AND a:"cats_2.11"`.
 * In nu-maven:
     ```sh
-    $ aws s3 ls s3://nu-maven/snapshots/common-etl/
+    aws s3 ls s3://nu-maven/snapshots/common-etl/
     ```
 
 ### Bumping libraries on itaipu

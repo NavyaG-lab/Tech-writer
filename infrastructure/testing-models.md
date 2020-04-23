@@ -100,7 +100,7 @@ There you will see two tabs: **Active Tasks**, and **Completed Tasks**. Dependin
 Once you find it, click at the IP address to the right of the row where the task is displayed. You will see a web interface for the host. You can check the task status, command, duration, and check the `stdout` and `stderr` links to see the log output for that task.
 
 > If you don't see an IP address, that could mean Aurora was not able to allocate the task to a host (yet). Double-check whether the `SLAVE_TYPE` passed was correct - it should be composed by `mesos-on-demand-` and the same name which was used to scale up the cluster.
-
+>
 > You can also check how are the agents' `SLAVE_TYPE` attributes registered in Mesos (also using the Aurora UI) via [this page](https://cantareira-dev-aurora-scheduler.nubank.com.br:8080/agents). The `slave-type` attribute should be equal to what is being passed in the `sabesp` command.
 
 #### Scale down
