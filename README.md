@@ -15,6 +15,7 @@ This repository is the canonical place to put all documentation related to how t
 * [Dataset Series](etl_users/dataset_series.md)
 * [Manual Dataset Series](etl_users/manual_dataset_series.md)
 * [Archived Datasets](etl_users/archived_datasets.md)
+* [How to optimize your SparkOp](etl_users/optimizing_your_sparkop.md)
 
 ## ETL Operations
 
