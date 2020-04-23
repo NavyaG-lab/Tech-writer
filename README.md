@@ -1,4 +1,4 @@
-# Data Infra Documentation
+# Data Infra Documentation [![CircleCI](https://circleci.com/gh/nubank/data-platform-docs.svg?style=svg&circle-token=0d7949cdca982ceb84320b0184c1f529d52df53e)](https://circleci.com/gh/nubank/data-platform-docs)
 
 This repository is the canonical place to put all documentation related to how to understand and operate in our analytical environment.
 
