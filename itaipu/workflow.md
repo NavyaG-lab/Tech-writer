@@ -47,8 +47,8 @@ Creating a new contract is different than updating an existing contract because 
                 table with columns `audit__cid`, `audit__tags`, `audit__user`, `audit__version`, `db__tx_instant`)
         - `test/[SERVICE-NAME]/db/datomic/config_test.clj`:
             1. Add a call to function `common-datomic.contract.test-helpers/enforce-contracts! <country>` for each country that needs to have contracts.
-    1. Run `$ lein gen-contracts <country>` to generate the initial contracts in `resources/nu/data/<country>/dbcontracts/<DB-NAME>/entities`. Give the data
-    infra squad a heads up that you are working on it, and then answer `Y` to the command line prompt.
+    1. Run `$ lein gen-contracts <country>` (for all countries) to generate the initial contracts in
+    `resources/nu/data/<country>/dbcontracts/<DB-NAME>/entities`.
         - If you receive the following error:
 
           ```
@@ -76,7 +76,7 @@ Creating a new contract is different than updating an existing contract because 
 
 1. Create a new Scala object for each new contract entity you are adding.
     1. The code should be a direct copy paste from contract Scala file(s) generated in the Clojure project (generated
-    using `$ lein gen-contracts <country>` and found in `resources/nu/data/<country>/<DB-NAME>/entities/*.scala`) into folder
+    using `$ lein gen-contracts <country>` (for all countries) and found in `resources/nu/data/<country>/<DB-NAME>/entities/*.scala`) into folder
     `itaipu/src/main/scala/nu/data/<country>/dbcontracts/<DB-NAME>/entities/`.
     1. Ensure all objects are referenced by the `entities` val in the database object (mentioned in the previous step).
 
@@ -114,7 +114,7 @@ If you want to add, change or remove an attribute:
         remove that attribute, because the default is to include them all) and `:contract/history true` (if you want to
         include the historical values of that attribute in a separate table with columns `audit__cid`, `audit__tags`,
         `audit__user`, `audit__version`, `db__tx_instant`)
-    1. Run `$ lein gen-contracts`
+    1. Run `$ lein gen-contracts <country>` (for all countries)
 1. Paste the updated Scala files into a branch of Itaipu
 1. Open pull requests for each and ask someone from data infra squad to review
 1. [Merge and profit](#merging-pull-requests)
