@@ -19,11 +19,13 @@ When creating an Aurora Job, you need to specify the resources that this job is 
 
 ## Mesos overview
 
-TODO: fill me in
- - What are agents
- - What are executors
- - What are frameworks
- - What are drivers
+Mesos is a cluster manager that provides efficient resource isolation and resource sharing across distributed applications. It ensures that applications have the resources they need; a pool of machines can be shared and used to run different parts of your application without them interfering with each other. It also provides dynamic allocation of resources as needed.
+
+Mesos consists of a *master* daemon that manages *agent* daemons (running on each cluster node), and *Mesos frameworks* that run *tasks* on these agents.
+
+Further information on *frameworks* can be found [here](http://mesos.apache.org/documentation/latest/architecture/).
+
+Note: There is no semantic different between *agents* and *slaves*, the terminology *slave* is deprecated and *agent* is preferred and recommended. Source: [https://issues.apache.org/jira/browse/MESOS-1478](https://issues.apache.org/jira/browse/MESOS-1478)
 
 ## Aurora overview
 
