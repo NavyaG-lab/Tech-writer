@@ -70,9 +70,12 @@ To update Airflow you need to first bump the `base-airflow` [Dockerfile](https:/
 
 `Airflow.create!("x")`
 
-Wait until it's created and you can access https://cantareira-x-airflow.nubank.com.br/admin/ and then you can upsert the new airflow to the main DNS.
+Wait until it's created and you can access
+https://cantareira-x-airflow.nubank.com.br/admin/ and then you can:
+* Test the new deployment by re-running one of the already finished nodes
+* Upsert the new airflow to the main DNS
 
-If this does not work, try to ssh (instructions below) in the new instance and see if there are any units that failed to start (there is a concurrency issue here)
+If the service is not responding correctly, try to ssh (instructions below) in the new instance and see if there are any units that failed to start (there is a concurrency issue here).
 
 `$ systemctl list-units --state=failed`
 
