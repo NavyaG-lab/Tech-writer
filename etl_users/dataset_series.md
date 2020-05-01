@@ -55,6 +55,12 @@ In order to use the data from a Dataset Series in an Itaipu `SparkOp`, you'll fi
 Given a `DatasetSeriesContract` called `MySeriesContract`:
 
 * An `object` called `MySeriesContract` extending `nu.data.infra.api.dataset_series.v1.DatasetSeriesContract` should be placed in the `nu.data.<country>.dataset_series` [package](https://github.com/nubank/itaipu/tree/master/src/main/scala/nu/data/br/dataset_series) (this link is only for BR series, change the url to the country you need).
+  * Actually the dataset series doesn't specifically need to live anywhere, but it’s a convention
+  to make it easier for people to find it, and to keep code organized along with the list that gets
+  built by itaipu in the [dataset series package](https://github.com/nubank/itaipu/blob/master/src/main/scala/nu/data/br/dataset_series/package.scala)
+  (link for BR series only), i.e., the run won’t fail even if a dataset series is declared in a
+  `foo.bar` package, as long as they are imported and referenced in the collection of classes that
+  gets picked up by itaipu.
 * The object should be added to this package's `package.scala` file in the `v1DatasetSeriesContracts` set [here](https://github.com/nubank/itaipu/blob/master/src/main/scala/nu/data/br/dataset_series/package.scala) (again this file is for BR, change it according to your needs).
 
 #### Anatomy of a DatasetSeriesContract
