@@ -19,8 +19,8 @@
   * [Metadata](#metadata)
   * [Primary keys and deduplication](#primary-keys-and-deduplication)
   * [Final renaming](#final-renaming)
-    * [Troubleshooting dropped schemas](#troubleshooting-dropped-schemas)
-    * [Troubleshooting very big dataset series](#troubleshooting-very-big-dataset-series)
+  * [Troubleshooting dropped schemas](#troubleshooting-dropped-schemas)
+   * [Troubleshooting very big dataset series](#troubleshooting-very-big-dataset-series)
   * [PII Handling](#pii-handling)
   * [Accessing the output dataframes](#accessing-the-output-dataframes)
 * [Squish](#squish)
@@ -300,7 +300,7 @@ override val droppedSchemas = Seq(
 
 It is fairly important to declare schemas you wish to drop on purpose in this `droppedSchemas` field; otherwise Itaipu will alert on them and you won't be able to differentiate between schemas you're ignoring intentionally and schemas you're accidentally missing.
 
-#### Troubleshooting dropped schemas
+## Troubleshooting dropped schemas
 
 Ideally, you'd want all datasets to be either processed normally, or intentionally dropped through the `droppedSchemas` attribute described above. If Itaipu is unable to match a given dataset against one of the schemas defined in the op, it will log a warning and ignore the dataset.
 
@@ -308,7 +308,7 @@ To track these, the `Dropped Series Versions` table in the [ETL Monitoring Dashb
 
 In order to remedy this, you will need to update the existing schemas or add new schema in the op to match these dropped datasets. Currently you need to debug this by hand, perhaps with the help of the `nu dataset-series info YOUR_DATASET_SERIES -v` command. We hope to soon fix up our databricks helper notebooks that can aid in this.
 
-#### Troubleshooting very big dataset series
+### Troubleshooting very big dataset series
 
 One issue you might encounter when using this notebook is that the Metapod query will timeout (in case of very big series); in this case, you can solve the dropped datasets issue by:
 - Going to this [Splunk query](https://nubank.splunkcloud.com/en-US/app/search/search?q=search%20index%3Dcantareira%20%22Dropping%20dataset-series%22&display.page.search.mode=fast&dispatch.sample_ratio=1&earliest=-24h%40h&latest=now&sid=1549617293.5429746) and change it to search for the name of the series you're looking to troubleshoot
