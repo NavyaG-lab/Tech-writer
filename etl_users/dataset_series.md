@@ -20,7 +20,7 @@
   * [Primary keys and deduplication](#primary-keys-and-deduplication)
   * [Final renaming](#final-renaming)
   * [Troubleshooting dropped schemas](#troubleshooting-dropped-schemas)
-   * [Troubleshooting very big dataset series](#troubleshooting-very-big-dataset-series)
+    * [Troubleshooting very big dataset series](#troubleshooting-very-big-dataset-series)
   * [PII Handling](#pii-handling)
   * [Accessing the output dataframes](#accessing-the-output-dataframes)
 * [Squish](#squish)
