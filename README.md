@@ -9,6 +9,8 @@ This repository is the canonical place to put all documentation related to how t
 * [Data Infra Glossary](glossary.md)
 * [General Glossary](https://github.com/nubank/playbooks/blob/master/docs/glossary.md)
 
+![Image of our infra](images/DataInfraArchitecture.png)
+
 ## ETL User references
 
 * [FAQ](etl_users/FAQ.md)
