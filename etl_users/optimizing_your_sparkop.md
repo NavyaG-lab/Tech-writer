@@ -2,7 +2,7 @@
 
 This document aims to provide a simple and easy way to troubleshoot heavy SparkOps. This was based on the experience gathered optimizing datasets, explaining common cases found in our ETL.
 
-Each item contains **_Problem_**, **_How to solve it_** and **_Wait, but why?_** sections. If you are just troubleshooting your SparkOp, you can totally skip the last section. If you are curious, this section contains a more _complete_ explanation about the problem
+Each item contains *__Problem__*, *__How to solve it__* and *__Wait, but why?__* sections. If you are just troubleshooting your SparkOp, you can totally skip the last section. If you are curious, this section contains a more _complete_ explanation about the problem
 
 If you can't get around with just this guide, please reach #data-help or #guild-spark and ask for help!
 
