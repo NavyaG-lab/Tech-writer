@@ -7,81 +7,68 @@ This style guide is based on the [Databricks Scala Style Guide](https://github.c
 
 ## <a name='TOC'>Table of Contents</a>
 
-1. [Document History](#history)
+1. [Document History](#document-history)
 
-2. [Syntactic Style](#syntactic)
-    * [Naming Convention](#naming)
-    * [Variable Naming Convention](#variable-naming)
-    * [Line Length](#linelength)
-    * [Rule of 30](#rule_of_30)
-    * [Spacing and Indentation](#indent)
-    * [Blank Lines (Vertical Whitespace)](#blanklines)
+2. [Syntactic Style](#syntactic-style)
+    * [Naming Convention](#naming-convention)
+    * [Variable Naming Convention](#variable-naming-convention)
+    * [Line Length](#line-length)
+    * [Rule of 30](#rule-of-30)
+    * [Spacing and Indentation](#spacing-and-indentation)
+    * [Blank Lines](#blank-lines)
     * [Parentheses](#parentheses)
-    * [Curly Braces](#curly)
-    * [Long Literals](#long_literal)
-    * [Documentation Style](#doc)
-    * [Ordering within a Class](#ordering_class)
+    * [Curly Braces](#curly-braces)
+    * [Long Literals](#long-literals)
+    * [Documentation Style](#documentation-style)
+    * [Ordering within a Class](#ordering-within-a-class)
     * [Imports](#imports)
     * [Pattern Matching](#pattern-matching)
-    * [Infix Methods](#infix)
-    * [Anonymous Methods](#anonymous)
+    * [Infix Methods](#infix-methods)
+    * [Anonymous Methods](#anonymous-methods)
 
-1. [Scala Language Features](#lang)
-    * [Case Classes and Immutability](#case_class_immutability)
-    * [apply Method](#apply_method)
-    * [override Modifier](#override_modifier)
-    * [Destructuring Binds](#destruct_bind)
-    * [Call by Name](#call_by_name)
-    * [Multiple Parameter Lists](#multi-param-list)
-    * [Symbolic Methods (Operator Overloading)](#symbolic_methods)
-    * [Type Inference](#type_inference)
-    * [Return Statements](#return)
-    * [Recursion and Tail Recursion](#recursion)
+1. [Scala Language Features](#scala-language-features)
+    * [Case Classes and Immutability](#case-classes-and-immutability)
+    * [apply Method](#apply-method)
+    * [override Modifier](#override-modifier)
+    * [Destructuring Binds](#destructuring-binds)
+    * [Call by Name](#call-by-name)
+    * [Multiple Parameter Lists](#multiple-parameter-lists)
+    * [Symbolic Methods](#symbolic-methods)
+    * [Type Inference](#type-inference)
+    * [Return Statements](#return-statements)
+    * [Recursion and Tail Recursion](#recursion-and-tail-recursion)
     * [Implicits](#implicits)
-    * [Exception Handling (Try vs try)](#exception)
-    * [Options](#option)
-    * [Monadic Chaining](#chaining)
+    * [Exception Handling](#exception-handling)
+    * [Options](#options)
+    * [Monadic Chaining](#monadic-chaining)
 
 1. [Concurrency](#concurrency)
-    * [Scala concurrent.Map](#concurrency-scala-collection)
-    * [Explicit Synchronization vs Concurrent Collections](#concurrency-sync-vs-map)
-    * [Explicit Synchronization vs Atomic Variables vs @volatile](#concurrency-sync-vs-atomic)
-    * [Private Fields](#concurrency-private-this)
-    * [Isolation](#concurrency-isolation)
+    * [Explicit Synchronization vs Concurrent Collections](#explicit-synchronization-vs-concurrent-collections)
+    * [Explicit Synchronization vs Atomic Variables](#explicit-synchronization-vs-atomic-variables)
+    * [Private Fields](#private-fields)
+    * [Isolation](#isolation)
 
-1. [Performance](#perf)
-    * [Microbenchmarks](#perf-microbenchmarks)
-    * [Traversal and zipWithIndex](#perf-whileloops)
-    * [Option and null](#perf-option)
-    * [Scala Collection Library](#perf-collection)
-    * [private[this]](#perf-private)
-
-1. [Java Interoperability](#java)
-    * [Java Features Missing from Scala](#java-missing-features)
-    * [Traits and Abstract Classes](#java-traits)
-    * [Type Aliases](#java-type-alias)
-    * [Default Parameter Values](#java-default-param-values)
-    * [Multiple Parameter Lists](#java-multi-param-list)
-    * [Varargs](#java-varargs)
-    * [Implicits](#java-implicits)
-    * [Companion Objects, Static Methods and Fields](#java-companion-object)
+1. [Performance](#performance)
+    * [Microbenchmarks](#microbenchmarks)
+    * [Traversal and zipWithIndex](#traversal-and-zipwithindex)
+    * [private[this]](#privatethis)
 
 1. [Testing](#testing)
-    * [Intercepting Exceptions](#testing-intercepting)
+    * [Intercepting Exceptions](#intercepting-exceptions)
 
-1. [Miscellaneous](#misc)
-    * [Prefer nanoTime over currentTimeMillis](#misc_currentTimeMillis_vs_nanoTime)
-    * [Prefer URI over URL](#misc_uri_url)
-    * [Prefer existing well-tested methods over reinventing the wheel](#misc_well_tested_method)
+1. [Miscellaneous](#miscellaneous)
+    * [Prefer nanoTime over currentTimeMillis](#prefer-nanotime-over-currenttimemillis)
+    * [Prefer URI over URL](#prefer-uri-over-url)
+    * [Prefer existing well-tested methods over reinventing the wheel](#prefer-existing-well-tested-methods-over-reinventing-the-wheel)
 
 
 
-## <a name='history'>Document History</a>
+## Document History
 - 2018-10-31: Forked from the Databricks version.
 
-## <a name='syntactic'>Syntactic Style</a>
+## Syntactic Style
 
-### <a name='naming'>Naming Convention</a>
+### Naming Convention
 
 We mostly follow Java's and Scala's standard naming conventions.
 
@@ -110,7 +97,7 @@ We mostly follow Java's and Scala's standard naming conventions.
 
 - Annotations be avoided whenever possible.
 
-### <a name='variable-naming'>Variable Naming Convention</a>
+### Variable Naming Convention
 
 - Variables should be named in camelCase style, and should have self-evident names.
   ```scala
@@ -120,14 +107,14 @@ We mostly follow Java's and Scala's standard naming conventions.
 
 - It is OK to use one-character variable names in small, localized scope. For example, "i" is commonly used as the loop index for a small loop body (e.g. 10 lines of code). However, do NOT use "l" (as in Larry) as the identifier, because it is difficult to differentiate "l" from "1", "|", and "I".
 
-### <a name='linelength'>Line Length</a>
+### Line Length
 
 - Limit lines to 120 characters.
 - The only exceptions are import statements and URLs (although even for those, try to keep them under 120 chars).
 - `scalafmt` enforces this restriction.
 
 
-### <a name='rule_of_30'>Rule of 30</a>
+### Rule of 30
 
 "If an element consists of more than 30 subelements, it is highly probable that there is a serious problem" - [Refactoring in Large Software Projects](http://www.amazon.com/Refactoring-Large-Software-Projects-Restructurings/dp/0470858923).
 
@@ -137,12 +124,12 @@ In general:
 - A class should contain less than 30 methods.
 
 
-### <a name='indent'>Spacing and Indentation</a>
+### Spacing and Indentation
 
 - use `scalafmt`.
 
 
-### <a name='blanklines'>Blank Lines (Vertical Whitespace)</a>
+### Blank Lines
 
 - A single blank line appears:
   - Between consecutive members (or initializers) of a class: fields, constructors, methods, nested classes, static initializers, instance initializers.
@@ -153,7 +140,7 @@ In general:
 - Excessive number of blank lines is discouraged.
 
 
-### <a name='parentheses'>Parentheses</a>
+### Parentheses
 
 - Methods should be declared with parentheses, unless they are accessors that have no side-effect (state mutation, I/O operations are considered side-effects).
   ```scala
@@ -181,7 +168,7 @@ In general:
   ```
 
 
-### <a name='curly'>Curly Braces</a>
+### Curly Braces
 
 Put curly braces even around one-line conditional or loop statements. The only exception is if you are using if/else as an one-line ternary operator that is also side-effect free.
 ```scala
@@ -211,7 +198,7 @@ try foo() catch {
 ```
 
 
-### <a name='long_literal'>Long Literals</a>
+### Long Literals
 
 Suffix long literal values with uppercase `L`. It is often hard to differentiate lowercase `l` from `1`.
 ```scala
@@ -221,7 +208,7 @@ val longValue = 5432l  // Do NOT do this
 ```
 
 
-### <a name='doc'>Documentation Style</a>
+### Documentation Style
 
 Use Java docs style instead of Scala docs style.
 ```scala
@@ -239,7 +226,7 @@ Use Java docs style instead of Scala docs style.
 ```
 
 
-### <a name='ordering_class'>Ordering within a Class</a>
+### Ordering within a Class
 
 If a class is long and has many methods, group them logically into different sections, and use comment headers to organize them.
 ```scala
@@ -262,7 +249,7 @@ class DataFrame {
 Of course, the situation in which a class grows this long is strongly discouraged, and is generally reserved only for building certain public APIs.
 
 
-### <a name='imports'>Imports</a>
+### Imports
 
 - __Avoid using wildcard imports__, unless you are importing more than 6 entities, or implicit methods. Wildcard imports make the code less robust to external changes.
 - Always import packages using absolute paths (e.g. `scala.util.Random`) instead of relative ones (e.g. `util.Random`).
@@ -287,7 +274,7 @@ Of course, the situation in which a class grows this long is strongly discourage
   ```
 
 
-### <a name='pattern-matching'>Pattern Matching</a>
+### Pattern Matching
 
 - For method whose entire body is a pattern match expression, put the match on the same line as the method declaration if possible to reduce one level of indentation.
   ```scala
@@ -337,7 +324,7 @@ Of course, the situation in which a class grows this long is strongly discourage
   ```
 
 
-### <a name='infix'>Infix Methods</a>
+### Infix Methods
 
 __Avoid infix notation__ for methods that aren't symbolic methods (i.e. operator overloading).
 ```scala
@@ -354,7 +341,7 @@ arrayBuffer += elem
 ```
 
 
-### <a name='anonymous'>Anonymous Methods</a>
+### Anonymous Methods
 
 __Avoid excessive parentheses and curly braces__ for anonymous methods.
 ```scala
@@ -381,9 +368,9 @@ list.map({ item => ... })
 ```
 
 
-## <a name='lang'>Scala Language Features</a>
+## Scala Language Features
 
-### <a name='case_class_immutability'>Case Classes and Immutability</a>
+### Case Classes and Immutability
 
 Case classes are regular classes but extended by the compiler to automatically support:
 - Public getters for constructor parameters
@@ -406,7 +393,7 @@ val p2 = p1.copy(age = 16)
 ```
 
 
-### <a name='apply_method'>apply Method</a>
+### apply Method
 
 Avoid defining apply methods on classes. These methods tend to make the code less readable, especially for people less familiar with Scala. It is also harder for IDEs (or grep) to trace. In the worst case, it can also affect correctness of the code in surprising ways, as demonstrated in [Parentheses](#parentheses).
 
@@ -422,7 +409,7 @@ object TreeNode {
 ```
 
 
-### <a name='override_modifier'>override Modifier</a>
+### override Modifier
 Always add override modifier for methods, both for overriding concrete methods and implementing abstract methods. The Scala compiler does not require `override` for implementing abstract methods. However, we should always add `override` to make the override obvious, and to avoid accidental non-overrides due to non-matching signatures.
 ```scala
 trait Parent {
@@ -445,7 +432,7 @@ class Child extends Parent {
 
 
 
-### <a name='destruct_bind'>Destructuring Binds</a>
+### Destructuring Binds
 
 Destructuring bind (sometimes called tuple extraction) is a convenient way to assign two variables in one expression.
 
@@ -463,7 +450,7 @@ class MyClass {
 }
 ```
 
-### <a name='call_by_name'>Call by Name</a>
+### Call by Name
 
 __Avoid using call by name__. Use `() => T` explicitly.
 
@@ -486,7 +473,7 @@ print(inc())
 
 in the above code, `inc()` is passed into `print` as a closure and is executed (twice) in the print method, rather than being passed in as a value `1`. The main problem with call-by-name is that the caller cannot differentiate between call-by-name and call-by-value, and thus cannot know for sure whether the expression will be executed or not (or maybe worse, multiple times). This is especially dangerous for expressions that have side-effect.
 
-### <a name='multi-param-list'>Multiple Parameter Lists</a>
+### Multiple Parameter Lists
 
 __Avoid using multiple parameter lists__. They complicate operator overloading, and can confuse programmers less familiar with Scala. For example:
 
@@ -499,7 +486,7 @@ One notable exception is the use of a 2nd parameter list for implicits when defi
 
 Another exception is when writing functions to be used with `transform` in `SparkOps`, where you want the last parameter list to be a `DataFrame`.
 
-### <a name='symbolic_methods'>Symbolic Methods (Operator Overloading)</a>
+### Symbolic Methods
 
 __Do NOT use symbolic method names__, unless you are defining them for natural arithmetic operations (e.g. `+`, `-`, `*`, `/`). Under no other circumstances should they be used. Symbolic method names make it very hard to understand the intent of the methods. Consider the following two examples:
 ```scala
@@ -512,7 +499,7 @@ channel.send(msg)
 stream1.join(stream2)
 ```
 
-### <a name='type_inference'>Type Inference</a>
+### Type Inference
 
 Scala type inference, especially left-side type inference and closure inference, can make code more concise. That said, there are a few cases where explicit typing should be used:
 
@@ -521,7 +508,7 @@ Scala type inference, especially left-side type inference and closure inference,
 - __Variables or closures with non-obvious types should be explicitly typed__. A good litmus test is that explicit types should be used if a code reviewer cannot determine the type in 3 seconds.
 
 
-### <a name='return'>Return Statements</a>
+### Return Statements
 
 __Avoid using return in closures__. `return` is turned into ``try/catch`` of ``scala.runtime.NonLocalReturnControl`` by the compiler. This can lead to unexpected behaviors. Consider the following example:
   ```scala
@@ -556,7 +543,7 @@ However, there are a few cases where `return` is preferred.
   }
   ```
 
-### <a name='recursion'>Recursion and Tail Recursion</a>
+### Recursion and Tail Recursion
 
 __Avoid using recursion__, unless the problem can be naturally framed recursively (e.g. graph traversal, tree traversal).
 
@@ -591,7 +578,7 @@ def max(data: Array[Int]): Int = {
 ```
 
 
-### <a name='implicits'>Implicits</a>
+### Implicits
 
 __Avoid using implicits__, unless:
 - you are building a domain-specific language
@@ -617,7 +604,7 @@ object ImplicitHolder {
 ```
 
 
-## <a name='exception'>Exception Handling (Try vs try)</a>
+## Exception Handling
 
 - Do NOT catch Throwable or Exception. Use `scala.util.control.NonFatal`:
 
@@ -636,7 +623,7 @@ object ImplicitHolder {
 - Do use `Try` in APIs, instead of throwing exceptions for abnormal execution.
 
 
-### <a name='option'>Options</a>
+### Options
 
 - Use `Option` when the value can be empty. Compared with `null`, an `Option` explicitly states in the API contract that the value can be `None`.
 - When constructing an `Option`, use `Option` rather than `Some` to guard against `null` values.
@@ -650,7 +637,7 @@ object ImplicitHolder {
 - Do not use None to represent exceptions. Instead, use a `Failure` from `Try`.
 - Do not call `get` directly on an `Option`, unless you know absolutely for sure the `Option` has some value.
 
-### <a name='chaining'>Monadic Chaining</a>
+### Monadic Chaining
 
 One of Scala's powerful features is monadic chaining. Almost everything (e.g. collections, Option, Future, Try) is a monad and operations on them can be chained together. This is an incredibly powerful concept, but chaining should be used sparingly. In particular:
 
@@ -689,9 +676,9 @@ def getAddress(name: String): Option[String] = {
 ```
 
 
-## <a name='concurrency'>Concurrency</a>
+## Concurrency
 
-### <a name='concurrency-sync-vs-map'>Explicit Synchronization vs Concurrent Collections</a>
+### Explicit Synchronization vs Concurrent Collections
 
 There are 3 recommended ways to make concurrent accesses to shared states safe. __Do NOT mix them__ because that could make the program very hard to reason about and lead to deadlocks.
 
@@ -733,7 +720,7 @@ Note that for case 1 and case 2, do not let views or iterators of the collection
   def values: Iterable[String] = map.synchronized { Seq(map.values: _*) }
   ```
 
-### <a name='concurrency-sync-vs-atomic'>Explicit Synchronization vs Atomic Variables vs @volatile</a>
+### Explicit Synchronization vs Atomic Variables
 
 The `java.util.concurrent.atomic` package provides primitives for lock-free access to primitive types, such as `AtomicBoolean`, `AtomicInteger`, and `AtomicReference`.
 
@@ -762,7 +749,7 @@ Prefer Atomic variables over explicit synchronization when: (1) all critical upd
   }
   ```
 
-### <a name='concurrency-private-this'>Private Fields</a>
+### Private Fields
 
 Note that `private` fields are still accessible by other instances of the same class, so protecting it with `this.synchronized` (or just `synchronized`) is not technically sufficient. Make the field `private[this]` instead.
 
@@ -781,7 +768,7 @@ class Foo {
 ```
 
 
-### <a name='concurrency-isolation'>Isolation</a>
+### Isolation
 
 In general, concurrency and synchronization logic should be isolated and contained as much as possible. This effectively means:
 
@@ -789,18 +776,18 @@ In general, concurrency and synchronization logic should be isolated and contain
 - For complex modules, create a small, inner module that captures the concurrency primitives.
 
 
-## <a name='perf'>Performance</a>
+## Performance
 
 For the vast majority of the code you write, performance should not be a concern. However, for performance sensitive code, here are some tips:
 
-### <a name='perf-microbenchmarks'>Microbenchmarks</a>
+### Microbenchmarks
 
 It is ridiculously hard to write a good microbenchmark because the Scala compiler and the JVM JIT compiler do a lot of magic to the code. More often than not, your microbenchmark code is not measuring the thing you want to measure.
 
 Use [jmh](http://openjdk.java.net/projects/code-tools/jmh/) if you are writing microbenchmark code. Make sure you read through [all the sample microbenchmarks](http://hg.openjdk.java.net/code-tools/jmh/file/tip/jmh-samples/src/main/java/org/openjdk/jmh/samples/) so you understand the effect of deadcode elimination, constant folding, and loop unrolling on microbenchmarks.
 
 
-### <a name='perf-whileloops'>Traversal and zipWithIndex</a>
+### Traversal and zipWithIndex
 
 Use `while` loops instead of `for` loops or functional transformations (e.g. `map`, `foreach`). For loops and functional transformations are very slow (due to virtual function calls and boxing).
 
@@ -823,7 +810,7 @@ while (i < len) {
 ```
 
 
-### <a name='perf-private'>private[this]</a>
+### private[this]
 
 For performance sensitive code, prefer `private[this]` over `private`. `private[this]` generates a field, rather than creating an accessor method. In our experience, the JVM JIT compiler cannot always inline `private` field accessor methods, and thus it is safer to use `private[this]` to ensure no virtual method call for accessing a field.
 
@@ -844,9 +831,9 @@ class MyClass {
 ```
 
 
-## <a name='testing'>Testing</a>
+## Testing
 
-### <a name='testing-intercepting'>Intercepting Exceptions</a>
+### Intercepting Exceptions
 
 When testing that performing a certain action (say, calling a function with an invalid argument) throws an exception, be as specific as possible about the type of exception you expect to be thrown. You should NOT simply `intercept[Exception]` or `intercept[Throwable]` (to use the ScalaTest syntax), as this will just assert that _any_ exception is thrown. Often times, this will just catch errors you made when setting up your testing mocks and your test will silently pass without actually checking the behavior you want to verify.
 
@@ -864,9 +851,9 @@ When testing that performing a certain action (say, calling a function with an i
 
 If you cannot be more specific about the type of exception that the code will throw, that is often a sign of code smell. You should either test at a lower level or modify the underlying code to throw a more specific exception.
 
-## <a name='misc'>Miscellaneous</a>
+## Miscellaneous
 
-### <a name='misc_currentTimeMillis_vs_nanoTime'>Prefer nanoTime over currentTimeMillis</a>
+### Prefer nanoTime over currentTimeMillis
 
 When computing a *duration* or checking for a *timeout*, avoid using `System.currentTimeMillis()`. Use `System.nanoTime()` instead, even if you are not interested in sub-millisecond precision.
 
@@ -878,13 +865,13 @@ Caveats:
 - `nanoTime()` rolls over every 292 years. So if your Spark job is going to take a really long time, you may need something else :)
 
 
-### <a name='misc_uri_url'>Prefer URI over URL</a>
+### Prefer URI over URL
 
 When storing the URL of a service, you should use the `URI` representation.
 
 The [equality check](http://docs.oracle.com/javase/7/docs/api/java/net/URL.html#equals(java.lang.Object)) of `URL` actually performs a (blocking) network call to resolve the IP address. The `URI` class performs field equality and is a superset of `URL` as to what it can represent.
 
-### <a name='misc_well_tested_method'>Prefer existing well-tested methods over reinventing the wheel</a>
+### Prefer existing well-tested methods over reinventing the wheel
 
 When there is an existing well-tested method and it doesn't cause any performance issue, prefer to use it. Reimplementing such method may introduce bugs and requires spending time testing it (maybe we don't even remember to test it!).
 

@@ -4,7 +4,7 @@
    * [Creating a New Contract](#creating-a-new-contract)
    * [Updating an Existing Contract](#updating-an-existing-contract)
    * [Migrating from V0 to V1 Contracts](guides/contracts_migration_v0_to_v1.md)
- * [Datasets, Dimensions, and Fact Tables Workflow](#datasets,-dimensions,-and-fact-tables-workflow)
+ * [Datasets, Dimensions, and Fact Tables Workflow](#datasets-dimensions-and-fact-tables-workflow)
    * [Bus matrix](#bus-matrix)
    * [Databricks Approach](#databricks-approach)
    * [Creating a new dataset](#creating-a-new-dataset)
@@ -96,7 +96,7 @@ Creating a new contract is different than updating an existing contract because 
 
 1. Open a pull request on Itaipu. There’s no need to ask for reviews on Itaipu, we monitor new PRs multiple times a day as the repo is very active.
 
-1. Follow the instructions about [merging pull requests](#merging-pull-requests)
+1. Follow the instructions about [merging pull requests](./opening_prs.md)
 
 ### Updating an Existing Contract
 
@@ -117,7 +117,7 @@ If you want to add, change or remove an attribute:
     1. Run `$ lein gen-contracts <country>` (for all countries)
 1. Paste the updated Scala files into a branch of Itaipu
 1. Open pull requests for each and ask someone from data infra squad to review
-1. [Merge and profit](#merging-pull-requests)
+1. [Merge and profit](./opening_prs.md)
 
 
 ## Datasets, Dimensions, and Fact Tables Workflow
@@ -270,7 +270,7 @@ edit in an IDE because of type checking, autocompletion, etc.), then go back to 
     ```
 1. Follow the instructions about [running tests](#running-tests)
 1. Open a pull request on Itaipu and ask someone from data infra to review it
-1. Follow the instructions about [merging pull requests](#merging-pull-requests)
+1. Follow the instructions about [merging pull requests](./opening_prs.md)
 
 ### Make the dataset available in Redshift
 
@@ -354,7 +354,7 @@ Force-push your changes to the `debug-build` branch of `itaipu` and trigger the 
 
 When you have a dataset that doesn't originate from a Datomic service and you
 want to utilize Spark to process it (periodically), you can build with
-`itaipu`.  See [`dataset-series`](itaipu/dataset_series.md) and `StaticOp` for more information.
+`itaipu`.  See [`dataset-series`](../etl_users/dataset_series.md) and `StaticOp` for more information.
 
 Parquet files are mainly used for accessing data from Spark / Databricks. Avro files are used for loading into Redshift.
 

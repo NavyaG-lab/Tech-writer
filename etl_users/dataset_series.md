@@ -149,7 +149,7 @@ val alternativeSchemas = Seq(
 ...
 ```
 
-See [Final Steps](#final-steps) for `as` fields declared on`contractSchema` attributes (which would be ignored in the above
+See [Final Steps](#final-renaming) for `as` fields declared on`contractSchema` attributes (which would be ignored in the above
 phase).
 
 #### Coerce values
@@ -234,7 +234,7 @@ Currently, the metadata fields are the following:
   * `series_event_service_name`
   * `metadata_id`
 
-See [RFC-9878](https://github.com/nubank/riverbend/blob/master/doc/rfc-9878.md) for more details. 
+See [RFC-9878](https://github.com/nubank/riverbend/blob/master/doc/rfc-9878.md) for more details.
 
 ### Primary keys and deduplication
 
@@ -242,20 +242,20 @@ Once all versions (including the contract) have been processed, the engine union
 
 * Rows are grouped by primary key. A column can be made a primary key by marking its corresponding `DatasetSeriesAttribute` as `isPrimaryKey = true`
 * When several rows have the same primary key, they are sorted and the first row in the resulting sequence is kept, the others are dropped. Sorting is done either:
-  
+
   * Using the primary key columns sorted alphabetically
   * By passing a list of column objects in the *optional*
     `orderByColumns` field:
     ```scala
     import org.apache.spark.sql.functions._
-    
+
     object MySeriesContract extends DatasetSeriesContract {
           ...
           override val orderByColumns: Seq[Column] = Seq($"key1", desc($"key2"))
           ...
       }
     ```
-  
+
 
 **NB: The deduplication step can be skipped by using `override val deduplicate = false` in the `DatasetSeriesContractOp` declaration**
 
@@ -370,23 +370,23 @@ Within Itaipu, the `DatasetSeriesOpNameLookup` helper should be used instead of 
 package nu.data.br.datasets
 
 ...
-import nu.data.infra.util.dataset_series.DatasetSeriesOpNameLookup 
+import nu.data.infra.util.dataset_series.DatasetSeriesOpNameLookup
 import nu.data.br.dataset_series.MySeriesContract
 
 object `MyOp` extends SparkOp {
   ...
   // get a hold of the Contract Op name with the helper:
   val contractOpName = DatasetSeriesOpNameLookup.datasetSeriesContractOpName(MySeriesContract)
-  
+
   // then use the name in your `inputs` and `definition`:
-  
+
   def inputs: Set[String] = Set(contractOpName)
-  
+
   def definition(datasets: Map[String, DataFrame]): DataFrame = {
   	datasets(contractOpName)
     	.someOperation
   }
-  
+
 }
 ```
 
@@ -420,11 +420,11 @@ Create a file in the `dataset_series/archived` folder for your Dataset Series. I
 
 ```scala
 object  DatasetSquishExample  extends  SparkOpToSeries(SquishExample)  {  //Change for the address and names corresponding to your dataset
-  
+
   val  v2  =  contractSchema.less("column1")
-  
+
   val  v1  =  v2.less("column2")
-  
+
   override  val  alternativeSchemas  =  Seq(v1,  v2)
 }
 ```
@@ -447,13 +447,13 @@ If you want to change something (`country`  in the example below), just create a
 
 ```scala
 object DatasetSquishExample extends SparkOpToSeries(SquishExample) {
-  
+
   override val country: Country = Country.MX
-  
+
   val v2 = contractSchema.less("column1")
-  
+
   val v1 = v2.less("column2")
-  
+
   override val alternativeSchemas = Seq(v1, v2)
 }
 ```

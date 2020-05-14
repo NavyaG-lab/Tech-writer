@@ -33,8 +33,8 @@
 ## Workflow
 The normal flow is:
 
-1. PR WIP -> "you finish pushing all the changes and making sure the tests are passing" 
-1. PR Teammate Review Requested -> "teammate reviews" 
+1. PR WIP -> "you finish pushing all the changes and making sure the tests are passing"
+1. PR Teammate Review Requested -> "teammate reviews"
 1. PR Review Requested -> "itaipu committer reviews"
 1. PR Ready For Merge -> "someone merges the PR (either bors or an itaipu committer)"
 1. PR Merged
@@ -66,7 +66,7 @@ You can read more about the tags [here](https://docs.google.com/document/d/1YRCK
   * All attributes have descriptions (unless it is a model with 100s of attributes)
 * Code
   * Functions are idempotent (no use of random, current_date, etc)  
-  * Added to package file in alphabetical order 
+  * Added to package file in alphabetical order
   * Stop usage of hard-coded values in the middle of the code (magic numbers) and enforce that all fixed values are stored in variables that are passed by parameter
   * Enforce naming standards
 * Tests
@@ -128,8 +128,8 @@ Can you add a tag to this PR? I will preemptively add it as -PR WIP for now. You
 Can you please add the tag `-PR Review Requested` when you are waiting for an itaipu committer to review your PR?
 
 The normal flow is:
-PR WIP  -> "you finish pushing all the changes and making sure the tests are passing" 
--> PR Teammate Review Requested -> "teammate reviews" 
+PR WIP  -> "you finish pushing all the changes and making sure the tests are passing"
+-> PR Teammate Review Requested -> "teammate reviews"
 -> PR Review Requested  -> "itaipu committer reviews"
 -> PR Ready For Merge -> "someone merges the PR (either bors or an itaipu committer)"
 -> PR Merged
@@ -173,13 +173,13 @@ The [history tab](https://bors.nubank.com.br/repositories/8/log) should provide 
 
 Currently, `bors` is being used as the only to get a PR merged in [Itaipu](https://github.com/nubank/itaipu/). You can check the configuration used by `bors` here: https://github.com/nubank/itaipu/blob/master/bors.toml
 
-`bors` enforces the [Github Labels](https://github.com/nubank/data-platform-docs/blob/master/itaipu/pr_review.md#github-labels) are properly set, if there are at least a [CODEOWNER](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/about-code-owners) review before allowing a PR to enter its queue.
+`bors` enforces the [Github Labels](https://github.com/nubank/data-platform-docs/blob/master/itaipu/opening_prs.md#github-labels) are properly set, if there are at least a [CODEOWNER](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/about-code-owners) review before allowing a PR to enter its queue.
 
 ### CircleCI
 
 We use CircleCI for ensuring tests are run for every PR on Itaipu. Currently, `bors` is responsible to ensure all the tests are run in CircleCI before merging to `master`.
 
-`bors` uses the `staging` branch to batch PRs and run all the tests before merging the PR. We only run all the tests on this branch, so in the Github Interface you might not see all tests we run on `staging`. `bors` will report all the tests in a comment before merging your PR. 
+`bors` uses the `staging` branch to batch PRs and run all the tests before merging the PR. We only run all the tests on this branch, so in the Github Interface you might not see all tests we run on `staging`. `bors` will report all the tests in a comment before merging your PR.
 
 The reason we did this is because we have a lot of users creating PRs and pushing to several branches and running tests for everyone is very costly. So we reduced the amount of tests running in users' branches. That means if people do not use bors and merge directly to master some bad code could be merged, because not all tests run on the `master` branch.
 
@@ -232,7 +232,7 @@ If you want to become an itaipu committer, the steps you must follow are:
 * Pair up with another reviewer for two sessions of the daily PR review rotation
 * Review PRs on your own for one session of the daily PR review rotation
 
-This form will be regularly reviewed by either [#itaipu-reviewers](https://app.slack.com/client/T024U97V8/GQU8K9RFF) or [#squad-data-access](https://app.slack.com/client/T024U97V8/C84FAS7L6), who will check the requirements bellow, and also manage the pairing up between new reviewers and existing ones. 
+This form will be regularly reviewed by either [#itaipu-reviewers](https://app.slack.com/client/T024U97V8/GQU8K9RFF) or [#squad-data-access](https://app.slack.com/client/T024U97V8/C84FAS7L6), who will check the requirements bellow, and also manage the pairing up between new reviewers and existing ones.
 
 * Should have at least exited the onboarding period
 * Should have actively contributed to the repo
@@ -248,4 +248,3 @@ This form will be regularly reviewed by either [#itaipu-reviewers](https://app.s
   * [Bors](https://github.com/bors-ng/bors-ng)
   * [Serving Layer](https://github.com/nubank/data-platform-docs/blob/master/infrastructure/serving_layer.md)
   * [GitHub tags](https://github.com/nubank/data-platform-docs/blob/master/itaipu/itaipu_reviewer.md#workflow)
-

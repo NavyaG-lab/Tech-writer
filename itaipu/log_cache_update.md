@@ -13,7 +13,7 @@ Every few months it is important to update the log cache with the latest logs.
 This can drastically speed up contract generation.
 
 To do so
- - get the metapod transaction for the last successful nightly run ([see here](monitoring_nightly_run.md#finding-the-transaction-id))
+ - get the metapod transaction for the last successful nightly run ([see here](../monitoring_nightly_run.md#finding-the-transaction-id))
  - run [this databricks notebook](https://nubank.cloud.databricks.com/#notebook/231312) with that transaction (should take ~2-3 hours). This notebook opens all the logs and materialized entities for the specified transaction and looks up the `T` value. This is used to properly populate the LogCache map. At the end of the notebook there is a command to download a json map with all the updated T info (we'll call it `2019-09-30-log-cache.json`).
  - copy all the parquets from the `ephemeral` bucket (which will eventually be deleted) into a permanent bucket. You can do some scripting like this:
 

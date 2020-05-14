@@ -6,7 +6,7 @@ The general layout of the Alerts part is “alert, reason, action”. All the al
 
 The frequent dataset failures should enumerate the symptoms of the particular failure, along with the best known way to mitigate it. Links to Slack threads about the previous failures are appreciated for traceability.
 
-*Before contributing, please keep in mind [the following guidelines](writing-runbooks).*
+*Before contributing, please keep in mind [the following guidelines](writing_runbooks.md).*
 
 ## Incident response
 

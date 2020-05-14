@@ -36,7 +36,7 @@ This repository is the canonical place to put all documentation related to how t
 * [Primer](itaipu/primer.md)
 * [Styleguide](itaipu/styleguide.md)
 * [Workflow](itaipu/workflow.md)
-* [Bumping Itaipu on Databricks](itaipu/databricks_bump.md)
+* [Bumping Itaipu on Databricks](databricks/library_bump.md)
 * [Updating the Log Cache](itaipu/log_cache_update.md)
 * [Dataset Series Compaction](itaipu/dataset_series_compaction.md)
 * [Pororoca](itaipu/pororoca.md)

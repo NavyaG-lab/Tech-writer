@@ -125,7 +125,7 @@ In case something goes wrong when reading the data back from its compacted state
 nu ser curl PUT global metapod /api/migrations/transaction/TRANSACTION_ID/unapply-compactions
 ```
 
-[1]: ./dataset-series.md
+[1]: /etl_users/dataset_series.md
 [2]: https://github.com/nubank/riverbend
 [3]: https://github.com/nubank/itaipu
 [4]: https://github.com/nubank/metapod
