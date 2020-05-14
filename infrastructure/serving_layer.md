@@ -135,7 +135,7 @@ The [Sarcophagus](https://github.com/nubank/sarcophagus) project publishes the P
 
 ## Conrado
 
-`conrado` is a service that runs in the prod environment. It serves data out the DynamoDB table that `tapir` loaded data into, via an HTTP interface, described below:
+`conrado` is a service that runs in the prod environment. It serves data out the DynamoDB table that `tapir` loaded data into, via an HTTP interface, described below. To hit said endpoints through nucli the `admin` scope is required. To hit it from a service, please add the service and the datset it will use on this [scopes list](https://github.com/nubank/conrado/blob/master/src/conrado/logic/auth.clj#L11).
 
 ##### GET /api/dataset/:name/row/:id
 
