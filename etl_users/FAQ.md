@@ -21,3 +21,6 @@ This means that you're trying to use code that the platform is trying to move aw
 This is our way of evolving the platform APIs without breaking existing code, by gradually phasing out older APIs when necessary in favor of newer ones. This is frequently necessary in order to accommodate our changing needs and requirements for how we ingest, process and present data.
 
 The warning messages usually include an alternative way of doing what you're trying to do, and it would be best if you could follow its suggestion in a timely manner. If the warning message is not clear or helpful enough, please feel free to ask about it in [#data-help](https://nubank.slack.com/messages/C06F04CH1) and we will do our best to help.
+
+## What should I consider as PII data in my datasets?
+Please refer to this primer on [identifying PII data & its handling in Itaipu](/itaipu/pii_and_personal_data.md).
