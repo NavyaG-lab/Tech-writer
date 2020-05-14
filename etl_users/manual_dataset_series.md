@@ -176,18 +176,12 @@ def definition(datasets) = {
 
 In order for this process to be as smooth and quick as possible, you'll need to follow these steps:
 
-- Go to [Sonar](https://backoffice.nubank.com.br/sonar-js/#/sonar-js/graphiql) (our dataset query interface) and use the following graphql query:
+- Run the following nucli command:
+
 ```
-query GetManualSeries {
-  datasetSeries(datasetSeriesName: "series/<my-series>") {
-    datasets {
-      id
-      committedAt
-      path
-    }
-  }
-}
+nu dataset-series info <my-series> -v
 ```
+
 - Running the above should return a list of datasets and their ids. Find the dataset you want to delete there (usually you'd look for the data at which you appended it) and get a hold of its `id` attribute
 - On #squad-data-infra, ask for the deletion by providing:
   - your dataset series' precise name (e.g. `series/direct-mail`)
