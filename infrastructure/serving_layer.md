@@ -20,12 +20,30 @@ You can follow this nice tutorial on [how to write a dataset](/itaipu/create_bas
 
 ### Making your dataset ready for the serving layer
 
- - Make sure your dataset has the [serving layer mode](https://github.com/nubank/common-etl/blob/97d640d6c280f4dcedd7b65eae4a64b875f213f2/src/main/scala/common_etl/operator/ServingLayerMode.scala) set up properly; [for example](https://github.com/nubank/itaipu/blob/a77ca6e81c19e3331a96a1de3567a44671c2f7f9/src/main/scala/etl/dataset/policy/mgm_offenders/MgmOffendersPolicy.scala#L18). This will ensure your dataset is saved in the Avro format, with a number of partitions that is optimal for loading.
- - The serving layer mode has four modes right now: `NotUsed` (the default), `LoadedOnly`, `PropagatedOnly` and `LoadedAndPropagated`, which define how the dataset should be sent to the serving layer. `LoadedOnly` datasets are only available to be queried by normal production services via Conrado. `PropagatedOnly` datasets can only be consumed via Kafka and are not loaded into Conrado's docstore. Finally `LoadedAndPropagated` datasets can be queried via Conrado and are also propagated via Kafka to notify other services whenever new data is available.
- - If you use the `LoadedAndPropagated` mode, you also have to specify a propagation key: it ensures we can find the appropriate prototype each row of your dataset belongs to, which is required to route them to the proper Kafka cluster (see [note](#note-on-the-prototype-column) below). The current valid propagation keys are listed [here](https://github.com/nubank/common-etl/blob/master/src/main/scala/common_etl/operator/ServingLayerPropagationKey.scala) (eg: `CreditCardAccount`, `Customer` and `Prospect` that require the columns called `account__id`, `customer__id` and `prospect__id`, respectively). If you want your all the rows to be propagated to the `global` prototype you should use the `Global` key.
- - Make sure your dataset's primary key ([for example](https://github.com/nubank/itaipu/blob/3e270152cc9f51200ad8423d7baf6d574c3aea57/src/main/scala/etl/dataset/policy/collections_policy/CollectionsUnionPolicy.scala#L53)) is distinct per row. This is necessary because the dataset's primary key is how you will access the row on `conrado`. The primary key is generally something like customer id, account id, cpf, etc.
- - Tests that fail if you change the schema [like here](https://github.com/nubank/itaipu/blob/93709a89e4243e56b048586a5dba0a8160007284/src/it/scala/etl/itaipu/ItaipuSchemaSpec.scala#L54).
-   This is necessary because if we change the schema of a dataset loaded by `tapir` we need to ensure all downstream consumers of the data (your microservices) can handle this schema change.
+Make sure your dataset has the [serving layer mode](https://github.com/nubank/common-etl/blob/97d640d6c280f4dcedd7b65eae4a64b875f213f2/src/main/scala/common_etl/operator/ServingLayerMode.scala) set up properly; [for example](https://github.com/nubank/itaipu/blob/a77ca6e81c19e3331a96a1de3567a44671c2f7f9/src/main/scala/etl/dataset/policy/mgm_offenders/MgmOffendersPolicy.scala#L18). This will ensure your dataset is saved in the Avro format, with a number of partitions that is optimal for loading.
+
+
+The serving layer mode has four modes right now that define how the dataset should be sent to the serving layer:
+
+ - `NotUsed`: the default
+ - `LoadedOnly`: datasets are only available to be queried by normal production services via Conrado
+ - `PropagatedOnly`: datasets can only be consumed via Kafka and are not loaded into Conrado's docstore
+ - `LoadedAndPropagated`: datasets can be queried via Conrado and are also propagated via Kafka to notify other services whenever new data is available.
+
+#### schema compatibility with downstream consumers
+
+Tests that fail if you change the schema [like here](https://github.com/nubank/itaipu/blob/93709a89e4243e56b048586a5dba0a8160007284/src/it/scala/etl/itaipu/ItaipuSchemaSpec.scala#L54).
+This is necessary because if we change the schema of a dataset loaded by `tapir` we need to ensure all downstream consumers of the data (your microservices) can handle this schema change.
+
+#### loading into a persistent table
+
+If you use either the `LoadedAndPropagated` or `PropagatedOnly` modes, you also have to specify a propagation key: it ensures we can find the appropriate prototype each row of your dataset belongs to, which is required to route them to the proper Kafka cluster (see [note](#note-on-the-prototype-column) below). The current valid propagation keys are listed [here](https://github.com/nubank/common-etl/blob/master/src/main/scala/common_etl/operator/ServingLayerPropagationKey.scala) (eg: `CreditCardAccount`, `Customer` and `Prospect` that require the columns called `account__id`, `customer__id` and `prospect__id`, respectively). If you want your all the rows to be propagated to the `global` prototype you should use the `Global` key.
+
+Make sure your dataset's primary key ([for example](https://github.com/nubank/itaipu/blob/3e270152cc9f51200ad8423d7baf6d574c3aea57/src/main/scala/etl/dataset/policy/collections_policy/CollectionsUnionPolicy.scala#L53)) is distinct per row. This is necessary because the dataset's primary key is how you will access the row on `conrado`. The primary key is generally something like customer id, account id, cpf, etc.
+
+#### data expiration
+
+With serving layer data that is loaded into the serving layer table (`LoadedAndPropagated` or `LoadedOnly` modes), you must also specify when you would like that data to be wiped from the docstore and hence no longer retrievable via `conrado`. The options are `ServingLayerExpiration.NeverExpires` and `ServingLayerExpiration.ExpiresIn(days=5)`. For `ServingLayerExpiration.ExpiresIn(days=X)`, the data will be wiped at the end of day of the `targetDay + X`, so if the target day is `2020-02-02` and `days` is `2`, the data will be wiped at `2002-02-04 23:59:59`. NOTE: that data isn't immediately wiped when it expires, it happens within a few hours.
 
 ## Tapir
 
