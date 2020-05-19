@@ -11,17 +11,17 @@ First, you need to have an account on both [github.com](http://github.com) and [
 ### Access Requests
 
 Then let's ask for access requests with this
-[form](https://forms.gle/DkwiWfWoZXHXHAFQA).
+[form](https://nu-itops.atlassian.net/servicedesk/customer/portal/5).
 
-* Submit one request by selecting `Account Creation -> add` for each of the
+* Submit one request by selecting the appropriate menu for each of the
   following accounts, if don’t have them, already:
   * Github
   * Quay
   * Splunk
   * Databricks
   * Looker
-* Submit another request by selecting `Account Creation -> group-add`.
-  Specify `amazon` and paste the following groups:
+* Submit another request by selecting `AWS -> AWS Group`.
+  Specify `BR` as AWS account.
   ```
   data-access-ops data-infra-aurora-access eng infra-ops prod-eng data-infra belomonte analyst
   ```
