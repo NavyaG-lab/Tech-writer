@@ -19,7 +19,6 @@ Then let's ask for access requests with this
   * Quay
   * Splunk
   * Databricks
-  * AWS
   * Looker
 * Submit another request by selecting `Account Creation -> group-add`.
   Specify `amazon` and paste the following groups:
@@ -28,13 +27,14 @@ Then let's ask for access requests with this
   ```
 * Sonar-JS. Submit another request by selecting `Scopes`, and the
   scope name is: `metapod-admin`
-* [BigQuery](https://wiki.nubank.com.br/index.php/BigQuery)
 
 You'll be tagged in #access-request slack channel when the permission
 is given to you.
 
 ### Other accounts
 
+* [BigQuery](https://wiki.nubank.com.br/index.php/BigQuery): by default everyone has access to non-PII data.
+* AWS: credentials are given to you via SlackBot a few days after you join.
 * Now, to join `datainfra` quay.io team, ping `@chico` or `@schaffer`
   on Slack with your quay.io handle (currently only admins are able to
   do this).
@@ -128,8 +128,9 @@ You can find a bunch of relevant engineering links here:  [Onboarding](https://w
 - AWS
   - We run most of Nubank services on AWS. If you want to get to know our cloud infrastructure better please go to `Basic Devops` at the [general onboarding guide](https://docs.google.com/a/nubank.com.br/document/d/1x6soXtlFli-I6zaGyUI-oG3k87ASaICoqr698NhFwwQ/edit?usp=sharing)
   - [Intro to Nubank's AWS Infrastructure](https://wiki.nubank.com.br/index.php/Busquem_Conhecimento#Intro_to_Nubank.27s_AWS_Infrastructure)
-- Spark
-  - **TODO**
+- [Apache Spark](https://spark.apache.org/)
+  - Apache Spark is a general framework, that by leveraging distributing computing, handles large-scale data processing and analytics.
+  - We at Nubank are heavy users of it; We use it to process and produce new [datasets](https://github.com/nubank/data-platform-docs/blob/master/glossary.md#dataset).
 
 ## Data Infra's Onboarding Exercise
 
