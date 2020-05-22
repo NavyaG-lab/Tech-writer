@@ -49,7 +49,7 @@ dataset.
 
 ### Metrics
 
-Mergulho defines a set of [metrics](https://github.com/nubank/itaipu/blob/master/common-etl/src/main/scala/mergulho/Metric.scala)
+Mergulho defines a set of [metrics](https://github.com/nubank/itaipu/blob/master/common-etl/src/main/scala/nu/data/infra/mergulho/metrics/Metric.scala)
 that can currently be selected to run on our data. Moreover, these metrics are
 grouped into subsets that are sensible for certain content types of data. These
 subsets are selected by Mergulho as described [below](#metric-application).
@@ -89,7 +89,7 @@ the attribute and 6-7 make up the value.
 
 ### Metric application
 
-[API](https://github.com/nubank/itaipu/blob/master/common-etl/src/main/scala/mergulho/Mergulho.scala#L11)
+[API](https://github.com/nubank/itaipu/blob/master/common-etl/src/main/scala/nu/data/infra/mergulho/internal/MetricsCollector.scala)
 
 There are currently four ways to get Mergulho to run metrics on your data:
 
@@ -125,7 +125,7 @@ to adjust that behavior:
 
 Mergulho code is in [Itaipu](https://github.com/nubank/itaipu). The
 metrics described above are collected daily at each run and then
-stored in [Escafandro](https://github.com/nubank/itaipu).
+stored in [Escafandro](https://github.com/nubank/escafandro).
 
 ## Roadmap
 
