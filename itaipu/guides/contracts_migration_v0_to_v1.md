@@ -24,9 +24,10 @@ On `common-datomic` version `5.44.2` the capability of generating contracts for 
 
 ### Step 2: Generate new contracts using nucli
 - Pull the latest `nucli` version: `nu proj update nucli`
+- PS: In case you have old contracts on V0, please delete them from `src/main/scala/etl/contract/{service_name}` on Itaipu (locally) before running the command above
+- Edit the following file `src/main/scala/etl/contract/package.scala` on Itaipu and delete the old contract references of your service on the `import` and `allDatabases` object.
 - Run the command, for each country:
   - `nu dev sync-itaipu-contracts <service> --country <country>`
-- PS: In case you have old contracts on V0, please delete them from `src/main/scala/etl/contract/{service_name}` on Itaipu (locally) before running the command above
 
 ### Step 3: Changes on Itaipu - Delete existing contract from Itaipu and create a new DatabaseContract
 
