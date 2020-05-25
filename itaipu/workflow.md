@@ -46,7 +46,8 @@ Creating a new contract is different than updating an existing contract because 
                 - `:contract/history true` if you want to include the historical values of that attribute (a separate
                 table with columns `audit__cid`, `audit__tags`, `audit__user`, `audit__version`, `db__tx_instant`)
         - `test/[SERVICE-NAME]/db/datomic/config_test.clj`:
-            1. Add a call to function `common-datomic.contract.test-helpers/enforce-contracts! <country>` for each country that needs to have contracts.
+            1. [if you are using midje] Add a call to function `common-datomic.contract.test-helpers/enforce-contracts! <country>` for each country that needs to have contracts.
+            2. [if you are using clojure.test] Add a deftest calling `common-datomic.contract.new-test-helpers/broken-contracts <db-name> <contract-skeletons> <country>` for each country that needs to have contracts. Check the docstring in the function to see how to write the test.
     1. Run `$ lein gen-contracts <country>` (for all countries) to generate the initial contracts in
     `resources/nu/data/<country>/dbcontracts/<DB-NAME>/entities`.
         - If you receive the following error:
