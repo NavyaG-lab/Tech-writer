@@ -43,7 +43,9 @@ Make sure your dataset's primary key ([for example](https://github.com/nubank/it
 
 #### data expiration
 
-With serving layer data that is loaded into the serving layer table (`LoadedAndPropagated` or `LoadedOnly` modes), you must also specify when you would like that data to be wiped from the docstore and hence no longer retrievable via `conrado`. The options are `ServingLayerExpiration.NeverExpires` and `ServingLayerExpiration.ExpiresIn(days=5)`. For `ServingLayerExpiration.ExpiresIn(days=X)`, the data will be wiped at the end of day of the `targetDay + X`, so if the target day is `2020-02-02` and `days` is `2`, the data will be wiped at `2002-02-04 23:59:59`. NOTE: that data isn't immediately wiped when it expires, it happens within a few hours.
+With serving layer data that is loaded into the serving layer table (`LoadedAndPropagated` or `LoadedOnly` modes), you must also specify when you would like that data to be wiped from the docstore and hence no longer retrievable via `conrado`. The options are `ServingLayerExpiration.NeverExpires` ([example](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/dataset/batch_models/fraud_daily/collisions/ServingAddressCollisions.scala#L45)) and `ServingLayerExpiration.ExpiresIn(days=5)`. For `ServingLayerExpiration.ExpiresIn(days=X)`, the data will be wiped at the end of day of the `targetDay + X`, so if the target day is `2020-02-02` and `days` is `2`, the data will be wiped at `2020-02-04 23:59:59`. 
+
+NOTE: Data isn't immediately wiped when it expires. According to Dynamo's documentation, it may take up to 48 hours for this to happen. Due to this potential discrepancy between expiration and deletion time, you might get expired items when performing read queries. If you don't want to view these items, you must filter them out in the query. More information on this: https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/TTL.html
 
 ## Tapir
 
@@ -73,7 +75,7 @@ You can alternatively set the Serving Layer Mode to `LoadedAndPropagated` to hav
 
 ### When is data overwritten?
 
-The ETL pipeline runs once a day and will load the results of the datasets in the list into the dynamo table. Data from previous loads is not cleared, but when new data is inserted at a primary key that already exists, it will be overwritten for that primary key. So if your dataset `recalculate-customer-limits` produces a new limit for every customer every day, then the data in the dynamo table will be updated for every customer every day. But if your dataset includes a customer only once a month, similar to what is done with `proactive-limit-increases`, then the data for a customer will only get refreshed once a month.
+The ETL pipeline runs once a day and will load the results of the datasets in the list into the dynamo table. When new data is inserted at a primary key that already exists, it will be overwritten for that primary key. So if your dataset `recalculate-customer-limits` produces a new limit for every customer every day, then the data in the dynamo table will be updated for every customer every day. But if your dataset includes a customer only once a month, similar to what is done with `proactive-limit-increases`, then the data for a customer will only get refreshed once a month. Data from previous loads might get cleared depending on the existence of a `ServingLayerExpirationTimestamp`. See [data expiration](#data-expiration) for more details.
 
 ## Dataset Row Schema
 
@@ -88,6 +90,7 @@ containing the following fields:
  - `:dataset-id`: the id for the dataset on metapod
  - `:prototype`: what prototype (eg: global, s0, s1, ...) the customer/account is associated with (not required)
  - `:expires-at`: loose proxy for when the data may become overwritten. We suggest you ignore this as it doesn't mean data will necessarily be overwritten before or after this time.
+ - `:serving-layer-expiration-timestamp`: Unix timestamp (in seconds) at which the dataset will expire from the serving layer docstore.
  - `:target-date`: the day that the data was loaded
  - `:value`: a map representing the row of the dataset
 
@@ -116,6 +119,7 @@ The response for this dataset looks like this:
 {:dataset "dummy-served",
  :dataset-id #uuid "5ddc6b92-ec4c-46e6-828d-1c5069cdcf11",
  :expires-at #nu/time "2019-11-27T23:59:59Z",
+ :serving-layer-expiration-timestamp #nu/Int 183267472027,
  :identifier "11111111-1111-1111-1111-111111111111",
  :prototype "global",
  :schema-id #uuid "5dc98514-491a-452a-ad6d-4e66eb111727",
