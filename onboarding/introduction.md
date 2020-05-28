@@ -1,140 +1,116 @@
 # Berlin Onboarding
 
-Welcome to [Nubank](https://nubank.com.br/) Berlin :tada:🇩🇪
+Welcome to [Nubank](https://nubank.com.br/) Berlin :tada:🇩🇪  We are excited you're here!
 
-## Getting accounts and permissions
+As part of Onboarding, you'll need to do the following:
 
-Good! You already have a computer, a Gmail and also a Slack account. Now it's time to get the other credentials you're going to need.
+* [Create accounts and request for accesses](#accounts-and-access-permissions)
+* [Setup environment](setup.md)
+* [Onboarding Exercises](setup.md)
 
-First, you need to have an account on both [github.com](http://github.com) and [quay.io](http://quay.io).
+## Accounts and access permissions
 
-### Access Requests
+Good! that you already have a Nubank machine and a Gmail account with Nubank credentials.
 
-Then let's ask for access requests with this
-[form](https://nu-itops.atlassian.net/servicedesk/customer/portal/5).
+Let's get started by creating the following accounts:
 
-* Submit one request by selecting the appropriate menu for each of the
-  following accounts, if don’t have them, already:
-  * Github
-  * Quay
-  * Splunk
-  * Databricks
-  * Looker
-* Submit another request by selecting `AWS -> AWS Group`.
-  Specify `BR` as AWS account.
-  ```
-  data-access-ops data-infra-aurora-access eng infra-ops prod-eng data-infra belomonte analyst
-  ```
-* Sonar-JS. Submit another request by selecting `Scopes`, and the
-  scope name is: `metapod-admin`
+* Slack
+* [github](https://github.com/)
+* [Quay.io](https://quay.io/)
 
-You'll be tagged in #access-request slack channel when the permission
-is given to you.
+### Request access for services through IT Ops
 
-### Other accounts
+Raise a request for the following accounts by logging into Nubank's [IT Ops](https://nu-itops.atlassian.net/servicedesk/customer/user/login).
 
-* [BigQuery](https://wiki.nubank.com.br/index.php/BigQuery): by default everyone has access to non-PII data.
-* AWS: credentials are given to you via SlackBot a few days after you join.
-* Now, to join `datainfra` quay.io team, ping `@chico` or `@schaffer`
-  on Slack with your quay.io handle (currently only admins are able to
-  do this).
-* Log-in to [circleci](https://circleci.com) with your GitHub account.
+### Services
+
+|Tools or services|Notes|
+|----------------|---------|
+|Create a [Github](https://github.com/) account|Get access to the [Nubank github](https://github.com/nubank/) account, the Nubank's codebase|
+|splunk|To trace and debug the services|
+|Databricks|Data analysis tool. You already have access to Databricks via Okta. To access databricks notebooks, reach out to florian.kornrumpf@nubank.com.br. Or, raise a request via IT Ops to get added to a specific group inside Databricks|
+|Looker|Data visualization tool|
+|Sonar-js|Submit request by selecting `Scopes`, and name of the scope is `metapod-admin`|
+|OpsGenie|An Incident management tool used by Hausmeisters|
+
+#### How to request access
+
+1. Log in to [IT Ops](https://nu-itops.atlassian.net/servicedesk/customer/user/login) using Nubank credentials.
+1. Choose the service or tool for which you want to raise a request.
+1. Fill the required fields and submit.
+
+### Request access for AWS groups
+
+The AWS credentials are sent to you through SlackBot, a few days after you join. Then, request for accessing the AWS groups.
+
+1. Log in to [IT Ops](https://nu-itops.atlassian.net/servicedesk/customer/user/login) using Nubank credentials.
+1. Select **BR** from the list of AWS accounts. Fill other required fields.
+
+   **Note**: Make sure you are added to all three accounts in AWS - **BR**, **MX**, and **Data**. You must raise requests to be added in each AWS account.
+1. Enter the following groups in the **IAM Group/s** field.
+    * For **BR** account
+        * data-access-engineering
+        * data-access-ops
+        * data-infra
+        * data-infra-aurora-access
+    * For **Data** account
+        * eng
+        * prod-dev
+1. Submit the request.
+
+## How to Join datainfra group in Quay.io
+
+1. You must have created Quay.io account already. If you don't already have an account, [create one](https://quay.io/).
+1. You'll receive an invite on your email to join quay.io "nubank account". If not, reach out to #access-request Slack channel to join.
+1. Then, join the datainfra quay.io team. To do so,
+      * Ping @chico or @schaffer on Slack with your quay.io handle (or)
+      * Join #access-request Slack channel and post your request.
+
+## Other accounts
+
+* [BigQuery](https://wiki.nubank.com.br/index.php/BigQuery): A data visualization and analysis tool. By default everyone has access to non-PII data.
+* [Circleci](https://circleci.com): Log-in to [circleci](https://circleci.com) with your GitHub account.
   This is for building code on branches, such as the pull request
   build indicator on Itaipu.
 
-## Setting up your environment
+## Get access to production and Staging environment
 
-### `setupnu.sh`
+An Engineer will have aceess to Production environment by default. For access to staging environment, you must raise a request.
 
-Overall, you should use [setupnu.sh](https://github.com/nubank/nudev#setting-up-a-new-development-machine). It has been updated and made more user-friendly recently.
+* For Metapod: Raise a request for staging CERT through [IT Ops](https://nu-itops.atlassian.net/servicedesk/customer/user/login).
 
-The `setupnu.sh` script is self-explanatory. Make sure that you have gone through [Getting accounts and permissions](#getting-accounts-and-permissions) to be in the engineering group, otherwise you will have problems to use your aws key and secret while running `setupnu.sh`.
-
-Every now and then people will find minor bugs on setupnu. This is a great opportunity to create your first PR.
-
-### Other useful programs
-
-[This wiki page](https://wiki.nubank.com.br/index.php/Programas_%C3%BAteis) lists
-additional programs not covered by the setup script that you can
-install and configure.
-
-### VPN
-
-After running `setupnu.sh`, setup your VPN by following [these steps](https://nubank.slack.com/archives/C024U9800/p1545380162000900).
-
-### Validation
-To validate the environment is working properly, you should clone a service repo and try to run its tests.
-
-### Setting up scala
-
-Scala 101: https://wiki.nubank.com.br/index.php/Scala
-
-Independently of your editor of choice, is always a good idea to default to IDEA when coding in **Scala,** download it here [https://www.jetbrains.com/idea/download/#section=linux](https://www.jetbrains.com/idea/download/#section=linux) , you can use the community edition, which is free and works for working with **scala** .
-
-After installing IDEA, let's set up our main project, [Itaipu](https://github.com/nubank/itaipu/) :
-
-- At this point in time, you already have **[nucli](https://github.com/nubank/nucli/)** installed, so let's use it.
-- `nu projects clone itaipu` this command you clone Itaipu to into your **$NU_HOME**
-- now `cd` into itaipu's dir, and run `sbt test it:test` sbt is going to download all necessary dependencies and run Itaipu's tests.
-
-Importing Itaipu on IDEA:
-
-1. Open idea, click in **Configure -> Plugins**
-
-  ![](https://static.notion-static.com/d90d9310dc1642249a992163f8d72c81/Screenshot_2017-12-01_11-58-00.png)
-
-2. Browse Repositories -> Type Scala in the search box, and install the **Scala Language** plugin (you can further add IDEA features by following the instructions in section 7 of wiki's [useful programs](https://wiki.nubank.com.br/index.php/Programas_%C3%BAteis)).
-
-  ![](https://static.notion-static.com/6224eb2fb911420bbafca0019e283e0a/Screenshot_2017-12-01_12-00-42.png)
-
-3. Restart IDEA
-4. Now, click on **Import Project** and select **itaipu's directory**
-
-  ![](https://static.notion-static.com/83b9fb8bf0384dafb15400821f4af401/Screenshot_2017-12-01_12-01-54.png)
-
-5. Select **Import Project from external Model -> SBT**
-
-  ![](https://static.notion-static.com/c5d12ddcbd2f45c1a76f6a6515fe6526/Screenshot_2017-12-01_13-53-31.png)
-
-6. Select the Java SDK that is installed on your machine. If you don't have one, click on **NEW** and select from your local machine.
-
-  ![](https://static.notion-static.com/7a4b466d0c1a4ce1be1bf78122f7abc0/Screenshot_2017-12-01_13-56-33.png)
-
-7. Next, Next, Finish. Wait a little bit for IDEA to download all dependencies and build the project.
-8. Repeat the process with **common-etl**
-
-All done.
+ **Note:** For requests related to access permissions, reach out to #access-request slack channel and post your request.
 
 ## Nubank Core Infrastructure
 
-You can find a bunch of relevant engineering links here:  [Onboarding](https://wiki.nubank.com.br/index.php/Engineering_Chapter/Onboarding)
+You can find a bunch of engineering links here:  [Onboarding](https://wiki.nubank.com.br/index.php/Engineering_Chapter/Onboarding)
 [Tech talks](https://wiki.nubank.com.br/index.php/Busquem_Conhecimento3)
-- Clojure
-  - Clojure is the main programming language used at Nubank. You should know basic clojure well.
-  - [Free beginner book](https://www.braveclojure.com/clojure-for-the-brave-and-true/)
-  - [Advanced book](https://pragprog.com/book/vmclojeco/clojure-applied)
-- [Service code organization (Ports & Adapters)][hexagonal-architecture-article]
-  - This [first PR](https://github.com/nubank/savings-accounts/pull/1/files?diff=unified) of this service might help visualize the code organization at Nubank' services
-  - [Microservice structure and hexagonal architecture glossary][code-organization-glossary]
-  - [Busquem conhecimento (Portuguese)](https://wiki.nubank.cofeedbacksm.br/index.php/Busquem_Conhecimento#Ports_.26_Adapters)
-- [Kafka](http://kafka.apache.org/intro)
-  - Kafka is a distributed streaming platform. We use it for async communication between services.
-  - The main kafka abstraction we use is the topic. [Services produce](https://github.com/nubank/bleach/blob/master/src/bleach/diplomat/producer.clj) messages to topics and [services consume](https://github.com/nubank/bleach/blob/master/src/bleach/diplomat/consumer.clj) messages from topics. Any number of services can produce to a topic and all the services that are consuming from this topic will receive this message.
-  - [Busquem conhecimento in portuguese](https://wiki.nubank.com.br/index.php/Busquem_Conhecimento#Kafka)
-- [Datomic](http://docs.datomic.com/tutorial.html)
-  - Datomic is a git like database. Information accumulates over time. Information is not forgotten as a side effect of acquiring new information.
-  - [Intro to Datomic](https://www.youtube.com/watch?v=RKcqYZZ9RDY)
-  - [Learn datalog](http://www.learndatalogtoday.org/)
-- AWS
-  - We run most of Nubank services on AWS. If you want to get to know our cloud infrastructure better please go to `Basic Devops` at the [general onboarding guide](https://docs.google.com/a/nubank.com.br/document/d/1x6soXtlFli-I6zaGyUI-oG3k87ASaICoqr698NhFwwQ/edit?usp=sharing)
-  - [Intro to Nubank's AWS Infrastructure](https://wiki.nubank.com.br/index.php/Busquem_Conhecimento#Intro_to_Nubank.27s_AWS_Infrastructure)
-- [Apache Spark](https://spark.apache.org/)
-  - Apache Spark is a general framework, that by leveraging distributing computing, handles large-scale data processing and analytics.
-  - We at Nubank are heavy users of it; We use it to process and produce new [datasets](https://github.com/nubank/data-platform-docs/blob/master/glossary.md#dataset).
 
-## Data Infra's Onboarding Exercise
+* Clojure
+  * Clojure is the main programming language used at Nubank. You should know basic clojure well.
+  * [Free beginner book](https://www.braveclojure.com/clojure-for-the-brave-and-true/)
+  * [Advanced book](https://pragprog.com/book/vmclojeco/clojure-applied)
+  * [Courses on Alura portal](https://courses.alura.online/loginForm?urlAfterLogin=/loginForm)
+* [Service code organization (Ports & Adapters)][hexagonal-architecture-article]
+  * This [first PR](https://github.com/nubank/savings-accounts/pull/1/files?diff=unified) of this service might help visualize the code organization at Nubank' services
+  * [Microservice structure and hexagonal architecture glossary][code-organization-glossary]
+  * [Busquem conhecimento (Portuguese)](https://wiki.nubank.cofeedbacksm.br/index.php/Busquem_Conhecimento#Ports_.26_Adapters)
+* [Kafka](http://kafka.apache.org/intro)
+  * Kafka is a distributed streaming platform. We use it for async communication between services.
+  * The main kafka abstraction we use is the topic. [Services produce](https://github.com/nubank/bleach/blob/master/src/bleach/diplomat/producer.clj) messages to topics and [services consume](https://github.com/nubank/bleach/blob/master/src/bleach/diplomat/consumer.clj) messages from topics. Any number of services can produce to a topic and all the services that are consuming from this topic will receive this message.
+  * [Busquem conhecimento in portuguese](https://wiki.nubank.com.br/index.php/Busquem_Conhecimento#Kafka)
+* [Datomic](http://docs.datomic.com/tutorial.html)
+  * Datomic is a git like database. Information accumulates over time. Information is not forgotten as a side effect of acquiring new information.
+  * [Intro to Datomic](https://www.youtube.com/watch?v=RKcqYZZ9RDY)
+  * [Learn datalog](http://www.learndatalogtoday.org/)
 
-The goal of this exercise is to make you familiar with Nubank's general and data infrastructures. The exercise is split up into two parts, _Part I_ is ["Creating a dataset"](dataset-exercise.md) and _Part II_ is ["Creating a service to expose a dataset via API"](service-exercise.md).
+* AWS
+  * We run most of our Nubank services on AWS using Kubernetes. If you want to get to know our cloud infrastructure, go to `Basic Devops` at the [general onboarding guide](https://docs.google.com/a/nubank.com.br/document/d/1x6soXtlFli-I6zaGyUI-oG3k87ASaICoqr698NhFwwQ/edit?usp=sharing)
+  * [Intro to Nubank's AWS Infrastructure](https://wiki.nubank.com.br/index.php/Busquem_Conhecimento#Intro_to_Nubank.27s_AWS_Infrastructure)
+  * [Buscquem conhecimento in English on Kubernetes](https://www.youtube.com/watch?v=93O8C4cKd1g)
 
-[hexagonal-architecture-article]: https://alistair.cockburn.us/hexagonal-architecture/
-[code-organization-glossary]: https://github.com/nubank/playbooks/blob/502cd385d5c30f13405f9b481d0557d793c61279/docs/code-organization.md#hexagonal-architecture
+* [Apache Spark](https://spark.apache.org/)
+  * Apache Spark is a general framework, that by leveraging distributing computing, handles large-scale data processing and analytics.
+  * We at Nubank are heavy users of it; We use it to process and produce new [datasets](https://github.com/nubank/data-platform-docs/blob/master/glossary.md#dataset).
+
+After requesting for access permissions, [setup](setup.md) your dev environment.
