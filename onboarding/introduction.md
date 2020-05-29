@@ -28,7 +28,7 @@ Raise a request for the following accounts by logging into Nubank's [IT Ops](htt
 |----------------|---------|
 |Create a [Github](https://github.com/) account|Get access to the [Nubank github](https://github.com/nubank/) account, the Nubank's codebase|
 |splunk|To trace and debug the services|
-|Databricks|Data analysis tool. You already have access to Databricks via Okta. To access databricks notebooks, reach out to florian.kornrumpf@nubank.com.br. Or, raise a request via IT Ops to get added to a specific group inside Databricks|
+|Databricks|Data analysis tool. You already have access to Databricks via Okta. To get admin rights, request in Slack channels - #squad-data-infra or #access-request. Note that you can access Databricks through VPN only.|
 |Looker|Data visualization tool|
 |Sonar-js|Submit request by selecting `Scopes`, and name of the scope is `metapod-admin`|
 |OpsGenie|An Incident management tool used by Hausmeisters|
