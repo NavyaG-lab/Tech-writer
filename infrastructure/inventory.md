@@ -19,6 +19,64 @@ These are "normal" Clojure services that get deployed in our main infrastructure
 - [tapir](https://github.com/nubank/tapir)
 - [veiga](https://github.com/nubank/veiga)
 
+### Context on why services are sharded, shard-aware, or just global
+
+At nubank we have this notion of sharding our customer-base into horizontal instances of our production stack.
+This is to allow us to tune scaling needs to a fixed size and when we run out of space, we create a new shard.
+Squads that deal with customers almost exclusively have sharded services, where service `mango` is deployed on all `X` shards and none of `mango`'s logic needs to know about the shard abstraction or other deployments of `mango`.
+
+Data-infra is a little unique because we have sharded services, global services, and global services that are shard-aware
+
+#### sharded services
+
+##### riverbend
+
+`riverbend` consumes from the `EVENT-TO-ETL` topic on the shard it deployed on. It sorts those messages into their respective dataset-series, batches them up as AVRO files on s3, and sends a commit message to the `NEW-SERIES-PARTITIONS` topic.
+
+`riverbend` was previously a shard-aware service on the global shard. This required it to scale according to our entire customer base. Now that it is sharded, we can tune it to work for the max shard size and not need to worry about how large nubank gets.
+
+##### correnteza
+
+`correnteza` connects to datomic database and extracts change logs, storing them as AVRO files on s3, and registers metadata for those files in a docstore. It is a service sharded service that only extracts from databases within its shard.
+
+`correnteza` was previously a shard-aware service in global that would extract from datomic databases across all shards. This was problematic because we needed more liberal security policies to allow `correnteza` to read from all databases. Additionally, scaling was a bit trickier because with `N` shards, every new service would add `N` new databases.
+
+Note that `correnteza` collects input data for the datomic contracts layer of the ETL. When the ETL starts it needs to read this data. For whatever reason, the ETL reads directly from `correnteza`'s extraction metadata docstore. Given `correnteza` used to live on global, the ETL would just read from this one table. When we sharded `correnteza`, we left all the different shards still writing to the single global extraction metadata docstore.
+
+##### conrado
+
+`conrado` is an HTTP front-end to the serving layer docstore. The docstore holds data for all customers, across all shards.
+
+`conrado` was previously a service global that services across all shards would access. We decided to shard it after a bad crash. By sharding `conrado` we reduced the blast radius of outages. For instance, we had some issues with pods auto-scaling and coming up and back when `conrado` lived in global it brought down functionality for the entire customer base.
+
+#### global services
+
+##### cutia
+
+Consumes from the `DATASET-COMMITTED` and for every archive dataset that is computed sends it as an input to an archive dataset-series on `ouroboros`. It talks with the global instance of `ouroboros`, so it doesn't need to know about shards.
+
+##### metapod
+
+Tracks metadata for the ETL run.
+
+Currently lives in the global shard in brazil account but is being migrated to the global shard of the data account.
+
+##### veiga
+
+A HTTP-to-Kafka proxy for sending kafka data between AWS accounts. This is needed to get around some cross-account communication limitations and allow `metapod` to send `DATASET-COMMITTED` messages to all the different countries.
+
+Will reside in every country and be hit by the data account `metapod`.
+
+#### global shard-aware services
+
+##### tapir (shard-aware kafka production)
+
+`tapir` does two things, it loads data into the single serving layer docstore shared by all shards and it publishes dataset rows to kafka. When publishing rows to kafka, we need to be sure to send the row to the relevant shard, where the customer or loan or whatever lives. Hence, `tapir` is shard-aware: it doesn't have one kafka producer component, it has `N`, where `N` is the number of shards. It uses the appropriate shard producer to send the message only to that kafka cluster.
+
+##### ouroboros (shard-aware kafka consumption)
+
+`ouroboros` keeps track of input data for dataset-series and serves it to the ETL when it starts. Since a lot of input data for dataset-series comes from `riverbend` serializing events to s3, and `riverbend` is sharded, `ouroboros` either needs to be sharded or shard-aware. On the other hand, since it talks to the ETL, it is nicer to have `ouroboros` serves this dataset-series metadata to the ETL, so it is nice to have
+
 ### Front-ends
 
 #### Clojurescript
