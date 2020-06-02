@@ -1,27 +1,27 @@
 # multi-country
 
-## overview
+## Overview
 
 [this slide deck](https://docs.google.com/presentation/d/17c2l00x6rdO9bt2C3ZD2P_Gn2G1so7BXEyFwY_gaky0/edit#slide=id.g7e12e10c74_0_14]) explains a lot of the changes needed to run our data infrastructure on the data aws account.
 
-## mesos
-mesos on the data account can be found using the naming scheme:
+**Please note that mesos-master and aurora-scheduler are already isolated on the Data account, and have distinct DNS addresses.**
 
-```
-prod-foz-white-mesos-master
-prod - env
-foz - prototype
-white - layer
-mesos-master - service name
-```
+## Aurora
 
-So for example, currently it is at: [https://prod-foz-mesos-master.nubank.world:8080/scheduler/jobs/prod] (note the `layer` isn't required)
+Aurora (aurora-scheduler) provides access to the Aurora Scheduler UI.
 
-## airflow
+`aurora-scheduler` on the Data account is currently available at [https://prod-foz-aurora-scheduler.nubank.world/](https://prod-aurora-scheduler.nubank.world/)
 
-[Airflow running on the data account](https://airflow.nubank.world/admin/)
+## Mesos
+Mesos (mesos-master) provides access to the Mesos UI, and allows you to see lower level details of the jobs. It is usually recommended to interface directly with Aurora whenever possible.
 
-### dags
+`mesos-master` on the Data account is currently available at [https://prod-foz-mesos-master.nubank.world/](https://prod-foz-mesos-master.nubank.world/)
+
+## Airflow
+
+Airflow on the Data account is available at [https://airflow.nubank.world/admin/](https://airflow.nubank.world/admin/)
+
+### DAGs
 
 The daily etl run on the data account, which currently includes mexico datasets is called `daguito`.
 
