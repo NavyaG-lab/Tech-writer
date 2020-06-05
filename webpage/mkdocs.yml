@@ -1,0 +1,16 @@
+site_name: Data Platform Docs
+site_description: Data platform documentation
+site_author: Data tribe
+site_url: https://data-platform-docs.nubank.com.br/
+repo_url: https://github.com/nubank/data-platform-docs/
+edit_uri: edit/master/
+theme:
+  name: material
+  favicon: webpage/assets/nubank-favicon.ico
+  logo: webpage/assets/nubank-logo.svg
+extra_css: [webpage/extra.css]
+plugins:
+  - search # necessary for search to work
+  - git-revision-date-localized
+markdown_extensions:
+  - pymdownx.superfences
