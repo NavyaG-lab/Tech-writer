@@ -569,9 +569,34 @@ The above is an async request. You can check whether it is completed with [this 
 ## Retracting Manual Appends to Dataset Series
    You will occassionally receive requests from users to retract datasets which were manually appended to a dataset-series. This usually happens in the #manual-dataset-series channel.
 
-- Use `insomnia`/ `sonar` to get the id of the dataset you want to retract. For eg., `5d94b837-c31e-4109-ac73-b904bbc7bf17`.
-- Retract using this end-point on metapod:
-  `nu ser curl POST global metapod /api/migrations/retract/dataset-series/dataset/5d94b837-c31e-4109-ac73-b904bbc7bf17`
+- Use `nu dataset-series info -v <dataset-series>` to get the id of the dataset you want to retract. As shown in the illustrative example below, the dataset id can be found under `Resources`:
+```
+nu dataset-series info -v ftp-series
+
+3 datasets in series
+there are 1 different schemas
+the latest was appended at 2020-06-03T13:38:01.644Z
+
+Schema-group
+Schema                                5e84f976-67b7-4979-8568-d9f1c4b2fb60
+NAME                                  TYPE                                  SUBTYPE
+____                                  _______                               _______
+base_date                             date
+business_days                         double
+cdi_equivalent                        double
+equivalent_cdi_spread                 double
+equivalent_maturity                   date
+ftp_curve                             double
+_
+Resources:
+ID                                    COMMIT
+____                                  ________
+5e84f976-5075-4f03-beb7-b57bb503a303  2020-04-01T20:28:38.215Z
+5ebd6ecb-a26c-438b-af49-a6902ad3751e  2020-05-14T16:16:11.137Z
+5ed7a7b9-825e-4fd6-944c-049bd859be67  2020-06-03T13:38:01.644Z
+```
+- Retract using this end-point on ouroboros:
+  `nu ser curl POST --env prod --country br global ouroboros /api/admin/migrations/delete-resource -d'{"resource-id": "<resource-id>"}'`
 
 If the uploaded dataset has been committed to a transaction, we will also need to retract the raw datasets for that dataset-series.The raw datasets have a naming convention: `series-raw/{dataset-series-name}-*` For eg., for a dataset-series `series/direct-mail`, we may also have to retract
 
@@ -580,7 +605,9 @@ If the uploaded dataset has been committed to a transaction, we will also need t
 - "series-raw/direct-mail-alt-version-0-avro"
 - "series-raw/direct-mail-alt-version-0-parquet"
 
-To retract these raw datasets, we follow the same procedure as above for each one of them: get the `id` of the dataset, and retract using the metapod endpoint.
+To retract these raw datasets, we need to fetch their IDs from Metapod and retract them using:
+
+ `nu ser curl POST global metapod /api/migrations/retract/committed-dataset/<dataset-id>`
 
 ## Replaying Deadletters
 **Deadletter:** when something goes wrong in a service, it creates a deadletter. That information is captured by a service (called `Mortician`) including the service that created the message, the recipient, the payload, and the error information. This is very important for debugging, and also allows us to just replay the same message -- as if the message creator had just done it.
