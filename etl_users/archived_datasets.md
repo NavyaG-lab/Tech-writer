@@ -74,7 +74,7 @@ package etl.dataset_series.archived
 
 object MyDataset extends DatasetSeriesContract {
   
-  val name = "dataset-my-dataset"
+  val seriesName = "dataset-my-dataset"
   
   ...
   
@@ -98,3 +98,5 @@ object MyDataset extends DatasetSeriesContract {
 ```
 
 Note that by default, `archivedVersion` makes all metadata columns primary keys of your new dataset. If you wish to change this (to change deduplication behaviour for example), it also takes an optional `commonPrimaryKeys` which you can use to restrict which of these keys should be set as primary.
+
+For your contract dataset to be computed you'll also need to add it to the [list of archive contracts](https://github.com/nubank/itaipu/blob/master/src/main/scala/nu/data/br/dataset_series/archived/package.scala)
