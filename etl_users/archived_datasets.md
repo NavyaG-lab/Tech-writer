@@ -7,9 +7,9 @@ A typical use case is when computing a model every day. The authors of the model
 Setting up a dataset to be archived is a two-fold process:
 
 1. Add relevant metadata to the dataset for the ETL to correctly trigger its archiving after each successful computation.
-2. Write an archive `DatasetSeriesContractOp` for the ETL to correctly read it back in subsequent runs.
+2. Write an archive `DatasetSeriesContract` for the ETL to correctly read it back in subsequent runs.
 
-This reference document assumes that you understand how to code up a basic `SparkOp`, and that you are somewhat familiar with the `DatasetSeriesContractOp` API.
+This reference document assumes that you understand how to code up a basic `SparkOp`, and that you are somewhat familiar with the `DatasetSeriesContract` API.
 
 ## Relevant vocabulary
 
@@ -28,7 +28,7 @@ This reference document assumes that you understand how to code up a basic `Spar
   | `archive_environment`    | `StringType` | The environment in which the row was created. For most use cases, this should be `prod` |
   | `archive_transaction_id` | `StringType` | The transaction id for the run that produced the row         |
 
-* The dataset archive feature builds on the `DatasetSeriesContractOp` API as it facilitates deduplication and schema reconciliation. In the case of archives, its schema reconciliation facilities are particularly useful as they allows you to safely evolve your dataset's schema without catastrophically breaking its ingestion. The trade-off is that you need to be careful to update the corresponding `DatasetSeriesContractOp` after any modification of the dataset; if you do not, new versions of your dataset will be dropped and will not appear in subsequent runs until you fix the Op. See relevant section in the Dataset Series documentation for more information on [schema evolution](dataset_series.md#dealing-with-versions) & [troubleshooting dropped datasets](dataset_series.md#droppedschemas).
+* The dataset archive feature builds on the `DatasetSeriesContract` API as it facilitates deduplication and schema reconciliation. In the case of archives, its schema reconciliation facilities are particularly useful as they allows you to safely evolve your dataset's schema without catastrophically breaking its ingestion. The trade-off is that you need to be careful to update the corresponding `DatasetSeriesContract` after any modification of the dataset; if you do not, new versions of your dataset will be dropped and will not appear in subsequent runs until you fix the Op. See relevant section in the Dataset Series documentation for more information on [schema evolution](dataset_series.md#dealing-with-versions) & [troubleshooting dropped datasets](dataset_series.md#droppedschemas).
 
 ## Set up
 
@@ -59,20 +59,20 @@ object MyDataset extends SparkOp with DeclaredSchema {
 }
 ```
 
-### 2. Setting up a `DatasetSeriesContractOp`
+### 2. Setting up a `DatasetSeriesContract`
 
 This step is automated when using [Squish](dataset_series.md#squish) (which should work for most Archived Datasets).
 
 You can set up your series normally as described in the [Dataset Series documentation](dataset_series.md), keeping the following in mind:
 
 * We usually try to keep all archives in the `archived` package of the `dataset_series` package
-* The `name` attribute of your `DatasetSeriesContractOp` is identical to your original dataset's with all `/` characters replaced with `-`. For example, `dataset/my-dataset` becomes `dataset-my-dataset`
+* The `name` attribute of your `DatasetSeriesContract` is identical to your original dataset's with all `/` characters replaced with `-`. For example, `dataset/my-dataset` becomes `dataset-my-dataset`
 * as described above, the archive system adds additional metadata columns to your dataset, which would need to be required in the dataset series definition as well. For this purpose, you can use the `archivedSchema` function (available in the `archived` package) to turn any normal Dataset Series schema into its augmented version.
 
 ```scala
 package etl.dataset_series.archived
 
-object MyDataset extends DatasetSeriesContractOp {
+object MyDataset extends DatasetSeriesContract {
   
   val name = "dataset-my-dataset"
   
