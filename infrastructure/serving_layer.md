@@ -43,7 +43,7 @@ Make sure your dataset's primary key ([for example](https://github.com/nubank/it
 
 #### data expiration
 
-With serving layer data that is loaded into the serving layer table (`LoadedAndPropagated` or `LoadedOnly` modes), you must also specify when you would like that data to be wiped from the docstore and hence no longer retrievable via `conrado`. The options are `ServingLayerExpiration.NeverExpires` ([example](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/dataset/batch_models/fraud_daily/collisions/ServingAddressCollisions.scala#L45)) and `ServingLayerExpiration.ExpiresIn(days=5)`. For `ServingLayerExpiration.ExpiresIn(days=X)`, the data will be wiped at the end of day of the `targetDay + X`, so if the target day is `2020-02-02` and `days` is `2`, the data will be wiped at `2020-02-04 23:59:59`.
+With serving layer data that is loaded into the serving layer table (`LoadedAndPropagated` or `LoadedOnly` modes), you must also specify when you would like that data to be wiped from the docstore and hence no longer retrievable via `conrado`. The options are `ServingLayerExpiration.NeverExpires` ([example](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/dataset/batch_models/fraud_daily/collisions/ServingAddressCollisions.scala#L45)) and `ServingLayerExpiration.ExpiresIn(days=5)` ([example](https://github.com/nubank/itaipu/blob/master/src/main/scala/nu/data/br/datasets/data_infra/DummyServedDataset.scala#L30)]. For `ServingLayerExpiration.ExpiresIn(days=X)`, the data will be wiped at the end of day of the `targetDay + X`, so if the target day is `2020-02-02` and `days` is `2`, the data will be wiped at `2020-02-04 23:59:59`.
 
 ## Tapir
 
@@ -78,7 +78,7 @@ The ETL pipeline runs once a day and will load the results of the datasets in th
 ## Dataset Row Schema
 
 Data is served either via HTTP or Kafka. The payload is a [`dataset
-row`](https://github.com/nubank/common-etl-spec/blob/master/src/tapir/schemata/dataset.clj#L30),
+row`](https://github.com/nubank/common-etl-spec/blob/master/src/common_etl_spec/serving_layer/schemata/dataset.clj#L31-L41),
 which contain some metadata and a `:value` key. The row is a map
 containing the following fields:
 
@@ -87,8 +87,7 @@ containing the following fields:
  - `:transaction-id`: the [metapod transaction](/glossary.md#transaction) that the dataset was a part of.
  - `:dataset-id`: the id for the dataset on metapod
  - `:prototype`: what prototype (eg: global, s0, s1, ...) the customer/account is associated with (not required)
- - `:expires-at`: loose proxy for when the data may become overwritten. We suggest you ignore this as it doesn't mean data will necessarily be overwritten before or after this time.
- - `:serving-layer-expiration-timestamp`: Unix timestamp (in seconds) at which the dataset will expire from the serving layer docstore.
+ - `:expires-at`: if a [data expiration](#data-expiration) policy is set, this is the human-readable datetime of when the row expires and hence stops being available in the serving layer table. When data expiration isn't set (defaulting to `ServingLayerExpiration.NeverExpires`) this is `"9999-12-31T23:59:59Z"`.
  - `:target-date`: the day that the data was loaded
  - `:value`: a map representing the row of the dataset
 
