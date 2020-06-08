@@ -24,13 +24,13 @@ Now that we know the definition of Pii, here is a NON exhaustive list of Pii dat
 * Credit card number
 * Account number 
 * Geolocation
+* Pictures from the customer onboarding
 
 Besides the Pii data, we also have the personal data, which would be any kind of information associated with an identified or identifiable person. Below we have a non exhaustive list of personal data (only if they are associated to an identified or identifiable person): 
 
 * Credit card transactions, bill, installments etc. 
 * Nuconta transactions, balance, transferences etc. 
 * Credit scores and general bureau data 
-* Pictures
 * Travel notification
 * Profession
 * Income
