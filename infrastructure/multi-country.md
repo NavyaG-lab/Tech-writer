@@ -7,6 +7,9 @@
 **Please note that mesos-master and aurora-scheduler are already isolated on the Data account, and have distinct DNS addresses.** This means that we no longer need to specify the port in their URLs (see the corresponding sections below).
 In Brazil, even though they are already running in isolated instances too, for the time being the port still needs to be specified.
 
+In order to set up access to the multiple countries, follow [these instructions][multi-country-setup].
+
+
 ## Aurora
 
 Aurora (aurora-scheduler) provides access to the Aurora Scheduler UI.
@@ -28,3 +31,5 @@ The daily etl run on the data account, which currently includes mexico datasets 
 
 Other dags also run in the data account, such as the dag that sends progress announcements to slack.
 Here is an [example of moving a dag to run on the data account](https://github.com/nubank/aurora-jobs/pull/1125).
+
+[multi-country-setup]: ./multi_country_setup.md
