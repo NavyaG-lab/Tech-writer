@@ -4,7 +4,8 @@
 
 [this slide deck](https://docs.google.com/presentation/d/17c2l00x6rdO9bt2C3ZD2P_Gn2G1so7BXEyFwY_gaky0/edit#slide=id.g7e12e10c74_0_14]) explains a lot of the changes needed to run our data infrastructure on the data aws account.
 
-**Please note that mesos-master and aurora-scheduler are already isolated on the Data account, and have distinct DNS addresses.**
+**Please note that mesos-master and aurora-scheduler are already isolated on the Data account, and have distinct DNS addresses.** This means that we no longer need to specify the port in their URLs (see the corresponding sections below).
+In Brazil, even though they are already running in isolated instances too, for the time being the port still needs to be specified.
 
 ## Aurora
 
