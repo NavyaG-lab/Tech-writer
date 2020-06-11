@@ -270,4 +270,24 @@ Some instances of this happening include:
   - [3] https://nubank.slack.com/archives/CE98NE603/p1573363471193700
 
 ### Solution
-[Retracting](https://github.com/nubank/data-platform-docs/blob/master/ops_how_to.md#retracting-datasets-in-bulk) the inputs for the failing datasets in order to recompute the inputs and re-store them on s3 usually fixes it.
+[Retracting](https://github.com/nubank/data-platform-docs/blob/master/ops_how_to.md#retracting-datasets-in-bulk)
+the inputs for the failing datasets in order to recompute the inpu
+ts and re-store them on s3 usually fixes it.
+
+## No space left on device
+
+### Symptoms
+
+No real symptoms. This alert directly points to the real cause: one or
+more EC2 instances running Spark Executors are out of disk space.
+
+### Solution
+
+  * Change the storage class for the instances assigned to that job in
+    `aurora-jobs`. See [this
+    PR](https://github.com/nubank/aurora-jobs/pull/1232) for an
+    example. Please note: at the time of the PR, we had three storage
+    classes defined: `lowe`, `standard`, `high`. Also, see [this Slack
+    thread](https://nubank.slack.com/archives/CP3F163C4/p1591794519178600)
+    to trace back to the context leading to that PR.
+  * If the job is critical, run it manually with this override.
