@@ -93,7 +93,39 @@ then you need to delete the old airflow
 
 Go to AWS CloudFormation and delete the old roles stack named `cantareira-y-airflow-roles`
 
-Don't forget to commit the changes you made to deploy, so that we have an up to date view of the changes in a version-control system.
+Don't forget to commit the changes you made to deploy, so that we have
+an up to date view of the changes in a version-control system.
+
+### Updating Airflow in `nu-data`
+
+Things are bit rougher in `nu-data` because it‘s still a work in
+progress. Preparatory steps
+  * Set `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` to your
+    corresponding credentials for `nu-data`
+  * Check out the branch
+    `giorgio-valoti/ch125837/spin-new-airflow-from-deploy`
+
+After this you can start the console:
+
+```
+./console <either prod or staging>
+```
+
+And then use:
+
+```
+AirflowService.create!(ENVIRONMENT, "foz", "<your new color>")
+```
+
+After that, you need to update DNS entries manually in Route 53 by
+updating the alias from the old color to the new one.
+
+Finally, you can delete the old stack with:
+
+```
+AirflowService.delete!(ENVIRONMENT, "foz", "<the old color>")
+```
+
 
 ## Restarting the Airflow process
 
