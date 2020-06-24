@@ -187,3 +187,5 @@ nu dataset-series info <my-series> -v
   - your dataset series' precise name (e.g. `series/direct-mail`)
   - the id(s) of the dataset(s) you wish deleted
   - the reason for wishing to delete the data
+  
+**NB**: while we use the word _deletion_ here the data actually doesn't get deleted, only de-referenced. If you need the actual files to be deleted from S3 for compliance or security reasons, get in touch with Data Infra
