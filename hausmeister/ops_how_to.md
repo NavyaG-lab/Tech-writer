@@ -1,10 +1,14 @@
-# Operations HOWTO
+# Operations Cookbook
+
+This guide aims at providing the Hausmeisters, a compendium of how-to-do tasks that are required to quickly fix the issues. It can be useful for the New Engineers planning to step up for the Hausmeister (on-call rotation) role.
+
+This is a recipe based guide where each section contains the steps required (how-to-do-it) to follow the recipe. It also provides the context or an overview of the topic and helpful links to other useful information for the recipe.
 
   * [Restart Aurora](#restart-aurora)
   * [Hot-deploying service rollbacks](#hot-deploying-service-rollbacks)
   * [Re-deploying the DAG during a run](#re-deploying-the-dag-during-a-run)
   * [Controlling aurora jobs via the CLI](#controlling-aurora-jobs-via-the-cli)
-  * [Basic steps to handling Airflow DAG errors](#basic-steps-to-handling-airflow-dag-errors)
+  * [Handling Airflow DAG errors](#handling-airflow-dag-errors)
   * [Recover from non-critical dataset/model build failures](#recover-from-non-critical-datasetmodel-build-failures)
     + [Determining if a dataset or model is business critical or can be fixed without time-pressure](#determining-if-a-dataset-or-model-is-business-critical-or-can-be-fixed-without-time-pressure)
     + [Determining if it was the dataset or model that failed](#determining-if-it-was-the-dataset-or-model-that-failed)
@@ -15,7 +19,7 @@
       - [Using either `sbt console` or `ammonite repl`](#using-either-sbt-console-or-ammonite-repl)
       - [Using `spark_ops.json`](#using-spark_opsjson)
   * [Keep machines up after a model fails](#keep-machines-up-after-a-model-fails)
-  * [Checking if a dataset was loaded into the warehouse](#checking-if-a-dataset-was-loaded-into-the-warehouse)
+  * [Check if a dataset was loaded into the warehouse](#check-if-a-dataset-was-loaded-into-the-warehouse)
   * [Manually commit a dataset to metapod](#manually-commit-a-dataset-to-metapod)
   * [Removing bad data from Metapod](#removing-bad-data-from-metapod)
     + [Retracting datasets in bulk](#retracting-datasets-in-bulk)
@@ -41,36 +45,25 @@
   * [Replaying Deadletters](#replaying-deadletters)
   * [Regenerating Expired Certificates](#regenerating-expired-certificates)
 
+## Aurora
 
 ## Restart Aurora
 
-Every once in a while, Aurora goes down. `sabesp` commands, such as ones involved in running the DAG, won't work in this case .
-
-### Symptoms of a non-responsive Aurora**
-
-- The [aurora web UI](https://cantareira-stable-aurora-scheduler.nubank.com.br:8080) does not load, but the [mesos web UI](https://cantareira-stable-mesos-master-bypass.nubank.com.br) does.
-- A lot of pending jobs in the [aurora web UI](https://cantareira-stable-aurora-scheduler.nubank.com.br:8080)
-
-### Solution
-
-1. SSH into `aurora-scheduler`, via `nu ser ssh aurora-scheduler --suffix stable --env cantareira --region us-east-1` and look at the aurora logs via `journalctl -u aurora-scheduler`.
-
-1. kill the job via sabesp:
-
-`sabesp --aurora-stack cantareira-stable jobs kill jobs prod itaipu-contracts`
+Every once in a while, Aurora goes down. `sabesp` commands, such as ones involved in running the DAG, won't work in this case. The steps involved in restarting the Aurora are as follows:
 
 1. Restart Mesos Master:
   - cycle `mesos-master`: `nu ser cycle mesos-master --env cantareira --suffix stable --region us-east-1`
 
-1. Restart Aurora Scheduler:
+2. Restart Aurora Scheduler:
   - `nu ser ssh aurora-scheduler --suffix stable --env cantareira --region us-east-1`
   - Check current status: `sudo systemctl status aurora-scheduler`
   - Start the service: `sudo systemctl restart aurora-scheduler`
   - Verify that the service restarted: `journalctl -f -u aurora-scheduler`
 
-Most likely, you will need to [restart Airflow](airflow.md#restarting-the-airflow-process) after this happens.
+3. After restarting Aurora:
 
-Another result of restarting aurora is an orphaned mesos framework. To check this, look for entries under `Inactive Frameworks` [here](https://cantareira-stable-mesos-master-bypass.nubank.com.br/#/frameworks).
+- Most likely, you will need to [restart Airflow](../airflow.md#restarting-the-airflow-process).
+- Restarting aurora results in an orphaned mesos framework. To check this, look for entries under `Inactive Frameworks` [here](https://cantareira-stable-mesos-master-bypass.nubank.com.br/#/frameworks).
 
 ```shell
 # Use the direct IP to the mesos instance (due to DNS issues) - it's on Leader on the left side of https://cantareira-stable-mesos-master.nubank.com.br/
@@ -78,6 +71,11 @@ Another result of restarting aurora is an orphaned mesos framework. To check thi
 
 curl -XPOST 10.130.1.61:5050/master/teardown -d 'frameworkId=67386329-1fe2-48f4-9457-0d45d924db5d-0000'
 ```
+## Controlling aurora jobs via the CLI
+
+[see sabesp cli examples](../cli_examples.md)
+
+## Deployment
 
 ## Hot-deploying service rollbacks
 
@@ -87,31 +85,29 @@ If a buggy version gets deployed of a service that lives in the non-data-infra p
 
 If the DAG is using a buggy version of a program and you want to deploy a fix, in certain cases you can deploy the fix to the running DAG.
 
-Make sure you aren't pulling in non-fix related changes since the last DAG deployment.
+### Getting ready
 
-In some cases, you will want to retract datasets before re-running jobs with the newly deployed version. For example, if `itaipu-contracts` is broken (one of the first jobs in the DAG) and you need to deploy a fix for it, kill the job and retract all the committed datasets before restarting with the new `itaipu` version ([see here](ops_how_to.md#retracting-datasets-in-bulk)).
+The following are the initial verification steps to be carried out before the recipe can be executed:
 
-1. Push the fix through the pipeline as described [here](airflow.md#deploying-job-changes-to-airflow)
+- Make sure you aren't pulling in non-fix related changes since the last DAG deployment.
+- In some cases, you will want to retract datasets before re-running jobs with the newly deployed version. For example, if `itaipu-contracts` is broken (one of the first jobs in the DAG) and you need to deploy a fix for it, kill the job and retract all the committed datasets before restarting with the new `itaipu` version ([see here](ops_how_to.md#retracting-datasets-in-bulk)).
 
-2. You can't simply clear the running DAG nodes to restart jobs, because this will pull in the old configurations. Instead, you should kill the job via sabesp:
+### How to do it
+
+1. Push the fix through the pipeline as described in the [Airflow](../airflow.md#deploying-job-changes-to-airflow) documentation.
+
+1. kill the job via sabesp.
 
 ```shell
 sabesp --aurora-stack cantareira-stable jobs kill jobs prod itaipu-contracts
 ```
 
-3. Once the jobs have been killed manually, you should clear them and let airflow start them anew.
+  **Note**: You can't just clear the running DAG nodes to restart jobs, because this will pull in the old configurations.
 
-## Controlling aurora jobs via the CLI
+3. Once the jobs are killed manually, you should clear them and let the Airflow start them again.
 
-[see sabesp cli examples](cli_examples.md)
+## Handling Airflow DAG errors
 
-## Basic steps to handling Airflow DAG errors
-
-The dagão run failed. What can you do?
-
-- Check out for errors on the failed aurora tasks
-- Check out for recent commits and deploy on go, to check if they are related to that
-- If nothing seems obvious and you get lots of generic errors (reading non-existent files, network errors, etc), you should:
  1. Cycle all machines (eg `nu ser cycle mesos-on-demand --env cantareira --suffix stable --region us-east-1`)
  2. Get the transaction id from [#etl-updates](https://nubank.slack.com/archives/CCYJHJHR9/p1538438447000100)
  3. Retry rerunning the dagão with the same transaction (eg `sabesp --verbose --aurora-stack=cantareira-stable jobs create prod dagao --filename dagao "profile.metapod_transaction=$metapod_tx"`)
@@ -122,11 +118,12 @@ The dagão run failed. What can you do?
 ## Recover from non-critical dataset/model build failures
 
 Datasets and models, especially newer ones, may have bugs that lead to build failures on Airflow that block downstream jobs.
-There are two things to do to recover from these failures:
- * Prevent the failure in subsequent runs
- * Retrigger downstream jobs if they can be successfully run in the presence of upstream failures. For example, in the case of a single model failing and causing all of `itaipu-rest` from not running.
 
-There are two types of jobs that can fail, datasets, which are then used to generate downstream models, or the models themselves. Each have different but similar ways to recovery.
+There are two things to do to recover from these failures:
+ - Prevent the failure in subsequent runs
+ - Retrigger downstream jobs if they can be successfully run in the presence of upstream failures. For example, in the case of a single model failing and causing all of `itaipu-rest` from not running.
+
+There are two types of jobs that can fail - datasets which are used to generate downstream models, or the models themselves. Each have different but similar ways of recovery.
 
 ### Determining if a dataset or model is business critical or can be fixed without time-pressure
 
@@ -134,8 +131,8 @@ If the model is a [`policy model`](https://github.com/nubank/aurora-jobs/blob/00
 
 ### Determining if it was the dataset or model that failed
 
-Get the transaction id for the run ([here is how](https://github.com/nubank/data-infra-docs/blob/master/monitoring_nightly_run.md#finding-the-transaction-id)).
-Then find uncommitted "`datasets`" for that transaction by using [sonar](https://backoffice.nubank.com.br/sonar-js/#/sonar-js/graphiql) run this GraphQL query:
+1. Get the transaction id for the run ([here is how](https://github.com/nubank/data-infra-docs/blob/master/monitoring_nightly_run.md#finding-the-transaction-id)).
+1. Find uncommitted "`datasets`" for that transaction by using [sonar](https://backoffice.nubank.com.br/sonar-js/#/sonar-js/graphiql) run this GraphQL query:
 
 ```
 {
@@ -179,41 +176,51 @@ Given this output, the dataset failed, also causing the dependent model to fail,
 
 ### Dealing with dataset failures
 
-If a dataset is erroring and causing an job node to fail on airflow, we should check to see if it is a critical dataset (current best way is to ask somebody).
-If the dataset is non-critical, we can comment out the dataset from `itaipu` to stop it from failing in subsequent runs. Here is an [example PR that does this](https://github.com/nubank/itaipu/pull/1603). You will also want to clear downstream jobs that were marked as failures to allow them to run (see [Making downstream jobs run when an upstream job fails](#making-downstream-jobs-run-when-an-upstream-job-fails)).
+- If a dataset is failed, and causing a job node to fail on airflow, we should check to see if it is a critical dataset (current best way is to ask somebody).
+
+- If the dataset is non-critical, we can comment out the dataset from `itaipu` to stop it from failing in subsequent runs. 
+
+Here is an [example PR that does this](https://github.com/nubank/itaipu/pull/1603). You will also want to clear downstream jobs that were marked as failures to allow them to run (see [Making downstream jobs run when an upstream job fails](#making-downstream-jobs-run-when-an-upstream-job-fails)).
 
 ### Dealing with model failures
 
-Non-critical models (models that don't feed into policies) can be removed from the DAG definition ([example PR here](https://github.com/nubank/aurora-jobs/pull/483)) so that it doesn't block future runs. The owner of the model can then fix it without blocking other models. It's a good idea to have a look at what happened by querying the model logs in splunk and dropping relevant information directly to the model owners (usually main github contributors to the model):
+Non-critical models (models that don't feed into policies) can be removed from the DAG definition ([example PR here](https://github.com/nubank/aurora-jobs/pull/483)) so that it doesn't block future runs. The owner of the model can then fix it without blocking other models.
 
-```
-index=cantareira job=aurora/prod/jobs/sorting-hat error
-```
+- Look at what happened by querying the model logs in splunk and dropping relevant information directly to the model owners (usually main github contributors to the model):
 
-(the lines are in the reverse order, so use the `>` on the left and select 'show source` to read the stacktraces more easily)
+  ```
+  index=cantareira job=aurora/prod/jobs/sorting-hat error
+  ```
 
-Removing model will only take affect tomorrow, when in the next run is triggered.
+  (the lines are in the reverse order, so use the `>` on the left and select 'show source` to read the stacktraces more easily)
 
-Hence, there are two things you can do to get things building today:
+Removed model will only take affect the next day, when the run is triggered.
 
-- To get downstream jobs to build today, we can do some Airflow manipulations. Note that the failing model will show up as empty in those downstream jobs.
+#### Build Jobs on current day after removing failed model
+
+Removed model will only take affect the next day, when the run is triggered. Hence, there are two things you can do to get things build today:
+
+- To get downstream jobs to build on current day, we can do some Airflow manipulations. Note that the failing model will show up as empty in those downstream jobs.
+
 - If there are no downstream dependencies for a dataset, you can [manually commit an empty dataset for a specific dataset id](#manually-commit-a-dataset-to-metapod).
 
-Lastly, be sure to [deploy job changes to airflow](airflow.md#deploying-job-changes-to-airflow) once the current run finishes.
+  **Important**: Lastly, be sure to [deploy job changes to airflow](../airflow.md#deploying-job-changes-to-airflow) once the current run finishes.
 
 ### Making downstream jobs run when an upstream job fails
 
-Say `itaipu-fx-model` causing the downstream [`fx-model`](https://github.com/nubank/aurora-jobs/blob/000ba9f8b8ac4b06408bf3783971351d7916e912/airflow/main.py#L254) and `itaipu-rest` to fail.
+1. Say `itaipu-fx-model` causing the downstream [`fx-model`](https://github.com/nubank/aurora-jobs/blob/000ba9f8b8ac4b06408bf3783971351d7916e912/airflow/main.py#L254) and `itaipu-rest` to fail.
 
-![fx_model failing](images/failed_dag.png)
+  ![fx_model failing](../images/failed_dag.png)
 
-In this case you can select `fx-model` and mark it as successful:
+1. In this case you can select `fx-model` and mark it as successful:
 
-![mark fx model as success](images/mark_model_success.png)
+  ![mark fx model as success](../images/mark_model_success.png)
 
-Then select the downstream nodes that have failed due to the upstream `fx-model` failure and clear them so that when other running dependencies finish, they will run these nodes. In this case, clear both `databricks_load-models` and `scale-ec2-rest`. The resulting DAG should look like this:
+1. Then select the downstream nodes that have failed due to the upstream `fx-model` failure and clear them so that when other running dependencies finish, they will run these nodes. 
 
-![resulting dag](images/recovered_dag.png)
+1. Clear both `databricks_load-models` and `scale-ec2-rest`. The resulting DAG should look like this:
+
+![resulting dag](../images/recovered_dag.png)
 
 ### Determining downstream datasets to a failed dataset
 
@@ -255,7 +262,7 @@ val successors = node.withSubgraph().toSet - op
 #### Using `spark_ops.json`
 `spark_ops.json` is generated as part of the integration tests which run on CircleCI. You will have to navigate to the integration tests run against the specific version of `release` branch. Download `spark_ops.json` by clicking on the link, as shown below.
 
-![spark_ops_json](images/spark_ops_json.png)
+![spark_ops_json](../images/spark_ops_json.png)
 
 ```cat Downloads/spark_ops.json | jq '[.[] | select(.name == "series-contract/scr-operacao") | {name: .name, inputs: .inputs, downstream: .successors}] '```
 
@@ -265,20 +272,20 @@ Usually when a model job fails, you will want to look at the mesos logs for the 
 
 You can get around this by disabling the scale-down logic on Airflow for a job.
 
- - Restart the job.
- - Find the downscale node
+ 1. Restart the job.
+ 2. Find the downscale node.
 
-![downscale job](images/downscale_node.png)
+  ![downscale job](../images/downscale_node.png)
 
- - Mark the downscale node as success
+ 3. Mark the downscale node as success.
 
-![mark downscale as success](images/mark_success.png)
+![mark downscale as success](../images/mark_success.png)
 
- - After the job fails and you get the logs, clear the downscale node so that airflow will re-run the downscale and machines will be taken offline
+ 4. After the job fails and you get the logs, clear the downscale node so that airflow will re-run the downscale and machines will be taken offline
 
 Note: this tactic mostly applies to models. For Spark, most of the interesting logs live in the driver, which runs on a fixed instance. In the rare cases where you want the Spark executor logs, you can also apply this downscale delay strategy.
 
-## Checking if a dataset was loaded into the warehouse
+## Check if a dataset was loaded into the warehouse
 
 When datasets are loaded into BigQuery the load is logged in the `meta.itaipu_loads` table.
 
@@ -287,9 +294,9 @@ When datasets are loaded into BigQuery the load is logged in the `meta.itaipu_lo
 In specific cases, when a dataset that doesn't have downstream dependencies fails, you can commit an empty parquet file to the dataset.
 This allows buggy datasets to be skipped so that they don't affect the stability of ETL runs.
 
-- Get the `metapod-transaction-id` from [`#etl-updates`](https://nubank.slack.com/messages/CCYJHJHR9/).
-- Find the name of the failing dataset (`dataset-name`) from the SparkUI page.
-- Get the `dataset-id` from sonar with the following GraphQL query:
+1. Get the `metapod-transaction-id` from [`#etl-updates`](https://nubank.slack.com/messages/CCYJHJHR9/).
+2. Find the name of the failing dataset (`dataset-name`) from the SparkUI page.
+3. Get the `dataset-id` from sonar with the following GraphQL query:
 
 ```
 {
@@ -305,7 +312,7 @@ This allows buggy datasets to be skipped so that they don't affect the stability
 }
 ```
 
-- Run the following `sabesb` command to commit a blank dataset for a specific dataset in a given run:
+4. Run the following `sabesb` command to commit a blank dataset for a specific dataset in a given run:
 
 ```shell
 sabesp metapod --token --env prod dataset commit <metapod-transaction-id> <dataset-id> PARQUET s3://nu-spark-us-east-1/non-datomic/static-datasets/empty-materialized/empty.gz.parquet
@@ -313,7 +320,11 @@ sabesp metapod --token --env prod dataset commit <metapod-transaction-id> <datas
 
 ## Removing bad data from Metapod
 
-If bad data has been committed to Metapod, there are some migrations that can be run to *retract* (the Datomic version of *deleting*) certain parts of a transaction, like the committed information about a dataset, attributes and more. The way they work is similar: send a `POST` request with an empty body to an endpoint that starts `api/migrations/retract/:kind-of-stuff-you-want-to-retract/:id`. The currently available things to be retracted are:
+If bad data has been committed to Metapod, there are some migrations that can be run to *retract* (the Datomic version of *deleting*) certain parts of a transaction, like the committed information about a dataset, attributes and more. 
+
+The way to retract parts of a transaction: 
+
+Send a `POST` request with an empty body to an endpoint that starts `api/migrations/retract/:kind-of-stuff-you-want-to-retract/:id`. The currently available things to be retracted are:
 
 * Attributes: via `api/migrations/retract/attribute/:attribute-id`, where `:attribute-id` is the `:attribute/id` of the attribute you want to remove.
 * Indexed attributes: via `api/migrations/retract/indexed-attribute/:indexed-attribute-id`, where `:indexed-attribute-id` is the `:indexed-attribute/id` of the indexed attribute you want to remove.
@@ -356,7 +367,7 @@ If you then re-run the query you will see that the `schema` is now `null`.
 
 ### Retracting datasets in bulk
 
-If you are retracting all datasets, use the following query
+1. If you are retracting all datasets, use the following query.
 ```
 {
   transaction(transactionId: "f7832a01-001b-56f7-a4fe-b3a417f8f654") {
@@ -368,11 +379,11 @@ If you are retracting all datasets, use the following query
 }
 ```
 
-Save the results in a file called `result.json` then run the retraction in parallel for every dataset id (make sure the `jq` command is correct for your query)
+2. Save the results in a file called `result.json`, then run the retraction in parallel for every dataset id (make sure the `jq` command is correct for your query).
 
-```shell
-cat result.json | jq -r ".data.transaction.datasets | .[].id  " | xargs -P 10 -I {} nu ser curl POST global metapod /api/migrations/retract/committed-dataset/{}
-```
+  ```shell
+  cat result.json | jq -r ".data.transaction.datasets | .[].id  " | xargs -P 10 -I {} nu ser curl POST global metapod /api/migrations/retract/committed-dataset/{}
+  ```
 
 You can track the number of committed datasets with the following query
 
@@ -418,7 +429,7 @@ On Sonar click the `Datasets` tab and:
  - Locate the dataset you want, if you want the avro version look for `{your dataset name}-avro` and for parquet it is just `{your dataset name}`
  - There are two paths, the `S3 Path` corresponds to the direct file path on S3, and the `Databricks Path` to the mounted version on databricks. In this case, we want the `Databricks Path`
 
-![finding a dataset on Sonar](images/find_dataset.png)
+![finding a dataset on Sonar](../images/find_dataset.png)
 
 ### Load it in databricks
 Now that you have the path, open up a databricks notebook ([here is a nice example](https://nubank.cloud.databricks.com/#notebook/131424/command/131441))
@@ -517,16 +528,11 @@ If a dataset is served with bad data, and you need to quickly revert to yesterda
    }
    ```
 
-
-
 2. Retract the dataset:
 
    ```bash
    nu ser curl POST global metapod /api/migrations/retract/committed-dataset/dataset/<datasetId>
    ```
-
-
-
 3. Recompute the dataset using yesterday's transaction details (you can get those from yesterday's dag node info)
 
    ```bash
@@ -575,34 +581,9 @@ The above is an async request. You can check whether it is completed with [this 
 ## Retracting Manual Appends to Dataset Series
    You will occassionally receive requests from users to retract datasets which were manually appended to a dataset-series. This usually happens in the #manual-dataset-series channel.
 
-- Use `nu dataset-series info -v <dataset-series>` to get the id of the dataset you want to retract. As shown in the illustrative example below, the dataset id can be found under `Resources`:
-```
-nu dataset-series info -v ftp-series
-
-3 datasets in series
-there are 1 different schemas
-the latest was appended at 2020-06-03T13:38:01.644Z
-
-Schema-group
-Schema                                5e84f976-67b7-4979-8568-d9f1c4b2fb60
-NAME                                  TYPE                                  SUBTYPE
-____                                  _______                               _______
-base_date                             date
-business_days                         double
-cdi_equivalent                        double
-equivalent_cdi_spread                 double
-equivalent_maturity                   date
-ftp_curve                             double
-_
-Resources:
-ID                                    COMMIT
-____                                  ________
-5e84f976-5075-4f03-beb7-b57bb503a303  2020-04-01T20:28:38.215Z
-5ebd6ecb-a26c-438b-af49-a6902ad3751e  2020-05-14T16:16:11.137Z
-5ed7a7b9-825e-4fd6-944c-049bd859be67  2020-06-03T13:38:01.644Z
-```
-- Retract using this end-point on ouroboros:
-  `nu ser curl POST --env prod --country br global ouroboros /api/admin/migrations/delete-resource -d'{"resource-id": "<resource-id>"}'`
+1. Use `insomnia`/ `sonar` to get the id of the dataset you want to retract. For eg., `5d94b837-c31e-4109-ac73-b904bbc7bf17`.
+2. Retract using this end-point on metapod:
+  `nu ser curl POST global metapod /api/migrations/retract/dataset-series/dataset/5d94b837-c31e-4109-ac73-b904bbc7bf17`
 
 If the uploaded dataset has been committed to a transaction, we will also need to retract the raw datasets for that dataset-series.The raw datasets have a naming convention: `series-raw/{dataset-series-name}-*` For eg., for a dataset-series `series/direct-mail`, we may also have to retract
 
@@ -611,24 +592,22 @@ If the uploaded dataset has been committed to a transaction, we will also need t
 - "series-raw/direct-mail-alt-version-0-avro"
 - "series-raw/direct-mail-alt-version-0-parquet"
 
-To retract these raw datasets, we need to fetch their IDs from Metapod and retract them using:
-
- `nu ser curl POST global metapod /api/migrations/retract/committed-dataset/<dataset-id>`
+To retract these raw datasets, we follow the same procedure as above for each one of them: get the `id` of the dataset, and retract using the metapod endpoint.
 
 ## Replaying Deadletters
 **Deadletter:** when something goes wrong in a service, it creates a deadletter. That information is captured by a service (called `Mortician`) including the service that created the message, the recipient, the payload, and the error information. This is very important for debugging, and also allows us to just replay the same message -- as if the message creator had just done it.
 
 You will notice soft-alarms on [#squad-di-alarms](https://app.slack.com/client/T024U97V8/C51LWJ0SK) warning of new deadletters.
 
-![deadletter-warning](images/deadletter-warning.png)
+![deadletter-warning](../images/deadletter-warning.png)
 
-Head to [Mortician](https://backoffice.nubank.com.br/mortician-gui/) and input the query parameters as shown below. Information on the particular query parameters to use can be found in the Slack alarm.
+1. Head to [Mortician](https://backoffice.nubank.com.br/mortician-gui/) and input the query parameters as shown below. Information on the particular query parameters to use can be found in the Slack alarm.
 
-![mortician-gui](images/mortician-gui.png)
+![mortician-gui](../images/mortician-gui.png)
 
-Mortician GUI lists the deadletters as shown below. They are grouped by error message. You can choose to either replay them or discard them, depending on the specifics of the service & the error.
+2. Mortician GUI lists the deadletters as shown below. They are grouped based on error messages. You can choose to either replay them or discard them, depending on the specifics of the service & the error.
 
-![deadletter-mortician](images/deadletters-mortician.png)
+![deadletter-mortician](../images/deadletters-mortician.png)
 
 ## Regenerating Expired Certificates
 
@@ -642,6 +621,7 @@ Certain airflow nodes (primarily, _models_) depend on _Aurora_ interacting with 
 - Confirm Aurora is present in the [secrets-management](https://github.com/nubank/secrets-management/blob/master/src/identities_without_definition.clj) repository. This is required for Infosec to generate the certificate.
 - Once the certificate is generated, you need to run `nu sec generate certificate aurora`. You might need assistance from a [Data-Infra Permissions Admin](https://github.com/nubank/scope-matrix/blob/23fc2c9a15f8187dfccebf58fe3268877cb0344c/scope-matrix.json#L4534) with this command.
 - Typically, this should solve the issues. However, certain jobs (eg. [Finance Reports](https://github.com/nubank/finance-reports/)) look for certificates in the deprecated path `nu-keysets-prod/certificates/pri/infrastructure/aurora.p12`, instead of the correct path `nu-keysets-br-prod/certificates/pri/services/aurora.p12`. To support such jobs, we have to copy certificates from the correct path to the deprecated path.
+
 ```bash
 aws s3 cp s3://nu-keysets-br-prod/certificates/pri/services/aurora.p12 .
 aws s3 cp aurora.p12 s3://nu-keysets-prod/certificates/pri/infrastructure/aurora.p12

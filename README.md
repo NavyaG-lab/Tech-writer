@@ -1,6 +1,8 @@
-# Data Infra Documentation [![CircleCI](https://circleci.com/gh/nubank/data-platform-docs.svg?style=svg&circle-token=0d7949cdca982ceb84320b0184c1f529d52df53e)](https://circleci.com/gh/nubank/data-platform-docs)
+# Data Platform Documentation [![CircleCI](https://circleci.com/gh/nubank/data-platform-docs.svg?style=svg&circle-token=0d7949cdca982ceb84320b0184c1f529d52df53e)](https://circleci.com/gh/nubank/data-platform-docs)
 
-This repository is the canonical place to put all documentation related to how to understand and operate in our analytical environment.
+Data Platform Docs is a central documentation hub for Data Infra, Data Access Engineers and Data users.  It is a one-stop store that contains the detailed documentation for developers to understand and work on the internal microservices and collaborate to create new services. This platform helps developers and data users to focus on a single documentation source, instead of hunting down several individual guides for different services.
+
+The knowledge base contains a comprehensive list of all microservices and its details, information on thought-through architectures, step-by-step guides, Incident response guides, Dataset series guides, FAQs and more.
 
 ## Data Infra Overall
 
@@ -21,10 +23,10 @@ This repository is the canonical place to put all documentation related to how t
 
 ## ETL Operations
 
-* [Hausmeister](squad/data-infra/hausmeister.md) (a.k.a on-call rotation)
+* [Hausmeister](hausmeister/hausmeister.md) (a.k.a on-call rotation)
 * [Monitoring the nightly run](monitoring_nightly_run.md)
-* [On Call Runbook](on-call_runbook.md)
-* [Ops How To](ops_how_to.md)
+* [On Call Runbook](hausmeister/on_call_runbook.md)
+* [Ops How To](hausmeister/ops_how_to.md)
 * [Incident Response Checklist](./etl_operators/incident_response_checklist.md)
 * [Getting help from other squads](./etl_operators/getting_help_from_other_squads.md)
 * [CLI usage examples](cli_examples.md)
@@ -33,6 +35,7 @@ This repository is the canonical place to put all documentation related to how t
 * [Metapod](metapod.md)
 
 ## Itaipu
+
 * [Primer](itaipu/primer.md)
 * [Styleguide](itaipu/styleguide.md)
 * [Workflow](itaipu/workflow.md)
@@ -42,6 +45,7 @@ This repository is the canonical place to put all documentation related to how t
 * [Pororoca](itaipu/pororoca.md)
 
 ## Infrastructure
+
 * [Inventory](infrastructure/inventory.md)
 * [Multi-country pointers](infrastructure/multi-country.md)
 * [Guide to the runtime environment (Mesos & Aurora)](infrastructure/guide-to-the-runtime-environment.md)
@@ -62,5 +66,6 @@ This repository is the canonical place to put all documentation related to how t
 * [Exercise Part II: Creating a service to expose a dataset via API](onboarding/service-exercise.md)
 
 ## Dimensional Modeling (Data Access)
+
 * [Kimball on Dimensional Modeling Quotes](dimensional_modeling/kimball.md)
 * [Contribution Margin (and how to update static inputs)](dimensional_modeling/contribution_margin.md)

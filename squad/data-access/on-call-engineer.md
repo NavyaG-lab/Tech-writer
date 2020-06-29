@@ -6,7 +6,7 @@ In a weekly based fashion, the responsibilities of the On-call Engineer is to en
 
 The on-call schedule only covers working hours during weekdays since Data Access does not own any time-sensitive services or processes.
 
-It is expected from On-call Engineers that they: 
+It is expected from On-call Engineers that they:
 
 * monitor our data tools
 * write playbooks for common incidents
@@ -46,26 +46,31 @@ If you are in the middle of an incident go here for [common failure scenarios an
 * [Usage dashboard](https://nubank.looker.com/dashboards/gcp_bigquery_logs::bigquery_audit)
 
 #### Databricks
+
 * [Clusters management](https://nubank.cloud.databricks.com/#setting/clusters)
 
-#### Things to keep an eye on:
+#### Things to keep an eye on
 
 * Detach notebooks older than 1 day
 * Restart clusters that are not working as expected
 * Attach, detach, add and remove libraries. There are some instructions [here](https://github.com/nubank/data-platform-docs/tree/master/databricks)
 * Automated jobs:
-    - [Autobump itaipu and restart clusters](https://nubank.cloud.databricks.com/#job/8737)
+
+- [Autobump itaipu and restart clusters](https://nubank.cloud.databricks.com/#job/8737)
+
         - Runs daily at 5:30am (UTC-2)
-    - [Databricks BR loader](https://nubank.cloud.databricks.com/#notebook/1321846)
-        - Runs daily every 3 hours
-    - [Databricks MX loader](https://nubank.cloud.databricks.com/#notebook/1223300/)
-        - Manually triggered
+* [Databricks BR loader](https://nubank.cloud.databricks.com/#notebook/1321846)
+
+    * Runs daily every 3 hours
+- [Databricks MX loader](https://nubank.cloud.databricks.com/#notebook/1223300/)
+
+- Manually triggered
 
 ### Documenting
 
 Keep documentation up to date to help solve incidents:
 
-* [Data Platform Docs] (https://github.com/nubank/data-platform-docs)
+* [Data Platform Docs] (https://github.com/nubank/data-platform-docs>
 * [Common failures documentation](https://github.com/nubank/playbooks/tree/master/squads/data-access)
 * [Nubank wiki](https://wiki.nubank.com.br/)
 * [Data Access Playbooks](https://playbooks.nubank.com.br/squads/data-access/)
@@ -73,7 +78,6 @@ Keep documentation up to date to help solve incidents:
 * [Mordor documentation](https://github.com/nubank/mordor/blob/master/README.md)
 * [Mordor Python lib documentation](https://github.com/nubank/imordor/blob/master/README.md)
 * [Bilbo documentation](https://github.com/nubank/bilbo/blob/master/README.md)
-
 
 ### Post-mortem
 
