@@ -38,6 +38,7 @@ On `common-datomic` version `5.44.2` the capability of generating contracts for 
 - Add the `DatabaseContract` to the respective Country's list of the databases. [Example][6]
 - PS: Remember to add a `private [country]` to your `DatabaseContract` definition, that will make importing the right country easier.
 - PS2: Remember to override the `prototypes` val to the prototypes where the service run in each country. Check out the options available at `nu.data.infra.Prototypes`. [Example][7]
+- PS3: After oppening a PR, remember to ask each code owner to make the necessary communication to the teams that might be affected by this change.
 
 ### Step 4: Migrate references to the old contract
 
