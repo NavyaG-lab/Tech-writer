@@ -25,10 +25,11 @@
 ### Troubeshooting
 
 - [Alerts](../hausmeister/on_call_runbook.md)
-- [Frequently occurred issues](../hausmeister/on_call_runbook.md)
+- [Frequently occurring issues](../hausmeister/on_call_runbook.md)
 - [Issues related to Services](../hausmeister/on_call_runbook.md)
-- Accounts and access permissions related issues
-- Debugging tips
+
+<!-- - Accounts and access permissions related issues
+Debugging tips-->
 
 </details>
 
@@ -45,7 +46,7 @@
 
 The responsibilities include:
 
-- Monitoring run during the day even when there are no alerts, and make sure that nodes in Airflow finish successfully in time (~10 mins). You can proactively solve performance issues if you have bandwidth.
+- Monitoring run during the day even when there are no alerts, and make sure that nodes in Airflow finish successfully in time (usually takes time between 40 minutes to 8 hours). You can proactively solve performance issues if you have bandwidth.
 - Quickly address the Opsgenie pagers related to the run.
   
   Addressing any failures such as:

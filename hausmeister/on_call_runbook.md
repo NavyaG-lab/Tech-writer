@@ -2,7 +2,14 @@
 # On-Call Runbook
 
 - [Alarms](#alarms)
+  - [alert-itaipu-contracts triggered on Airflow](#alert-itaipu-contracts-triggered-on-airflow)
+  - [Correnteza - database-claimer is failing](#correnteza-database-claimer-is-failing)
+  - [Correnteza - attempt-checker is failing](#correnteza-attempt-checker-is-failing)
+  - [Riverbend - no file upload in the last hour](#no-file-upload-in-the-last-hour)
+  - [Warning: [PROD] correnteza_last_t_greater_than_basis_t](#warning-prod-correnteza_last_t_greater_than_basis_t)
 - [Frequent dataset failures](#frequent-dataset-failures)
+  - [Dataset partition not found on s3](#dataset-partition-not-found-on-s3)
+  - [Leaf dataset is failing because of bad definition](#leaf-dataset-is-failing-because-of-bad-definition)
 - [Service related issues](#issues-related-to-services)
 
 This document is a resource for engineers *on-call*.
@@ -22,26 +29,14 @@ When an issue arises, it is expected that you mention the failure, communicate u
 For serious incidents, also perform these steps:
 
 - find someone to actively communicate updates about the incident, referred to as the "comms" person. if you're alone, you can take that role.
-  - you are the "point" person, which means you're the first responder and primary person acting on the issue
-  - change the [#data-crash](https://nubank.slack.com/messages/CE98NE603/) channel topic to ":red_circle: -short description of the failure- | point: -your-name- comms: -comms-person-" e.g. "itaipu-dimensional-modeling not finishing"
-  - move any discussions about the issue to this channel (no need for threads)
-
+- you are the "point" person, which means you're the first responder and primary person acting on the issue
+- change the [#data-crash](https://nubank.slack.com/messages/CE98NE603/) channel topic to ":red_circle: -short description of the failure- | point:  -your-name- comms: -comms-person-" e.g. "itaipu-dimensional-modeling not finishing"
+- move any discussions about the issue to this channel (no need for threads)
 If the incident affects the time which data will be available for users at Nubank, or availability of some user-facing service (e.g. BigQuery, Looker, Belo Monte, Databricks), post a short message about what is being affected in [#data-announcements](https://nubank.slack.com/messages/C20GTK220/). This way, users know we are aware of the issue. Note that this channel serves a wider audience than engineers, so describe the issue in plain terms and at a high level.
 
 After the incident has been taken care of and resolved, change the topic back to ":green_circle:" (and post an update for users in #data-announcements, if applicable).
 
 ## Alarms
-
-- [alert-itaipu-contracts triggered on Airflow](#alert-itaipu-contracts-triggered-on-airflow)
-- [Correnteza - database-claimer is failing](#correnteza-database-claimer-is-failing)
-- [Correnteza - attempt-checker is failing](#correnteza-attempt-checker-is-failing)
-- [Riverbend - no file upload in the last hour](#no-file-upload-in-the-last-hour)
-- [Warning: [PROD] correnteza_last_t_greater_than_basis_t](#warning-prod-correnteza_last_t_greater_than_basis_t)
-
-## Frequent Dataset Failures
-
-- [Dataset partition not found on s3](#dataset-partition-not-found-on-s3)
-- [Leaf dataset is failing because of bad definition](#leaf-dataset-is-failing-because-of-bad-definition)
 
 ### alert-itaipu-contracts triggered on Airflow
 
@@ -75,7 +70,8 @@ _What you just did is "clearing" the state of the node. This will effectively ma
 
 After executing these steps, there is a possibility that the task fails once more. In this case, escalate to the next layer of on-call and coordinate with another engineer to figure out next steps.
 
-### Checking errors directly in Airflow
+
+#### Checking errors directly in Airflow
 
 It is possible that a failure happens before the task is created in Aurora, and the usual case is lack of credentials to access the aurora API. To verify that:
 
@@ -95,8 +91,7 @@ It is possible that a failure happens before the task is created in Aurora, and 
 
 This alert means that [Riverbend](https://github.com/nubank/riverbend) is not properly consuming, batching and uploading incoming messages.
 
-### Solution
-
+#### Solution
 - First, check on Grafana if that's really the case [Grafana Dashboard](https://prod-grafana.nubank.com.br/d/000000301/riverbend)
 - If that's the case and files upload is actually 0 in the last couple hours you should cycle riverbend, `nu ser cycle global riverbend`
 - After a while check if it gets back to normal, it can take a while (~20 min) as it has to restore the state store.
@@ -173,7 +168,7 @@ If the service in question has been live for a long time, or if you know it to b
 
 ### Warning: [PROD] correnteza_last_t_greater_than_basis_t
 
-### Context
+#### Context
 
 Correnteza tracks the extractions from the Datomic databases by storing the `last-t`
 that it extracted from each of those databases.
@@ -184,8 +179,7 @@ means that it won't extract any new data from that database.
 The condition described above seems impossible to reach, and so far, it has only happened when
 people destroy and re-create databases for the production services.
 
-### Solution
-
+#### Solution
 Note that this solution only applies for the cases described above, **so please confirm
 with the service owners that the database was re-created**.
 
@@ -226,7 +220,6 @@ To check the progress of the service cycling, run this command:
 # parameterised with service name (correnteza) and prototype (s0)
 watch --differences --interval 10 nu k8s ctl s0 -- get po -l nubank.com.br/name=correnteza
 ```
-
 #### Monitor re-extractions
 
 After the service has cycled, wait for a few minutes. Correnteza's startup is noticeably
@@ -241,22 +234,26 @@ important bits for this purpose are highlighted in the screenshot.
 
 [correnteza-extractor-dashboard]: https://prod-grafana.nubank.com.br/d/A8ULVDTmz/correnteza-datomic-extractor-service?orgId=1&var-stack_id=All&var-host=All&var-database=skyler&var-prototype=s0&var-prometheus=prod-thanos 
 
+
+## Frequent dataset failures
 ### Leaf dataset is failing because of bad definition
 
-### Symptoms
+#### Symptoms
 
   * Any of the steps during running the dataset is failing
   * It's not an environment issue, but purely specific to how the dataset is defined
   * The dataset has been recently modified/introduced
 
-### Solution
+
+#### Solution
   * Revert the most recent commits modifying the failing datasets along with any other commits that depend on
     those recent changes.
   * [Commit an empty dataset](ops_how_to.md#manually-commit-a-dataset-to-metapod) in place of the failing
     datasets in order to ignore this dataset for the rest of the ETL run.
   * Announce in [#guild-data-eng](https://nubank.slack.com/archives/C1SNEPL5P) about the reverted changes.
 
-### Notes
+#### Notes
+
   * You should be aware that reverting changes spanning more than one dataset might cause problems if some of
     the datasets have already been committed but are then consumed by the reverted-to earlier versions of the
     other datasets.
@@ -265,7 +262,8 @@ important bits for this purpose are highlighted in the screenshot.
 
 ### Dataset partition not found on s3
 
-### Symptoms
+#### Symptoms
+
   * A thrown `java.io.FileNotFoundException: No such file or directory` on a Spark executor for a file on S3.
   * The partition file in question is accounted for in the mentioned bucket via the AWS console web UI (because the AWS CLI is usually unable to find it either), and it has no permissions listed then it's most likely this issue.
 
@@ -274,18 +272,20 @@ Some instances of this happening include:
   - [2] https://nubank.slack.com/archives/CE98NE603/p1566115955069000?thread_ts=1566105267.068700&cid=CE98NE603
   - [3] https://nubank.slack.com/archives/CE98NE603/p1573363471193700
 
-### Solution
+#### Solution
+
 [Retracting](https://github.com/nubank/data-platform-docs/blob/master/ops_how_to.md#retracting-datasets-in-bulk) the inputs for the failing datasets in order to recompute the inputs and re-store them on s3 usually fixes it.
 
 ## Issues related to Services
 
-### Aurora: Queued Jobs in PENDING state - [aurora web UI](https://cantareira-stable-aurora-scheduler.nubank.com.br:8080)
 
-### Symptom
+### Queued Jobs in PENDING state - [aurora web UI](https://cantareira-stable-aurora-scheduler.nubank.com.br:8080)
+
+#### Symptom
 
 [aurora web UI](https://cantareira-stable-aurora-scheduler.nubank.com.br:8080) leaving tasks in PENDING state for more than 20 minutes. Currently, we don't have a mechanism to detect the Aurora Jobs in PENDING state for long time and indicate the hausmeister about it.
 
-### Solution
+#### Solution
 
 1. SSH into aurora-scheduler, via `nu ser ssh aurora-scheduler --suffix stable --env cantareira --region us-east-1` and look at the aurora logs via `journalctl -u aurora-scheduler` to find out why the jobs are not being scheduled. Often these will be in the form of exceptions.
 2. If the logs seem normal, kill one of the pending jobs via sabesp. Run the following to kill each job:
@@ -300,13 +300,13 @@ Some instances of this happening include:
 
 ### Non-responsive Aurora
 
-Every once in a while, Aurora goes down. `sabesp` commands, such as ones involved in running the DAG, won't work in this case .
+Every once in a while, Aurora goes down. `sabesp` commands, such as ones involved in running the DAG, won't work in this case.
 
-### Symptom
+#### Symptom
 
 - The [aurora web UI](https://cantareira-stable-aurora-scheduler.nubank.com.br:8080) does not load, but the [mesos web UI](https://cantareira-stable-mesos-master-bypass.nubank.com.br) does.
 
-### Solution
+#### Solution
 
 1. SSH into `aurora-scheduler`, via `nu ser ssh aurora-scheduler --suffix stable --env cantareira --region us-east-1` and look at the aurora logs via `journalctl -u aurora-scheduler` to find out why the jobs are not being scheduled. Often these will be in the form of exceptions.
 2. If the logs seem normal, kill one of the pending jobs via sabesp. Run the following to kill each job:
