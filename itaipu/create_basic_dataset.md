@@ -543,6 +543,10 @@ and
 it:test
 ```
 
+There's a chance that you will have problems with "GC overhead limit excedeed" errors. In order to solve that via terminal, you need to launch your sbt with `sbt -mem 9000` to set your GC memory limit. This number is arbitrary but should work for most cases.
+
+Also, you can create a file on the `/usr/local/bin` directory with the name `sbtopts` and write `-mem 9000` inside it, so everytime you launch `sbt` it will automatically add the flag.
+
 ## 10 - Adding it to Itaipu
 Thought we were done? Think again. Don't worry, though, we're almost there.
 Now that we created the Dataset and its tests, we need to add them to Itaipu. There are two possibilities on what you needed to do, depending on where you put your new class.
