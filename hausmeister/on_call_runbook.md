@@ -5,7 +5,8 @@
   - [alert-itaipu-contracts triggered on Airflow](#alert-itaipu-contracts-triggered-on-airflow)
   - [Correnteza - database-claimer is failing](#correnteza-database-claimer-is-failing)
   - [Correnteza - attempt-checker is failing](#correnteza-attempt-checker-is-failing)
-  - [Riverbend - no file upload in the last hour](#no-file-upload-in-the-last-hour)
+  - [Riverbend - no file upload in the last hour](#riverbend---no-file-upload-in-the-last-hour)
+  - [Riverbend - kafka lag above threshold](#riverbend---kafka-lag-above-threshold)
   - [Warning: [PROD] correnteza_last_t_greater_than_basis_t](#warning-prod-correnteza_last_t_greater_than_basis_t)
 - [Frequent dataset failures](#frequent-dataset-failures)
   - [Dataset partition not found on s3](#dataset-partition-not-found-on-s3)
@@ -87,7 +88,7 @@ It is possible that a failure happens before the task is created in Aurora, and 
 - What is logged after "status FAILED and message <message>" is the reason why the task failed. If it reads simply `Task failed`, that means the task was started in Aurora, but the actual failure should be inspected via the Aurora logs. For that, jump back to the [Check reason for the failure](#check-reason-for-the-failure) step for this alarm.
 - In other cases, you might see a message such as: `Subtask: 401 Client Error: Unauthorized for url`. This means there was an error fetching credentials to talk to the Aurora API. Restarting the task should be enough. To achieve that, follow the steps in the [Restart the task](#restart-the-task) section above.
 
-### No file upload in the last hour
+### Riverbend - No file upload in the last hour
 
 This alert means that [Riverbend](https://github.com/nubank/riverbend) is not properly consuming, batching and uploading incoming messages.
 
@@ -96,6 +97,18 @@ This alert means that [Riverbend](https://github.com/nubank/riverbend) is not pr
 - If that's the case and files upload is actually 0 in the last couple hours you should cycle riverbend, `nu ser cycle global riverbend`
 - After a while check if it gets back to normal, it can take a while (~20 min) as it has to restore the state store.
 - If it doesn't start working again, check for further exceptions on Splunk.
+
+### Riverbend - kafka lag above threshold
+
+This alert means that [Riverbend](https://github.com/nubank/riverbend) is not consuming messages on at least one partition on the prototype. This is usually caused by one of two things: either Riverbend is under-provisioned, or one of the consumers/partitions got temporarily stuck somehow.
+
+#### Solution
+
+Open [Riverbend Grafana Dashboard](https://prod-grafana.nubank.com.br/d/000000301/riverbend) as well as the [Kubernetes CPU and Memory dashboard](https://prod-grafana.nubank.com.br/d/000000268/kubernetes-cpu-and-memory-pod-metrics?orgId=1&from=now-6h&to=now&refresh=1m&var-PROMETHEUS=prod-thanos&var-namespace=default&var-container=nu-riverbend&var-PROTOTYPE=All&var-stack_id=All). Make sure to correctly set the prototype to whatever prototype is alarming on both dashboards.
+
+- First, check on the Kubernetes dashboard for frequent restarts; this is usually visible for example on the memory usage graph where you'll see a lot of new lines appearing through time as new processes are added. Under normal circumstances the memory usage lines should be mostly stable.
+- If there are frequent restarts, check the memory usage of the pods (both average and per pod) on the same dashboard to see whether Riverbend may be under-provisioned on that shard. If it is, you'll need to bump memory by submitting a PR on [definition](https://github.com/nubank/definition) or, if you want to go fast or if there isn't anyone around to approve your PR, directly by editing the k8s deployment with `nu-"$country" k8s ctl --country "$country" --env "$env" "$prototype" -- edit deploy "$env-$prototype-$stack-riverbend-deployment"`.
+- If there are no restarts, the next step is to check directly the riverbend dashboard to see if the issue is occuring on all partitions or only on a single one. Usually if the issue is not due to provisioning, there'll be a single stuck partition. In this case the fix is to cycle riverbend: `nu-$country k8s cycle --env prod $prototype riverbend`. It'll take some time for processing to resume, usually between 30 minutes and an hour, but you should eventually see a dip in the lag.
 
 ### Correnteza database-claimer is failing
 
