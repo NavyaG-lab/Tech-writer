@@ -30,7 +30,6 @@ Raise a request for the following accounts by logging into Nubank's [IT Ops](htt
 |splunk|To trace and debug the services|
 |Databricks|Data analysis tool. You already have access to Databricks via Okta. To get admin rights, request in Slack channels - #squad-data-infra or #access-request. Note that you can access Databricks through VPN only.|
 |Looker|Data visualization tool|
-|Sonar-js|Submit request by selecting `Scopes`, and name of the scope is `metapod-admin`|
 |OpsGenie|An Incident management tool used by Hausmeisters|
 
 #### How to request access
