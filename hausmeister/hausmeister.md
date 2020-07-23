@@ -119,9 +119,7 @@ The slack channels you should monitor for user questions are:
 |[#di-hausmeister](https://nubank.slack.com/archives/CP3F163C4)|
 |[#etl-integrity-checks](https://nubank.slack.com/archives/CGBLGLYFK) - For failing datasets|
 
-```
-   **Important**: As a Hausmeister, your role is to ensure user's problems are addressed, but this does not mean that you are responsible for fixing every single problem you encounter yourself; the reason being that you should always make sure you have the headspace necessary to tackle a hard alarm when it is notified. Do not hesitate to rope in other data infra engineers to help with user requests, and in particular to involve engineers closer to the context of the request who will be able to fix it quicker.
-```
+**Important**: As a Hausmeister, your role is to ensure user's problems are addressed, but this does not mean that you are responsible for fixing every single problem you encounter yourself; the reason being that you should always make sure you have the headspace necessary to tackle a hard alarm when it is notified. Do not hesitate to rope in other data infra engineers to help with user requests, and in particular to involve engineers closer to the context of the request who will be able to fix it quicker.
 
 ### During work hours: address the Hausmeister Backlog
 
