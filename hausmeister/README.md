@@ -7,26 +7,26 @@
   
 ## Hausmeister Prerequisites
 
-- [Knowledge requirements](../hausmeister/hausmeister.md)
-- [Setup](../hausmeister/hausmeister.md)
+- [Knowledge requirements](hausmeister.md)
+- [Setup](hausmeister.md)
 - [Understanding the Severity levels](https://github.com/nubank/playbooks/blob/master/incident-response/incident-severity-levels.md)
-- [Working and Non-Working hours](../hausmeister/on_call_runbook.md)
-- [Slack channels to look during on-call](../hausmeister/on_call_runbook.md)
+- [Working and Non-Working hours](on_call_runbook.md)
+- [Slack channels to look during on-call](on_call_runbook.md)
 
 </details>
 
 <details>
   <summary>On-call runbooks</summary>
   
-- [Operations Cookbook](../ops_how_to.md)
+- [Operations Cookbook](ops_how_to.md)
 
-- [Monitoring nightly run](../monitoring_nightly_run.md)
+- [Monitoring nightly run](monitoring_nightly_run.md)
 
 ### Troubeshooting
 
 - [Alerts](../hausmeister/on_call_runbook.md)
-- [Frequently occurring issues](../hausmeister/on_call_runbook.md)
-- [Issues related to Services](../hausmeister/on_call_runbook.md)
+- [Frequently occurring issues](on_call_runbook.md)
+- [Issues related to Services](on_call_runbook.md)
 
 <!-- - Accounts and access permissions related issues
 Debugging tips-->
