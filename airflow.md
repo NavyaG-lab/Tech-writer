@@ -10,7 +10,7 @@ Table of contents
 * [Dry run tests](#dry-run-tests)
 
 ## Useful links
-* [Monitoring the run on Airflow](./monitoring_nightly_run.md)
+* [Monitoring the run on Airflow](hausmeister/monitoring_nightly_run.md)
 * [Airflow DOCS on Creating a new DAG](https://airflow.apache.org/tutorial.html), Basically you need to create a python file, that has the definition of your DAG inside the airflow directory, then just follow the `Deploying job changes to Airflow`
 
 ## Manually stopping a run

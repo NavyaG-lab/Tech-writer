@@ -111,7 +111,7 @@ Navigate to that IP `10.130.118.157:5050`
 Find your relevant active task and click `Sandbox` (note that opening this link in a new browser window is unsupported).
 In the sandbox you can check the `stderr` and `stdout` logs.
 
-Note that while doing this you will probably want to keep the machine up by disabling downscaling ([see here for instructions](../ops_how_to.md#keep-machines-up-after-a-model-fails)).
+Note that while doing this you will probably want to keep the machine up by disabling downscaling ([see here for instructions](/hausmeister/ops_how_to.md#keep-machines-up-after-a-model-fails)).
 
 ### Updating Mesos IAM Roles
 

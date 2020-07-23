@@ -133,7 +133,7 @@ Docker image in [the corresponding repo](https://quay.io/repository/nubank/nu-ca
 ### Manually run cluster scale up job
 
 Occasionally airflow may fail to run a cluster scale up job, which will cause a job to take way longer than usual because it doesn't have enough machines.
-When this happens (instructions on verifying [this here](ops_how_to.md#checking-status-of-cluster-up-and-down-scales)), you may want to manually run the scale up.
+When this happens (instructions on verifying [this here](hausmeister/ops_how_to.md#checking-status-of-cluster-up-and-down-scales)), you may want to manually run the scale up.
 
 ```shell
 nu datainfra sabesp -- --aurora-stack=<stack> jobs create <env> scale-ec2-<job-name> NODE_COUNT=<nodes> SLAVE_TYPE=<job-name> --filename scale-ec2 --job-version"scale_cluster=<version>"
@@ -165,7 +165,7 @@ nu datainfra sabesp -- --aurora-stack=cantareira-stable jobs create staging down
 nu datainfra sabesp -- metapod --token --env prod dataset commit <metapod-transaction-id> <dataset-id> parquet s3://nu-spark-us-east-1/non-datomic/static-datasets/empty-materialized/empty.gz.parquet
 ```
 
-See the entry in [Ops How-To](ops_how_to.md#manually-commit-a-dataset-to-metapod) for more details
+See the entry in [Ops How-To](hausmeister/ops_how_to.md#manually-commit-a-dataset-to-metapod) for more details
 
 ## Troubleshooting
 

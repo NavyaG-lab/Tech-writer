@@ -100,7 +100,7 @@ Note that you should only do this *if asked by a stakeholder*, as they would kno
 
 #### How?
 
-Follow the instructions in [Ops How-To](../ops_how_to.md#serve-a-dataset-again).
+Follow the instructions in [Ops How-To](/hausmeister/ops_how_to.md#serve-a-dataset-again).
 
 ### Retract impacted datasets
 
@@ -236,7 +236,7 @@ This step is a follow-up to pausing the serving layer; the idea is to ensure tha
 
 ### Deploy fixes as necessary
 
-See [Deploying a hot-fix of Itaipu](../ops_how_to.md#deploy-a-hot-fix-to-itaipu).
+See [Deploying a hot-fix of Itaipu](/hausmeister/ops_how_to.md#deploy-a-hot-fix-to-itaipu).
 
 ### Resume the run
 

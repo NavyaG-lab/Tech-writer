@@ -16,7 +16,7 @@
 
 ## A real-world example, commented
 
-Quoting from the [runbook]:
+Quoting from the [runbook](hausmeister/on_call_runbook.md):
 
 > ## No file upload in the last hour
 >
@@ -42,7 +42,6 @@ Quoting from the [runbook]:
     check its effects.
 
 For a more complex example, please take a look at
-[alert-itaipu-contracts].
+[alert-itaipu-contracts](hausmeister/on_call_runbook.md#alert-itaipu-contracts-triggered-on-airflow).
 
-[runbook]: on-call_runbook.md
-[alert-itaipu-contracts]: on-call_runbook.md#alert-itaipu-contracts-triggered-on-airflow
+

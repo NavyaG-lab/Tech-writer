@@ -5,18 +5,18 @@
 Make sure your work environment is set up and you have the following:
 
 - [VPN functioning properly](https://nubank.slack.com/archives/C024U9800/p1545380162000900).
-- know your way around [Airflow](https://github.com/nubank/data-platform-docs/blob/master/airflow.md).
-- know [how to use sabesp](https://github.com/nubank/data-platform-docs/blob/master/cli_examples.md).
-- have a [GraphQL client accessible](https://github.com/nubank/data-platform-docs/blob/master/ops/graphql_clients.md).
+- know your way around [Airflow](/airflow.md).
+- know [how to use sabesp](/cli_examples.md).
+- have a [GraphQL client accessible](/ops/graphql_clients.md).
 
 ## Required knowledge 
 
 A Hausmeister should be familiarized with the following:
 
-- [Sabesp](https://github.com/nubank/data-platform-docs/blob/358080b6eac2ea472346ed03e4507f6639562a0f/cli_examples.md)
+- [Sabesp](/cli_examples.md)
 - Itaipu and the phases of run
 - Datasets management - Datomic datasets and dataset series
-- [Airflow](https://github.com/nubank/data-platform-docs/blob/c52c7877bf640e5f8c8bdf27827191dce5ff50df/airflow.md)
+- [Airflow](/airflow.md)
 - [Aurora](https://github.com/nubank/aurora-jobs)
 
 Once you're familiar with the above, make sure you gain knowledge on the following:
@@ -73,11 +73,11 @@ When one of the above generates an alert, it then notifies us as hard and soft a
 
 ### Issues
 
-- Before handling an issue, be sure to go through the [Data Incident Response Checklist](https://github.com/nubank/data-platform-docs/blob/master/etl_operators/incident_response_checklist.md).
+- Before handling an issue, be sure to go through the [Data Incident Response Checklist](/etl_operators/incident_response_checklist.md).
 
-- Read through [the runbook](https://github.com/nubank/data-platform-docs/blob/master/on-call_runbook.md) to know how to handle the raised alert.
+- Read through [the runbook](/hausmeister/on_call_runbook.md) to know how to handle the raised alert.
 
-- Read through [Operations Cookbook](https://github.com/nubank/data-platform-docs/blob/master/ops_how_to.md) for common maintenance operations. Consider contributing back to it if you come across a repeated task that is worth sharing.
+- Read through [Operations Cookbook](/hausmeister/ops_how_to.md) for common maintenance operations. Consider contributing back to it if you come across a repeated task that is worth sharing.
 
 ### Escalating
 
@@ -140,6 +140,6 @@ From a resourcing perspective, the on-call enginer is resourced exclusively as h
 
 ## See also
 
-- [Monitoring nightly run](../hausmeister/monitoring_nightly_run.md)
-- [Operations How-Tos](../hausmeister/ops_how_to.md)
-- [On-call runbook](../hausmeister/on_call_runbook.md)
+- [Monitoring nightly run](monitoring_nightly_run.md)
+- [Operations How-Tos](ops_how_to.md)
+- [On-call runbook](on_call_runbook.md)

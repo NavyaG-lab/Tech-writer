@@ -24,7 +24,7 @@ The knowledge base contains a comprehensive list of all microservices and its de
 ## ETL Operations
 
 * [Hausmeister](hausmeister/hausmeister.md) (a.k.a on-call rotation)
-* [Monitoring the nightly run](monitoring_nightly_run.md)
+* [Monitoring the nightly run](hausmeister/monitoring_nightly_run.md)
 * [On Call Runbook](hausmeister/on_call_runbook.md)
 * [Ops How To](hausmeister/ops_how_to.md)
 * [Incident Response Checklist](./etl_operators/incident_response_checklist.md)

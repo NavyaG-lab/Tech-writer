@@ -19,7 +19,7 @@ The general layout of the Alerts part is “alert, reason, action”. All the al
 
 The frequent dataset failures should enumerate the symptoms of the particular failure, along with the best known way to mitigate it. Links to Slack threads about the previous failures are appreciated for traceability.
 
-*Before contributing, please keep in mind [the following guidelines](../writing_runbooks.md).*
+*Before contributing, please keep in mind [the following guidelines](/writing_runbooks.md).*
 
 ## Incident response
 
@@ -240,7 +240,7 @@ slow because it has to discover and connect to many Datomic databases.
 Then, check the status of the Datomic extractor using
 [Correnteza's extractor dashboard](https://prod-grafana.nubank.com.br/d/A8ULVDTmz/correnteza-datomic-extractor-service?orgId=1&var-stack_id=All&var-host=All&var-database=skyler&var-prototype=s0&var-prometheus=prod-thanos) on Graphana.
 
-![Correnteza extractor dashboard](../images/correnteza_extractor_dashboard_highlighted.png)
+![Correnteza extractor dashboard](/images/correnteza_extractor_dashboard_highlighted.png)
 
 The dashboard has a lot more useful information about Correnteza's extractions, but the
 important bits for this purpose are highlighted in the screenshot.
@@ -287,7 +287,7 @@ Some instances of this happening include:
 
 #### Solution
 
-[Retracting](https://github.com/nubank/data-platform-docs/blob/master/ops_how_to.md#retracting-datasets-in-bulk) the inputs for the failing datasets in order to recompute the inputs and re-store them on s3 usually fixes it.
+[Retracting](ops_how_to.md#retracting-datasets-in-bulk) the inputs for the failing datasets in order to recompute the inputs and re-store them on s3 usually fixes it.
 
 ## Issues related to Services
 
@@ -305,11 +305,11 @@ Some instances of this happening include:
 
     `nu datainfra sabesp -- --aurora-stack cantareira-stable jobs kill jobs prod <job-name>`
 3. Do a sanity check to ensure that no job is scheduled.
-4. If the issued is not fixed using the above steps, [Restart Mesos](../hausmeister/ops_how_to.md#restart-aurora) 
-4. If the issue still persists, [restart Aurora](../hausmeister/ops_how_to.md#restart-aurora). It takes ~5 mins to resume the jobs.
-5. If the jobs are not resumed, then [restart Airflow](../airflow.md#restarting-the-airflow-process).
+4. If the issued is not fixed using the above steps, [Restart Mesos](ops_how_to.md#restart-aurora) 
+4. If the issue still persists, [restart Aurora](ops_how_to.md#restart-aurora). It takes ~5 mins to resume the jobs.
+5. If the jobs are not resumed, then [restart Airflow](/airflow.md#restarting-the-airflow-process).
 
-**Important** The result of restarting aurora is an orphaned mesos framework. You must delete orphan mesos frameworks as indicated in the [Operations Cookbook](../hausmeister/ops_how_to.md#restart-aurora) doc.
+**Important** The result of restarting aurora is an orphaned mesos framework. You must delete orphan mesos frameworks as indicated in the [Operations Cookbook](ops_how_to.md#restart-aurora) doc.
 
 ### Non-responsive Aurora
 
@@ -326,8 +326,8 @@ Every once in a while, Aurora goes down. `sabesp` commands, such as ones involve
 
 `nu datainfra sabesp -- --aurora-stack cantareira-stable jobs kill jobs prod <job-name>`
 
-3. [Restart Mesos](../hausmeister/ops_how_to.md#restart-aurora).
-4. If the issue still persists, [restart Aurora](../hausmeister/ops_how_to.md#restart-aurora). 
+3. [Restart Mesos](ops_how_to.md#restart-aurora).
+4. If the issue still persists, [restart Aurora](ops_how_to.md#restart-aurora). 
 
 ### Airflow: Dagão run failed
 

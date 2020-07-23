@@ -137,7 +137,7 @@ More stuff at [Airflow maintenance](./airflow.md)
 ![RQL-stack](images/rql-ecosystem.png)
 
 ## Monitoring and caring for DAG runs
-  * See: [Monitoring the Nightly Run](monitoring_nightly_run.md)
+  * See: [Monitoring the Nightly Run](hausmeister/monitoring_nightly_run.md)
 
 ## Other relevant ETL repositories
   * [common-etl-spec](https://github.com/nubank/common-etl-spec) - Repository of clojure specs shared across ETL-related services
