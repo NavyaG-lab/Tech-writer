@@ -7,6 +7,7 @@
   - [Correnteza - attempt-checker is failing](#correnteza-attempt-checker-is-failing)
   - [Riverbend - no file upload in the last hour](#riverbend---no-file-upload-in-the-last-hour)
   - [Riverbend - kafka lag above threshold](#riverbend---kafka-lag-above-threshold)
+  - [Barragem - segment handling time above threshold](#barragem---segment-handling-time-above-threshold)
   - [Warning: [PROD] correnteza_last_t_greater_than_basis_t](#warning-prod-correnteza_last_t_greater_than_basis_t)
 - [Frequent dataset failures](#frequent-dataset-failures)
   - [Dataset partition not found on s3](#dataset-partition-not-found-on-s3)
@@ -178,6 +179,16 @@ You can then force the healthcheck to recompute its state via:
 `nu ser curl POST <prototype> --env prod correnteza /ops/attempt-checker/force`
 
 If the service in question has been live for a long time, or if you know it to be a critical service AND if the last extraction attempt is more than 1 day old, you should reach out to the owner squad urgently to find out what's going on and work with them to solve the situation.
+
+### Barragem - segment handling time above threshold
+
+This alert means that [Barragem](https://github.com/nubank/barragem) is not able to process segments in time (10 minutes SLO), for at least one prototype and one database. This can mean that big or faulty segments are being submitted to Barragem (e.g. files generated on a backfill job were too big and may be slowing down Barragem overall) or the service is under provisioned.
+
+#### Solution
+
+- First, check Splunk for any errors using `source=barragem`. Any exception here may indicate faulty segments or integration issues with other components (ex: AuroraDB). This [troubleshooting] playbook section can be consulted for more info about possible errors at this point. If there are no exceptions or errors, continue to the steps below.
+- Then, open the [Barragem Grafana Dashboard](https://prod-grafana.nubank.com.br/d/ApXjNMwZk/barragem) as well as the [Kubernetes CPU and Memory dashboard](https://prod-grafana.nubank.com.br/d/000000268/kubernetes-cpu-and-memory-pod-metrics?orgId=1&refresh=1m&var-PROMETHEUS=prod-thanos&var-namespace=default&var-container=nu-barragem&var-PROTOTYPE=All&var-stack_id=All). Make sure to correctly set the prototype to whatever prototype is alarming on both dashboards. Check the service resource comsumption on the Kubernetes dashboard. If the pods are caped on CPU or RAM, seems unresponsive, or if there are frequent restarts, Barragem may be under-provisioned on the observed shard. In this case, you'll need to bump resources (CPU and/or memory) by submitting a PR on [definition](https://github.com/nubank/definition/blob/master/resources/br/services/barragem.edn) or, if you want to go fast or if there isn't anyone around to approve your PR, you can bump resources directly by editing the k8s deployment with `nu-"$country" k8s ctl --country "$country" --env "$env" "$prototype" -- edit deploy "$env-$prototype-$stack-barragem-deployment".
+- If there are no restarts, the next step is to check [AuroraDB dashboard on AWS](https://sa-east-1.console.aws.amazon.com/cloudwatch/home?region=sa-east-1#dashboards:name=barragem_aurora) (pay attention to check the AWS account on the correct country) to see if the database instances is struggling for resources, which would affect write- and read-throughput and thus slow-down the processing of segments. If this is the case, you will need to bump the size of the writer DB instance by clicking on the _Modify_ button on the [prod-global-barragem-aurora-instance](https://sa-east-1.console.aws.amazon.com/rds/home?region=sa-east-1#database:id=prod-global-barragem-aurora-instance;is-cluster=false) dashboard. Bump one or more instance types and evaluate if it was of any help.
 
 ### Warning: [PROD] correnteza_last_t_greater_than_basis_t
 
