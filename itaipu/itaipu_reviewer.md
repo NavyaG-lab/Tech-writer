@@ -92,6 +92,19 @@ Check for [PII](https://github.com/nubank/data-platform-docs/itaipu/pii_and_pers
 * Warn people about PII data (if a column is tagged as PII, only the hash value will be available) -> another solution for this is to tag the entire dataset as PII
 * There shouldn't be many transformations inside the DatasetSeriesOp apart from renamings and replaces -> advise people to create a separate SparkOp for that
 
+#### Archived DatasetSeries
+
+* When building things that depend on archived dataset series, remember to **add fallback logic to avoid issues when the archive is not produced**. 
+This is particularly important for people that build logic based on the existence of an archive for policies / models. 
+This has been a failure mode for multiple times for the ETL, such as the example below, which had to be fixed in [this PR](https://github.com/nubank/itaipu/pull/12982/files#diff-4668190d5170d918ed92384ae30b151bL269).
+```scala
+    // DON'T DO THIS!
+    archive
+      .where($"archive_date" === targetArchiveDate)
+```
+
+In the case above, a possible solution could be taking the most recent archive up until the referenceDate instead of taking the archive from a given date.
+
 ## Macros
 Since the issues faced when reviewing a PR are recurring and the changes requested in those cases are usually standard, there are some macros we can use. You can set up your github macros using [this tutorial](https://help.github.com/en/github/writing-on-github/creating-a-saved-reply).
 
