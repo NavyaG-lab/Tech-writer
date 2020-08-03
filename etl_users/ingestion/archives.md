@@ -128,4 +128,4 @@ Archives can be used to lighten the load on Spark by allowing you to reuse data 
 
 The archive series system described above could be used to compute a dataset in an incremental manner each day – reusing outputs from the previous run and adding onto them sparingly.
 
-While this use case is technically possible with the archive series system, it is currently not recommended for users to to use it in this way, as Data Infra cannot currently guarantee that the archive of a dataset generated during a run will be available in the run following run.
+While this use case is technically possible with the archive series system, it is currently not recommended for users to to use it in this way, as Data Infra cannot currently guarantee that the archive of a dataset generated during a run will be available in the run that follows directly.
