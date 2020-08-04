@@ -14,7 +14,7 @@ In order to set up access to the multiple countries, follow [these instructions]
 
 Aurora (aurora-scheduler) provides access to the Aurora Scheduler UI.
 
-`aurora-scheduler` on the Data account is currently available at [https://prod-foz-aurora-scheduler.nubank.world/](https://prod-aurora-scheduler.nubank.world/)
+`aurora-scheduler` on the Data account is currently available at [https://prod-foz-aurora-scheduler.nubank.world/](https://prod-foz-aurora-scheduler.nubank.world/scheduler/jobs/)
 
 ## Mesos
 Mesos (mesos-master) provides access to the Mesos UI, and allows you to see lower level details of the jobs. It is usually recommended to interface directly with Aurora whenever possible.
