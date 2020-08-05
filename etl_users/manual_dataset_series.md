@@ -8,7 +8,7 @@ A new alternative (in beta) is to use the [dataset series abstraction](/etl_user
 
 Standard event-based dataset series take a bunch of kafka messages (with the same schema), put them in an avro, and append that as a new dataset in a dataset series.
 
-With manual dataset series, we prepare by-hand the dataset that will be appended to the dataset series and directly tell `metapod`, our metadata store, to include it in the series.
+With manual dataset series, we prepare by-hand the dataset that will be appended to the dataset series and directly tell `ouroboros`, our metadata store, to include it in the series.
 
 This is done by running a CLI command that takes a Parquet file on s3 and the associated [logical type schema](/glossary.md#logical-type-schema) encoded as a json. The logical type schema describes the schema of the Parquet file using Nubank's custom type system. In Scala code we define this schema by having our SparkOps extend `DeclaredSchema` and defining the `attributes` field. Since we are working from the command line, we need to write this manually as a json file.
 
@@ -95,7 +95,7 @@ After that you will need to create an account in quay.io [Here](https://docs.qua
 
 Now you should have to sign into Quay.io using docker. Quay.io was originally created out of necessity when the company wanted to use Docker containers with an original IDE product, it is a private container registry that stores, builds, and deploys container images. It analyzes your images for security vulnerabilities, identifying potential issues that can help you mitigate security risks. In order to login run the command ```docker login quay.io```.
 
-Since appending involves talking directly to `metapod`, you will need the `admin` scope for your AWS user. Use `nu-<country> sec scope show <your-firstname.your-lastname>` to see if you have the `admin` scope. If you don't, ask for it using the access request form pinned to the `#access-request` channel. After getting it you may need to run `nu-<country> auth get-refresh-token --env prod --country <country>`. Where `<country>` is the country where you are creating your manual series (eg: br, mx).
+Since appending involves talking directly to `ouroboros`, you will need the `admin` scope for your AWS user. Use `nu-<country> sec scope show <your-firstname.your-lastname>` to see if you have the `admin` scope. If you don't, ask for it using the access request form pinned to the `#access-request` channel. After getting it you may need to run `nu-<country> auth get-refresh-token --env prod --country <country>`. Where `<country>` is the country where you are creating your manual series (eg: br, mx).
 
 
 Lastly, you will need to have read and write access the particular bucket where the dataset file will copied to. For this step, ask `#squad-data-infra` to run the following command. Note: due to limitations with our permission infrastructure, we can only grant access for 1 week at a time.
