@@ -72,7 +72,8 @@ To update Airflow you need to first bump the `base-airflow` [Dockerfile](https:/
 
 Wait until it's created and you can access
 https://cantareira-x-airflow.nubank.com.br/admin/ and then you can:
-* Test the new deployment by re-running one of the already finished nodes
+* Test the new deployment by re-running one of the already finished nodes, but first, make sure you understand what the implications of re-running a DAG are: [triggering a DAG vs clearing a DAG and its tasks](#triggering-a-DAG-vs-clearing-a-DAG-and-its-tasks). It is recommended to re-run a DAG that has minimal impact on the daily run, but at the same time, we need to test the correctness of the new updated Airflow, and for that reason, it is important that this DAG is scheduled by Airflow (to verify Airflow correctness) and submits and waits for an Aurora job (to verify Aurora correctness). A DAG like `data-announcements` might be what you are looking for here.
+
 * Upsert the new airflow to the main DNS
 
 If the service is not responding correctly, try to ssh (instructions below) in the new instance and see if there are any units that failed to start (there is a concurrency issue here).
@@ -145,6 +146,32 @@ sudo systemctl restart airflow
 ```
 
 This should get things going again.
+
+## Understanding Airflow run dates and schedule intervals
+
+This section assumes that the reader has some basic knowledge about Airflow.
+
+The Airflow schedule interval could be a challenging and difficult concept to grasp that results in a few, confusing questions that arise every now and then: "why is the run date the 30st if today is the 31st?", "why is my DAG not running as expected?", "is the DAG running for today or yesterday?". The Airflow scheduler is one of the most misunderstood and complicated areas of Airflow; With that in mind we will try to explain how the schedule interval works and how it relates to the run date.
+
+The first thing that we should clearly understand is that Airflow was built with the concept of ETL in mind. This basically means that Airflow is commonly used to perform an action after a certain period of time has ended. Let's say that this period of time is 24 hours and the action is uploading some data to an S3 bucket. We wait for the 24 hour period to be over, and then we upload all the data. When a DAG that represents this behaviour is running during, let's say, on the 20th of January, it does not make sense for the run date to be the 20th of January, because the day is not over yet! The run date should be the 19th, because it always corresponds to the beginning of the previous completed time period.
+In other words, if you run a DAG on a schedule interval of one day, the run with the run date of 2020-01-20 will be triggered after 2020-01-20T23:59 - always at the end of the time period.
+Let's now take a look at one final example: let's assume that some requirements change, and the previous DAG will now have to run on a weekly schedule (every Monday at 1pm), what exactly will change with the execution date? Well, the idea is pretty much the same, assuming "today" is Monday the 3rd of August some time after 1pm, and that the DAG is already running, the DAG will have the execution date that corresponds to the beginning of the previous completed time period (a week in this case), and therefore the execution date will be the 27th of July, 1PM, i.e., 27-07-2020T13:00:00, exactly 7 days before.
+
+### Why is this important, and why should we care?
+
+When fixing an issue with one of the runs, be it `dagao`, `daguito` etc., it is important to understand which run are we looking at. You should always keep in mind that the run you are looking at might not be one for yesterday, but the one for today. When in doubt, you should always open one of the tasks, and take a look at the log lines. They will always have the current "real" date. Let's take a look at the next figure. This example was taken on the 3rd of August 2020; This particular task `itaipu-non-double-entry-datasets` has a run date of 2020-08-02 (the last completed 24 hour period), but the log lines, that represent the task being run inside the Airflow machine, display the 3rd of August as date. Although this task might seem to be the one for yesterday, it is actually the one for today, the 3rd of August.
+
+![Airflow run data example](images/airflow-run-date-example.png)
+
+## Triggering a DAG vs clearing a DAG and its tasks
+
+Triggering an Airflow DAG means creating a new DAG run outside of the DAG normal schedule. This means that the rules we covered in the previous section no longer apply here; Since the new DAG is outside of its the normal schedule, the execution date will be the exact "real" time that the DAG was triggered and its run ID will include the keyword "manual" to distinguish this DAG run from the normal "scheduled" ones.
+
+Re-running a node by **clearing** its status represents a very different behavior: here we are **not** creating a new DAG run, we are simply telling Airflow to ignore whatever previous status it had stored about this task(s), and upon **clearing** them (using the UI's button), the Airflow scheduler will behave like these tasks have never run before, and therefore, will start them again, because according to the scheduler they should indeed be running or be done by that time.
+
+### Why is this important, and why should we care?
+
+As we covered before, triggering a DAG (**not** clearing a DAG), will create a totally new DAG run; We can think of this as creating a new *dagao* or a new *daguito* run. One of the first things we do during the first task in one of the DAGs is creating a new Metapod transaction, so yes, creating a new DAG run will result in creating a new transaction, which is something that we do not want, as it might confuse our users on why we have multiple production transactions for the same day.
 
 ## Running tests for the Airflow DAGs
 
