@@ -333,13 +333,24 @@ Running the tests:
 
 ## How Itaipu is deployed to the Dagao
 
-Pull requests generally target the `master` branch of `itaipu`. Once they are merged, circleci will test and build the repo.
+Pull requests generally target the `master` branch of `itaipu`. Once they are merged, circleci tests and builds the repo.
 
-Once a day at `23h20 UTC`, the `release` branch is updated to point to `master` via the [`itaipu-release-refresh` GoCD pipeline](https://go.nubank.com.br/go/tab/pipeline/history/itaipu-release-refresh).
+Every day, at `21h00 UTC`, `22h00 UTC` and `23h00 UTC`, the [`itaipu-release-refresh` GoCD pipeline](https://go.nubank.com.br/go/tab/pipeline/history/itaipu-release-refresh) updates the `release` branch to point to `master`.
+
 This change triggers a build of [`itaipu-stable`](https://go.nubank.com.br/go/tab/pipeline/history/itaipu-stable), which builds off the `release` branch.
 
-The [`dagao`](https://go.nubank.com.br/go/tab/pipeline/history/dagao) pipeline depends on `itaipu-stable`, so it must finish before the `dagao` pipeline runs to deploy the dag.
-Sometimes `itaipu-stable` will fail (for instance when it fails to download dependencies, which happens sometimes). In this case, the `dagao` will get deployed with an old version of `itaipu`.
+The update of the `master` branch is scheduled three times a day because the resulting build of `itaipu-stable` 
+ sometimes fails (e.g. if it fails to download dependencies). 
+
+The [`dagao`](https://go.nubank.com.br/go/tab/pipeline/history/dagao) pipeline depends on `itaipu-stable`, so `itaipu-stable` and the subsequent `itaipu-stable-publish` must finish before the `dagao` and the subsequent `dagao-deploy` pipelines run to deploy the new version of the dag. 
+
+More precisely, `itaipu-stable` -> `itaipu-stable-publish` -> `dagao` (steps 1-3) must finish before `23h45 UTC`, which is when `dagao-deploy` automatically gets triggered every day. 
+
+Steps 4-6 of `dagao` do the same thing as `dagao-deploy`, but when triggering them manually it's possible to select which version of the dag to deploy.
+ 
+In case all the build attempts fail, the `dagao` pipeline will deploy the version of `itaipu` for which it last successfully built.
+
+Note that the build attempts are triggered in times between the daily runs, as building a new version in the middle of the run would change the code in the middle of the run.
 
 ## Publishing an itaipu build
 
