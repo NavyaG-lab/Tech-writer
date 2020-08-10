@@ -38,24 +38,72 @@ Raise a request for the following accounts by logging into Nubank's [IT Ops](htt
 1. Choose the service or tool for which you want to raise a request.
 1. Fill the required fields and submit.
 
-### Request access for AWS groups
+### Requesting AWS access
 
-The AWS credentials are sent to you through SlackBot, a few days after you join. Then, request for accessing the AWS groups.
+The AWS access is given to you through roles, which must be requested directly; The following section explains how to do it.
+
+#### Requesting AWS roles:
 
 1. Log in to [IT Ops](https://nu-itops.atlassian.net/servicedesk/customer/user/login) using Nubank credentials.
-1. Select **BR** from the list of AWS accounts. Fill other required fields.
-
-   **Note**: Make sure you are added to all three accounts in AWS - **BR**, **MX**, and **Data**. You must raise requests to be added in each AWS account.
-1. Enter the following groups in the **IAM Group/s** field.
-    * For **BR** account
-        * data-access-engineering
-        * data-access-ops
-        * data-infra
-        * data-infra-aurora-access
-    * For **Data** account
-        * eng
-        * prod-dev
+1. Click on **Request Access** -> **AWS** -> **New Role**.
+1. Select on the list, the role for the country that you are going to interact with (e.g. **BR**). Fill in other required fields.
 1. Submit the request.
+
+**Note**: Make sure you requested access for all the three roles in AWS - **BR**, **MX**, and **Data**.
+You should now request access for the necessary AWS IAM groups.
+#### Requesting AWS IAM groups:
+
+1. Log in to [IT Ops](https://nu-itops.atlassian.net/servicedesk/customer/user/login) using Nubank credentials.
+1. Click on **Request Access** -> **AWS** -> **AWS Group**.
+1. Enter the following groups in the **IAM Group/s** field:
+
+    * data-access-engineering
+    * data-access-ops
+    * data-infra
+    * data-infra-aurora-access
+    * eng
+    * prod-eng
+        
+1. Submit the request.
+1. After the request is handled, make sure you have the correct groups by running:
+
+```
+nu-<country> sec iam show <your.username>
+```
+
+**Note**: Make sure you request access for all the three roles in AWS - **BR**, **MX**, and **Data**.
+
+## Requesting necessary Scopes:
+
+Access to some services and NuCLI commands is given to you through scopes, which must be requested directly.
+
+1. Log in to [IT Ops](https://nu-itops.atlassian.net/servicedesk/customer/user/login) using Nubank credentials.
+1. Click on **Request Access** -> **Internal** -> **Scope Request**.
+1. Enter the following groups in the **IAM Group/s** field:
+
+    * admin
+    * data-infra-admin (**only if you are participating on the Hausmesiter rotation**)
+
+1. Submit the request.
+1. After the request is handled, make sure you have the correct scope by running:
+
+```
+nu-<country> sec scope show <your.username>
+```
+
+6. On the *Staging* environment, make sure you also have the following scopes:
+
+    * change-roles
+    * read-roles
+    
+1. If you don't have it, please ask another engineer in Data-Infra to assign you to those scopes by running:
+
+```
+nu-<country> sec scope add <your.username> change-scopes --env staging
+nu-<country> sec scope add <your.username> read-scopes --env staging
+```
+
+**Note**: Make sure you requested access for all the three roles in AWS - **BR**, **MX**, and **Data**.
 
 ## How to Join datainfra group in Quay.io
 
