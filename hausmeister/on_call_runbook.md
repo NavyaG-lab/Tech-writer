@@ -258,6 +258,39 @@ important bits for this purpose are highlighted in the screenshot.
 
 [correnteza-extractor-dashboard]: https://prod-grafana.nubank.com.br/d/A8ULVDTmz/correnteza-datomic-extractor-service?orgId=1&var-stack_id=All&var-host=All&var-database=skyler&var-prototype=s0&var-prometheus=prod-thanos 
 
+## Itaipu OutOfMemory error
+
+### Alert Severity
+
+Soft alert.
+
+### Overview
+
+While computing a dataset, an Itaipu node fails with `java.lang.OutOfMemoryError`. This error is usually thrown during a Spark stage when there are insufficient resources to process said dataset. It is a Soft Alert because usually, these datasets get eventually computed and succeed, as they retry on a different node.
+
+### Verification
+
+The OOM check runs every hour, and we get alerted only once - within a 45 minute window - per job name. The issue is still ongoing if we get subsequent alerts for the same job name, 45m after the first one.
+If OOM happens in two jobs within the 45m window, two alerts - one per each job - are sent.
+
+### Troubleshooting
+
+From the alert message we get the following information: the name of job, e.g., `aurora/prod/jobs/itaipu-core-datasets`, and a link to a Splunk landing page that will contain additional details about the problem, namely, Spark task ID and stage ID, full error message, e.g., `java.lang.OutOfMemoryError No enough memory for aggregation`, and the thread where it happened, e.g., `task-result-getter-2`. The thread name might help us identify if the problem originates from user behaviour or from configuration and/or infrastructure (data infra responsibility). If, for example, the thread name resonates a problem in the Spark listener queues, e.g., `spark-listener-group-shared`, this might mean that we have configuration issues and that we might have to tweak some Spark configuration values.
+
+You can then use the job name and the Spark information (stage and task) to debug further, and find the dataset name, by using the Spark Web UI or Itaipu logs - you reach both of these pages from the Aurora Web UI.
+
+### Solution
+
+Most of the time, our users are the ones coming up with solutions for these kind of problems, and it usually involves them optimizing their SparkOP or even breaking it down in multiple ones.
+
+We do have one known event that can cause these issues, and that we can try to solve on our side: a combination of a Spark listener event queue being too big (we control their size) for a given job, and an issue with a Dataset - user behaviour, this can cause the node to OOM and we can try to fix it by reducing the size of the queue. We do this by changing a variable called `spark_listener_bus_capacity` inside `dagao.py`. You can set a smaller value in the order of tens of thousands. The default set by Spark is 10k. You must hot deploy `dagao` if you want these changes to take effect right away.
+
+### Escalation
+If the problem is found to originate from user behaviour, we should leave a message in #data-tribe, informing our users that a specific dataset(s) is having OOM issues. They should investigate.
+
+### Relevant links
+
+* https://spark.apache.org/docs/latest/configuration.html, `spark.scheduler.listenerbus.eventqueue.capacity` field.
 
 ## Frequent dataset failures
 ### Leaf dataset is failing because of bad definition
