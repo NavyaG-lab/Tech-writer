@@ -128,7 +128,7 @@ nu datainfra sabesp -- --aurora-stack=cantareira-dev jobs create staging capivar
 
 In this example, inside `capivara-clj.aurora` you should find a call
 to `get_version` which in turn is going to be used to look the desired
-Docker image in [the corresponding repo](https://quay.io/repository/nubank/nu-capivara-clj).
+Docker image.
 
 ### Manually run cluster scale up job
 

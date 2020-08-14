@@ -36,7 +36,7 @@ and also make sure all the T values are numbers not strings.
  - do a log validation run using the quay.io image, a fresh metapod tx you invent by hand (to get around a limitation setting it dynamically via airflow), and the log-validation dag via the nucli command:
 
  ```
- nu datainfra log-validation <QUAY-IMAGE-HASH> <METAPOD_TX_YOU_INVENT>
+ nu datainfra log-validation <DOCKER-IMAGE-HASH> <METAPOD_TX_YOU_INVENT>
  ```
 
  - open the `dataset/cache-validations` in databricks and validate that all the rows have `is_valid` set to `true`. For invalid rows, remove the updates from the json. You can do this using the python script detailed in [this itaipu pr](https://github.com/nubank/itaipu/pull/9129).

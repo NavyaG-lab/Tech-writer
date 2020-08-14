@@ -47,12 +47,6 @@ run. To do that, clone the
 `sabesp` uses the job definitions from that project to create the
 tasks in aurora. After that, run the following `sabesp` command. Don’t forget to:
 
-  * Replace the two occurrences of `<YOUR_NAME>` with your lowercase
-    first or last name, to make it easier to identity the instances
-  * Replace `<DOCKER_IMAGE_TAG>` with the latest value of the value
-    found in [the corresponding Docker repo](https://quay.io/repository/nubank/nu-scale-cluster)
-
-
 ```
 sabesp --verbose --aurora-stack=cantareira-dev jobs create staging scale-ec2-<YOUR_NAME> \
     SLAVE_TYPE=<YOUR_NAME> \
@@ -61,6 +55,11 @@ sabesp --verbose --aurora-stack=cantareira-dev jobs create staging scale-ec2-<YO
     --filename scale-ec2 \
     --check
 ```
+
+  * Replace the two occurrences of `<YOUR_NAME>` with your lowercase
+    first or last name, to make it easier to identity the instances
+  * Replace `<DOCKER_IMAGE_TAG>` with the latest value of the value
+    found with `nu registry list-images nu-scale-cluster`
 
 When the command finishes successfully (`finished with end_time` present in the output), you are ready to run the model code in those instances.
 

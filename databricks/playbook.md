@@ -37,7 +37,7 @@ Databricks -> Cluster -> (Select the cluster) -> Spark UI
 Check the number of default partitions here:
     List of clusters -> Select the cluster -> Configuration -> Spark -> spark.sql.shuffle.partitions
     In this case, isolate this notebook from the cluster by talking to the owner.
-8. If there are lot of such jobs, ask the owners to move some of them to other databricks clusters. 
+8. If there are lot of such jobs, ask the owners to move some of them to other databricks clusters.
 
 ## Reaching out to Databricks
 Under the current contract with Databricks, there are only two nubank email addresses allowed to create and ask support on the ticket. Though these email addresses can be changed anytime.
@@ -48,7 +48,7 @@ The fastest way is to clone an existing cluster. For instance, if it's for gener
 
 Ensure this checklist applies:
 1. Use the Standard Cluster Mode
-2. Enable Autoscaling with a Min and Max depending 
+2. Enable Autoscaling with a Min and Max depending
 3. Assign an IAM role to the cluster. If you have to add a new IAM role, create one in AWS prod account
 4. Don't add permissions directly on the cluster. Rather use an existing user group or create one in 'Admin Console'. Add users to this group rather.
 5. Check that the IAM role attached matches:
@@ -79,13 +79,13 @@ Ensure this checklist applies:
 ## Manually run the [autobump_itaipu_and_restart_clusters](https://nubank.cloud.databricks.com/#job/8737) job
 This job runs [this notebook](https://nubank.cloud.databricks.com/#notebook/1510228) which updates the Itaipu version on the Databricks clusters.
 
-It is scheduled to run daily 4h30 AM. 
+It is scheduled to run daily 4h30 AM.
 
 **If this job fails then we have to run it manually.**
 There are three parameters you need to pass:
 1. `include_anotherbricks` - it is usually False. If you had to set it true you will know, check the link above for more information.
-2. `itaipu_release_hash` - it takes the latest one by default but you can override it to install a particular build especially in case when a new build of Itaipu is failing. You can get the Hash from Quay.io under Itaipu Builds.
-3. `clusters_to_bump` - This is a comma separated list of cluster names. If the field is empty, it will bump and restart every cluster. 
+2. `itaipu_release_hash` - it takes the latest one by default but you can override it to install a particular build especially in case when a new build of Itaipu is failing. You can get a list of previous builds with the command `nu registry list-images nu-itaipu` and the last one with `nu registry latest-tag nu-itaipu`.
+3. `clusters_to_bump` - This is a comma separated list of cluster names. If the field is empty, it will bump and restart every cluster.
 
 ## Alarms
 

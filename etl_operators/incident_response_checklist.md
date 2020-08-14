@@ -34,7 +34,7 @@ To ensure you're running the correct commands with the correct parameters.
 
 #### How?
 
-* Run `docker pull quay.io/nubank/datainfra-sabesp:latest` & `nu update`.
+* Run `nu registry pull 193814090748.dkr.ecr.us-east-1.amazonaws.com/datainfra-sabesp:latest` & `nu update`.
 * Ensure you're on the `master` branch of `aurora-jobs` and run `git pull`.
 * Get today's transaction id: `nu datainfra sabesp -- utils tx-id` and keep it handy.
 * You'll probably want to `git checkout release` on Itaipu to ensure you're using whatever is running on Aurora at the moment.

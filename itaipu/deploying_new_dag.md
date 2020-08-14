@@ -25,7 +25,7 @@ To check:
 
 Usually developers merge branches to master after a code review without deploying a new DAG. That's fine, however, it's important to emphasize that every code on master branch must be production code.
 
-This can sound too obvious, but, if you merge code that is not healthy for production, a new DAG can be deployed by other developer with your code in it. This happens because a docker image of our master branch is automatically uploaded to [Quay.io](https://quay.io/repository/nubank/nu-itaipu?tab=tags), and will be seen by [GoCD](https://go.nubank.com.br/go/) (more details below).
+This can sound too obvious, but, if you merge code that is not healthy for production, a new DAG can be deployed by other developer with your code in it. This happens because a docker image of our master branch is automatically uploaded to ECR, and will be seen by [GoCD](https://go.nubank.com.br/go/) (more details below).
 
 As an example:
 - Master branch of itaipu after a merge:
@@ -34,14 +34,12 @@ As an example:
 - We can check its commit ID (***63f05a7fec38bf9cc402b24d10a2c01aa10d16fd*** in this case) on the right-hand side of the commit in the screen above or if we open the last commit:
 ![Itaipu Last Commit](../images/itaipu_last_commit.png)
 
-- If you visit **nubank/nu-itaipu** repository in [Quay.io](https://quay.io/repository/nubank/nu-itaipu?tab=tags), you should be able to find part of the commit id under the tag column (might take some minutes). This happens because the automatic process creates a docker image of this project, tags it with the initials from the last commit id and uploads it to quay.
-![Quay Tag](../images/quay_tag.png)
+- If you execute 'nu registry list-images nu-itaipu', you should be able to find part of the commit id under the `TAG` column (might take some minutes). This happens because the automatic process creates a docker image of this project, tags it with the initials from the last commit id and uploads it.
 
 - Also, you can check what was going on behind the scenes on [GoCD](https://go.nubank.com.br/go/). Just find the itaipu project under pipelines and check the versions:
 ![Go Pipelines](../images/go_pipelines.png)
 
-- If you click on the itaipu pipeline, you will see that `publish-container` column is green. It means that [GoCD](https://go.nubank.com.br/go/) successfully executed this step and your docker image is already on Quay, as you noticed before.
-![Itaipu Pipeline](../images/itaipu_pipeline.png)
+- If you click on the itaipu pipeline, you will see that `publish-container` column is green. It means that [GoCD](https://go.nubank.com.br/go/) successfully executed this step and your docker image is already on ECR, as you noticed before.
 
 - If you open this revision, the steps of itaipu pipeline will appear on the screen. Here you can understand that Github merge is triggering this execution, and `publish-container` is being executed.
 ![Itaipu Pipeline Steps](../images/itaipu_pipeline_steps.png)

@@ -123,12 +123,22 @@ More stuff at [Airflow maintenance](./airflow.md)
     * Time taken to run the whole transaction, i.e. generate all datasets. That time can be measured on Sonar by using the transaction start and finish times.
     * Time taken to between the start of the run and `itaipu-rest` to finish, can be seen on Airflow by mousing over the `itaipu-rest` node (the daily run starts at midnight UTC).
 
-## Quay.io overview
-  * Nubank uses [Quay.io](https://quay.io/) as our Docker container image store
-  * Whenever we build a new version of a service, for example, a Go pipeline will build a Docker container and upload it to Quay.io. The images uploaded to Quay.io are conventionally tagged with the first 7 characters of the Git commit SHA of the repository that generated the build.
-  * When we deploy a new service version, the deploy code will get the relevant image from Quay.io via its tag
+## ECR overview
+  * Nubank uses [ECR](https://aws.amazon.com/ecr/) as our Docker container image store
+  * Whenever we build a new version of a service, for example, a Go pipeline will build a Docker container and upload it to ECR. The images uploaded there are conventionally tagged with the first 7 characters of the Git commit SHA of the repository that generated the build.
+  * When we deploy a new service version, the deploy code will get the relevant image from ECR via its tag
 
-  ![image](https://user-images.githubusercontent.com/726169/33166019-0da97e96-d039-11e7-88b2-759e1013484d.png)
+```
+$ nu registry list-images nu-itaipu
+TAG      SIZE_MB  PUSHED_AT
+8767881  1109.2   2020-08-13T11:13:28+02:00
+c11bed6  1109.2   2020-08-13T09:27:09+02:00
+81a09f3  1109.1   2020-08-13T01:18:36+02:00
+a701697  1109.1   2020-08-13T00:19:55+02:00
+8400f04  1109     2020-08-12T23:19:24+02:00
+fc3ea48  1108.7   2020-08-12T16:11:23+02:00
+eacc786  1109     2020-08-12T15:53:28+02:00
+```
 
 ## Parsa and Truta overview
 

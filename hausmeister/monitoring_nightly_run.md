@@ -19,7 +19,7 @@ When checking on the progress of the run, first check [Sonar](https://backoffice
 
 In order to use Sonar to check the run, you'll need the relevant [metapod transaction](../glossary.md#transaction) ID.
 
-If you have `nucli` and `quay.io`, you can do the following for today's transaction id:
+If you have `nucli` you can do the following for today's transaction id:
 
 `nu datainfra sabesp -- utils tx-id`
 
