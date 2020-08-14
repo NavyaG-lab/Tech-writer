@@ -26,7 +26,7 @@ Visualisation of the simplified flow of archives for a hypothetical `model/kamin
 
 ![Archive Flow](../../images/archive_flow.png)
 
-1. After `model/kamino` is computed, the ETL computes a special dataset called`archive/model-kamino` to contain the archive entry fo this dataset for this run. This dataset will contain additional columns containing metadata about the run that generated them, including date and the`metapod` transaction id.
+1. After `model/kamino` is computed, the ETL computes a special dataset called`archive/model-kamino` to contain the archive entry for this dataset for this run. This dataset will contain additional columns containing metadata about the run that generated them, including date and unique id of the run.
 2. When `archive/model-kamino` is computed successfully, its data is saved along with other outputs of the run.
 3. The archive data is asynchronously made available in the ETL inputs storage.
 4. When the a future ETL run starts, it queries the inputs storage and uses any archive data available in it, based on the schema specifications made available in the its `DatasetSeriesContract`. The output is the `series-contract/model-kamino` dataset which can be used as an input by other datasets in the ETL.
@@ -94,7 +94,7 @@ It will not be possible to re-include the archive into the run that it missed. H
 
 ###### Status of the data
 
-The data safe and will be available in the next run after the situation is back to normal, that is when the late archive node completes.
+The data is safe and will be available in the next run after the situation is back to normal, that is when the late archive node completes.
 
 #### Archive consumption failures
 
@@ -108,7 +108,7 @@ It will not be possible to re-include the archive into the run that it missed. H
 
 ###### Status of the data
 
-The data safe and will be available in the next run after the situation is back to normal, that is when the series contract is fixed to correctly match the schemas of the input data.
+The data is safe and will be available in the next run after the situation is back to normal, that is when the series contract is fixed to correctly match the schemas of the input data.
 
 ## Use cases
 
