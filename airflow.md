@@ -66,17 +66,19 @@ When a DAG is deployed while another is running, airflow will use the current st
 
 ## Updating Airflow
 
-To update Airflow you need to first bump the `base-airflow` [Dockerfile](https://github.com/nubank/dockerfiles/blob/master/base-airflow/Dockerfile), merge it and wait until go has finished building it, then, you need to change the version on [deploy](https://github.com/nubank/deploy/blob/master/lib/recipes/airflow.rb#L21), open the deploy console in the cantareira environment and run:
+To update Airflow you need to first bump the `base-airflow` [Dockerfile](https://github.com/nubank/dockerfiles/blob/master/base-airflow/Dockerfile), merge it and wait until the GoCD pipeline is done building and publishing it. Once it is done, you need to change its version on [deploy](https://github.com/nubank/deploy/blob/master/lib/recipes/airflow.rb#L21). You can find the latest tag by running `nu registry latest-tag nu-base-airflow`.
+
+You can now open the `deploy` console in the cantareira environment (`cd $NU_HOME/deploy; ./console cantareira`) and run
 
 `Airflow.create!("x")`
 
-Wait until it's created and you can access
+Wait until it's created, make sure you can access (might take a while given DNS propagation times)
 https://cantareira-x-airflow.nubank.com.br/admin/ and then you can:
-* Test the new deployment by re-running one of the already finished nodes, but first, make sure you understand what the implications of re-running a DAG are: [triggering a DAG vs clearing a DAG and its tasks](#triggering-a-DAG-vs-clearing-a-DAG-and-its-tasks). It is recommended to re-run a DAG that has minimal impact on the daily run, but at the same time, we need to test the correctness of the new updated Airflow, and for that reason, it is important that this DAG is scheduled by Airflow (to verify Airflow correctness) and submits and waits for an Aurora job (to verify Aurora correctness). A DAG like `data-announcements` might be what you are looking for here.
+* Test the new deployment by re-running one of the already finished nodes, but first, make sure you understand what the implications of re-running a DAG are: [triggering a DAG vs clearing a DAG and its tasks](#triggering-a-DAG-vs-clearing-a-DAG-and-its-tasks). **It is recommended to re-run a DAG that has minimal impact on the daily run**, but at the same time, we need to test the correctness of the new updated Airflow, and for that reason, it is important that this DAG is scheduled by Airflow (to verify Airflow correctness) and submits and waits for an Aurora job (to verify Aurora correctness). A DAG like `data-announcements` might be what you are looking for here.
 
-* Upsert the new airflow to the main DNS
+* Upsert the new airflow to the main DNS with `Airflow.upsert_alias!("x")`
 
-If the service is not responding correctly, try to ssh (instructions below) in the new instance and see if there are any units that failed to start (there is a concurrency issue here).
+If the service is not responding correctly, try to ssh (instructions below) into the new instance and see if there are any units that failed to start (there is a concurrency issue here).
 
 `$ systemctl list-units --state=failed`
 
@@ -84,11 +86,7 @@ If there is any, try to restart them. Example for the `nginx.service` unit:
 
 `$ sudo systemctl restart nginx.service`
 
-If this solved the issue you may continue, otherwise you will have to find the problem first.
-
-`Airflow.upsert_alias!("x")`
-
-then you need to delete the old airflow
+The final step is to delete the old airflow stack, you can do it by running,
 
 `Airflow.delete!("y")`
 
@@ -96,6 +94,8 @@ Go to AWS CloudFormation and delete the old roles stack named `cantareira-y-airf
 
 Don't forget to commit the changes you made to deploy, so that we have
 an up to date view of the changes in a version-control system.
+
+If you bumped Airflow to use a new version of Sabesp, SSH into the new Airflow machine and run the following command to double check that the new Airflow is running the correct version of `sabesp`: `docker exec <container_id> cat /usr/local/lib/python3.7/dist-packages/sabesp/resources/VERSION`
 
 ### Updating Airflow in `nu-data`
 
