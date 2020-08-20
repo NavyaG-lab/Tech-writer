@@ -294,7 +294,7 @@ When datasets are loaded into BigQuery the load is logged in the `meta.itaipu_lo
 In specific cases, when a dataset that doesn't have downstream dependencies fails, you can commit an empty parquet file to the dataset.
 This allows buggy datasets to be skipped so that they don't affect the stability of ETL runs.
 
-1. Get the `metapod-transaction-id` from [`#etl-updates`](https://nubank.slack.com/messages/CCYJHJHR9/).
+1. Get the `metapod-transaction-id` from [`#etl-updates`](https://nubank.slack.com/messages/CCYJHJHR9/) or via `nu datainfra sabesp -- utils tx-id`
 2. Find the name of the failing dataset (`dataset-name`) from the SparkUI page.
 3. Get the `dataset-id` from sonar with the following GraphQL query:
 
@@ -315,7 +315,7 @@ This allows buggy datasets to be skipped so that they don't affect the stability
 4. Run the following `sabesb` command to commit a blank dataset for a specific dataset in a given run:
 
 ```shell
-sabesp metapod --token --env prod dataset commit <metapod-transaction-id> <dataset-id> PARQUET s3://nu-spark-us-east-1/non-datomic/static-datasets/empty-materialized/empty.gz.parquet
+nu datainfra sabesp -- metapod --token --env prod dataset commit <metapod-transaction-id> <dataset-id> PARQUET s3://nu-spark-static/empty/materialized/empty.gz.parquet
 ```
 
 ## Removing bad data from Metapod
