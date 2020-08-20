@@ -39,7 +39,7 @@ At Nubank, Datomic is the main/preferred way to store data. But it's not the onl
 
 ### Source of the data
 
-Dataset series data is produced by services by calling the `common-schemata.wire.etl/produce-to-etl!` function ([source](https://codesearch.nubank.com.br/search/linux?q=defn%20produce-to-etl!&fold_case=auto&regex=false&context=true&repo%5B%5D=nubank%2Fcommon-schemata)) . The resulting data is then handled by the *Ingestion Layer* – a set of services linked to the `EVENT-TO-ETL` Kafka topic:
+Dataset series data is produced by services by using the [common-ingestion](https://github.com/nubank/common-ingestion) component; please refer to its README to understand its usage and how to integrate it with your service. The resulting data is then handled by the *Ingestion Layer* – a set of services linked to the `EVENT-TO-ETL` Kafka topic:
 
 * The [Riverbend](https://github.com/nubank/riverbend) service is responsible for producing dataset series. It does so by consuming the `EVENT-TO-ETL` Kafka topic and serialising its messages to `.avro` files suitable for ingestion by Itaipu. The dataset-name should be in the format `series/dataset-name`.
 * The [Curva de Rio](https://github.com/nubank/curva-de-rio) service exposes an HTTP endpoint which allows services not connected to Kafka to send data to Riverbend.
