@@ -2,31 +2,38 @@
 
 ## Table of Contents
 
-* [Background](#background)
-    * [Source of the data](#source-of-the-data)
-* [Using Dataset Series](#using-dataset-series)
-  * [Creating a new dataset series](#creating-a-new-dataset-series)
-    * [Code organization](#code-organization)
-    * [Anatomy of a DatasetSeriesContract](#anatomy-of-a-datasetseriescontract)
-        * [seriesName](#seriesname)
-        * [contractSchema](#contractschema)
-        * [alternativeSchemas](#alternativeschemas)
-    * [Why do I need all these different schemas?](#why-do-i-need-all-these-different-schemas)
-  * [Dealing with versions](#dealing-with-versions)
-    * [Transform values of existing attributes](#transform-values-of-existing-attributes)
-    * [Rename attributes](#rename-attributes)
-    * [Coerce values](#coerce-values)
-  * [Metadata](#metadata)
-  * [Primary keys and deduplication](#primary-keys-and-deduplication)
-  * [Final renaming](#final-renaming)
-  * [Troubleshooting dropped schemas](#troubleshooting-dropped-schemas)
-    * [Troubleshooting very big dataset series](#troubleshooting-very-big-dataset-series)
-  * [PII Handling](#pii-handling)
-  * [Accessing the output dataframes](#accessing-the-output-dataframes)
-* [Squish](#squish)
-  * [How to create archived schemas with just one line of code with Squish](#how-to-create-archived-schemas-with-just-one-line-of-code-with-squish)
-  * [How to create multiple versions in an archive dataset with Squish](#how-to-create-multiple-versions-in-an-archive-dataset-with-squish)
-  * [How to edit default parameters of Squish](#how-to-edit-default-parameters-of-squish)
+- [Dataset Series](#dataset-series)
+  - [Table of Contents](#table-of-contents)
+  - [Background](#background)
+    - [Source of the data](#source-of-the-data)
+  - [Using Dataset Series](#using-dataset-series)
+    - [Creating a new dataset series](#creating-a-new-dataset-series)
+      - [Code organization](#code-organization)
+      - [Anatomy of a DatasetSeriesContract](#anatomy-of-a-datasetseriescontract)
+        - [`seriesName`](#seriesname)
+        - [`contractSchema`](#contractschema)
+        - [`alternativeSchemas`](#alternativeschemas)
+      - [Why do I need all these different schemas?](#why-do-i-need-all-these-different-schemas)
+    - [Dealing with versions](#dealing-with-versions)
+      - [Transform values of existing attributes](#transform-values-of-existing-attributes)
+      - [Rename attributes](#rename-attributes)
+      - [Coerce values](#coerce-values)
+    - [Metadata](#metadata)
+    - [Primary keys and deduplication](#primary-keys-and-deduplication)
+    - [Final renaming](#final-renaming)
+    - [`droppedSchemas`](#droppedschemas)
+      - [Explicitly dropping schemas](#explicitly-dropping-schemas)
+  - [Dataset series tooling](#dataset-series-tooling)
+  - [Troubleshooting](#troubleshooting)
+    - [Troubleshooting Dataset Series schema mismatches](#troubleshooting-dataset-series-schema-mismatches)
+    - [Troubleshooting dropped schemas](#troubleshooting-dropped-schemas)
+    - [Troubleshooting very big dataset series](#troubleshooting-very-big-dataset-series)
+    - [PII Handling](#pii-handling)
+    - [Accessing the output dataframes](#accessing-the-output-dataframes)
+  - [Squish](#squish)
+    - [How to create archived schemas with just one line of code with Squish](#how-to-create-archived-schemas-with-just-one-line-of-code-with-squish)
+    - [How to create multiple versions in an archive dataset with Squish](#how-to-create-multiple-versions-in-an-archive-dataset-with-squish)
+    - [How to edit default parameters of Squish](#how-to-edit-default-parameters-of-squish)
 
 ## Background
 
@@ -298,9 +305,102 @@ override val droppedSchemas = Seq(
 )
 ```
 
-It is fairly important to declare schemas you wish to drop on purpose in this `droppedSchemas` field; otherwise Itaipu will alert on them and you won't be able to differentiate between schemas you're ignoring intentionally and schemas you're accidentally missing.
+It is important to declare schemas you wish to drop on purpose.  Otherwise, Itaipu will alert on them and you won't be able to differentiate between schemas you're ignoring intentionally and schemas missing accidentally. Therefore, provide schemas that you want to drop in the`droppedSchemas` field; 
 
-## Troubleshooting dropped schemas
+## Dataset series tooling
+
+If you find any data loss or no data at all, you'll then need to look for schema mismatches.
+
+There is a `nucli` tool called `dataset-series diff` that helps you to understand whether there are schema mismatches or not. If no schema mismatches were identified by the tool, Itaipu should be able to ingest and process your dataset series.
+
+This tool uses your local copy of Itaipu as a basis for the comparison. (e.g. `$NU_HOME/itaipu`)
+
+It looks for potential schema mismatches between the contract schema you have defined in Itaipu and the schemas of the files of your series in the ETL. The tool will check each schema in the series metadata store, and if it cannot find a suitable contract, alternative or dropped schema for it, will print information indicating how each of these schemas differs from the contract schema of your op.
+
+Since the tool uses your local copy of Itaipu, you can use this tool while creating new contracts schema for the series whose data is ingested already into ETL. This ensures that you build your `DatasetSeriesContract` right on the first attempt.
+
+## Troubleshooting
+
+### Troubleshooting Dataset Series schema mismatches
+
+Example - Let's take the Archived dataset `dataset-customers-responsys-integration-rewards` and run:
+
+`nu dataset-series diff dataset-customers-responsys-integration-rewards --country BR` 
+
+This allows us to identify potential schema mismatches between the current `contractSchema` defined in your local copy of Itaipu and the several appending schemas that the ETL has in its metadata store.
+
+At the time of writing, once this command was issued, the user was presented with the following output:
+
+```shell
+1. >> Schema >> dataset-customers-responsys-integration-rewards - BR (Append Dates: 2020-07-01 - 2020-08-19) matches local version of Itaipu contract schema
+2. >> Schema >> dataset-customers-responsys-integration-rewards - BR (Append Dates: 2020-06-18 - 2020-06-30) has the following mismatches with the local version of Itaipu contract schema
+3. >> Following attributes are in metadata store and not in local contract schema:
+4. >>+ recommendation_transaction__rewards_label - string => absent locally but present on metadata store
+5. >> Following attributes are in local contract schema and not in metadata store:
+6. >>+ recommendation_transaction__merchant_name - string => added locally but absent on metadata store
+```
+Let's breakdown this output for a better understading:
+
+**Line number 1**: `>> Schema >> dataset-customers-responsys-integration-rewards - BR (Append Dates: 2020-07-01 - 2020-08-19) matches local version of Itaipu contract schema`
+
+The schema known by ETL's metadata store with the most recent append dates has NO schema mismatches. 
+
+***Note:** The output will always bring schema mismatches sorted by the most recent append dates.*
+
+**Line number 2**: `>> Schema >> dataset-customers-responsys-integration-rewards - BR (Append Dates: 2020-06-18 - 2020-06-30) has the following mismatches with the local version of Itaipu contract schema`
+
+This schema known by ETL's metadata store has schema mismatches that will be explained in more detail next. 
+
+**Line number 3**: `>> Following attributes are in metadata store and not in local contract schema:`
+
+This section we aim to let you know the attributes known by ETL's metadata store that are not defined in your local copy of Itaipu.
+
+**Line number 4**: `>>+ recommendation_transaction__rewards_label - string => absent locally but present on metadata store`
+
+Here we point out the exact attribute name and type that is known by ETL's metadata store and that is not available in your local copy of Itaipu.
+
+**Line number 5**: `>> Following attributes are in local contract schema and not in metadata store:`
+
+This section we aim to let you know the attributes that are defined in your local copy of Itaipu but are NOT known by ETL's metadata store.
+
+**Line number 6**: `>>+ recommendation_transaction__merchant_name - string => added locally but absent on metadata store`
+
+Here we point out the exact attribute name and type that is defined in your local copy of Itaipu but is NOT known by ETL's metadata store.
+
+---
+
+Let's look at another small example. The dataset series contract `nu.data.br.dataset_series.SCROperacao` has been manually modified to make sure we would have a meaningful output for learning purposes. 
+By calling:
+
+`$ nu dataset-series diff scr-operacao --country BR` 
+
+we would get an output that looks like:
+
+```shell
+1. >> Schema >> scr-operacao - BR (Append Dates: 2019-12-09 - 2020-08-20) has the following mismatches with the local version of Itaipu contract schema
+2. >> Types changed in following attributes:
+3. >>+ database - integer => attribute has type integer locally but has type string on metadata store
+4. >> Schema >> scr-operacao - BR (Append Dates: 2019-12-09 - 2019-12-09) has the following mismatches 
+5. >> Types changed in following attributes:
+6. >>+ database - integer => attribute has type integer locally but has type string on metadata store
+```
+
+The lines that are worth noting in this case are:
+
+**Line number 2**: `Types changed in following attributes:`
+
+This is the section where attribute type mismatches will be listed out.
+
+**Line number 3**: `>>+ database - integer => attribute has type integer locally but has type string on metadata store`
+
+The attribute `database` of type `integer` differs from the type `string` known by Data-Infra's metadata store.
+
+---
+
+As we have seen, the tool will list the potential schema mismatches (attribute name and type) for each different schema known by the ETL metadata store. This tool should be able to tell you not only additions and absences of fields but also attribute type mismatches.
+
+
+### Troubleshooting dropped schemas
 
 Ideally, you'd want all datasets to be either processed normally, or intentionally dropped through the `droppedSchemas` attribute described above. If Itaipu is unable to match a given dataset against one of the schemas defined in the op, it will log a warning and ignore the dataset.
 
