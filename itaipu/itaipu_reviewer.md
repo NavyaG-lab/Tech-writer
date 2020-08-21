@@ -109,10 +109,10 @@ In the case above, a possible solution could be taking the most recent archive u
 Since the issues faced when reviewing a PR are recurring and the changes requested in those cases are usually standard, there are some macros we can use. You can set up your github macros using [this tutorial](https://help.github.com/en/github/writing-on-github/creating-a-saved-reply).
 
 ### Unsure about [PII](https://github.com/nubank/data-platform-docs/blob/master/itaipu/pii_and_personal_data.md) leakage in SparkOp
-Does this sparkOp contain PII information? If so, it should have a clearance PII. Please also refer to: https://github.com/nubank/data-platform-docs/itaipu/pii_and_personal_data.md.
+Does this sparkOp contain PII information? If so, it should have a clearance PII. Please also refer to: https://github.com/nubank/data-platform-docs/blob/master/itaipu/pii_and_personal_data.md.
 
 ### Unsure about [PII](https://github.com/nubank/data-platform-docs/blob/master/itaipu/pii_and_personal_data.md) leakage in StaticOp
-Does this staticOp contain PII information? If so, it should have a clearance PII (and it would go to s3://nu-spark-static/pii/staticop-name/). Please also refer to: https://github.com/nubank/data-platform-docs/itaipu/pii_and_personal_data.md.
+Does this staticOp contain PII information? If so, it should have a clearance PII (and it would go to s3://nu-spark-static/pii/staticop-name/). Please also refer to: https://github.com/nubank/data-platform-docs/blob/master/itaipu/pii_and_personal_data.md.
 
 ### StaticOp command not correctly pasted
 Can you pass the exact command to copy the files? This helps a lot the person reviewing the PRs and speeds up the process =) (PR for reference https://github.com/nubank/itaipu/pull/6851)
