@@ -292,6 +292,25 @@ If the problem is found to originate from user behaviour, we should leave a mess
 
 * https://spark.apache.org/docs/latest/configuration.html, `spark.scheduler.listenerbus.eventqueue.capacity` field.
 
+## No space left on device
+
+### Symptoms
+
+No real symptoms. This alert directly points to the real cause: one or
+more EC2 instances running Spark Executors are out of disk space.
+
+### Solution
+
+  * Change the storage class for the instances assigned to that job in
+This conversation was marked as resolved by giorgio-valoti
+    `aurora-jobs`. See [this
+    PR](https://github.com/nubank/aurora-jobs/pull/1232) for an
+    example. Please note: at the time of the PR, we had three storage
+    classes defined: `lowe`, `standard`, `high`. Also, see [this Slack
+    thread](https://nubank.slack.com/archives/CP3F163C4/p1591794519178600)
+    to trace back to the context leading to that PR.
+  * If the job is critical, run it manually with this override.
+
 ## Frequent dataset failures
 ### Leaf dataset is failing because of bad definition
 
