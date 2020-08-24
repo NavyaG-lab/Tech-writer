@@ -63,7 +63,7 @@ nu datainfra sabesp -- --aurora-stack cantareira-stable jobs kill jobs prod hyog
 ### Inspecting a metapod transaction
 
 ```shell
-nu datainfra sabesp metapod -- --env prod --token transaction get 9684e3c0-a961-45da-add2-17b3de5b513b | jq . | less
+nu datainfra sabesp -- metapod --env prod --token transaction get 9684e3c0-a961-45da-add2-17b3de5b513b | jq . | less
 ```
 
 ## Running Itaipu

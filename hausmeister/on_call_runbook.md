@@ -7,6 +7,8 @@
   - [Correnteza - attempt-checker is failing](#correnteza-attempt-checker-is-failing)
   - [Riverbend - no file upload in the last hour](#riverbend---no-file-upload-in-the-last-hour)
   - [Riverbend - kafka lag above threshold](#riverbend---kafka-lag-above-threshold)
+  - [Itaipu - OutOfMemory exceptions](#itaipu-outofmemory-error)
+  - [Itaipu - No space left on device](#no-space-left-on-device)
   - [Barragem - segment handling time above threshold](#barragem---segment-handling-time-above-threshold)
   - [Warning: [PROD] correnteza_last_t_greater_than_basis_t](#warning-prod-correnteza_last_t_greater_than_basis_t)
 - [Frequent dataset failures](#frequent-dataset-failures)
