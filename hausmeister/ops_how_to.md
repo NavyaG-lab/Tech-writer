@@ -296,14 +296,21 @@ This allows buggy datasets to be skipped so that they don't affect the stability
 
 1. Get the `metapod-transaction-id` from [`#etl-updates`](https://nubank.slack.com/messages/CCYJHJHR9/) or via `nu datainfra sabesp -- utils tx-id`
 2. Find the name of the failing dataset (`dataset-name`) from the SparkUI page.
-3. Get the `dataset-id` from sonar with the following GraphQL query:
+3. Double check if the dataset has successors using the following BigQuery query. If there are successors, they will also need to be comitted empty (check this possibility directly with the owners of those successors in this case).
+
+```
+select name, ops.successors 
+from dataset.spark_ops ops
+where name = '<dataset-name>'
+```
+4. Get the `dataset-id` of the failing dataset (and all its sucessors) from sonar with the following GraphQL query:
 
 ```
 {
   transaction(transactionId: "<metapod-transaction-id>") {
     datasets(
       datasetNames: [
-      "<dataset-name>"]) {
+      "<dataset-name>","<sucessor-dataset-name>","<other-sucessor-dataset-name>"...]) {
       id
       name
       committed
@@ -311,8 +318,7 @@ This allows buggy datasets to be skipped so that they don't affect the stability
   }
 }
 ```
-
-4. Run the following `sabesb` command to commit a blank dataset for a specific dataset in a given run:
+5. For each dataset, run the following `sabesp` command to commit a blank dataset in a given run:
 
 ```shell
 nu datainfra sabesp -- metapod --token --env prod dataset commit <metapod-transaction-id> <dataset-id> PARQUET s3://nu-spark-static/empty/materialized/empty.gz.parquet
