@@ -125,6 +125,64 @@ In case something goes wrong when reading the data back from its compacted state
 nu ser curl PUT global metapod /api/migrations/transaction/TRANSACTION_ID/unapply-compactions
 ```
 
+#### Running compaction in staging
+
+##### Scale the cluster up
+
+To run a compaction job some machine need to be scaled up in AWS. The
+following command scales up a cluster of 5 machines that can be used
+with an Aurora job called `compaction`.
+
+```shell
+nu datainfra sabesp -- --aurora-stack=cantareira-dev \
+   jobs create staging scale-ec2-compaction \
+   --filename scale-ec2 \
+   --job-version "scale_cluster=cc59ad8" \
+   INSTANCE_TYPE=m5.2xlarge \
+   NODE_COUNT=5 \
+   SLAVE_TYPE=compaction \
+   SPOT_RATIO=100 \
+   STORAGE_CLASS=standard \
+   USE_SPOTINST=
+```
+
+##### Running the compaction job
+
+The following command runs a compaction for the `series/example`
+dataset series.
+
+```shell
+nu datainfra sabesp -- --aurora-stack=cantareira-dev \
+   jobs create staging compaction \
+   --filename ouroboros-compaction-cli \
+   --job-version "itaipu=1be1fad" \
+   ARGS=BR___s3a://nu-spark-metapod-dataset-series/staging___s3a://nu-spark-metapod-dataset-series/staging___--series-to-compact___series/example \
+   CORES=99999 \
+   COUNTRY=br \
+   DRIVER_MEMORY=23622320128 \
+   DRIVER_MEMORY_JAVA=20G \
+   EXECUTOR_MEMORY=26843545600 \
+   ITAIPU_NAME=compaction \
+   METAPOD_ENVIRONMENT=staging \
+   MOCK_COUNTRY=False
+```
+
+The progress of the job can be monitored in Aurora [here](https://cantareira-dev-mesos-master.nubank.com.br:8080/scheduler/jobs/staging/compaction).
+
+##### Scale the cluster down
+
+After the compaction jobs has finished, please don't forget to scale
+the cluster down again. This can be done with the following command:
+
+```shell
+nu datainfra sabesp -- --aurora-stack=cantareira-dev \
+   jobs create staging downscale-ec2-compaction \
+   --filename scale-ec2 \
+   --job-version "scale_cluster=cc59ad8" \
+   SLAVE_TYPE=compaction \
+   USE_SPOTINST=
+```
+
 [1]: /etl_users/dataset_series.md
 [2]: https://github.com/nubank/riverbend
 [3]: https://github.com/nubank/itaipu
