@@ -1,0 +1,46 @@
+site_name: Data Platform Documentation
+site_description: Nubank's Data platform documentation
+site_author: Squad Observability
+site_url: 
+repo_url: https://github.com/nubank/data-platform-docs/
+edit_uri: edit/master/
+theme:
+  name: 'material'
+  custom_dir: 'overrides'
+  favicon: assets/nubank-favicon.ico
+  logo: assets/nubank-logo.svg
+  features:
+    - instant
+
+markdown_extensions:
+  - admonition
+  - sane_lists
+  - pymdownx.emoji:
+      emoji_generator: !!python/name:pymdownx.emoji.to_svg
+  - pymdownx.magiclink
+  - pymdownx.details
+  - pymdownx.critic
+  - pymdownx.mark
+  - plantuml_markdown
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_div_format
+  - toc:
+      permalink: "#"
+      baselevel: 3
+
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - https://unpkg.com/mermaid@8.4/dist/mermaid.min.js
+  - js/docs.js
+  - js/search.js
+  - js/elasticsearch.js
+
+plugins:
+  - mkdocs-jupyter
+  - git-revision-date-localized
+  - minify
