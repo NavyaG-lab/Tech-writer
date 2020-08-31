@@ -324,6 +324,13 @@ where name = '<dataset-name>'
 nu datainfra sabesp -- metapod --token --env prod dataset commit <metapod-transaction-id> <dataset-id> PARQUET s3://nu-spark-static/empty/materialized/empty.gz.parquet
 ```
 
+Alternatively, you can run the [dataset-commit-empty](hausmeister_tooling.md) command on the Hausmeister tooling with the `metapod-transaction-id` and 
+`dataset-name` and the switch `--include-successors`.
+
+```shell
+nu datainfra hausmeister dataset-commit-empty --include-successors <metapod-transaction-id> <dataset-name>
+```
+
 ## Removing bad data from Metapod
 
 If bad data has been committed to Metapod, there are some migrations that can be run to *retract* (the Datomic version of *deleting*) certain parts of a transaction, like the committed information about a dataset, attributes and more.
@@ -334,7 +341,7 @@ Send a `POST` request with an empty body to an endpoint that starts `api/migrati
 
 * Attributes: via `api/migrations/retract/attribute/:attribute-id`, where `:attribute-id` is the `:attribute/id` of the attribute you want to remove.
 * Indexed attributes: via `api/migrations/retract/indexed-attribute/:indexed-attribute-id`, where `:indexed-attribute-id` is the `:indexed-attribute/id` of the indexed attribute you want to remove.
-* Committed information of a dataset: via `api/migrations/retract/committed-dataset/:dataset-id`, where `:dataset-id` is the `:dataset/id` of the dataset you want to remove. Note that this does not remove the dataset from the transaction, only the information committed about this dataset (path, format, partitions, etc).
+* Committed information of a dataset: via `api/migrations/retract/committed-dataset/:dataset-id`, where `:dataset-id` is the `:dataset/id` of the dataset you want to remove. Note that this does not remove the dataset from the transaction, only the information committed about this dataset (path, format, partitions, etc). Alternatively you can use the [dataset-uncommit](hausmeister_tooling.md) command from the Hausmeister tooling CLI.
 
 _For example_:
 
@@ -436,6 +443,8 @@ On Sonar click the `Datasets` tab and:
  - There are two paths, the `S3 Path` corresponds to the direct file path on S3, and the `Databricks Path` to the mounted version on databricks. In this case, we want the `Databricks Path`
 
 ![finding a dataset on Sonar](../images/find_dataset.png)
+
+Alternatively, use the [dataset-path](hausmeister_tooling.md) command with the transaction ID and dataset name.
 
 ### Load it in databricks
 Now that you have the path, open up a databricks notebook ([here is a nice example](https://nubank.cloud.databricks.com/#notebook/131424/command/131441))
