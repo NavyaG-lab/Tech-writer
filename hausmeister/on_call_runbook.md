@@ -260,7 +260,27 @@ Then, check the status of the Datomic extractor using
 The dashboard has a lot more useful information about Correnteza's extractions, but the
 important bits for this purpose are highlighted in the screenshot.
 
-[correnteza-extractor-dashboard]: https://prod-grafana.nubank.com.br/d/A8ULVDTmz/correnteza-datomic-extractor-service?orgId=1&var-stack_id=All&var-host=All&var-database=skyler&var-prototype=s0&var-prometheus=prod-thanos 
+[correnteza-extractor-dashboard]: https://prod-grafana.nubank.com.br/d/A8ULVDTmz/correnteza-datomic-extractor-service?orgId=1&var-stack_id=All&var-host=All&var-database=skyler&var-prototype=s0&var-prometheus=prod-thanos
+
+## Itaipu/Aurora/Mesos/Spot: Job has not accepted any resources
+
+### Alert Severity
+
+Critical
+
+### Overview
+
+This error indicates that the cluster has insufficient resources to run the current job; This is usually related to a scale up issue, i.e., Spot not being able to spin on-demand instances in a certain availability zone.
+
+### Verification
+
+In order to verify this, you should
+1) Open the Aurora logs, and you will probably see several messages like this one `job has not accepted any resources; check your cluster UI to ensure that workers are registered and have sufficient resources`. This means that there are no nodes available to run the current job on.
+2) Open the Spot UI and look at the logs from the faulty job (Okta -> Spotinst -> Elasticgroup -> Groups -> filter by job name, for example `itaipu-brando` -> Log -> select the time period), and you might see something like `08/26/2020, 18:44:02, ERROR, Can't Spin On-Demand Instance: Code: InsufficientInstanceCapacity, Message: We currently do not have sufficient r5.4xlarge capacity in the Availability Zone you requested (us-east-1c). Our system will be working on provisioning additional capacity. You can currently get r5.4xlarge capacity by not specifying an Availability Zone in your request or choosing us-east-1a, us-east-1b, us-east-1d, us-east-1f.` This indicates that `Spot` is not working as expected and failing to create on demand instances.
+
+### Solution
+
+Since a random AZ is selected every time we run a scale-up job, re-triggering the entire Airflow SubDag from scratch will hopefully fix it.
 
 ## Itaipu OutOfMemory error
 
@@ -371,7 +391,7 @@ Some instances of this happening include:
 
     `nu datainfra sabesp -- --aurora-stack cantareira-stable jobs kill jobs prod <job-name>`
 3. Do a sanity check to ensure that no job is scheduled.
-4. If the issued is not fixed using the above steps, [Restart Mesos](ops_how_to.md#restart-aurora) 
+4. If the issued is not fixed using the above steps, [Restart Mesos](ops_how_to.md#restart-aurora)
 4. If the issue still persists, [restart Aurora](ops_how_to.md#restart-aurora). It takes ~5 mins to resume the jobs.
 5. If the jobs are not resumed, then [restart Airflow](/airflow.md#restarting-the-airflow-process).
 
@@ -393,7 +413,7 @@ Every once in a while, Aurora goes down. `sabesp` commands, such as ones involve
 `nu datainfra sabesp -- --aurora-stack cantareira-stable jobs kill jobs prod <job-name>`
 
 3. [Restart Mesos](ops_how_to.md#restart-aurora).
-4. If the issue still persists, [restart Aurora](ops_how_to.md#restart-aurora). 
+4. If the issue still persists, [restart Aurora](ops_how_to.md#restart-aurora).
 
 ### Airflow: Dagão run failed
 
