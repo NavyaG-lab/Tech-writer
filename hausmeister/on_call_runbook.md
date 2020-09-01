@@ -304,8 +304,9 @@ From the alert message we get the following information: the name of job, e.g., 
 You can then use the job name and the Spark information (stage and task) to debug further, and find the dataset name, by using the Spark Web UI or Itaipu logs - you reach both of these pages from the Aurora Web UI.
 
 ### Solution
+Even though sometimes no action needs to be taken (as the dataset retries and often succeeds on a different node), **you should consider commit the faulty dataset empty if a critical part of the run is getting blocked by it.**
 
-Most of the time, our users are the ones coming up with solutions for these kind of problems, and it usually involves them optimizing their SparkOP or even breaking it down in multiple ones.
+Most of the time, our users are the ones coming up with the long term solutions for these kind of problems, and it usually involves them optimizing their SparkOP or even breaking it down in multiple ones.
 
 We do have one known event that can cause these issues, and that we can try to solve on our side: a combination of a Spark listener event queue being too big (we control their size) for a given job, and an issue with a Dataset - user behaviour, this can cause the node to OOM and we can try to fix it by reducing the size of the queue. We do this by changing a variable called `spark_listener_bus_capacity` inside `dagao.py`. You can set a smaller value in the order of tens of thousands. The default set by Spark is 10k. You must hot deploy `dagao` if you want these changes to take effect right away.
 
