@@ -103,7 +103,7 @@ This alert means that [Riverbend](https://github.com/nubank/riverbend) is not pr
 
 ### Riverbend - kafka lag above threshold
 
-This alert means that [Riverbend](https://github.com/nubank/riverbend) is not consuming messages on at least one partition on the prototype. This is usually caused by one of two things: either Riverbend is under-provisioned, or one of the consumers/partitions got temporarily stuck somehow.
+This alert means that [Riverbend](https://github.com/nubank/riverbend) is not consuming messages on at least one partition on the prototype. This is usually caused by one of two things: either Riverbend is under-provisioned, or one of the consumers/partitions got temporarily stuck somehow. A third event that can create a significant lag, which is related to the previous one, is that we might have a series whose messages are too big and therefore are not being processed.
 
 #### Solution
 
@@ -112,6 +112,8 @@ Open [Riverbend Grafana Dashboard](https://prod-grafana.nubank.com.br/d/00000030
 - First, check on the Kubernetes dashboard for frequent restarts; this is usually visible for example on the memory usage graph where you'll see a lot of new lines appearing through time as new processes are added. Under normal circumstances the memory usage lines should be mostly stable.
 - If there are frequent restarts, check the memory usage of the pods (both average and per pod) on the same dashboard to see whether Riverbend may be under-provisioned on that shard. If it is, you'll need to bump memory by submitting a PR on [definition](https://github.com/nubank/definition) or, if you want to go fast or if there isn't anyone around to approve your PR, directly by editing the k8s deployment with `nu-"$country" k8s ctl --country "$country" --env "$env" "$prototype" -- edit deploy "$env-$prototype-$stack-riverbend-deployment"`.
 - If there are no restarts, the next step is to check directly the riverbend dashboard to see if the issue is occuring on all partitions or only on a single one. Usually if the issue is not due to provisioning, there'll be a single stuck partition. In this case the fix is to cycle riverbend: `nu-$country k8s cycle --env prod $prototype riverbend`. It'll take some time for processing to resume, usually between 30 minutes and an hour, but you should eventually see a dip in the lag.
+- If the previous steps do not seem to solve the issue, and you find out that we have a series whose messages are too big to be processed - you can find this by querying Splunk, you need to add this series to Riverbend's `series_droplist`. You do this by changing Riverbend's configuration inside its `config` branch. You can use the following pull request as an example: https://github.com/nubank/riverbend/pull/215/files. After you merge into `config`, the GoCD pipeline `riverbend-config-prod-br` should trigger automatically and will apply the new changes to the service.
+Splunk query example: `source=riverbend prototype=global host=prod-global-blue-riverbend-deployment-5957fdddbb-hzhvv error`; Error message to keep an eye out for `org.apache.kafka.common.errors.RecordTooLargeException: The request included a message larger than the max message size the server will accept`
 
 ### Correnteza database-claimer is failing
 
