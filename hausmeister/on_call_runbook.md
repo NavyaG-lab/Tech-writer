@@ -10,6 +10,7 @@
   - [Itaipu - OutOfMemory exceptions](#itaipu-outofmemory-error)
   - [Itaipu - No space left on device](#no-space-left-on-device)
   - [Barragem - segment handling time above threshold](#barragem---segment-handling-time-above-threshold)
+  - [Barragem - segment processing error](#barragem---segment-processing-errors)
   - [Warning: [PROD] correnteza_last_t_greater_than_basis_t](#warning-prod-correnteza_last_t_greater_than_basis_t)
 - [Frequent dataset failures](#frequent-dataset-failures)
   - [Dataset partition not found on s3](#dataset-partition-not-found-on-s3)
@@ -193,6 +194,25 @@ This alert means that [Barragem](https://github.com/nubank/barragem) is not able
 - First, check Splunk for any errors or big delays using `source=barragem error` or `source=barragem timing_ms>600000` (you can also specify a prototype by adding `prototype=s0` to the query, for example). Any exception here may indicate faulty segments or integration issues with other components (ex: AuroraDB). This [troubleshooting] playbook section can be consulted for more info about possible errors at this point. If there are no exceptions or errors, continue to the steps below.
 - Then, open the [Barragem Grafana Dashboard](https://prod-grafana.nubank.com.br/d/ApXjNMwZk/barragem) as well as the [Kubernetes CPU and Memory dashboard](https://prod-grafana.nubank.com.br/d/000000268/kubernetes-cpu-and-memory-pod-metrics?orgId=1&refresh=1m&var-PROMETHEUS=prod-thanos&var-namespace=default&var-container=nu-barragem&var-PROTOTYPE=All&var-stack_id=All). Make sure to correctly set the prototype to whatever prototype is alarming on both dashboards. Check the service resource comsumption on the Kubernetes dashboard. If the pods are caped on CPU or RAM, seems unresponsive, or if there are frequent restarts, Barragem may be under-provisioned on the observed shard. In this case, you'll need to bump resources (CPU and/or memory) by submitting a PR on [definition](https://github.com/nubank/definition/blob/master/resources/br/services/barragem.edn) or, if you want to go fast or if there isn't anyone around to approve your PR, you can bump resources directly by editing the k8s deployment with `nu-"$country" k8s ctl --country "$country" --env "$env" "$prototype" -- edit deploy "$env-$prototype-$stack-barragem-deployment"`. For example, for the `global` prototype on `br`, and the `staging` env: `nu-br k8s ctl --country br --env staging global -- edit deploy staging-global-blue-barragem-deployment`
 - If there are no restarts, the next step is to check [AuroraDB dashboard on AWS](https://sa-east-1.console.aws.amazon.com/cloudwatch/home?region=sa-east-1#dashboards:name=barragem_aurora) (pay attention to check the AWS account on the correct country) to see if the database instances is struggling for resources, which would affect write- and read-throughput and thus slow-down the processing of segments. If this is the case, you will need to bump the size of the writer DB instance by clicking on the _Modify_ button on the [prod-global-barragem-aurora-instance](https://sa-east-1.console.aws.amazon.com/rds/home?region=sa-east-1#database:id=prod-global-barragem-aurora-instance;is-cluster=false) dashboard. Bump one or more instance types and evaluate if it was of any help.
+
+### Barragem - segment processing errors
+
+#### Overview
+
+This error means Barragem is not being able to process a given Correnteza segment from a given datomic database. This also means that the streaming contract is not being processed correctly, and therefore the BigQuery table is not being updated.
+
+#### Troubleshooting
+
+The best way to troubleshoot and better understand what is happening, is by using [Splunk](https://nubank.splunkcloud.com/en-GB/app/launcher/home). Initially you should be looking for ["error-processing-segment" errors](https://github.com/nubank/barragem/blob/master/src/barragem/diplomat/consumer.clj#L76), i.e., `source=barragem "error-processing-segment" "acquisition"`.
+Alternatively you can look for "barragem.diplomat.consumer/exception-consuming", i.e., `source=barragem "barragem.diplomat.consumer/exception-consuming"`, this will give you the whole stack trace and allow you to find the root cause.
+
+#### Solution
+
+If a bug is found, a fix needs to be put in place as soon as possible. BQ tables are not being updated and we are breaking the streaming contacts 1h SLO.
+
+#### Escalation
+
+Please consider informing our users (#data-announcements) about the ongoing issue.
 
 ### Warning: [PROD] correnteza_last_t_greater_than_basis_t
 
