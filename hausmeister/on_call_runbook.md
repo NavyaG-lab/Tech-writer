@@ -355,6 +355,41 @@ more EC2 instances running Spark Executors are out of disk space.
     to trace back to the context leading to that PR.
   * If the job is critical, run it manually with this override.
 
+### Dagao is using an out-of-date version of itaipu's release branch
+
+#### Context
+
+The alert is telling us that the version being deployed is different
+from the current top of the tree in Itaipu’s `release` branch. For
+more context see [How Itaipu is deployed to the
+Dagao](/itaipu/workflow.md#how-itaipu-is-deployed-to-the-dagao).
+
+#### Solution
+
+  * Set release back to the correct version
+      * If we know there were no hotdeploys that day, we can get the
+        correct release from
+        [`#etl-updates`](https://nubank.slack.com/archives/CCYJHJHR9/p1597104023128200),
+        otherwise the user should go check out the commit history to
+        find the latest commit for that day's run.
+      * And use it to revert the `release` branch to that value.
+  * Push the changes and wait for the `dagao` pipeline to finish.
+  * Once it’s done, trigger a hot-deploy by triggering the gated step
+    in `dagao`, i.e. [the `>|>` arrow after the `create-release`
+    step](https://go.nubank.com.br/go/tab/pipeline/history/dagao).
+  * Restart the failing jobs
+      * Kill the job with `nu-<country> datainfra sabesp -- --aurora-stack <stack-name> jobs kill jobs prod <job-name>`
+      * [Clear the nodes in Airflow](/airflow.md#triggering-a-DAG-vs-clearing-a-DAG-and-its-tasks)
+
+  * Change the storage class for the instances assigned to that job in
+    `aurora-jobs`. See [this
+    PR](https://github.com/nubank/aurora-jobs/pull/1232) for an
+    example. Please note: at the time of the PR, we had three storage
+    classes defined: `low`, `standard`, `high`. Also, see [this Slack
+    thread](https://nubank.slack.com/archives/CP3F163C4/p1591794519178600)
+    to trace back to the context leading to that PR.
+  * If the job is critical, run it manually with this override.
+
 ## Frequent dataset failures
 ### Leaf dataset is failing because of bad definition
 
