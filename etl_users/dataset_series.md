@@ -417,6 +417,11 @@ One issue you might encounter when using this notebook is that the Metapod query
 
 ### PII Handling
 
+#### Definition of attributes as PII
+
+- Attributes marked as PII are automatically hashed in the output contract dataset. 
+- PII attribute lookup table datasets are generated for every attribute marked as PII, which allow lookups from a hash value to the original PII value
+
 When declaring the contract schema, attributes representing PII data should be marked as `isPii = true`:
 
 ```scala
@@ -434,27 +439,21 @@ val contractSchema = Set(
 )
 ```
 
-Fields marked as PII are automatically hashed in the output contract dataset. If you need to expose the PII data directly, there are two tools at your disposal:
+
+#### Definition of PII contract
 
 - The PII contract dataset, which is the same as the contract dataset, but with no hashing
-- PII attribute lookup table dataset, which allow lookups from a hash value to the original PII value
+- By default, the PII contract is not generated. 
 
-By default, none of the two above are generated. To have them generated, you'll need to extend the `generatedPiiTables` field on `DatasetSeriesContract`:
+When declaring the contract schema, extend the `generatedPiiTables` field on `DatasetSeriesContract`:
 
 ```scala
-import nu.data.infra.api.dataset_series.v1.{DatasetSeriesContract, PiiTableType}
 
 object MySeriesContract extends DatasetSeriesContract {
   ...
-  override def generatedPiiTables: Set[PiiTableType] =
-        Set(
-          PiiTableType.PiiContractTable, // <- this will generate the full unhashed dataset
-          PiiTableType.PiiAttributeLookupTable("attr_2") // <- this will generate a PII lookup table for `attr_2`
-        )
+  override def generatePiiContractTable : Boolean = true
 }
 ```
-
-Note that when declaring a `PiiAttributeLookupTable`  on an attribute that is renamed in the contract with the `as` method, you'll need to refer to it by its final, changed name.
 
 ### Accessing the output dataframes
 
