@@ -7,7 +7,7 @@ These are a set of tools that should aid the Hausmeister in performing certain t
 The following projects need to be installed:
 
   * [nucli.py](https://github.com/nubank/nucli.py): A new port of nucli that serves as the hostbed for Hausmeister CLI operations.
-  * [Google Cloud SDK](https://cloud.google.com/sdk): A set of command-line tools for the Google Cloud Platform. Used for operations that interact with BigQuery.
+  * [Google Cloud SDK](https://cloud.google.com/sdk/docs/downloads-interactive): A set of command-line tools for the Google Cloud Platform. Used for operations that interact with BigQuery.
   
 After `gcloud` SDK is installed, run the following to setup your Google Account Credentials. Use your `nubank` email address to authenticate. 
   ```
