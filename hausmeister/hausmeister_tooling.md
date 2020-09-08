@@ -41,7 +41,7 @@ All the commands are available under `nu datainfra hausmeister`.
 
 ### `dataset-id [options] <tx-id> <dataset-name>` ##
 
-[[source](https://github.com/nubank/nucli.py/blob/master/src/nucli/datainfra/hausmeister/dataset_id.p)]
+[[source](https://github.com/nubank/nucli.py/blob/master/src/nucli/datainfra/hausmeister/dataset_id.py)]
 
 Get the ID for a dataset in a transaction.
 
