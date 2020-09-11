@@ -15,57 +15,8 @@
 - [Finishing up and pushing](#12---finishing-up-and-pushing)
 
 ## 1 - Preparation
-Overall, you should use [https://wiki.nubank.com.br/index.php/Dev_environment](https://wiki.nubank.com.br/index.php/Dev_environment) . It has been updated and made more user-friendly recently.
 
-The setupnu.sh script is self-explanatory. Make sure that you have access to the engineering team S3, otherwise you will have problems to use your aws key and secret while running setupnu.sh.
-
-Every now and then people will find minor bugs on setupnu. This is a great opportunity to create your first PR.
-
-To validate the environment is working properly, you should clone a service repo and try to run its tests.
-
-Setting up **scala:**
-
-Scala 101: https://wiki.nubank.com.br/index.php/Scala
-
-Independently of your editor of choice, is always a good idea to default to IDEA when coding in **Scala,** download it here [https://www.jetbrains.com/idea/download/#section=linux](https://www.jetbrains.com/idea/download/#section=linux) , you can use the community edition, which is free and works for working with **scala** .
-
-Configuring IDEA:
-
-1. Open idea, click in **Configure -> Plugins**
-
-  ![](https://static.notion-static.com/d90d9310dc1642249a992163f8d72c81/Screenshot_2017-12-01_11-58-00.png)
-
-2. Browse Repositories -> Type Scala in the search box, and install the **Scala Language** plugin.
-
-  ![](https://static.notion-static.com/6224eb2fb911420bbafca0019e283e0a/Screenshot_2017-12-01_12-00-42.png)
-
-3. Restart IDEA
-4. Open idea, click on **Configure -> Preferences**
-5. Navigate to **Build, Execution, Deployment -> Compiler -> Scala Compiler -> Scala Compiler Server**
-6. Change **JVM maximum heap size, MB** to `8192`
-7. Restart IDEA
-
-Importing projects on IDEA:
-
-After configuring IDEA, let's set up the **[Itaipu](https://github.com/nubank/itaipu/)** project.
-
-8. At this point in time, you already have **[nucli](https://github.com/nubank/nucli/)** installed, so let's use it.
-9. `nu projects clone itaipu` with this command you clone common-etl to into your **$NU_HOME**
-10. Now, click on **Import Project** and select **itaipu's directory**
-11. Select **Import Project from external Model -> SBT**
-
-  ![](https://static.notion-static.com/c5d12ddcbd2f45c1a76f6a6515fe6526/Screenshot_2017-12-01_13-53-31.png)
-
-12. Select the Java SDK that is installed on your machine. If you don't have one, click on **NEW** and select from your local machine.
-13. On **General settings**, change **Maximum heap size, MB** to `8192`
-
-  ![](https://user-images.githubusercontent.com/39742656/65346653-9233ad80-dbb3-11e9-86ec-a2678f57ef28.png)
-
-14. Click on Finish. Wait a little bit for IDEA to download all dependencies and build the project.
-15. If prompted, choose to use scalafmt for formatting
-- If you get errors related to dependencies of the project, force IntelliJ to reload them from build.sbt: Go to menu **View --> Tool Windows --> sbt** and click on the button to Refresh (arrows in a circle).
-
-All done.
+Follow the Itaipu [setup](project_dev_setup.md).
 
 ## 2 - Create your query in SQL in Databricks
 Go to `https://nubank.cloud.databricks.com/` and create your own Notebook. There's this [Databricks Tutorial](https://docs.databricks.com/spark/latest/gentle-introduction/for-data-engineers.html) , designed for giving you a introduction to Spark running on Databricks. Also, the [entry on the wiki](https://wiki.nubank.com.br/index.php/Databricks_Notebook) is pretty useful. Feel free to read it to understand Databricks better.
