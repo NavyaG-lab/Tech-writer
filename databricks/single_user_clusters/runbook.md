@@ -1,6 +1,7 @@
 # Runbook
 
 - [How to provision new clusters](#How-to-provision-new-clusters)
+   - [Troubleshooting](#Troubleshooting) 
 - [How to enable IAM passthrough for a new country?](#How-to-enable-IAM-passthrough-for-a-new-country)
 - [How to add new bucket permissions?](#How-to-add-new-bucket-permissions)
 - [How to create a lambda to evolve the environment?](#How-to-create-a-lambda-to-evolve-the-environment)
@@ -8,9 +9,27 @@
 ---
 
 ## How to provision new clusters
-This notebooks covers everything related to provisioning and administering single user cluster: https://nubank.cloud.databricks.com/#notebook/5445086
+This notebook covers everything related to provisioning and administering single user cluster: [SU creation notebook](https://nubank.cloud.databricks.com/#notebook/5445086)
 
-For more options and applying changes in groups refer to this notebook: https://nubank.cloud.databricks.com/#notebook/5222538/
+For more options and applying changes in groups refer to this notebook: [SU options notebook](https://nubank.cloud.databricks.com/#notebook/5222538/)
+
+### Troubleshooting
+
+#### A cluster was created with the wrong options
+
+If any kind of option was wrong at the cluster creation, manually delete the cluster and create the cluster again. 
+
+#### A user already has a SU cluster and requested PII access again
+
+The notebook already has a check in place preventing multiple clusters for the same person. In this case tag the person who requested the access on [#help-databricks-su-clusters](https://nubank.slack.com/archives/C016QUF63JB) and paste this message:
+>
+>Hello @person-slack-handle
+>
+>Your single user cluster already has access to PII data. In case you are having problems please check:
+>
+>- Check on the Jira support ticket if the period you requested for PII access hasn't expired
+>- If that's not the problem run `dbutils.credentials.showRoles()` on a notebook of your SU cluster and post the results on this thread.
+
 
 
 ## How to enable IAM passthrough for a new country?
