@@ -305,7 +305,7 @@ override val droppedSchemas = Seq(
 )
 ```
 
-It is important to declare schemas you wish to drop on purpose.  Otherwise, Itaipu will alert on them and you won't be able to differentiate between schemas you're ignoring intentionally and schemas missing accidentally. Therefore, provide schemas that you want to drop in the`droppedSchemas` field; 
+It is important to declare schemas you wish to drop on purpose.  Otherwise, Itaipu will alert on them and you won't be able to differentiate between schemas you're ignoring intentionally and schemas missing accidentally. Therefore, provide schemas that you want to drop in the`droppedSchemas` field;
 
 ## Dataset series tooling
 
@@ -325,7 +325,7 @@ Since the tool uses your local copy of Itaipu, you can use this tool while creat
 
 Example - Let's take the Archived dataset `dataset-customers-responsys-integration-rewards` and run:
 
-`nu dataset-series diff dataset-customers-responsys-integration-rewards --country BR` 
+`nu dataset-series diff dataset-customers-responsys-integration-rewards --country BR`
 
 This allows us to identify potential schema mismatches between the current `contractSchema` defined in your local copy of Itaipu and the several appending schemas that the ETL has in its metadata store.
 
@@ -343,13 +343,13 @@ Let's breakdown this output for a better understading:
 
 **Line number 1**: `>> Schema >> dataset-customers-responsys-integration-rewards - BR (Append Dates: 2020-07-01 - 2020-08-19) matches local version of Itaipu contract schema`
 
-The schema known by ETL's metadata store with the most recent append dates has NO schema mismatches. 
+The schema known by ETL's metadata store with the most recent append dates has NO schema mismatches.
 
-***Note:** The output will always bring schema mismatches sorted by the most recent append dates.*
+***Note:*** The output will always bring schema mismatches sorted by the most recent append dates.*
 
 **Line number 2**: `>> Schema >> dataset-customers-responsys-integration-rewards - BR (Append Dates: 2020-06-18 - 2020-06-30) has the following mismatches with the local version of Itaipu contract schema`
 
-This schema known by ETL's metadata store has schema mismatches that will be explained in more detail next. 
+This schema known by ETL's metadata store has schema mismatches that will be explained in more detail next.
 
 **Line number 3**: `>> Following attributes are in metadata store and not in local contract schema:`
 
@@ -369,10 +369,10 @@ Here we point out the exact attribute name and type that is defined in your loca
 
 ---
 
-Let's look at another small example. The dataset series contract `nu.data.br.dataset_series.SCROperacao` has been manually modified to make sure we would have a meaningful output for learning purposes. 
+Let's look at another small example. The dataset series contract `nu.data.br.dataset_series.SCROperacao` has been manually modified to make sure we would have a meaningful output for learning purposes.
 By calling:
 
-`$ nu dataset-series diff scr-operacao --country BR` 
+`$ nu dataset-series diff scr-operacao --country BR`
 
 we would get an output that looks like:
 
@@ -380,7 +380,7 @@ we would get an output that looks like:
 1. >> Schema >> scr-operacao - BR (Append Dates: 2019-12-09 - 2020-08-20) has the following mismatches with the local version of Itaipu contract schema
 2. >> Types changed in following attributes:
 3. >>+ database - integer => attribute has type integer locally but has type string on metadata store
-4. >> Schema >> scr-operacao - BR (Append Dates: 2019-12-09 - 2019-12-09) has the following mismatches 
+4. >> Schema >> scr-operacao - BR (Append Dates: 2019-12-09 - 2019-12-09) has the following mismatches
 5. >> Types changed in following attributes:
 6. >>+ database - integer => attribute has type integer locally but has type string on metadata store
 ```
@@ -419,7 +419,7 @@ One issue you might encounter when using this notebook is that the Metapod query
 
 #### Definition of attributes as PII
 
-- Attributes marked as PII are automatically hashed in the output contract dataset. 
+- Attributes marked as PII are automatically hashed in the output contract dataset.
 - PII attribute lookup table datasets are generated for every attribute marked as PII, which allow lookups from a hash value to the original PII value
 
 When declaring the contract schema, attributes representing PII data should be marked as `isPii = true`:
@@ -443,7 +443,7 @@ val contractSchema = Set(
 #### Definition of PII contract
 
 - The PII contract dataset, which is the same as the contract dataset, but with no hashing
-- By default, the PII contract is not generated. 
+- By default, the PII contract is not generated.
 
 When declaring the contract schema, extend the `generatedPiiTables` field on `DatasetSeriesContract`:
 
