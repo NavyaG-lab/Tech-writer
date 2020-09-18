@@ -9,6 +9,7 @@
 - [How to access the Audit logs?](#How-to-access-the-Audit-logs)
 - [What has changed for end users when accessing Databricks using Single User Clusters?](#What-has-changed-for-end-users-when-accessing-Databricks-using-Single-User-Clusters)
 - [Runbook](runbook.md)
+- [Meta Roles](meta-roles.md)
 
 ---
 
