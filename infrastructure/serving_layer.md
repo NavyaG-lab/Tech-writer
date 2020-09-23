@@ -156,6 +156,34 @@ The [Sarcophagus](https://github.com/nubank/sarcophagus) project publishes the P
 
 `conrado` is a service that runs in the prod environment. It serves data out the DynamoDB table that `tapir` loaded data into, via an HTTP interface, described below. To hit said endpoints through nucli the `admin` scope is required. To hit it from a service, please add the service and the datset it will use on this [scopes list](https://github.com/nubank/conrado/blob/master/src/conrado/logic/auth.clj#L11).
 
+### Bookmarks & Sachem
+
+When declaring bookmarks to consume a dataset from Conrado, please DO
+NOT add the `:dataset` parameter into the URL of the bookmark, because
+otherwise Sachem will use a very generic schema to check against and
+not the schema of the dataset.
+
+If you are going to consume 2 datasets, `my-dataset-1` and
+`my-dataset-2`, please add 2 bookmarks for them, like in the following
+example:
+
+```
+"bookmarks": {
+  "my-dataset-1" : {"url": "{{services.conrado}}/api/dataset/my-dataset-1/row/:id", "service": "conrado"},
+  "my-dataset-2" : {"url": "{{services.conrado}}/api/dataset/my-dataset-2/row/:id", "service": "conrado"}
+}
+```
+
+
+💣 Please DO NOT add the `:dataset` parameter to the URL like in the
+following example:
+
+```
+"bookmarks": {
+  "my-datasets" : {"url": "{{services.conrado}}/api/dataset/:dataset/row/:id", "service": "conrado"},
+}
+```
+
 ##### GET /api/dataset/:name/row/:id
 
 Gets a single row of a dataset given the `:name` of the dataset and
