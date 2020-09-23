@@ -83,8 +83,20 @@ The op needs to know its country and a quality assessment, nothing more of the
 normal attributes as they are all set in the abstraction.
 
 Then the main task is to get the malzahar contract names and the raw logs of
-the db's you are looking for. Here is a minimal example of the op that is
-needed for `mx`:
+the db's you are looking for.
+
+The list of contracts/databases we excise from is as follows:
+
+1. Acquisition
+2. Bureau
+3. Customers
+4. KarmaPolice
+5. Tubarao
+6. Yellow pages
+
+Not all of those exist for every country. Find the contracts that exist in the
+countries respective `contracts` folder (e.g. `nu.data.mx.dbcontracts`) and add
+those to your op. Here is a minimal example of the op that is needed for `mx`:
 
 ```scala
 object DatomicReextractions extends DatomicReextractOp {
@@ -104,13 +116,51 @@ Don't forget to add your op to the package file: Unlike normally, this time you
 add it to an attribute called `pii_deletion_datasets` instead of `all`:
 
 ```scala
-def pii_deletion_datasets: Seq[DatomicReextractOp] = Seq.empty[DatomicReextractOp]
-// currently still empty
+// empty version of the attribute: fill your op into the Seq
+def pii_deletion_datasets: Seq[DatomicReextractOp] = Seq(DatomicReextractions)
 ```
 
 For a new country, this attribute still needs to be created.
 
-### 2. Add mergulho anomalyChecks
+Lastly, we have a simple unit test for ensuring the inputs are correct. Copy
+that one from a country where the op already exists and adapt depending on
+which contracts are used in the new country for deletion. `mx` example:
+
+```scala
+import org.scalatest.{FlatSpec, Matchers}
+
+class DatomicReextractionsSpec extends FlatSpec with Matchers {
+
+  "inputs" should "be correct" in {
+    DatomicReextractions.inputs.toStream should contain allOf(
+      "nu-mx/contract/malzahar/excise-fields",
+      "nu-mx/contract/malzahar/excise-entities",
+      "nu-mx/contract/malzahar/excise-requests",
+      "nu-mx/raw/acquisition-s0/log",
+      "nu-mx/raw/customers-s0/log",
+      "nu-mx/raw/karma-police-s0/log",
+      "nu-mx/raw/bureau-mx-global/log"
+    )
+  }
+
+}
+```
+
+It is not a strict test but that is intentional: Just choose your initial set
+to be tested against to be what is expected. As the sparkOp changes (more
+prototypes, more contracts) this test _can_ be extended but does not fail if
+it is not extended. The merits of keeping the list up-to-date in terms of
+safety are too limited to enforce regular updates.
+
+### 2. Add pii_deletion_datasets to the itaipu main
+
+The `pii_deletion_datasets` attribute still needs to be picked up by itaipu to
+include the ops for this country into the DAG. The place to do so is
+[here](https://github.com/nubank/itaipu/blob/9f2a3dbc609d2183b8322440fa4de2948c580050/src/main/scala/etl/itaipu/Itaipu.scala#L67).
+Add the package object and attribute for your new country once you have created
+them.
+
+### 3. Add mergulho anomalyChecks
 
 Look for the
 [DatasetSelector](https://github.com/nubank/itaipu/blob/69c98a87a082002497749f4b1346516222497bb8/common-etl/src/main/scala/common_etl/evaluator/steps/mergulho/DatasetSelector.scala#L35)
@@ -126,12 +176,12 @@ here automatically isn't trivial for now.
 ## How it works
 
 The first sparkOp you add in step 1 above is used in our `ManagedOps` section
-to create 13 more sparkOps:
+to create 15 more sparkOps:
 
 1. The ServingOp
 2. The JoinHistoryOp
 3. MonitorTiming: Check if reextraction of excised data is late
-4. MonitorCompletenes: Check if every excised entity in malzahar is either
+4. MonitorCompleteness: Check if every excised entity in malzahar is either
    served today or was joined in the past
 5. MonitorDuplication: Check if any excised entity in malzahar is found in the
    current joins or the joinHistory twice: Indicating that it was served for
