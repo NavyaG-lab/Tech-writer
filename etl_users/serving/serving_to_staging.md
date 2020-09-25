@@ -17,6 +17,8 @@ With the Avro file and the schema file, the CLI command validates the logical ty
 ## Preparing the data
 In a nutshell, place your Avro file or directory on the s3 bucket for stage serving layer (`s3://nu-spark-metapod-ephemeral-staging/me/my-dataset.avro`) and place your logical type json schema in the same directory and name it `schema.json` (`s3://nu-spark-metapod-ephemeral-staging/me/schema.json`)
 
+**The data ingestion can only be made from this S3 bucket `s3://nu-spark-metapod-ephemeral-staging`.**
+
 In detail:
 
 ### The Avro file
@@ -41,8 +43,8 @@ StructType(
   StructField(example_doubles,ArrayType(DoubleType,true),true),
   StructField(example_enum,StringType,true),
   StructField(example_enums,ArrayType(StringType,true),true),
-  StructField(example_integer,IntegerType,true),
-  StructField(example_integers,ArrayType(IntegerType,true),true),
+  StructField(example_integer,LongType,true),
+  StructField(example_integers,ArrayType(LongType,true),true),
   StructField(example_string,StringType,true),
   StructField(example_strings,ArrayType(StringType,true),true),
   StructField(example_timestamp,TimestampType,true),
@@ -61,7 +63,10 @@ The logical type schema describes the schema of the dataset using our own intern
 They differ a little bit, hence we don't have a tool to generate them automatically.
 That said, we do validate that the Avro and logical type schemas match up before committing the dataset to the serving layer.
 
+**Important: The Logical type `INTEGER` actually maps to the Spark type `LongType`.**
+
 [Here is a full example of the logical type schema](../manual_series_schema.json) for the dataframe above.
+Please keep in mind that, if you have nullable fields, these have to be explicitly declared in the logical schema.
 
 It looks roughly like:
 
@@ -71,12 +76,14 @@ It looks roughly like:
       {
         "name": "example_number",
         "primaryKey": false,
+        "nullable": true,
         "logicalType": "DOUBLE",
         "logicalSubType": null
       },
       {
         "name": "id",
         "primaryKey": true,
+        "nullable": false,
         "logicalType": "UUID",
         "logicalSubType": null
       },
