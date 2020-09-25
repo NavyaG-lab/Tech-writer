@@ -310,7 +310,7 @@ Soft alert.
 
 ### Overview
 
-While computing a dataset, an Itaipu node fails with `java.lang.OutOfMemoryError`. This error is usually thrown during a Spark stage when there are insufficient resources to process said dataset. It is a Soft Alert because usually, these datasets get eventually computed and succeed, as they retry on a different node.
+While computing a dataset, an Itaipu node fails with `java.lang.OutOfMemoryError`. This error is usually thrown during a Spark stage when there are insufficient resources to process said dataset. It is a Soft Alert because **usually**, these datasets get eventually computed and succeed, as they end up running on a different node.
 
 ### Verification
 
@@ -319,19 +319,20 @@ If OOM happens in two jobs within the 45m window, two alerts - one per each job 
 
 ### Troubleshooting
 
-From the alert message we get the following information: the name of job, e.g., `aurora/prod/jobs/itaipu-core-datasets`, and a link to a Splunk landing page that will contain additional details about the problem, namely, Spark task ID and stage ID, full error message, e.g., `java.lang.OutOfMemoryError No enough memory for aggregation`, and the thread where it happened, e.g., `task-result-getter-2`. The thread name might help us identify if the problem originates from user behaviour or from configuration and/or infrastructure (data infra responsibility). If, for example, the thread name resonates a problem in the Spark listener queues, e.g., `spark-listener-group-shared`, this might mean that we have configuration issues and that we might have to tweak some Spark configuration values.
+First things first, we are going to need to understand which dataset has failed, and you can do this by parsing the Itaipu logs (*stderr* from the Aurora page). This is not very straightforward, because multiple threads log to that file, and for that reason, it might not be easy to identity which dataset is the culprit, but you should at least be able to narrow it down to a few candidates.
 
-You can then use the job name and the Spark information (stage and task) to debug further, and find the dataset name, by using the Spark Web UI or Itaipu logs - you reach both of these pages from the Aurora Web UI.
+And now, it is time to understand if said dataset was already committed (potentially in different node), by running, for example, `nu-br etl info <dataset-name>`, e.g., `nu-br etl info nu-br/dataset/customer-eavt-pivotted`; if yes, you should still warn the users (see the Escalation section), informing them that the dataset failed, and that its stability might not be the best.
 
 ### Solution
-Even though sometimes no action needs to be taken (as the dataset retries and often succeeds on a different node), **you should consider commit the faulty dataset empty if a critical part of the run is getting blocked by it.**
+Even though sometimes no action needs to be taken (as the dataset often succeeds in a different node), **you should consider committing the faulty dataset empty if it keeps failing, and a critical part of the run is getting blocked by it.** 
+Something else worth trying is to isolate the faulty dataset in a different node, i.e., `itaipu-other-flaky-datasets`, and see if its behaviour changes during the next run.
 
 Most of the time, our users are the ones coming up with the long term solutions for these kind of problems, and it usually involves them optimizing their SparkOP or even breaking it down in multiple ones.
 
 We do have one known event that can cause these issues, and that we can try to solve on our side: a combination of a Spark listener event queue being too big (we control their size) for a given job, and an issue with a Dataset - user behaviour, this can cause the node to OOM and we can try to fix it by reducing the size of the queue. We do this by changing a variable called `spark_listener_bus_capacity` inside `dagao.py`. You can set a smaller value in the order of tens of thousands. The default set by Spark is 10k. You must hot deploy `dagao` if you want these changes to take effect right away.
 
 ### Escalation
-If the problem is found to originate from user behaviour, we should leave a message in #data-tribe, informing our users that a specific dataset(s) is having OOM issues. They should investigate.
+If the problem is found to originate from user behaviour, we should leave a message in #data-tribe, informing our users that a specific dataset(s) is having OOM issues. We should inform them that the dataset succeeded on a different node, but that we are concerned about its long term stability. Please follow our [communication templates](https://docs.google.com/document/d/1L5MwBH2OZ0uvr5sTHG-LrLQTFRtx44Az8HyeN46rnc8/edit). They should investigate.
 
 ### Relevant links
 
