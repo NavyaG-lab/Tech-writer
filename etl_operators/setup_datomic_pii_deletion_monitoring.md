@@ -55,13 +55,11 @@ Glossary of what needs to be known:
    deletion) on the production databases.
 2. _Correnteza_: Data Infra service that (re-)extracts datomic logs from the
    production databases.
-3. _JoinOp_: Op that joins Malzahar contracts to our datomic raw logs to find
+3. _BaseOp_: Op that joins Malzahar contracts to our datomic raw logs to find
    which logs contain data that is supposed to be deleted and hence need to be
-   reextracted. Also holds all the entities that cannot be joined for
-   monitoring.
+   reextracted.
 4. _JoinHistoryOp_: A filtered JoinOp with only successful joins. This op is
-   archived to retain a history of what was found to be reextracted in the
-   past.
+   archived to retain a history of what was found to be reextracted in the past.
 5. _ServingOp_: Aggregation of the JoinOp that is sent to correnteza so that it
    can figure out which log parts to reextract.
 6. _ReextractionDSS_: Dataset series about when correnteza reextracted what log
@@ -73,11 +71,7 @@ Glossary of what needs to be known:
 
 ## How to do it
 
-Note: You can do all of these steps within a single PR. If you want to split it
-into multiple smaller steps, you can do the last step separately. But the first
-three steps need to be executed in the same PR, otherwise tests will fail.
-
-### 1. Create the JoinOp
+### 1. Create the BaseOp
 
 The op needs to know its country and a quality assessment, nothing more of the
 normal attributes as they are all set in the abstraction.
@@ -122,36 +116,6 @@ def pii_deletion_datasets: Seq[DatomicReextractOp] = Seq(DatomicReextractions)
 
 For a new country, this attribute still needs to be created.
 
-Lastly, we have a simple unit test for ensuring the inputs are correct. Copy
-that one from a country where the op already exists and adapt depending on
-which contracts are used in the new country for deletion. `mx` example:
-
-```scala
-import org.scalatest.{FlatSpec, Matchers}
-
-class DatomicReextractionsSpec extends FlatSpec with Matchers {
-
-  "inputs" should "be correct" in {
-    DatomicReextractions.inputs.toStream should contain allOf(
-      "nu-mx/contract/malzahar/excise-fields",
-      "nu-mx/contract/malzahar/excise-entities",
-      "nu-mx/contract/malzahar/excise-requests",
-      "nu-mx/raw/acquisition-s0/log",
-      "nu-mx/raw/customers-s0/log",
-      "nu-mx/raw/karma-police-s0/log",
-      "nu-mx/raw/bureau-mx-global/log"
-    )
-  }
-
-}
-```
-
-It is not a strict test but that is intentional: Just choose your initial set
-to be tested against to be what is expected. As the sparkOp changes (more
-prototypes, more contracts) this test _can_ be extended but does not fail if
-it is not extended. The merits of keeping the list up-to-date in terms of
-safety are too limited to enforce regular updates.
-
 ### 2. Add pii_deletion_datasets to the itaipu main
 
 The `pii_deletion_datasets` attribute still needs to be picked up by itaipu to
@@ -169,7 +133,7 @@ add your dataset and the check you want to run. In this case, it should be the
 `NewPIIDeletionAlertsCheck`. Add the three monitoring sparkOps to the list. You
 should find the examples from `br` in there already.
 
-In a future step we want to automate this as well, but getting the names in
+In a future step we want to automate this as well but getting the names in
 here automatically isn't trivial for now.
 
 
@@ -179,7 +143,7 @@ The first sparkOp you add in step 1 above is used in our `ManagedOps` section
 to create 15 more sparkOps:
 
 1. The ServingOp
-2. The JoinHistoryOp
+2. The JoinHistoryOp (and a derived archive)
 3. MonitorTiming: Check if reextraction of excised data is late
 4. MonitorCompleteness: Check if every excised entity in malzahar is either
    served today or was joined in the past
