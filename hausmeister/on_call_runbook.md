@@ -347,6 +347,10 @@ more EC2 instances running Spark Executors are out of disk space.
 
 ### Solution
 
+  * Consider decreasing the workload. For example if the job is a periodic 
+    maintenance job like `pollux-auto` consider [decreasing the number of databases](https://github.com/nubank/castor/blob/master/resources/castor_config.json.base)
+    it updates the cache for at a time, as long it can still maintain the service
+    SLO.
   * Change the storage class for the instances assigned to that job in
     `aurora-jobs`. See [this
     PR](https://github.com/nubank/aurora-jobs/pull/1232) for an
