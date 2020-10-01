@@ -16,7 +16,7 @@ The following instructions assume that your environment is fully setup for Brazi
 
 ```
 nu-data auth get-refresh-token --env prod
-nu-data auth refresh-token --env prod
+nu-data auth get-access-token --env prod
 ```
 
 2. Check whether you can reach services

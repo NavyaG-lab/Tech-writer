@@ -28,7 +28,7 @@ Note you may, from time to time, need to run ([more info](https://github.com/nub
 
 ```
 nu auth get-refresh-token --env prod
-nu auth refresh-token --env prod
+nu auth get-access-token --env prod
 ```
 
 Alternatively, you can also add a new _Environment_ in Insomnia, which will allow you to set environment variables across all saved requests. To access the Manage Environments window, click the `No Environment` dropdown below the Insomnia logo on the top-left.
