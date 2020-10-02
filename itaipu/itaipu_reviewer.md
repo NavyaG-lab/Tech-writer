@@ -29,6 +29,7 @@
      * [Commands](#commands)
      * [bors try](#bors-try)
 * [Code Owners](#code-owners)
+* [Itaipu Committers](#itaipu-committers)
 
 ## Workflow
 The normal flow is:
@@ -242,8 +243,9 @@ Itaipu uses a [CODEOWNERS](https://github.com/nubank/itaipu/blob/master/.github/
 
 If you want to become an itaipu committer, the steps you must follow are:
 * Do a self-assessment about how much you feel comfortable reviewing a PR by filling up some questions in this forms (https://forms.gle/ptkK1ByKpjRChMSKA)
-* Pair up with another reviewer for two sessions of the daily PR review rotation
+* Pair up with another reviewer for one session of the daily PR review rotation
 * Review PRs on your own for one session of the daily PR review rotation
+* Expect to be required to participate on the review rotation for at least a month
 
 This form will be regularly reviewed by either [#itaipu-reviewers](https://app.slack.com/client/T024U97V8/GQU8K9RFF) or [#squad-data-access](https://app.slack.com/client/T024U97V8/C84FAS7L6), who will check the requirements bellow, and also manage the pairing up between new reviewers and existing ones.
 
