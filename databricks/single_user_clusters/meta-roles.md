@@ -9,9 +9,9 @@ Here is a table that shows the role and the respective Okta groups:
 | role-name                                     | okta-group                        |
 |-----------------------------------------------|-----------------------------------|
 | databricks-federated-prod-general-br-role     | databricks-br-prod                |
-| databricks-federated-prod-general-mx-rol      | databricks-pii-prod               |
 | databricks-federated-prod-pii-br-role         | databricks-pii_su-br-prod         |
 | databricks-federated-prod-pii-mx-role         | databricks-pii_su-mx-prod         |
+| databricks-federated-prod-pii-co-role         | databricks-pii_su-co-prod         |
 | databricks-federated-prod-ds-role             | databricks-pii_ds-ww-prod         |
 | databricks-federated-prod-admin-br-role       | databricks-admin_su-br-prod       |
 | databricks-federated-prod-hausmeister-ww-role | databricks-hausmeister_su-ww-prod |
