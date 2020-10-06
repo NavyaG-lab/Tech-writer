@@ -27,7 +27,6 @@
   - [Troubleshooting](#troubleshooting)
     - [Troubleshooting Dataset Series schema mismatches](#troubleshooting-dataset-series-schema-mismatches)
     - [Troubleshooting dropped schemas](#troubleshooting-dropped-schemas)
-    - [Troubleshooting very big dataset series](#troubleshooting-very-big-dataset-series)
     - [PII Handling](#pii-handling)
     - [Accessing the output dataframes](#accessing-the-output-dataframes)
   - [Squish](#squish)
@@ -406,14 +405,7 @@ Ideally, you'd want all datasets to be either processed normally, or intentional
 
 To track these, the `Dropped Series Versions` table in the [ETL Monitoring Dashboard](https://nubank.splunkcloud.com/en-US/app/search/etl__dataset_issues_monitoring) indicates which dataset series experienced datasets being dropped. If your series appears in this table, it means that Itaipu found an existing dataset series in S3, but could not match all of its datasets with a schema declared in the relevant `DatasetSeriesContract` (including schemas in `droppedSchemas`). The `dropped_count` column shows how many datasets were dropped, and the `schemas` column indicates how many distinct schemas were found in these datasets, which could not be reconciled against the contract schema.
 
-In order to remedy this, you will need to update the existing schemas or add new schema in the op to match these dropped datasets. Currently you need to debug this by hand, perhaps with the help of the `nu dataset-series info YOUR_DATASET_SERIES -v` command. We hope to soon fix up our databricks helper notebooks that can aid in this.
-
-### Troubleshooting very big dataset series
-
-One issue you might encounter when using this notebook is that the Metapod query will timeout (in case of very big series); in this case, you can solve the dropped datasets issue by:
-- Going to this [Splunk query](https://nubank.splunkcloud.com/en-US/app/search/search?q=search%20index%3Dcantareira%20%22Dropping%20dataset-series%22&display.page.search.mode=fast&dispatch.sample_ratio=1&earliest=-24h%40h&latest=now&sid=1549617293.5429746) and change it to search for the name of the series you're looking to troubleshoot
-- Finding the message for dropped datasets, which contains the schema that was dropped
-- Adding it to the schemas of the op (usually alternative schemas)
+In order to remedy this, you will need to update the existing schemas or add new schema in the op to match these dropped datasets. See the [previous section about troubleshooting schema mismatches](#troubleshooting-dataset-series-schema-mismatches) for how to do this.
 
 ### PII Handling
 
