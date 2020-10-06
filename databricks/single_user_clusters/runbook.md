@@ -72,6 +72,7 @@ Payload containig the edn:
 {
   :role-name "prod-[general/pii]-[country]"
   :meta-role-arn "arn:aws:iam::[account-id]:role/databricks-jobs-meta-role"
+  ;databricks-account-id is 103528554969
 }
 ```
 
