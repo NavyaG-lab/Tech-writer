@@ -1,21 +1,77 @@
 <!-- markdownlint-disable-file MD024 MD047-->
 # On-Call Runbook
 
-- [Alarms](#alarms)
-  - [alert-itaipu-contracts triggered on Airflow](#alert-itaipu-contracts-triggered-on-airflow)
-  - [Correnteza - database-claimer is failing](#correnteza-database-claimer-is-failing)
-  - [Correnteza - attempt-checker is failing](#correnteza-attempt-checker-is-failing)
-  - [Riverbend - no file upload in the last hour](#riverbend---no-file-upload-in-the-last-hour)
-  - [Riverbend - kafka lag above threshold](#riverbend---kafka-lag-above-threshold)
-  - [Itaipu - OutOfMemory exceptions](#itaipu-outofmemory-error)
-  - [Itaipu - No space left on device](#no-space-left-on-device)
-  - [Barragem - segment handling time above threshold](#barragem---segment-handling-time-above-threshold)
-  - [Barragem - segment processing error](#barragem---segment-processing-errors)
-  - [Warning: [PROD] correnteza_last_t_greater_than_basis_t](#warning-prod-correnteza_last_t_greater_than_basis_t)
-- [Frequent dataset failures](#frequent-dataset-failures)
-  - [Dataset partition not found on s3](#dataset-partition-not-found-on-s3)
-  - [Leaf dataset is failing because of bad definition](#leaf-dataset-is-failing-because-of-bad-definition)
-- [Service related issues](#issues-related-to-services)
+- [On-Call Runbook](#on-call-runbook)
+  - [Incident response](#incident-response)
+  - [Alarms](#alarms)
+    - [alert-itaipu-contracts triggered on Airflow](#alert-itaipu-contracts-triggered-on-airflow)
+      - [Check reason for the failure](#check-reason-for-the-failure)
+      - [Restart the task](#restart-the-task)
+      - [Checking errors directly in Airflow](#checking-errors-directly-in-airflow)
+    - [Riverbend - No file upload in the last hour](#riverbend---no-file-upload-in-the-last-hour)
+      - [Solution](#solution)
+    - [Riverbend - kafka lag above threshold](#riverbend---kafka-lag-above-threshold)
+      - [Solution](#solution-1)
+    - [Correnteza database-claimer is failing](#correnteza-database-claimer-is-failing)
+    - [Correnteza attempt-checker is failing](#correnteza-attempt-checker-is-failing)
+    - [Barragem - segment handling time above threshold](#barragem---segment-handling-time-above-threshold)
+      - [Solution](#solution-2)
+    - [Barragem - segment processing errors](#barragem---segment-processing-errors)
+      - [Overview](#overview)
+      - [Troubleshooting](#troubleshooting)
+      - [Solution](#solution-3)
+      - [Escalation](#escalation)
+    - [Warning: [PROD] correnteza_last_t_greater_than_basis_t](#warning-prod-correnteza_last_t_greater_than_basis_t)
+      - [Context](#context)
+      - [Solution](#solution-4)
+      - [Delete all the extractions for the databases that the alarm is going off for](#delete-all-the-extractions-for-the-databases-that-the-alarm-is-going-off-for)
+      - [Cycle Correnteza in the corresponding prototype](#cycle-correnteza-in-the-corresponding-prototype)
+      - [Monitor re-extractions](#monitor-re-extractions)
+  - [Itaipu/Aurora/Mesos/Spot: Job has not accepted any resources](#itaipuauroramesosspot-job-has-not-accepted-any-resources)
+    - [Alert Severity](#alert-severity)
+    - [Overview](#overview-1)
+    - [Verification](#verification)
+    - [Solution](#solution-5)
+  - [Itaipu OutOfMemory error](#itaipu-outofmemory-error)
+    - [Alert Severity](#alert-severity-1)
+    - [Overview](#overview-2)
+    - [Verification](#verification-1)
+    - [Troubleshooting](#troubleshooting-1)
+    - [Solution](#solution-6)
+    - [Escalation](#escalation-1)
+    - [Relevant links](#relevant-links)
+  - [No space left on device](#no-space-left-on-device)
+    - [Symptoms](#symptoms)
+    - [Solution](#solution-7)
+    - [Dagao is using an out-of-date version of itaipu's release branch](#dagao-is-using-an-out-of-date-version-of-itaipus-release-branch)
+      - [Context](#context-1)
+      - [Solution](#solution-8)
+  - [Escafandro - responses with empty data points above threshold](#escafandro---responses-with-empty-data-points-above-threshold)
+    - [Overview](#overview-3)
+      - [Alert Severity](#alert-severity-2)
+    - [Verification](#verification-2)
+    - [Troubleshooting](#troubleshooting-2)
+    - [Solution](#solution-9)
+    - [Escalation](#escalation-2)
+    - [Relevant links](#relevant-links-1)
+  - [Frequent dataset failures](#frequent-dataset-failures)
+    - [Leaf dataset is failing because of bad definition](#leaf-dataset-is-failing-because-of-bad-definition)
+      - [Symptoms](#symptoms-1)
+      - [Solution](#solution-10)
+      - [Notes](#notes)
+    - [Dataset partition not found on s3](#dataset-partition-not-found-on-s3)
+      - [Symptoms](#symptoms-2)
+      - [Solution](#solution-11)
+  - [Issues related to Services](#issues-related-to-services)
+    - [Queued Jobs in PENDING state - aurora web UI](#queued-jobs-in-pending-state---aurora-web-ui)
+      - [Symptom](#symptom)
+      - [Solution](#solution-12)
+    - [Non-responsive Aurora](#non-responsive-aurora)
+      - [Symptom](#symptom-1)
+      - [Solution](#solution-13)
+    - [Airflow: Dagão run failed](#airflow-dagão-run-failed)
+      - [Diagnosis](#diagnosis)
+      - [Solution](#solution-14)
 
 This document is a resource for engineers *on-call*.
 
@@ -394,6 +450,63 @@ Dagao](/itaipu/workflow.md#how-itaipu-is-deployed-to-the-dagao).
     thread](https://nubank.slack.com/archives/CP3F163C4/p1591794519178600)
     to trace back to the context leading to that PR.
   * If the job is critical, run it manually with this override.
+
+## Escafandro - responses with empty data points above threshold
+
+Escafandro - responses with empty data points above threshold
+
+### Overview
+
+The purpose of this alert is to hint On-Call Engineers that there are more responses with empty datapoints than expected. This means that Itaipu is not being provided with enough data to perform `(Strictly)IncreasingRowCountCheck` checks, an anomaly check that helps our users to make sure the output of our ETL is behaving in a sane manner.
+
+#### Alert Severity
+
+Soft alert.
+
+### Verification
+
+To verify whether there is an on-going situation, access [Escafandro Monitoring](https://prod-grafana.nubank.com.br/d/b3gOJwFMz/escafandro-monitoring?orgId=1)  Grafana dashboard, more especifically checking the [Range Endpoint - Empty Responses](https://prod-grafana.nubank.com.br/d/b3gOJwFMz/escafandro-monitoring?orgId=1&viewPanel=2) chart. This chart should give you an overview about the usual trend of empty responses that Escafandro usually sends back to Itaipu. One reasonable explaination for this to happen is when a new dataset is added to the ETL. Once this happens, Escafandro will not have any datapoints for the very first run of the recently-added dataset.
+
+### Troubleshooting
+
+Before jumping into problem solving mode, it's important to understand whether there actually is something to be fixed in the current situation.
+
+One important aspect to keep in mind is the fact that many new datasets might have been added to the ETL at the same day, and since Escafandro will not have historical metrics about these, there is nothing that can be done about it. 
+One way to check whether this is the case, you can collect the name of some dataset samples using the following search query in Splunk: `source=escafandro "metric-query-response" ":datapoints ()"`
+
+To kick-start troubleshooting this, your first stop is again accessing [Escafandro Monitoring](https://prod-grafana.nubank.com.br/d/b3gOJwFMz/escafandro-monitoring?orgId=1) Grafana dashboard. Compare the [Persist Endpoint - Metric created](https://prod-grafana.nubank.com.br/d/b3gOJwFMz/escafandro-monitoring?orgId=1&viewPanel=4) pane with the [Range Endpoint - Empty Responses](https://prod-grafana.nubank.com.br/d/b3gOJwFMz/escafandro-monitoring?orgId=1&viewPanel=2). There should be an inversely proportional relationship between the number of metrics created vs the number empty datapoint responses. Meaning, the less metrics being created on a given day the higher is the likelyhood of the number of empty datapoints response on the upcoming day. E.g., On 1st October if `nu-br/important-dataset` does not create metrics, the execution of `nu-br/important-dataset` on 2nd October will return empty datapoints.
+
+So, look for possibly big gaps in the metrics creation over the past days. If that's the case, you might have to start digging into why did this happen by checking the following Grafana dashboards:
+- [Datomic Transactor Metrics](https://prod-grafana.nubank.com.br/d/XbZytFTWk/datomic-transactor-metrics?orgId=1&var-PROMETHEUS=prod-thanos&var-PROTOTYPE=All&var-TRANSACTOR=escafandro-1-datomic)
+- [Kubernetes CPU and Memory pod metrics](https://prod-grafana.nubank.com.br/d/000000268/kubernetes-cpu-and-memory-pod-metrics?orgId=1&refresh=1m&var-PROMETHEUS=prod-thanos&var-namespace=default&var-container=nu-escafandro&var-PROTOTYPE=All&var-stack_id=All)
+- [JVM by Service](https://prod-grafana.nubank.com.br/d/000000276/jvm-by-service?orgId=1&var-ENVIRONMENT=prod&var-PROMETHEUS=prod-thanos&var-SERVICE=escafandro&var-PROTOTYPE=global&var-STACK_ID=All&var-POD=All)
+- [Escafandro Monitoring - Custom metrics](https://prod-grafana.nubank.com.br/d/b3gOJwFMz/escafandro-monitoring?orgId=1)
+
+It's also possible to use Splunk to assert [Escafandro](https://github.com/nubank/escafandro/)'s behavior from the perspective of the consumer of the API, in this case [Itaipu/Mergulho](https://github.com/nubank/itaipu/). [This link](https://nubank.splunkcloud.com/en-US/app/search/search?q=search%20index%3Dcantareira%20step%3DCheckAnomaliesUsingMetricValues&display.page.search.mode=verbose&dispatch.sample_ratio=1&earliest=-24h%40h&latest=now&sid=1602083082.13899927_441E883E-2B06-437D-97A4-B78C146189E2) should take you to Splunk with the following initial search query `index=cantareira step=CheckAnomaliesUsingMetricValues`. From there, one can refine the search to validate potential hypothesis. E.g. Is the anomaly check being correctly performed over the critical dataset `xyz`? If not, it's worth escalate to the owners of the datasets. (see: [Escalation](#escalation-2) section)
+
+### Solution
+As mentioned above, there might be cases where too many new datasets might have been added on the same day, and therefore there is nothing to worry about.
+
+In case this alert is firing too ofen throughout the days, It could mean that the threshold set for this alert is too low and we should consider increasing it.
+The current state of this alert can be found [here](https://github.com/nubank/definition/blob/master/resources/alert-templates/escafandro-empty-data-points-above-threshold.edn).
+
+If it has not been possible to draw any conclusion about the actual problem by checking the above mentioned elemets for troubleshooting, you might have to look for recent changes over either [Escafandro](https://github.com/nubank/escafandro/) or [Itaipu/Mergulho](https://github.com/nubank/itaipu/).
+
+### Escalation
+
+Whenever you find yourself in doubt, escalating to the L2 Engineer should be your first step.
+
+As mentioned in the [Troubleshooting](#troubleshooting-2) section above, in case we clearly detect issues from any of the infrastructure resources like Datomic or Kubernetes, the escalation path should be reaching out to Foundation tribe through their Slack channel `#foundation-tribe`
+
+**Reminder**: Please consider informing our users (#data-announcements) about the ongoing issue.
+
+### Relevant links
+
+Escafandro's relevant links are:
+- [README](https://github.com/nubank/escafandro/)
+- [Datomic Transactor Metrics](https://prod-grafana.nubank.com.br/d/XbZytFTWk/datomic-transactor-metrics?orgId=1&var-PROMETHEUS=prod-thanos&var-PROTOTYPE=All&var-TRANSACTOR=escafandro-1-datomic)
+- [Kubernetes CPU and Memory pod metrics](https://prod-grafana.nubank.com.br/d/000000268/kubernetes-cpu-and-memory-pod-metrics?orgId=1&refresh=1m&var-PROMETHEUS=prod-thanos&var-namespace=default&var-container=nu-escafandro&var-PROTOTYPE=All&var-stack_id=All)
+- [JVM by Service](https://prod-grafana.nubank.com.br/d/000000276/jvm-by-service?orgId=1&var-ENVIRONMENT=prod&var-PROMETHEUS=prod-thanos&var-SERVICE=escafandro&var-PROTOTYPE=global&var-STACK_ID=All&var-POD=All) 
 
 ## Frequent dataset failures
 ### Leaf dataset is failing because of bad definition
