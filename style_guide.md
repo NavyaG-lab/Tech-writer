@@ -1,9 +1,12 @@
-# Data Infra Scala Guide
+---
+owner: "#data-infra"
+---
+
+# Scala Guide
 
 This style guide is based on the [Databricks Scala Style Guide](https://github.com/databricks/scala-style-guide/blob/master/README.md).
 
 <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
-
 
 ## <a name='TOC'>Table of Contents</a>
 
@@ -61,9 +64,8 @@ This style guide is based on the [Databricks Scala Style Guide](https://github.c
     * [Prefer URI over URL](#prefer-uri-over-url)
     * [Prefer existing well-tested methods over reinventing the wheel](#prefer-existing-well-tested-methods-over-reinventing-the-wheel)
 
-
-
 ## Document History
+
 - 2018-10-31: Forked from the Databricks version.
 
 ## Syntactic Style
@@ -73,6 +75,7 @@ This style guide is based on the [Databricks Scala Style Guide](https://github.c
 We mostly follow Java's and Scala's standard naming conventions.
 
 - Classes, traits, objects should follow Java class convention, i.e. PascalCase style.
+
   ```scala
   class ClusterManager
 
@@ -80,6 +83,7 @@ We mostly follow Java's and Scala's standard naming conventions.
   ```
 
 - Packages should follow Java package naming conventions, i.e. all-lowercase ASCII letters, but we don't require for them to be in reverse-DNS format.
+
   ```scala
   package etl.itaipu.contract
   ```
@@ -87,6 +91,7 @@ We mostly follow Java's and Scala's standard naming conventions.
 - Methods/functions should be named in camelCase style.
 
 - Constants should be upper camel-case letters and be put in a companion object.
+
   ```scala
   object Configuration {
     val DefaultPort = 10000
@@ -100,6 +105,7 @@ We mostly follow Java's and Scala's standard naming conventions.
 ### Variable Naming Convention
 
 - Variables should be named in camelCase style, and should have self-evident names.
+
   ```scala
   val serverPort = 1000
   val clientPort = 2000
@@ -113,7 +119,6 @@ We mostly follow Java's and Scala's standard naming conventions.
 - The only exceptions are import statements and URLs (although even for those, try to keep them under 120 chars).
 - `scalafmt` enforces this restriction.
 
-
 ### Rule of 30
 
 "If an element consists of more than 30 subelements, it is highly probable that there is a serious problem" - [Refactoring in Large Software Projects](http://www.amazon.com/Refactoring-Large-Software-Projects-Restructurings/dp/0470858923).
@@ -123,11 +128,9 @@ In general:
 - A method should contain less than 30 lines of code.
 - A class should contain less than 30 methods.
 
-
 ### Spacing and Indentation
 
 - use `scalafmt`.
-
 
 ### Blank Lines
 
@@ -139,10 +142,10 @@ In general:
 - Use one or two blank line(s) to separate class or object definitions.
 - Excessive number of blank lines is discouraged.
 
-
 ### Parentheses
 
 - Methods should be declared with parentheses, unless they are accessors that have no side-effect (state mutation, I/O operations are considered side-effects).
+
   ```scala
   class Job {
     // Wrong: killJob changes state. Should have ().
@@ -152,8 +155,10 @@ In general:
     def killJob(): Unit
   }
   ```
+
 - Callsite should follow method declaration, i.e. if a method is declared with parentheses, call with parentheses.
   Note that this is not just syntactic. It can affect correctness when `apply` is defined in the return object.
+
   ```scala
   class Foo {
     def apply(args: String*): Int
@@ -167,10 +172,10 @@ In general:
   new Bar().foo()  // This returns an Int!
   ```
 
-
 ### Curly Braces
 
 Put curly braces even around one-line conditional or loop statements. The only exception is if you are using if/else as an one-line ternary operator that is also side-effect free.
+
 ```scala
 // Correct:
 if (true) {
@@ -197,20 +202,20 @@ try foo() catch {
 }
 ```
 
-
 ### Long Literals
 
 Suffix long literal values with uppercase `L`. It is often hard to differentiate lowercase `l` from `1`.
+
 ```scala
 val longValue = 5432L  // Do this
 
 val longValue = 5432l  // Do NOT do this
 ```
 
-
 ### Documentation Style
 
 Use Java docs style instead of Scala docs style.
+
 ```scala
 /** This is a correct one-liner, short description. */
 
@@ -225,10 +230,10 @@ Use Java docs style instead of Scala docs style.
   */
 ```
 
-
 ### Ordering within a Class
 
 If a class is long and has many methods, group them logically into different sections, and use comment headers to organize them.
+
 ```scala
 class DataFrame {
 
@@ -247,7 +252,6 @@ class DataFrame {
 ```
 
 Of course, the situation in which a class grows this long is strongly discouraged, and is generally reserved only for building certain public APIs.
-
 
 ### Imports
 
@@ -273,10 +277,10 @@ Of course, the situation in which a class grows this long is strongly discourage
   com.databricks  // or org.apache.spark if you are working on Spark
   ```
 
-
 ### Pattern Matching
 
 - For method whose entire body is a pattern match expression, put the match on the same line as the method declaration if possible to reduce one level of indentation.
+
   ```scala
   def test(msg: Message): Unit = msg match {
     case ...
@@ -284,12 +288,15 @@ Of course, the situation in which a class grows this long is strongly discourage
   ```
 
 - When calling a function with a closure (or partial function), if there is only one case, put the case on the same line as the function invocation.
+
   ```scala
   list.zipWithIndex.map { case (elem, i) =>
     // ...
   }
   ```
+
   If there are multiple cases, indent and wrap them.
+
   ```scala
   list.map {
     case a: Foo =>  ...
@@ -298,6 +305,7 @@ Of course, the situation in which a class grows this long is strongly discourage
   ```
 
 - If the only goal is to match on the type of the object, do NOT expand fully all the arguments, as it makes refactoring more difficult and the code more error prone.
+
   ```scala
   case class Pokemon(name: String, weight: Int, hp: Int, attack: Int, defense: Int)
   case class Human(name: String, hp: Int)
@@ -323,10 +331,10 @@ Of course, the situation in which a class grows this long is strongly discourage
   }
   ```
 
-
 ### Infix Methods
 
 __Avoid infix notation__ for methods that aren't symbolic methods (i.e. operator overloading).
+
 ```scala
 // Correct
 list.map(func)
@@ -340,10 +348,10 @@ string contains "foo"
 arrayBuffer += elem
 ```
 
-
 ### Anonymous Methods
 
 __Avoid excessive parentheses and curly braces__ for anonymous methods.
+
 ```scala
 // Correct
 list.map { item =>
@@ -367,12 +375,12 @@ list.map { item => {
 list.map({ item => ... })
 ```
 
-
 ## Scala Language Features
 
 ### Case Classes and Immutability
 
 Case classes are regular classes but extended by the compiler to automatically support:
+
 - Public getters for constructor parameters
 - Copy constructor
 - Pattern matching on constructor parameters
@@ -380,6 +388,7 @@ Case classes are regular classes but extended by the compiler to automatically s
 
 Constructor parameters should NOT be mutable for case classes. Instead, use copy constructor.
 Having mutable case classes can be error prone, e.g. hash maps might place the object in the wrong bucket using the old hash code.
+
 ```scala
 // This is OK
 case class Person(name: String, age: Int)
@@ -392,12 +401,12 @@ val p1 = Person("Peter", 15)
 val p2 = p1.copy(age = 16)
 ```
 
-
 ### apply Method
 
 Avoid defining apply methods on classes. These methods tend to make the code less readable, especially for people less familiar with Scala. It is also harder for IDEs (or grep) to trace. In the worst case, it can also affect correctness of the code in surprising ways, as demonstrated in [Parentheses](#parentheses).
 
 It is acceptable to define apply methods on companion objects as factory methods. In these cases, the apply method should return the companion class type.
+
 ```scala
 object TreeNode {
   // This is OK
@@ -408,9 +417,10 @@ object TreeNode {
 }
 ```
 
-
 ### override Modifier
+
 Always add override modifier for methods, both for overriding concrete methods and implementing abstract methods. The Scala compiler does not require `override` for implementing abstract methods. However, we should always add `override` to make the override obvious, and to avoid accidental non-overrides due to non-matching signatures.
+
 ```scala
 trait Parent {
   def hello(data: Map[String, String]): Unit = {
@@ -429,8 +439,6 @@ class Child extends Parent {
   }
 }
 ```
-
-
 
 ### Destructuring Binds
 
@@ -489,6 +497,7 @@ Another exception is when writing functions to be used with `transform` in `Spar
 ### Symbolic Methods
 
 __Do NOT use symbolic method names__, unless you are defining them for natural arithmetic operations (e.g. `+`, `-`, `*`, `/`). Under no other circumstances should they be used. Symbolic method names make it very hard to understand the intent of the methods. Consider the following two examples:
+
 ```scala
 // symbolic method names are hard to understand
 channel ! msg
@@ -507,10 +516,10 @@ Scala type inference, especially left-side type inference and closure inference,
 - __Implicit methods should be explicitly typed__, otherwise it can crash the Scala compiler with incremental compilation.
 - __Variables or closures with non-obvious types should be explicitly typed__. A good litmus test is that explicit types should be used if a code reviewer cannot determine the type in 3 seconds.
 
-
 ### Return Statements
 
 __Avoid using return in closures__. `return` is turned into ``try/catch`` of ``scala.runtime.NonLocalReturnControl`` by the compiler. This can lead to unexpected behaviors. Consider the following example:
+
   ```scala
   def receive(rpc: WebSocketRPC): Option[Response] = {
     tableFut.onComplete { table =>
@@ -520,11 +529,13 @@ __Avoid using return in closures__. `return` is turned into ``try/catch`` of ``s
     }
   }
   ```
+
   the `.onComplete` method takes the anonymous closure `{ table => ... }` and passes it to a different thread. This closure eventually throws the `NonLocalReturnControl` exception that is captured __in a different thread__ . It has no effect on the poor method being executed here.
 
 However, there are a few cases where `return` is preferred.
 
 - Use `return` as a guard to simplify control flow without adding a level of indentation
+
   ```scala
   def doSomething(obj: Any): Any = {
     if (obj eq null) {
@@ -535,6 +546,7 @@ However, there are a few cases where `return` is preferred.
   ```
 
 - Use `return` to terminate a loop early, rather than constructing status flags
+
   ```scala
   while (true) {
     if (cond) {
@@ -577,10 +589,10 @@ def max(data: Array[Int]): Int = {
 }
 ```
 
-
 ### Implicits
 
 __Avoid using implicits__, unless:
+
 - you are building a domain-specific language
 - you are using it for implicit type parameters (e.g. `ClassTag`, `TypeTag`)
 - you are using it private to your own class to reduce verbosity of converting from one type to another (e.g. Scala closure to Java closure)
@@ -603,7 +615,6 @@ object ImplicitHolder {
 }
 ```
 
-
 ## Exception Handling
 
 - Do NOT catch Throwable or Exception. Use `scala.util.control.NonFatal`:
@@ -618,15 +629,16 @@ object ImplicitHolder {
       // handle InterruptedException
   }
   ```
+
   This ensures that we do not catch `NonLocalReturnControl` (as explained in [Return Statements](#return-statements)).
 
 - Do use `Try` in APIs, instead of throwing exceptions for abnormal execution.
-
 
 ### Options
 
 - Use `Option` when the value can be empty. Compared with `null`, an `Option` explicitly states in the API contract that the value can be `None`.
 - When constructing an `Option`, use `Option` rather than `Some` to guard against `null` values.
+
   ```scala
   def myMethod1(input: String): Option[String] = Option(transform(input))
 
@@ -634,6 +646,7 @@ object ImplicitHolder {
   // myMethod2 will return Some(null).
   def myMethod2(input: String): Option[String] = Some(transform(input))
   ```
+
 - Do not use None to represent exceptions. Instead, use a `Failure` from `Try`.
 - Do not call `get` directly on an `Option`, unless you know absolutely for sure the `Option` has some value.
 
@@ -674,7 +687,6 @@ def getAddress(name: String): Option[String] = {
 }
 
 ```
-
 
 ## Concurrency
 
@@ -767,14 +779,12 @@ class Foo {
 }
 ```
 
-
 ### Isolation
 
 In general, concurrency and synchronization logic should be isolated and contained as much as possible. This effectively means:
 
 - Avoid surfacing the internals of synchronization primitives in APIs, user-facing methods, and callbacks.
 - For complex modules, create a small, inner module that captures the concurrency primitives.
-
 
 ## Performance
 
@@ -785,7 +795,6 @@ For the vast majority of the code you write, performance should not be a concern
 It is ridiculously hard to write a good microbenchmark because the Scala compiler and the JVM JIT compiler do a lot of magic to the code. More often than not, your microbenchmark code is not measuring the thing you want to measure.
 
 Use [jmh](http://openjdk.java.net/projects/code-tools/jmh/) if you are writing microbenchmark code. Make sure you read through [all the sample microbenchmarks](http://hg.openjdk.java.net/code-tools/jmh/file/tip/jmh-samples/src/main/java/org/openjdk/jmh/samples/) so you understand the effect of deadcode elimination, constant folding, and loop unrolling on microbenchmarks.
-
 
 ### Traversal and zipWithIndex
 
@@ -809,7 +818,6 @@ while (i < len) {
 }
 ```
 
-
 ### private[this]
 
 For performance sensitive code, prefer `private[this]` over `private`. `private[this]` generates a field, rather than creating an accessor method. In our experience, the JVM JIT compiler cannot always inline `private` field accessor methods, and thus it is safer to use `private[this]` to ensure no virtual method call for accessing a field.
@@ -829,7 +837,6 @@ class MyClass {
   }
 }
 ```
-
 
 ## Testing
 
@@ -860,10 +867,10 @@ When computing a *duration* or checking for a *timeout*, avoid using `System.cur
 `System.currentTimeMillis()` returns current wallclock time and will follow changes to the system clock. Thus, negative wallclock adjustments can cause timeouts to "hang" for a long time (until wallclock time has caught up to its previous value again).  This can happen when ntpd does a "step" after the network has been disconnected for some time. The most canonical example is during system bootup when DHCP takes longer than usual. This can lead to failures that are really hard to understand/reproduce. `System.nanoTime()` is guaranteed to be monotonically increasing irrespective of wallclock changes.
 
 Caveats:
+
 - Never serialize an absolute `nanoTime()` value or pass it to another system. The absolute value is meaningless and system-specific and resets when the system reboots.
 - The absolute `nanoTime()` value is not guaranteed to be positive (but `t2 - t1` is guaranteed to yield the right result)
 - `nanoTime()` rolls over every 292 years. So if your Spark job is going to take a really long time, you may need something else :)
-
 
 ### Prefer URI over URL
 
@@ -894,5 +901,6 @@ When there is an existing well-tested method and it doesn't cause any performanc
   ```
 
 Exceptions:
+
 - Using an existing well-tested method requires adding a new dependency. If such method is pretty simple, reimplementing it is better than adding a dependency. But remember to test it.
 - The existing method is not optimized for our usage and is too slow. But benchmark it first, avoid premature optimization.

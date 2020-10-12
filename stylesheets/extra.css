@@ -86,3 +86,40 @@
         right: auto;
     }
 }
+
+/* css for mark as outdated button */
+
+a.outdated-button {
+    right: 0;
+    bottom: 0;
+    position: absolute;
+    width: 24px;
+    opacity: 0;
+    color: rgba(0, 0, 0, 0.26);
+    transition: all 1s;
+}
+a.outdated-button:hover {
+    color: var(--md-accent-fg-color);
+}
+.overlay {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    top: 0;
+    background: rgba(0, 0, 0, .03);
+    z-index: -1;
+    display: none;
+    outline: 5px solid rgba(0, 0, 0, .03);
+}
+a.outdated-button:hover + .overlay {
+    display: block;
+}
+.document-symbol {
+    padding-right: 24px !important;
+    position: relative;
+    transition: all 1s;
+}
+.document-symbol:hover a.outdated-button {
+    opacity: 1;
+}

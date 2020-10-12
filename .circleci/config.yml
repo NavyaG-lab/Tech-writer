@@ -3,7 +3,22 @@ version: 2.1
 orbs:
   md-sheriff: nubank/md-sheriff@volatile
 
+jobs:
+  tests:
+    docker:
+      - image: frolvlad/alpine-bash
+    working_directory: ~/repo
+    environment:
+      ENVIRONMENT: "test"
+      TERM: "dumb"
+    steps:
+      - checkout
+      - run: ./bin/run-tests
+
 workflows:
+  run-tests:
+    jobs:
+      - tests
   build:
     jobs:
       - md-sheriff/run-lint:
