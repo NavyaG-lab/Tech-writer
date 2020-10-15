@@ -64,9 +64,11 @@ We have several types of mesos slaves, one for each kind of workload. They can b
 * **Fixed Instances** - Created by the `MesosFixed` recipe, those instances doesn't scale up and down when we scale the cluster, that's the instance type that you want to use when your job is not fault tolerant.
 * **General On-Demand Instances** - Created by the `MesosOnDemand` recipe, those instances are spin scaling up the `mesos-on-demand` auto-scaling group, every `MesosCluster` has an On Demand autoscaling group.
   * can be scaled up using the following command: `sabesp --verbose --aurora-stack=cantareira-stable jobs create prod scale MODE=on-demand N_NODES=0 SCALE_TIMEOUT=5 --job-version scale_cluster=df8da67`
-* **Spot Instances** -  Created by the `MesosMultiAZSpotInstances` recipe, same as the on-demand but spins up spot-instances.
-  * can be scaled up using the following command: `sabesp --verbose --aurora-stack=cantareira-stable jobs create prod scale MODE=spot-only N_NODES=0 SCALE_TIMEOUT=5 --job-version scale_cluster=df8da67`
-* **Specific On Demand Instances** - Those instances are created using the [scale-cluster](https://github.com/nubank/scale-cluster) `scale-ec2` entrypoint, this differs from the other slaves by spinning individual ec2 instances (not in auto-scale cluster) so you can specify different attributes for each instance (like: instance type, naming etc.).
+* **Spot Instances** -  These instances are created using the [scale-cluster](https://github.com/nubank/scale-cluster) `scale-ec2` entrypoint. Upon every run, a separate Spotinst Elasticgroup is created, with similar parameters(type, size, storage class) for every node in the group.
+**Important**: Instance type may slightly vary within the group, but instance type and size must be compatible. Ex, the same group may have both `m5.2xlarge` and `m5n.2xlarge` instances, but not `r5.2xlarge` or `m5.xlarge`.
+  * can be scaled up either through [scale-cluster](https://github.com/nubank/scale-cluster#using-spotinst) or by passing `--use-spotinst` flag to `sabesp jobs itaipu` command. Please note that within itaipu, currently only `itaipu` command supports this flat.
+
+* **Specific On Demand Instances** - These instances are also created using the [scale-cluster](https://github.com/nubank/scale-cluster) `scale-ec2` entrypoint. The Specific On Demand instances are different from the other slaves as these involve spinning individual EC2 instances (not in auto-scale cluster). Therefore, you can specify different attributes for each instance (like: instance type, naming etc.).
   * can be scaled up using the following command: `sabesp --aurora-stack=cantareira-stable jobs create prod downscale-ec2-model SLAVE_TYPE=model NODE_COUNT=1 --job-version="scale_cluster=d749aa4" --filename scale-ec2`
 
 ## Upgrading Mesos
@@ -122,11 +124,9 @@ Note that while doing this you will probably want to keep the machine up by disa
 ### Updating Mesos IAM Roles
 
 IAM roles are stored in a separate project [iam-policies](https://github.com/nubank/iam-policies), to update them you need to change the file that corresponds the slave you want to change (or change all of them) files are:
-
-* [Mesos Fixed Role](https://github.com/nubank/iam-policies/blob/master/mesos-fixed.json)
-* [Mesos On-Demand Role](https://github.com/nubank/iam-policies/blob/master/mesos-on-demand.json)
-* [Mesos Spot Multi Az Role](https://github.com/nubank/iam-policies/blob/master/mesos-spot-multi-az.json)
-* [Mesos Master Role](https://github.com/nubank/iam-policies/blob/master/mesos-master.json)
+* [Mesos Fixed Role](https://github.com/nubank/iam-policies/blob/master/role-lists/mesos-fixed.json)
+* [Mesos On-Demand Role](https://github.com/nubank/iam-policies/blob/master/role-lists/mesos-on-demand.json)
+* [Mesos Master Role](https://github.com/nubank/iam-policies/blob/master/role-lists/mesos-master.json)
 
 Policies for mesos are inside the Mesos [directory](https://github.com/nubank/iam-policies/blob/master/policies/mesos/).
 
