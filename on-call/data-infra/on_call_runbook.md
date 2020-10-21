@@ -470,7 +470,7 @@ Soft alert.
 
 ### Verification
 
-To verify whether there is an on-going situation, access [Escafandro Monitoring](https://prod-grafana.nubank.com.br/d/b3gOJwFMz/escafandro-monitoring?orgId=1)  Grafana dashboard, more especifically checking the [Range Endpoint - Empty Responses](https://prod-grafana.nubank.com.br/d/b3gOJwFMz/escafandro-monitoring?orgId=1&viewPanel=2) chart. This chart should give you an overview about the usual trend of empty responses that Escafandro usually sends back to Itaipu. One reasonable explaination for this to happen is when a new dataset is added to the ETL. Once this happens, Escafandro will not have any datapoints for the very first run of the recently-added dataset.
+To verify whether there is an on-going situation, access [Escafandro Monitoring](https://prod-grafana.nubank.com.br/d/b3gOJwFMz/escafandro-monitoring?orgId=1)  Grafana dashboard, more especifically checking the [Range Endpoint - Empty Responses](https://prod-grafana.nubank.com.br/d/b3gOJwFMz/escafandro-monitoring?orgId=1&viewPanel=2) chart. This dashboard gives you an overview of empty responses that Escafandro usually sends back to Itaipu. One reasonable explanation for empty responses to be provided is when a new dataset is added to the ETL. Once this happens, Escafandro will not have any datapoints for the very first run of the recently-added dataset.
 
 ### Troubleshooting
 
@@ -503,7 +503,7 @@ Whenever you find yourself in doubt, escalating to the L2 Engineer should be you
 
 As mentioned in the [Troubleshooting](#troubleshooting-2) section above, in case we clearly detect issues from any of the infrastructure resources like Datomic or Kubernetes, the escalation path should be reaching out to Foundation tribe through their Slack channel `#foundation-tribe`
 
-**Reminder**: Please consider informing our users (#data-announcements) about the ongoing issue.
+**Important**: Ensure that you inform our users via #data-announcements slack channel about the ongoing issue.
 
 ### Relevant links
 
