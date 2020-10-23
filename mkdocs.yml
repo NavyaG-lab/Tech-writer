@@ -78,6 +78,11 @@ nav:
       - optimizing your SparkOp: "data-users/etl_users/optimizing_your_sparkop.md"
       - Schema validations: "data-users/etl_users/schema_validations.md"
       - Serving of datasets in staging environment: "data-users/etl_users/serving/serving_to_staging.md"
+    - Streaming contracts: 
+      - Streaming contracts overview: data-users/streaming-contracts/streaming-contracts-intro.md
+      - View batch and streaming contracts in BigQuery: data-users/streaming-contracts/views-bigquery.md
+      - How fresh data is processed and transformed: data-users/streaming-contracts/data-freshness.md
+    - Debugging load issues: squad/data-access/debugging-load-issues.md
     - FAQs: "data-users/etl_users/FAQ.md"
   - Oncall:
     - Data Infra:
@@ -153,6 +158,7 @@ nav:
       - Overview: "tools/databricks/README.md"
       - API: "tools/databricks/api.md"
       - Libraries: "tools/databricks/libraries.md"
+      - Setup NAT gateways for IP Filtering on Databricks: tools/databricks/ipfiltering.md
       - Bumping libraries: "tools/databricks/library_bump.md"
       - Databricks playbook: "tools/databricks/playbook.md"
       - S3 inventory: "tools/databricks/s3_inventory.md"
