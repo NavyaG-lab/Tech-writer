@@ -185,7 +185,7 @@ checkout `#manual-dataset-series` channel on slack.
 
 ### I appended a file to my dataset series but it's not appearing in the next run, how can I fix this
 
-The most common reason for this is due to your dataset being dropped by Itaipu due to a mismatch between the schema you declared and the schema encoded in the `DatasetSeriesContractOp`. See the [dataset series dropped schemas documentation](dataset_series.md#troubleshooting-dropped-schemas) for more information and how to remedy
+The most common reason for this is due to your dataset being dropped by Itaipu due to a mismatch between the schema you declared and the schema encoded in the `DatasetSeriesContractOp`. See the [dataset series mismatched schemas documentation](dataset_series.md#troubleshooting-dataset-series-schema-mismatches) for more information and how to remedy
 
 ### I appended wrong data to my series. How can I remove it
 
