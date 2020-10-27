@@ -10,7 +10,7 @@ Make sure your work environment is set up and you have the following:
 
 - [VPN functioning properly](https://nubank.slack.com/archives/C024U9800/p1545380162000900).
 - know your way around [Airflow](/airflow.md).
-- know [how to use sabesp](/cli_examples.md).
+- know [how to use sabesp](./tools/cli_examples.md).
 - have a [GraphQL client accessible](../../tools/graphql_clients.md).
 
 ## Required knowledge
