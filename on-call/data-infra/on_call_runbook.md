@@ -25,58 +25,63 @@ owner: "#data-infra"
       - [Overview](#overview)
       - [Troubleshooting](#troubleshooting)
       - [Solution](#solution-3)
-      - [Escalation](#escalation)
+      - [Escalation](#escalation)  
+    - [Barragem - not receiving requests from scheduler](#barragem---not-receiving-requests-from-scheduler)
+      - [Overview](#overview-1)
+      - [Troubleshooting](#troubleshooting-1)
+      - [Solution](#solution-4)
+      - [Escalation](#escalation-1)
     - [Warning: [PROD] correnteza_last_t_greater_than_basis_t](#warning-prod-correnteza_last_t_greater_than_basis_t)
       - [Context](#context)
-      - [Solution](#solution-4)
+      - [Solution](#solution-5)
       - [Delete all the extractions for the databases that the alarm is going off for](#delete-all-the-extractions-for-the-databases-that-the-alarm-is-going-off-for)
       - [Cycle Correnteza in the corresponding prototype](#cycle-correnteza-in-the-corresponding-prototype)
       - [Monitor re-extractions](#monitor-re-extractions)
   - [Itaipu/Aurora/Mesos/Spot: Job has not accepted any resources](#itaipuauroramesosspot-job-has-not-accepted-any-resources)
     - [Alert Severity](#alert-severity)
-    - [Overview](#overview-1)
+    - [Overview](#overview-2)
     - [Verification](#verification)
-    - [Solution](#solution-5)
+    - [Solution](#solution-6)
   - [Itaipu OutOfMemory error](#itaipu-outofmemory-error)
     - [Alert Severity](#alert-severity-1)
-    - [Overview](#overview-2)
+    - [Overview](#overview-3)
     - [Verification](#verification-1)
-    - [Troubleshooting](#troubleshooting-1)
-    - [Solution](#solution-6)
-    - [Escalation](#escalation-1)
+    - [Troubleshooting](#troubleshooting-2)
+    - [Solution](#solution-7)
+    - [Escalation](#escalation-2)
     - [Relevant links](#relevant-links)
   - [No space left on device](#no-space-left-on-device)
     - [Symptoms](#symptoms)
-    - [Solution](#solution-7)
+    - [Solution](#solution-8)
     - [Dagao is using an out-of-date version of itaipu's release branch](#dagao-is-using-an-out-of-date-version-of-itaipus-release-branch)
       - [Context](#context-1)
-      - [Solution](#solution-8)
+      - [Solution](#solution-9)
   - [Escafandro - responses with empty data points above threshold](#escafandro---responses-with-empty-data-points-above-threshold)
-    - [Overview](#overview-3)
+    - [Overview](#overview-4)
       - [Alert Severity](#alert-severity-2)
     - [Verification](#verification-2)
-    - [Troubleshooting](#troubleshooting-2)
-    - [Solution](#solution-9)
-    - [Escalation](#escalation-2)
+    - [Troubleshooting](#troubleshooting-3)
+    - [Solution](#solution-10)
+    - [Escalation](#escalation-3)
     - [Relevant links](#relevant-links-1)
   - [Frequent dataset failures](#frequent-dataset-failures)
     - [Leaf dataset is failing because of bad definition](#leaf-dataset-is-failing-because-of-bad-definition)
       - [Symptoms](#symptoms-1)
-      - [Solution](#solution-10)
+      - [Solution](#solution-11)
       - [Notes](#notes)
     - [Dataset partition not found on s3](#dataset-partition-not-found-on-s3)
       - [Symptoms](#symptoms-2)
-      - [Solution](#solution-11)
+      - [Solution](#solution-12)
   - [Issues related to Services](#issues-related-to-services)
     - [Queued Jobs in PENDING state - aurora web UI](#queued-jobs-in-pending-state---aurora-web-ui)
       - [Symptom](#symptom)
-      - [Solution](#solution-12)
+      - [Solution](#solution-13)
     - [Non-responsive Aurora](#non-responsive-aurora)
       - [Symptom](#symptom-1)
-      - [Solution](#solution-13)
+      - [Solution](#solution-14)
     - [Airflow: Dagão run failed](#airflow-dagão-run-failed)
       - [Diagnosis](#diagnosis)
-      - [Solution](#solution-14)
+      - [Solution](#solution-15)
 
 This document is a resource for engineers *on-call*.
 
@@ -274,6 +279,24 @@ If a bug is found, a fix needs to be put in place as soon as possible. BQ tables
 #### Escalation
 
 Please consider informing our users (#data-announcements) about the ongoing issue.
+
+### Barragem - not receiving requests from scheduler
+
+#### Overview
+
+This error means that Barragem is not able to receive requests from the scheduler (currently, [Tempo](https://github.com/nubank/tempo)) for a certain amount of time. As consequence, missing those requests will make Barragem not consume new files deployed by Correnteza and no contract will be update meanwhile.
+
+#### Troubleshooting
+
+This problem can be caused by either issues or down times on Tempo, or by problems while receiving Tempo requests on Barragem side. You can the check logs of both components by using [Splunk](https://nubank.splunkcloud.com/en-GB/app/launcher/home), where you should look for exceptions of any kind, i.e., `source=tempo OR source=barragem exception`.
+
+#### Solution
+
+If a bug is found on Barragem side, a fix needs to be put in place as soon as possible. BQ tables are not being updated and we are breaking the streaming contacts 1h SLO.
+
+#### Escalation
+
+Please consider informing Foundation (#foundation-tribe) in case of any issue on Tempo side.
 
 ### Warning: [PROD] correnteza_last_t_greater_than_basis_t
 
