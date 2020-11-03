@@ -25,9 +25,9 @@ In order to use Sonar to check the run, you'll need the relevant [metapod transa
 
 If you have `nucli` you can do the following for today's transaction id:
 
-`nu datainfra sabesp -- utils tx-id`
+`nu-br datainfra sabesp -- utils tx-id`
 
-Or something like `nu datainfra sabesp -- utils tx-id --date 2019-11-19` or `nu datainfra sabesp -- utils tx-id --delta 1` for older days.
+Or something like `nu-br datainfra sabesp -- utils tx-id --date 2019-11-19` or `nu-br datainfra sabesp -- utils tx-id --delta 1` for older days.
 
 Another way to get the Transaction ID is from the daily Slack notification posted in [#etl-updates](https://nubank.slack.com/messages/CCYJHJHR9/) when the nightly run begins (see the Metapod transaction line):
 
@@ -35,7 +35,7 @@ Another way to get the Transaction ID is from the daily Slack notification poste
 
 Alternatively, you can get the metapod transaction ID from the Airflow UI:
 
-1. In the DAG Graph view in Airflow, click on any task in the graph:
+1. In the DAG Graph view in Airflow, click on any task in the graph, go into the SubDag by clicking on "Zoom in Sub Dag". Once inside click on the `itaipu-*` task, e.g., itaipu-spark-ops, and then click on "rendered".
 
 ![DAG graph](https://user-images.githubusercontent.com/1674699/33117653-8510651a-cf69-11e7-9874-828feb890fe2.jpg)
 
