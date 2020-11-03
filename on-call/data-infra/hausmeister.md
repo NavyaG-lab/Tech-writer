@@ -125,21 +125,6 @@ The slack channels you should monitor for user questions are:
 
 **Important**: As a Hausmeister, your role is to ensure user's problems are addressed, but this does not mean that you are responsible for fixing every single problem you encounter yourself; the reason being that you should always make sure you have the headspace necessary to tackle a hard alarm when it is notified. Do not hesitate to rope in other data infra engineers to help with user requests, and in particular to involve engineers closer to the context of the request who will be able to fix it quicker.
 
-### During work hours: address the Hausmeister Backlog
-
-During your Level 1 on-call rotation you usually encounter bugs and corner cases in our system. The following should make it to the Hausmeister backlog, which we track on [clubhouse](https://app.clubhouse.io/nubank/project/352/data-infra-hausmeister):
-
-- Items about improving the visibility, monitoring, maintenance, and operation of our infrastructure. In short, items which improve the workflow for the primary Hausmeister.
-- Low-hanging non-blocking bugs observed as part of the hausmeister's attempts to keep the DAG running. More laborious fixes should be part of pack backlogs.
-
- Items with non-immediate payoff, such as “good-to-have” features, should be moved to pack backlogs.
-
-Backlog tickets should be annotated with a "why", as in, the benefit of completing the particular work-item.
-
-Tickets which the question ‘ *will it come back to bite the Hausmeister in the future?* ’ can't be answered with "yes" shouldn't belong on the hausmeister backlog.
-
-From a resourcing perspective, the on-call enginer is resourced exclusively as hausmeister during their rotation. If there aren't any open issues you are working on, feel free to tackle issues in the hausmeister backlog or general tech-debt.
-
 ## See also
 
 - [Monitoring nightly run](monitoring_nightly_run.md)
