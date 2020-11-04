@@ -113,6 +113,7 @@ progress. Preparatory steps
 
 * Set `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` to your
     corresponding credentials for `nu-data`
+* [Rataria Alert] If the previous step does not work, go ahead and create a new temporary profile inside `~/.aws/credentials`. Call it `data` and use the exact same configuration as `data-prod`.
 * Check out the branch
     `giorgio-valoti/ch125837/spin-new-airflow-from-deploy`
 
@@ -125,7 +126,7 @@ And then use:
 `AirflowService.create!(ENVIRONMENT, "foz", "<your new color>")`
 
 After that, you need to update DNS entries manually in Route 53 by
-updating the alias from the old color to the new one.
+updating the alias from the old color to the new one. Route53 -> Hosted zones -> Domain nubank.world -> edit "staging-foz-airflow.nubank.world" to route traffic to new stack
 
 Finally, you can delete the old stack with:
 
