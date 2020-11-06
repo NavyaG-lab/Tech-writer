@@ -48,6 +48,7 @@ This is a guide where each section contains the steps required (how-to-do-it) to
 * [Retracting Manual Appends to Dataset Series](#retracting-manual-appends-to-dataset-series)
 * [Replaying Deadletters](#replaying-deadletters)
 * [Regenerating Expired Certificates](#regenerating-expired-certificates)
+* [Rebalancing Contract nodes to meet SLOs](#rebalancing-contract-nodes)
 
 ## Aurora
 
@@ -672,3 +673,6 @@ aws s3 cp s3://nu-keysets-br-prod/certificates/pri/services/aurora.p12 .
 aws s3 cp aurora.p12 s3://nu-keysets-prod/certificates/pri/infrastructure/aurora.p12
 rm aurora.p12
 ```
+
+## Rebalancing Contract Nodes
+We have documented the steps required to do this operation in the following honey post: [Rebalancing the Load for Contracts Nodes](https://honey.is/home/#post/872465)
