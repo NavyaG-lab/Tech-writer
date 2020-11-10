@@ -53,7 +53,7 @@ The knowledge base contains a comprehensive list of all microservices and its de
 ## Infrastructure
 
 * [Inventory](../../infrastructure/data-infra/inventory.md)
-* [Multi-country pointers](../../infrastructure/data-infra/multi-country.md)
+* [New country deployment](../../infrastructure/data-infra/new-country.md)
 * [Guide to the runtime environment (Mesos & Aurora)](../../infrastructure/data-infra/guide-to-the-runtime-environment.md)
 * [Query Engines used/considered at Nubank](../../infrastructure/data-infra/query_engines.md)
 * [Testing models in staging](../../infrastructure/data-infra/testing-models.md)
