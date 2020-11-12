@@ -20,7 +20,7 @@ This section explains what level of access to **Looker's contents** each user ha
 * For BPOs, if they need access, they should reach #squad-cx-boosters on slack.
 * Xpeers that are not from some specific [levels](https://github.com/nubank/lambda-automation/blob/master/python/lambdas/looker-user/looker.py#L78) can only view dashboards and Looks. If they need access, they should reach their Xmanager.
 *In other scenarios the user should ask access on #access-request. In this case, the user will receive the Basic User role.
-This process is better explained in [Looker Support Guideline](https://github.com/nubank/data-platform-docs/blob/master/on-call/data-access/looker-support.md#access).
+This process is better explained in [Looker Support Guideline](looker-support.md).
 
 ### Actions Level
 

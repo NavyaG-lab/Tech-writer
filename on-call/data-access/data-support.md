@@ -12,8 +12,6 @@ Slack channels you should monitor for questions:
 - `#squad-data-access`
 - `#data-announcements`
 - `#help-databricks-su-clusters`
-<<<<<<< HEAD:on-call/data-access/data-support.md
-=======
 - `#databricks-su-cluster-requests`
 
 ## Responsibilities
@@ -44,7 +42,6 @@ Here's a list of FAQs that the Data Support can point users to:
 - [BigQuery FAQ](https://docs.google.com/document/d/1_49Uk9y5Sj0W9tgkuXMJN3sovDsxLa_sf1Ujxc6E-H4/edit#heading=h.hy1tecvonb9f)
 - [Looker FAQ](https://docs.google.com/document/d/1XPz-UT4IMKFnnl_b8gkplSXw-3CaecIY4wtRhNnEGTo/edit#heading=h.hy1tecvonb9f)
 - [Databricks SU FAQ](https://docs.google.com/document/d/1u25N1zjsxrffLN5-Ea21tNzpKy7GBg9O36lhImRwQ_4/edit)
->>>>>>> master:squad/data-access/data-support.md
 
 ## Schedule
 

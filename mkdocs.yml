@@ -99,8 +99,6 @@ nav:
       - Rotations: "on-call/data-access/data-access-rotations.md"
       - Support: "on-call/data-access/data-support.md"
       - Itaipu PR reviewer: "on-call/data-access/itaipu-pr-reviewer.md"
-      - Looker policies: "on-call/data-access/looker-policies.md"
-      - Looker support: "on-call/data-access/looker-support.md"
       - On-call engineer: "on-call/data-access/on-call-engineer.md"
   - Services:
     - Data layers: "services/data-ingestion/intro.md"
@@ -166,6 +164,13 @@ nav:
       - I AM roles in Databricks: "tools/databricks/single_user_clusters/meta-roles.md"
       - Single user clusters runbook: "tools/databricks/single_user_clusters/runbook.md"
       - Overloaded cluster: "tools/databricks/overloaded-cluster.md"
+    - Looker:
+      - Overview: "tools/looker/README.md"
+      - Looker Common Tasks: "tools/looker/looker-common-tasks.md"
+      - Looker Policies: "tools/looker/looker-policies.md"
+      - Looker Support: "tools/looker/looker-support.md"
+      - LookML Basics: "tools/looker/lookml-basics.md"
+      - Looker New Country Setup: "tools/looker/looker-country-setup.md"
   - Troubleshooting:
     - Dataset series compaction: "troubleshooting/dataset_series_compaction.md"
   - Writing:
