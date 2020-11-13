@@ -25,7 +25,7 @@ owner: "#data-infra"
       - [Overview](#overview)
       - [Troubleshooting](#troubleshooting)
       - [Solution](#solution-3)
-      - [Escalation](#escalation)  
+      - [Escalation](#escalation)
     - [Barragem - not receiving requests from scheduler](#barragem---not-receiving-requests-from-scheduler)
       - [Overview](#overview-1)
       - [Troubleshooting](#troubleshooting-1)
@@ -72,16 +72,22 @@ owner: "#data-infra"
     - [Dataset partition not found on s3](#dataset-partition-not-found-on-s3)
       - [Symptoms](#symptoms-2)
       - [Solution](#solution-12)
-  - [Issues related to Services](#issues-related-to-services)
+  - [Aurora "More than one prod-dagao running"](#aurora-more-than-one-prod-dagao-running)
+    - [Overview](#overview-5)
+      - [Alert Severity](#alert-severity-3)
+    - [Verification](#verification-3)
+    - [Solution](#solution-13)
+    - [Escalation](#escalation-4)
+  - [Issues related to services](#issues-related-to-services)
     - [Queued Jobs in PENDING state - aurora web UI](#queued-jobs-in-pending-state---aurora-web-ui)
       - [Symptom](#symptom)
-      - [Solution](#solution-13)
+      - [Solution](#solution-14)
     - [Non-responsive Aurora](#non-responsive-aurora)
       - [Symptom](#symptom-1)
-      - [Solution](#solution-14)
+      - [Solution](#solution-15)
     - [Airflow: Dagão run failed](#airflow-dagão-run-failed)
       - [Diagnosis](#diagnosis)
-      - [Solution](#solution-15)
+      - [Solution](#solution-16)
 
 This document is a resource for engineers *on-call*.
 
@@ -576,6 +582,45 @@ Some instances of this happening include:
 #### Solution
 
 [Retracting](ops_how_to.md#retracting-datasets-in-bulk) the inputs for the failing datasets in order to recompute the inputs and re-store them on s3 usually fixes it.
+
+## Aurora "More than one prod-dagao running"
+
+### Overview
+
+The purpose of this alert is to hint On-Call Engineers that there is more than one dagao running at the same time, and there is currently a hard cap of 2 running DAGs in Data-Infra's Airflow. Whenever it in this state, we are at risk of not properly scheduling the next day's DAG. If we have a DAG running over into the next day it usually means something is wrong with some jobs and it needs to be addressed. 
+
+Let’s say the ETL runs late on day D1, and continues running throughout D2 (maybe due to a node getting stuck). If the D2 run is also late, then at the start of D3 we’ll have already 2 DAGs running (D1 + D2) and so the D3 DAG will not get scheduled.
+
+#### Alert Severity
+
+Soft alert.
+
+### Verification
+
+To verify whether there is an on-going situation, [open the Airflow](https://airflow.nubank.com.br/admin/) running `Dagao`. Notice that the DAG `prod-dagao` will be marked with red. Indicating that there are already two DAGs running at the same time.
+
+![image](../../images/airflow_number_of_active_dags_runs.png)
+
+By clicking at [prod-dagao](https://airflow.nubank.com.br/admin/airflow/graph?dag_id=prod-dagao) link listed in the list of DAGs, you should be able to see the current day running DAG.
+
+### Solution
+
+To prevent Aurora job failing due to name clashes, or even Airflow failing to schedule the following day's DAG, the usual actions required in this case are:
+- Inspect the previous day’s DAG to figure out what’s still running
+![image](../../images/airflow_previous_day_dag_run.png)
+- Identify the remaining running nodes
+![image](../../images/airflow_highlight_running_nodes.png)
+- Left click on the running node a pop-up will be displayed
+- Mark the running node as failed
+![image](../../images/airflow_mark_as_failed.png)
+
+It may happen that Aurora fails to automatically finish some of the scheduled or running jobs. If needed, manually kill jobs that are still running by using `nu-br datainfra sabesp -- --aurora-stack cantareira-stable jobs kill jobs prod name.of.the.running.job`
+
+Alternatively, one can also perform the same through Spotinst UI by accessing the service through your Okta account.
+
+### Escalation
+
+Whenever you find yourself in doubt, escalating to the L1 or L2 Engineer should be your first step.
 
 ## Issues related to services
 
