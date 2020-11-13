@@ -10,6 +10,7 @@ When working with Itaipu, it's possible that you will stumble upon this message 
 
 This is a known issue that we have while compiling Itaipu's codebase. 
 There are two possible work-arounds that you can take:
+
 **1. Remove all target folders**
 Try `rm -rf $(find . -name target -type d)` to have Itaipu's and its sub-projects `target` folders removed
 
