@@ -114,7 +114,7 @@ Make sure you have the following access permissions.
 
 - After getting the access, you may need to run `nu-<country> auth get-refresh-token --env prod --country <country>`. The `<country>` is the country from where you are creating your manual series (eg: br, mx).
 
-- For copying dataset files to the bucket, you'll need to have the read and write access to that specific bucket. For access permissions, ask `#squad-data-infra` to run the following command.
+- For copying dataset files to the bucket, you'll need to have the read and write access to that specific bucket. For access permissions, ask in `#data-help` for someone to run the following command:
 
 ```
 For BR:
