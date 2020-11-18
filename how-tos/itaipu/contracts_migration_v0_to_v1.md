@@ -16,7 +16,16 @@ On `common-datomic` version `5.44.2` the capability of generating contracts for 
 
 ## Upgrading contracts to V1
 
+Start by checking our [coordination-spreadsheet][10] for the initiative. Pick a
+service (or multiple if you want to do batches). It pays off if it is a service
+owned by your team or a service where you understand the business logic. But if
+no such service is available, just pick any. It's not super-important. Put your
+name next to it to indicate you are working on it.
+
 ### Step 1: Bump common-datomic and update generate contracts function
+
+First and foremost, create your own branch:
+`git checkout -b migrate-contracts-v1`
 
 [Reference PR][1]
 
@@ -84,29 +93,58 @@ git pull master
 git checkout -b {your_name}/upgrade-{service_name}-contracts
 ```
 
-- Delete old contracts from `src/main/scala/etl/contract/{service_name}`
 - Copy the entities from the service to the correct place in itaipu:
 
 ```sh
 cd $NU_HOME
-cp -r {service_name}/resources/nu/data/br/dbcontracts/*  itaipu/src/main/scala/nu/data/br/dbcontracts/
+cp -r {service_name}/resources/nu/data/br/dbcontracts/{service_name}  itaipu/src/main/scala/nu/data/br/dbcontracts/
 ```
 
 - Create a new `DatabaseContract` that includes the entities generated in the previous step, the entities are generated on `src/main/scala/nu/data/{country}/dbcontracts/{service_name}/entities`. [Example][5]
-- Add the `DatabaseContract` to the respective Country's list of the databases. [Example][6]
+- Add the `DatabaseContract` to the respective Country's list of the databases. [Example][6]: I mostly copy one from another contract and simply adjust it.
 - PS: Remember to add a `private [country]` to your `DatabaseContract` definition, that will make importing the right country easier.
 - PS2: Remember to override the `prototypes` val to the prototypes where the service run in each country. To check which prototypes the service is used in, check definition: `https://github.com/nubank/definition/blob/master/resources/br/services/{service_name}`. Check out the options available at `nu.data.infra.Prototypes`. [Example][7]
-- PS3: After oppening a PR, remember to ask each code owner to make the necessary communication to the teams that might be affected by this change.
 
-- TODO: check out what to do about schemaOnlyDatabases.
+NOTE: squad can be inferred from the old contracts
+
+- Delete old contracts from `src/main/scala/etl/contract/{service_name}`:
+    - always use intellij's safe delete which will show you all the references
+        in the codebase. This allows you to do step4 straight-away
+
 
 ### Step 4: Migrate references to the old contract
 
 - Replace in path `etl.contract.{service_name}` with `nu.data.br.dbcontracts.{service_name}.entities`
+- Do common-migrations listed below
 - Run `sbt clean compile` to ensure everything is compiling or build in
     intellij.
 - *Non-standard imports might require manual changes.*: In my experience, they
     usually do. Check the examples below.
+
+### Step 5: Create a PR for the service
+
+Create a PR with all the changes you have made to the service files. Probably,
+you'll have to run `lein lint-fix` in order to pass the tests. Running the
+tests themselves with `lein test` is also often a good idea as they check the
+contracts as well one more time. Then it's time for one more commit and
+creating a service PR.
+
+It is often a good idea to explicitly notify owners of the service via slack.
+Finding the channel isn't always easy. `[squad-name]-eng` often exists. If none
+can be found, I resort to writing to frequent contributors in person. Here is
+the message template i use:
+
+```
+Bom dia pessoal,
+:reviewplease: data infra is migrating old contracts from v0 to v1 to get rid of outdated code pre-dating multi-country. I have migrated this service: https://github.com/nubank/[your PR here].
+The corresponding itaipu PR will be merged tomorrow, but the PR's don't need to be merged in sync. This just keeps the service up-to-date with the contracts that are being used from now on. Could someone review and merge?
+
+Also: The new contracts require all fields to be equipped with a docstring.  Where we couldn't provide a useful docstring we have filled in a dummy value.  If you find the time or if it bugs you, we would be delighted if you could fill the correct information into the docstrings.
+Obrigado
+```
+
+Make sure you list your PR in the [coordination-spreadsheet][10] and mark it
+green once it goes through.
 
 
 ### Common Migrations
@@ -133,3 +171,4 @@ When migrating you might face some compilation errors by using the V1 api, those
 [7]: https://github.com/nubank/itaipu/pull/6483/files#diff-1f2479d5d9b07a1866c38d182c6b24a6R34
 [8]: https://github.com/nubank/itaipu/pull/6483/
 [9]: https://github.com/nubank/itaipu/pull/6481/
+[10]: https://docs.google.com/spreadsheets/d/1qeL1DDeETuGSAXvEfarqfBytRFNR-JlrdqBwRfZmFRc/edit#gid=0
