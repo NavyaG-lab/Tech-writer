@@ -220,10 +220,10 @@ In order for this process to be as smooth and quick as possible, you'll need to 
 nu dataset-series info <my-series> -v
 ```
 
-- Running the above should return a list of datasets and their ids. Find the dataset you want to delete there (usually you'd look for the data at which you appended it) and get a hold of its `id` attribute
-- On #squad-data-infra, ask for the deletion by providing:
+- Running the above should return a list of resources (files) and their ids. Find the resource you want to delete there (usually you'd look for the date at which you appended it) and get a hold of its `id` attribute
+- Open a ticket on [#data-help](https://nubank.slack.com/archives/C06F04CH1), marking it with the `:data-infra-ticket:` reaction and providing:
   - your dataset series' precise name (e.g. `series/direct-mail`)
-  - the id(s) of the dataset(s) you wish deleted
+  - the id(s) of the resources(s) you wish deleted
   - the reason for wishing to delete the data
 
 **Important**: The word _deletion_ here does not necessarily mean that the data files are actually removed from S3 - they are only de-referenced. If you need to delete the actual files from S3 for compliance or security reasons, get in touch with the Data Infra team.
