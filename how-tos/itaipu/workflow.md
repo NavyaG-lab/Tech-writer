@@ -9,6 +9,7 @@ owner: "#data-infra"
  * [Contracts Workflow](#contracts-workflow)
    * [Creating a New Contract](#creating-a-new-contract)
    * [Updating an Existing Contract](#updating-an-existing-contract)
+   * [Limitations in Contract specifications](#limitations-in-contract-specifications)
    * [Migrating from V0 to V1 Contracts](contracts_migration_v0_to_v1.md)
  * [Datasets, Dimensions, and Fact Tables Workflow](#datasets-dimensions-and-fact-tables-workflow)
    * [Bus matrix](#bus-matrix)
@@ -127,6 +128,25 @@ If you want to add, change or remove an attribute:
 1. Open pull requests for each and ask someone from data infra squad to review
 1. [Merge and profit](./opening_prs.md)
 
+### Limitations in Contract specifications
+
+#### Component entities with 1:N cardinality relationships
+
+In Datomic, if an entity only exists in the context of a parent entity, it is common to declare it as a [component entity][component-entity-blog-post].
+In our skeleton schemas, an entity can be declared as a component by adding `:component true` to the schema declaration. See the [following example][component-skeleton-example].
+
+Our contract system does not yet support component entities that are used as [part of 1:N relationships][one-many-cardinality-example]. If you encounter this limitation, work around it using the steps that follow. We'll be using Ouroboros as an example, but the steps should be the same.
+
+1. Create a `contract-*` skeleton for the entity. That skeleton is derived from the existing skeleton and [excludes the component field][exclude-component-metadata-example].
+2. Use the newly created skeleton on your `contract-skeletons` definition [in the Datomic config][contract-skeleton-def-example].
+3. Re-generate the contracts via `lein gen-contracts`. You should now see the contract for the component entity.
+4. Create a new PR with the new contract on Itaipu.
+
+[component-entity-blog-post]: https://blog.datomic.com/2013/06/component-entities.html
+[component-skeleton-example]: https://github.com/nubank/ouroboros/blob/3873ef74be7dc9bd6e1f545de1b19fd03f9f8d77/src/ouroboros/models/resource_group.clj#L31
+[one-many-cardinality-example]: https://github.com/nubank/ouroboros/blob/3873ef74be7dc9bd6e1f545de1b19fd03f9f8d77/src/ouroboros/models/resource_group.clj#L30-L32
+[exclude-component-metadata-example]: https://github.com/nubank/ouroboros/blob/3873ef74be7dc9bd6e1f545de1b19fd03f9f8d77/src/ouroboros/models/record_series.clj#L43-L48
+[contract-skeleton-def-example]: https://github.com/nubank/ouroboros/blob/3873ef74be7dc9bd6e1f545de1b19fd03f9f8d77/src/ouroboros/db/datomic/config.clj#L25
 
 ## Datasets, Dimensions, and Fact Tables Workflow
 
