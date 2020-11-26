@@ -7,7 +7,7 @@ owner: "#data-access"
 # How to setup a new country in looker:
 
 **1. Setup Permission for access to datasets in BigQuery**
-1. Create a service account with only the BigQuery JobUser permission. Naming scheme: `looker-<country>`
+1. Create a service account with only the **BigQuery JobUser** permission. Naming scheme: `looker-<country>`
 1. Generate the service account key in the JSON format. You are gonna need if for the next steps.
 1. Now create a dataset named `looker_scratch` in the BQ project and on it give permission **BigQuery DataEditor** to the service account you created.
 1. Give the service account the BigQuery DataViewer role on each dataset inside the BQ project except those related to PII, audit and staging.
@@ -29,7 +29,7 @@ owner: "#data-access"
 1. Go to Develop -> Manage LookML projects
 1. Click on New LookML project
 1. Enter project name -> `nubank_<country-code>_custom_queries` . And select blank project. Leave the Looker tab open.
-1. Now create a Github repository - `nubank_<country-code>_custom_queries`
+1. Now create a Github repository - `looker_<country-code>_custom_queries`
 1. Give the @developers group read permissions and @data-access admin permission on the repository
 1. Copy the Git Repository SSH URL - `git@github.com:nubank/looker_<country-code>_custom_queries.git` and go back to the Looker tab.
 1. Click Configure Git on top right and paste the URL. This will generate the deploy key.
