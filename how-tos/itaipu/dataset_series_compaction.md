@@ -11,7 +11,7 @@ For more information on Dataset Series, see [here][1].
 
 ## Problem statement
 
-Due to the nature of batching incoming data into smaller pieces, encoded in [riverbend][2], each batch of data ends up in a dataset with one single partition (an Avro file in S3), and [riverbend][2] appends it to Dataset Series, via [metapod][4].
+Due to the nature of batching incoming data into smaller pieces, encoded in [alph][2], each batch of data ends up in a dataset with one single partition (an Avro file in S3), and [alph][2] appends it to Dataset Series, via [metapod][4].
 
 Each file (called a 'partition') is rather small, and as time went by, and more data was appended to Dataset Series, it became very inefficient to:
 
@@ -190,7 +190,7 @@ nu datainfra sabesp -- --aurora-stack=cantareira-dev \
 ```
 
 [1]: ../../data-users/etl_users/dataset_series.md
-[2]: https://github.com/nubank/riverbend
+[2]: https://github.com/nubank/alph
 [3]: https://github.com/nubank/itaipu
 [4]: https://github.com/nubank/metapod
 [5]: ../../glossary.md#transaction

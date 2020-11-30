@@ -106,9 +106,9 @@ This schema is registered in `metapod`, our metadata store. We also validate tha
 
 ### Clojure
 
-We use logical types to describe the event data sent from production services to the ETL via `riverbend`.
+We use logical types to describe the event data sent from production services to the ETL via `alph`.
 
-These logical types are encoded using edn and their format is described in [`common-schemata.wire.etl`](https://github.com/nubank/common-schemata/blob/master/src/common_schemata/wire/etl.clj)
+These logical types are encoded using edn and their format is described in [`common.ingestion.schema`](https://github.com/nubank/common-ingestion/blob/master/src/common/ingestion/schema.clj)
 
 ### Permanence of a dataset
 

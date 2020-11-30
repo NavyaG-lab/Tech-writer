@@ -1,7 +1,7 @@
 site_name: Data Platform Documentation
 site_description: Nubank's Data platform documentation
 site_author: Squad Observability
-site_url: 
+site_url:
 repo_url: https://github.com/nubank/data-platform-docs/
 edit_uri: edit/master/
 theme:
@@ -55,8 +55,8 @@ nav:
   - Data Infra history: "about/data-infra/history.md"
   - Data Infra anguages and stacks: "about/data-infra/services-language-stacks.md"
   - Glossary: "glossary.md"
-  - Infrastructure: 
-    - Data Infra: 
+  - Infrastructure:
+    - Data Infra:
       - Bumping Spark: "infrastructure/data-infra/bumping-spark.md"
       - Run-time environment guide: "infrastructure/data-infra/guide-to-the-runtime-environment.md"
       - Inventory: "infrastructure/data-infra/inventory.md"
@@ -67,7 +67,7 @@ nav:
       - Testing models: "infrastructure/data-infra/testing-models.md"
     - Data Access:
       - Setup a new country in Looker : "tools/looker-country-setup.md"
-  - Data users: 
+  - Data users:
     - Dataset series:
       - Dataset series on ETL: "data-users/etl_users/dss-on-etl.md"
       - Event DSS: "data-users/etl_users/dataset_series.md"
@@ -78,7 +78,7 @@ nav:
       - optimizing your SparkOp: "data-users/etl_users/optimizing_your_sparkop.md"
       - Schema validations: "data-users/etl_users/schema_validations.md"
       - Serving of datasets in staging environment: "data-users/etl_users/serving/serving_to_staging.md"
-    - Streaming contracts: 
+    - Streaming contracts:
       - Streaming contracts overview: data-users/streaming-contracts/streaming-contracts-intro.md
       - View batch and streaming contracts in BigQuery: data-users/streaming-contracts/views-bigquery.md
       - How fresh data is processed and transformed: data-users/streaming-contracts/data-freshness.md
@@ -95,7 +95,7 @@ nav:
       - Operations How-tos: "on-call/data-infra/ops_how_to.md"
       - CLI examples: "on-call/data-infra/tools/cli_examples.md"
       - On-call engineer tools: "on-call/data-infra/tools/on-call-engineer-tool.md"
-    - Data access: 
+    - Data access:
       - Rotations: "on-call/data-access/data-access-rotations.md"
       - Support: "on-call/data-access/data-support.md"
       - Itaipu PR reviewer: "on-call/data-access/itaipu-pr-reviewer.md"
@@ -105,7 +105,7 @@ nav:
     - Data-ingestion:
       - Correnteza: "services/data-ingestion/correnteza.md"
       - Curva-de-rio: "services/data-ingestion/curva-de-rio.md"
-      - Riverbend: "services/data-ingestion/riverbend.md"
+      - Alph: "services/data-ingestion/alph.md"
     - Data processing:
       - Itaipu:
         - Overview: "services/data-processing/itaipu/itaipu.md"
@@ -152,7 +152,7 @@ nav:
     - Airflow: "tools/airflow.md"
     - Graphql: "tools/graphql_clients.md"
     - Setup a new country in Looker: "tools/looker-country-setup.md"
-    - Databricks: 
+    - Databricks:
       - Overview: "tools/databricks/README.md"
       - API: "tools/databricks/api.md"
       - Libraries: "tools/databricks/libraries.md"

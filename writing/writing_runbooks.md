@@ -24,13 +24,13 @@ Quoting from the [runbook](../on-call/data-infra/on_call_runbook.md):
 
 > ## No file upload in the last hour
 >
-> This alert means that [Riverbend](https://github.com/nubank/riverbend)
+> This alert means that [Alph](https://github.com/nubank/alph)
 > is not properly consuming, batching and uploading incoming messages.
 >
 > - First, check on Grafana if that's really the case
->   [Grafana Dashboard](https://prod-grafana.nubank.com.br/d/000000301/riverbend)
+>   [Grafana Dashboard](https://prod-grafana.nubank.com.br/d/000000301/dataset-series-ingestion)
 > - If that's the case and files upload is actually 0 in the last couple
->   hours you should cycle riverbend, `nu ser cycle global riverbend`
+>   hours you should cycle alph, `nu k8s cycle global alph`
 > - After a while check if it gets back to normal, it can take a while
 >   (~20 min) as it has to restore the state store.
 > - If it doesn't start working again, check for further exceptions on

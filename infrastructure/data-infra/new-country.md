@@ -31,7 +31,7 @@ In addition to the above, the following scopes are also needed:
 **NOTE***
   * Specific services may require special scopes such as `barragem-admin` or `ouroboros-admin`.
 
-We assume throughout this document that you have the correct AWS IAM groups, scopes and 
+We assume throughout this document that you have the correct AWS IAM groups, scopes and
 have setup your AWS role-based authentication locally. For more information, see [multi-country-setup](./multi_country_setup.md).
 
 ## Understanding current ETL infrastructure
@@ -114,7 +114,7 @@ Policies that are to be associated with any given bucket are defined in
 still a copy/paste affair at the moment. Roughly speaking, you have
 to find the policy associated with the corresponding bucket in another
 country and create appropriate “variation” of it. Once this is
-done, merge your policies in the `iam-policies` repository, and 
+done, merge your policies in the `iam-policies` repository, and
 then apply them with:
 
 ```{.shell}
@@ -147,11 +147,11 @@ You can find the list of countries at this
 
 2. After adding the new country, bump this project to a new version.
 
-All services that are to be deployed in the new country must be compatible with 
+All services that are to be deployed in the new country must be compatible with
 the newly provided version of **common-etl-spec**.
 
-**NOTE:** 
-  * You will notice on the **sachem** tests, which are the services where this 
+**NOTE:**
+  * You will notice on the **sachem** tests, which are the services where this
   dependency needs to be bumped due to this modification.
 
 ## Preparing Itaipu
@@ -217,13 +217,13 @@ put them back whenever the deployment is considered done.
 ### Spin Veiga
 
 _Veiga_ will be needed to route messages from the **DATA** _Metapod_ instance to the
-services on the new country. In order to deploy it, please copy and adapt the following 
+services on the new country. In order to deploy it, please copy and adapt the following
 definition for the new country:
 
 - [Service](https://github.com/nubank/definition/blob/master/resources/co/services/veiga.edn)
 
-After creating the new definition, launch the following commands on the **staging** 
-_Nimbus_ console to spin the service on the `:global` prototype only since _Veiga_ 
+After creating the new definition, launch the following commands on the **staging**
+_Nimbus_ console to spin the service on the `:global` prototype only since _Veiga_
 is not sharded:
 
 ```{.clojure}
@@ -311,7 +311,7 @@ nu-data datainfra sabesp -- --aurora-stack=staging-foz jobs itaipu staging new-c
 Few things to note in this command:
 
 - The staging on the DATA country should be used for this kind of test.
-- On manual runs, the transaction type must be set as __"hotfix"__ in 
+- On manual runs, the transaction type must be set as __"hotfix"__ in
 order for Itaipu to propagate the dataset commit message to Metapod.
 - You must build the Itaipu version containing your test dataset,
 publish as a dev image, and set its version on this command (just
@@ -430,39 +430,39 @@ transaction, or on __Splunk_ in case of any exceptions.
 
 ## Dataset Series
 
-To cover the "dataset series" use case on the new country installation, both _Riverbend_
+To cover the "dataset series" use case on the new country installation, both _Alph_
 and _Ouroboros_ need to be deployed.
 
-### Spin Riverbend
+### Spin Alph
 
-_Riverbend_ will be needed to ingest non-datomic data used in the new country.
+_Alph__ will be needed to ingest non-datomic data used in the new country.
 In order to deploy it, please copy and adapt the following definition for the new country:
 
-- [Service](https://github.com/nubank/definition/blob/master/resources/co/services/riverbend.edn)}
+- [Service](https://github.com/nubank/definition/blob/master/resources/co/services/alph.edn)}
 
-After creating the new definitions, launch the following commands on the **staging** 
+After creating the new definitions, launch the following commands on the **staging**
 _Nimbus_ console to spin the service on all necessary shards, using the given command:
 
 ```{.clojure}
 (doseq [prototype ["global" "s0"]] ; use more prototypes if needed
-  (app/create! (keyword prototype) "blue" :riverbend "<image-version-as-string>"))
+  (app/create! (keyword prototype) "blue" :alph "<image-version-as-string>"))
 ```
 
-You can list the last image version using the ```nu registry list-images nu-riverbend```
+You can list the last image version using the ```nu registry list-images nu-alph```
 command.
 
 Once those pods are successfully created, you will need to upsert DNS aliases for
 this service on the new country. You can do it by using the following command:
 
 ```{.shell}
-nu serverless invoke update-canonical-dns --invoke-type sync --account-alias $country --env staging --payload '{"prototype":"<prototype>","stack-id":"blue","service":"riverbend"}'
+nu serverless invoke update-canonical-dns --invoke-type sync --account-alias $country --env staging --payload '{"prototype":"<prototype>","stack-id":"blue","service":"alph"}'
 ```
 
 After running the command above, check if the new service is healthy by running the
 following command (for all existing prototypes):
 
 ```{.shell}
-nu-$country ser curl get $prototype riverbend /api/version --env staging
+nu-$country ser curl get $prototype alph /api/version --env staging
 ```
 
 If this deployment runs correctly on **staging**, repeat this operation using the
@@ -472,13 +472,13 @@ If this deployment runs correctly on **staging**, repeat this operation using th
 ### Spin Ouroboros
 
 _Ouroboros_ will be needed to act as the metadata storage for dataset series in
-the new country. In order to deploy it, please copy and adapt the following 
+the new country. In order to deploy it, please copy and adapt the following
 definitions for the new country:
 
 - [Service](https://github.com/nubank/definition/blob/master/resources/co/services/ouroboros.edn)
 - [Data storage](https://github.com/nubank/definition/blob/master/resources/co/datomics/ouroboros-datomic.edn)
 
-We also need to specialize _Ouroboros_'s configuration in order for it to access 
+We also need to specialize _Ouroboros_'s configuration in order for it to access
 the correct bucket for the given country. On the _Ouroboros_'s `config` branch,
 copy and adapt the correspondent configuration file as such:}
 
@@ -488,12 +488,12 @@ copy and adapt the correspondent configuration file as such:}
         ]
     }
 ```
-    
+
 After creating the new definitions and setting the country-specific configuration,
 wait until the __definition_ project pipeline is done since it will be the
 responsible for creating the datomic transactor.
 
-If the _definition_ pipeline finishes successfully, you can try to spin the service on the 
+If the _definition_ pipeline finishes successfully, you can try to spin the service on the
 `:global` prototype only since _Ouroboros_ is not sharded, using the given command on the
 **staging** _Nimbus_ console:
 
@@ -524,13 +524,13 @@ If this deployment runs correctly on **staging**, repeat this operation using th
 ### Preparing connection to Ouroboros on Itaipu
 
 In order to allow the manual dataset series in the new country, we will need to
-modify _Itaipu_ in order for it to talk with the country-specific instance 
-of _Ouroboros_. This [PR](https://github.com/nubank/itaipu/pull/14769/files) 
+modify _Itaipu_ in order for it to talk with the country-specific instance
+of _Ouroboros_. This [PR](https://github.com/nubank/itaipu/pull/14769/files)
 illustrates how a new _Ouroboros_ client can be defined on _Itaipu_.
 
 ### Testing dataset series use-cases
 
-Testing _Riverbend_ is pretty simple: just by checking if new Avro files are
+Testing _Alph_ is pretty simple: just by checking if new Avro files are
 being deployed on the target bucket is enough to consider the service as up
 and running correctly.
 
@@ -570,10 +570,10 @@ in a new country.
 _Conrado_ acts like a rest interface, backed by a data storage, of part of the
 computation on the ETL run which needs to be propagated to other services. Its
 data storage is fed by __Tapir_ after the dataset is generated on _Itaipu_. For
-that reason, we need to create this data storage prior to spin _Conrado_ 
+that reason, we need to create this data storage prior to spin _Conrado_
 and _Tapir_.
 
-In order to create _Conrado_'s data storage and service for the new country, 
+In order to create _Conrado_'s data storage and service for the new country,
 please copy and adapt the following definitions:
 
 - [Service](https://github.com/nubank/definition/blob/master/resources/co/services/conrado.edn)
@@ -596,7 +596,7 @@ If the commands above finished successfully, you can try to spin the service, on
 available prototypes (_s0_, _s1_ ... + __global_), using the given command:
 
 ```{.clojure}
-(doseq [prototype ["global" "s0"]] ; use more prototypes if needed 
+(doseq [prototype ["global" "s0"]] ; use more prototypes if needed
   (app/create! (keyword prototype) "blue" :conrado "<image-version-as-string>"))
 ```
 
@@ -629,7 +629,7 @@ adapt the following definitions for the new country:
 - [Service](https://github.com/nubank/definition/blob/master/resources/co/services/tapir.edn)
 - [Data storage](https://github.com/nubank/definition/blob/master/resources/co/dynamodbs/tapir.edn)
 
-We also need to specialize _Tapir_'s configuration in order for it to access 
+We also need to specialize _Tapir_'s configuration in order for it to access
 the correct bucket for the given country. On the _Tapir_'s `config` branch,
 copy and adapt the correspondent configuration file as such:
 
@@ -639,8 +639,8 @@ copy and adapt the correspondent configuration file as such:
        "partitions-bucket": "nu-spark-metapod-ephemeral-pii-<country>-<env>"
     }
 ```
-    
-After creating the new definitions and setting the country-specific configuration, 
+
+After creating the new definitions and setting the country-specific configuration,
 launch the following commands on the **staging** _Nimbus_ console to spin
 the required data storage:
 
@@ -648,7 +648,7 @@ the required data storage:
 (dynamodb/create-table! :global "tapir")
 ```
 
-If the commands above finished successfully, you can try to spin the service on the 
+If the commands above finished successfully, you can try to spin the service on the
 `:global` prototype only since _Tapir_ is not sharded, using the given command:
 
 ```{.clojure}
@@ -684,7 +684,7 @@ illustrates the required modifications to enable it for the new country.
 ### Testing serving layer
 
 In order to test the serving layer use cases, we will need to create a dataset to
-be propagated by _Itaipu_. The rows of this dataset will then be loaded by 
+be propagated by _Itaipu_. The rows of this dataset will then be loaded by
 _Tapir_ and exposed by _Conrado_ via its rest interface.
 
 In order to test this, in the case of Colombia, we copied tested by copying
@@ -696,9 +696,9 @@ nu-data datainfra sabesp -- --aurora-stack=staging-foz jobs itaipu staging servi
 ```
 
 If everything is working correctly, you can query _Conrado_ by using the id
-indicated on the `nu.data.co.datasets.infra.DummyServingLayerDataset` file. 
+indicated on the `nu.data.co.datasets.infra.DummyServingLayerDataset` file.
 
-**NOTE:** 
+**NOTE:**
 * The id used on this request must be in lowercase!
 
 ```{.shell}
@@ -706,7 +706,7 @@ nu-$country k8s curl GET global conrado --accept application/edn /api/dataset/du
 ```
 
 Please check if the row was found at _Conrado_ and the content matches with
-the data indicated on `nu.data.co.datasets.infra.DummyServingLayerDataset`. 
+the data indicated on `nu.data.co.datasets.infra.DummyServingLayerDataset`.
 
 ## Streaming Contracts
 
@@ -867,7 +867,7 @@ In order to do that, please copy and adapt the following definition:
 
 - [Service](https://github.com/nubank/definition/blob/master/resources/co/services/barragem.edn)
 
-We also need to specialize _Barragem_'s configuration in order for it to access 
+We also need to specialize _Barragem_'s configuration in order for it to access
 the correct bucket and RDS for the given country. On the _Barragem_'s `config`
 branch, copy and adapt the correspondent configuration file as such:
 
@@ -878,13 +878,13 @@ branch, copy and adapt the correspondent configuration file as such:
        "rdb-unqualified-endpoint-url": "barragem-aurora-instance.<host>-<region>.rds.amazonaws.com"
     }
 ```
-    
-After creating the new definitions and the country specific configuration, 
-launch the following commands on the **staging** _Nimbus_ console to spin 
+
+After creating the new definitions and the country specific configuration,
+launch the following commands on the **staging** _Nimbus_ console to spin
 all the service on all available prototypes (_s0_, _s1_ ... + __global_):
 
 ```{.clojure}
-(doseq [prototype ["global" "s0"]] ; use more prototypes if needed 
+(doseq [prototype ["global" "s0"]] ; use more prototypes if needed
   (app/create! (keyword prototype) "blue" :barragem "<image-version-as-string>"))
 ```
 
@@ -918,7 +918,7 @@ to set up tasks definitions as such:
 - [Schedule segments for global prototype](https://github.com/nubank/definition/blob/master/resources/co/tasks/barragem-process-next-segment-global.edn)
 - [Schedule segments for sharded prototypes](https://github.com/nubank/definition/blob/master/resources/co/tasks/barragem-process-next-segment-shards.edn)
 
-**NOTES:** 
+**NOTES:**
 * _Barragem_ will receive one schedule request for each DB specified on the
 tasks.
 * Make sure _Tempo_ is cycled after the new tasks are merged.
@@ -950,7 +950,7 @@ clojure.lang.ExceptionInfo: Object pub/auth/sign-pem/2019-08-08T11:29:17.127-_X3
 ded Request ID: WzC7yOlR4zB9nNVh8JJJGtKfp+/gJcUW3/Oz9myUZmAejUNhZvgZZFZqydH0AJK4LvY8NvgrgbY=)"
 ```
 
-If any similar error occurs, please contact the _Foundation_ tribe to make sure 
+If any similar error occurs, please contact the _Foundation_ tribe to make sure
 [these](https://github.com/nubank/playbooks/blob/master/squads/international/security.md#tokens) steps
 of the playbook was executed for the new country. In case of doubt, ask them to
 re-execute the following command:

@@ -19,7 +19,7 @@ These are "normal" Clojure services that get deployed in our main infrastructure
 - [escafandro](https://github.com/nubank/escafandro)
 - [metapod](https://github.com/nubank/metapod), ([overview](/primer.md#metapod-overview))
 - [ouroboros](https://github.com/nubank/ouroboros)
-- [riverbend](https://github.com/nubank/riverbend)
+- [alph](https://github.com/nubank/alph)
 - [tapir](https://github.com/nubank/tapir)
 - [veiga](https://github.com/nubank/veiga)
 
@@ -33,11 +33,11 @@ Data-infra is a little unique because we have sharded services, global services,
 
 #### sharded services
 
-##### riverbend
+##### alph
 
-`riverbend` consumes from the `EVENT-TO-ETL` topic on the shard it deployed on. It sorts those messages into their respective dataset-series, batches them up as AVRO files on s3, and sends a commit message to the `NEW-SERIES-PARTITIONS` topic.
+`alph` consumes from the `EVENT-TO-ETL` topic on the shard it deployed on. It sorts those messages into their respective dataset-series, batches them up as AVRO files on s3, and sends a commit message to the `NEW-SERIES-PARTITIONS` topic.
 
-`riverbend` was previously a shard-aware service on the global shard. This required it to scale according to our entire customer base. Now that it is sharded, we can tune it to work for the max shard size and not need to worry about how large nubank gets.
+`alph` substituted the service `riverbend`. `Riverbend` solved the same problem as `alph`, however due to its faulty implementation it used to frequently lose events that it was processing.
 
 ##### correnteza
 
@@ -79,7 +79,7 @@ Will reside in every country and be hit by the data account `metapod`.
 
 ##### ouroboros (shard-aware kafka consumption)
 
-`ouroboros` keeps track of input data for dataset-series and serves it to the ETL when it starts. Since a lot of input data for dataset-series comes from `riverbend` serializing events to s3, and `riverbend` is sharded, `ouroboros` either needs to be sharded or shard-aware. On the other hand, since it talks to the ETL, it is nicer to have `ouroboros` serves this dataset-series metadata to the ETL, so it is nice to have
+`ouroboros` keeps track of input data for dataset-series and serves it to the ETL when it starts. Since a lot of input data for dataset-series comes from `alph` serializing events to s3, and `alph` is sharded, `ouroboros` either needs to be sharded or shard-aware. On the other hand, since it talks to the ETL, it is nicer to have `ouroboros` serves this dataset-series metadata to the ETL, so it is nice to have
 
 ### Front-ends
 

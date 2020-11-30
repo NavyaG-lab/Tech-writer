@@ -13,9 +13,9 @@ owner: "#data-infra"
       - [Check reason for the failure](#check-reason-for-the-failure)
       - [Restart the task](#restart-the-task)
       - [Checking errors directly in Airflow](#checking-errors-directly-in-airflow)
-    - [Riverbend - No file upload in the last hour](#riverbend---no-file-upload-in-the-last-hour)
+    - [Alph - No file upload in the last hour](#alph---no-file-upload-in-the-last-hour)
       - [Solution](#solution)
-    - [Riverbend - kafka lag above threshold](#riverbend---kafka-lag-above-threshold)
+    - [Alph - kafka lag above threshold](#alph---kafka-lag-above-threshold)
       - [Solution](#solution-1)
     - [Correnteza database-claimer is failing](#correnteza-database-claimer-is-failing)
     - [Correnteza attempt-checker is failing](#correnteza-attempt-checker-is-failing)
@@ -164,29 +164,27 @@ It is possible that a failure happens before the task is created in Aurora, and 
 - What is logged after "status FAILED and message <message>" is the reason why the task failed. If it reads simply `Task failed`, that means the task was started in Aurora, but the actual failure should be inspected via the Aurora logs. For that, jump back to the [Check reason for the failure](#check-reason-for-the-failure) step for this alarm.
 - In other cases, you might see a message such as: `Subtask: 401 Client Error: Unauthorized for url`. This means there was an error fetching credentials to talk to the Aurora API. Restarting the task should be enough. To achieve that, follow the steps in the [Restart the task](#restart-the-task) section above.
 
-### Riverbend - No file upload in the last hour
+### Alph - No file upload in the last hour
 
-This alert means that [Riverbend](https://github.com/nubank/riverbend) is not properly consuming, batching and uploading incoming messages.
+This alert means that [Alph](https://github.com/nubank/alph) is not properly consuming, batching and uploading incoming messages.
 
 #### Solution
-- First, check on Grafana if that's really the case [Grafana Dashboard](https://prod-grafana.nubank.com.br/d/000000301/riverbend)
-- If that's the case and files upload is actually 0 in the last couple hours you should cycle riverbend, `nu ser cycle global riverbend`
-- After a while check if it gets back to normal, it can take a while (~20 min) as it has to restore the state store.
+- First, check on Grafana if that's really the case [Grafana Dashboard](https://prod-grafana.nubank.com.br/d/000000301/dataset-series-ingestion)
+- If that's the case and files upload is actually 0 in the last couple hours you should cycle alph, `nu k8s cycle global alph`
+- After a while check if it gets back to normal.
 - If it doesn't start working again, check for further exceptions on Splunk.
 
-### Riverbend - kafka lag above threshold
+### Alph - kafka lag above threshold
 
-This alert means that [Riverbend](https://github.com/nubank/riverbend) is not consuming messages on at least one partition on the prototype. This is usually caused by one of two things: either Riverbend is under-provisioned, or one of the consumers/partitions got temporarily stuck somehow. A third event that can create a significant lag, which is related to the previous one, is that we might have a series whose messages are too big and therefore are not being processed.
+This alert means that [Alph](https://github.com/nubank/alph) is not consuming messages on at least one partition on the prototype. This is usually caused by one of two things: either Alph is under-provisioned, or one of the consumers/partitions got temporarily stuck somehow. A third event that can create a significant lag, which is related to the previous one, is that we might have a series whose messages are too big and therefore are not being processed.
 
 #### Solution
 
-Open [Riverbend Grafana Dashboard](https://prod-grafana.nubank.com.br/d/000000301/riverbend) as well as the [Kubernetes CPU and Memory dashboard](https://prod-grafana.nubank.com.br/d/000000268/kubernetes-cpu-and-memory-pod-metrics?orgId=1&from=now-6h&to=now&refresh=1m&var-PROMETHEUS=prod-thanos&var-namespace=default&var-container=nu-riverbend&var-PROTOTYPE=All&var-stack_id=All). Make sure to correctly set the prototype to whatever prototype is alarming on both dashboards.
+Open [Alph Grafana Dashboard](https://prod-grafana.nubank.com.br/d/000000301/dataset-series-ingestion) as well as the [Kubernetes CPU and Memory dashboard](https://prod-grafana.nubank.com.br/d/000000268/kubernetes-cpu-and-memory-pod-metrics?orgId=1&from=now-6h&to=now&refresh=1m&var-PROMETHEUS=prod-thanos&var-namespace=default&var-container=nu-alph&var-PROTOTYPE=All&var-stack_id=All). Make sure to correctly set the prototype to whatever prototype is alarming on both dashboards.
 
 - First, check on the Kubernetes dashboard for frequent restarts; this is usually visible for example on the memory usage graph where you'll see a lot of new lines appearing through time as new processes are added. Under normal circumstances the memory usage lines should be mostly stable.
-- If there are frequent restarts, check the memory usage of the pods (both average and per pod) on the same dashboard to see whether Riverbend may be under-provisioned on that shard. If it is, you'll need to bump memory by submitting a PR on [definition](https://github.com/nubank/definition) or, if you want to go fast or if there isn't anyone around to approve your PR, directly by editing the k8s deployment with `nu-"$country" k8s ctl --country "$country" --env "$env" "$prototype" -- edit deploy "$env-$prototype-$stack-riverbend-deployment"`.
-- If there are no restarts, the next step is to check directly the riverbend dashboard to see if the issue is occuring on all partitions or only on a single one. Usually if the issue is not due to provisioning, there'll be a single stuck partition. In this case the fix is to cycle riverbend: `nu-$country k8s cycle --env prod $prototype riverbend`. It'll take some time for processing to resume, usually between 30 minutes and an hour, but you should eventually see a dip in the lag.
-- If the previous steps do not seem to solve the issue, and you find out that we have a series whose messages are too big to be processed - you can find this by querying Splunk, you need to add this series to Riverbend's `series_droplist`. You do this by changing Riverbend's configuration inside its `config` branch. You can use the following pull request as an example: https://github.com/nubank/riverbend/pull/215/files. After you merge into `config`, the GoCD pipeline `riverbend-config-prod-br` should trigger automatically and will apply the new changes to the service.
-Splunk query example: `source=riverbend prototype=global host=prod-global-blue-riverbend-deployment-5957fdddbb-hzhvv error`; Error message to keep an eye out for `org.apache.kafka.common.errors.RecordTooLargeException: The request included a message larger than the max message size the server will accept`
+- If there are frequent restarts, check the memory usage of the pods (both average and per pod) on the same dashboard to see whether Alph may be under-provisioned on that shard. If it is, you'll need to bump memory by submitting a PR on [definition](https://github.com/nubank/definition) or, if you want to go fast or if there isn't anyone around to approve your PR, directly by editing the k8s deployment with `nu-"$country" k8s ctl --country "$country" --env "$env" "$prototype" -- edit deploy "$env-$prototype-$stack-alph-deployment"`.
+- If there are no restarts, the next step is to check directly the alph dashboard to see if the issue is occuring on all partitions or only on a single one. Usually if the issue is not due to provisioning, there'll be a single stuck partition. In this case the fix is to cycle alph: `nu-$country k8s cycle --env prod $prototype alph`. It'll take some time for processing to resume, usually between 10 minutes and an hour, but you should eventually see a dip in the lag.
 
 ### Correnteza database-claimer is failing
 
@@ -414,7 +412,7 @@ First things first, we are going to need to understand which dataset has failed,
 And now, it is time to understand if said dataset was already committed (potentially in different node), by running, for example, `nu-br etl info <dataset-name>`, e.g., `nu-br etl info nu-br/dataset/customer-eavt-pivotted`; if yes, you should still warn the users (see the Escalation section), informing them that the dataset failed, and that its stability might not be the best.
 
 ### Solution
-Even though sometimes no action needs to be taken (as the dataset often succeeds in a different node), **you should consider committing the faulty dataset empty if it keeps failing, and a critical part of the run is getting blocked by it.** 
+Even though sometimes no action needs to be taken (as the dataset often succeeds in a different node), **you should consider committing the faulty dataset empty if it keeps failing, and a critical part of the run is getting blocked by it.**
 Something else worth trying is to isolate the faulty dataset in a different node, i.e., `itaipu-other-flaky-datasets`, and see if its behaviour changes during the next run.
 
 Most of the time, our users are the ones coming up with the long term solutions for these kind of problems, and it usually involves them optimizing their SparkOP or even breaking it down in multiple ones.
@@ -437,7 +435,7 @@ more EC2 instances running Spark Executors are out of disk space.
 
 ### Solution
 
-  * Consider decreasing the workload. For example if the job is a periodic 
+  * Consider decreasing the workload. For example if the job is a periodic
     maintenance job like `pollux-auto` consider [decreasing the number of databases](https://github.com/nubank/castor/blob/master/resources/castor_config.json.base)
     it updates the cache for at a time, as long it can still maintain the service
     SLO.
@@ -505,7 +503,7 @@ To verify whether there is an on-going situation, access [Escafandro Monitoring]
 
 Before jumping into problem solving mode, it's important to understand whether there actually is something to be fixed in the current situation.
 
-One important aspect to keep in mind is the fact that many new datasets might have been added to the ETL at the same day, and since Escafandro will not have historical metrics about these, there is nothing that can be done about it. 
+One important aspect to keep in mind is the fact that many new datasets might have been added to the ETL at the same day, and since Escafandro will not have historical metrics about these, there is nothing that can be done about it.
 One way to check whether this is the case, you can collect the name of some dataset samples using the following search query in Splunk: `source=escafandro "metric-query-response" ":datapoints ()"`
 
 To kick-start troubleshooting this, your first stop is again accessing [Escafandro Monitoring](https://prod-grafana.nubank.com.br/d/b3gOJwFMz/escafandro-monitoring?orgId=1) Grafana dashboard. Compare the [Persist Endpoint - Metric created](https://prod-grafana.nubank.com.br/d/b3gOJwFMz/escafandro-monitoring?orgId=1&viewPanel=4) pane with the [Range Endpoint - Empty Responses](https://prod-grafana.nubank.com.br/d/b3gOJwFMz/escafandro-monitoring?orgId=1&viewPanel=2). There should be an inversely proportional relationship between the number of metrics created vs the number empty datapoint responses. Meaning, the less metrics being created on a given day the higher is the likelyhood of the number of empty datapoints response on the upcoming day. E.g., On 1st October if `nu-br/important-dataset` does not create metrics, the execution of `nu-br/important-dataset` on 2nd October will return empty datapoints.
@@ -540,7 +538,7 @@ Escafandro's relevant links are:
 - [README](https://github.com/nubank/escafandro/)
 - [Datomic Transactor Metrics](https://prod-grafana.nubank.com.br/d/XbZytFTWk/datomic-transactor-metrics?orgId=1&var-PROMETHEUS=prod-thanos&var-PROTOTYPE=All&var-TRANSACTOR=escafandro-1-datomic)
 - [Kubernetes CPU and Memory pod metrics](https://prod-grafana.nubank.com.br/d/000000268/kubernetes-cpu-and-memory-pod-metrics?orgId=1&refresh=1m&var-PROMETHEUS=prod-thanos&var-namespace=default&var-container=nu-escafandro&var-PROTOTYPE=All&var-stack_id=All)
-- [JVM by Service](https://prod-grafana.nubank.com.br/d/000000276/jvm-by-service?orgId=1&var-ENVIRONMENT=prod&var-PROMETHEUS=prod-thanos&var-SERVICE=escafandro&var-PROTOTYPE=global&var-STACK_ID=All&var-POD=All) 
+- [JVM by Service](https://prod-grafana.nubank.com.br/d/000000276/jvm-by-service?orgId=1&var-ENVIRONMENT=prod&var-PROMETHEUS=prod-thanos&var-SERVICE=escafandro&var-PROTOTYPE=global&var-STACK_ID=All&var-POD=All)
 
 ## Frequent dataset failures
 ### Leaf dataset is failing because of bad definition
@@ -587,7 +585,7 @@ Some instances of this happening include:
 
 ### Overview
 
-The purpose of this alert is to hint On-Call Engineers that there is more than one dagao running at the same time, and there is currently a hard cap of 2 running DAGs in Data-Infra's Airflow. Whenever it in this state, we are at risk of not properly scheduling the next day's DAG. If we have a DAG running over into the next day it usually means something is wrong with some jobs and it needs to be addressed. 
+The purpose of this alert is to hint On-Call Engineers that there is more than one dagao running at the same time, and there is currently a hard cap of 2 running DAGs in Data-Infra's Airflow. Whenever it in this state, we are at risk of not properly scheduling the next day's DAG. If we have a DAG running over into the next day it usually means something is wrong with some jobs and it needs to be addressed.
 
 Let’s say the ETL runs late on day D1, and continues running throughout D2 (maybe due to a node getting stuck). If the D2 run is also late, then at the start of D3 we’ll have already 2 DAGs running (D1 + D2) and so the D3 DAG will not get scheduled.
 

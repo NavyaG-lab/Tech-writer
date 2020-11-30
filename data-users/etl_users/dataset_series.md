@@ -51,8 +51,8 @@ At Nubank, Datomic is the main/preferred way to store data. But it's not the onl
 
 Dataset series data is produced by services by using the [common-ingestion](https://github.com/nubank/common-ingestion) component; please refer to its README to understand its usage and how to integrate it with your service. The resulting data is then handled by the *Ingestion Layer* – a set of services linked to the `EVENT-TO-ETL` Kafka topic:
 
-* The [Riverbend](https://github.com/nubank/riverbend) service is responsible for producing dataset series. It does so by consuming the `EVENT-TO-ETL` Kafka topic and serialising its messages to `.avro` files suitable for ingestion by Itaipu. The dataset-name should be in the format `series/dataset-name`.
-* The [Curva de Rio](https://github.com/nubank/curva-de-rio) service exposes an HTTP endpoint which allows services not connected to Kafka to send data to Riverbend.
+* The [Alph](https://github.com/nubank/alph) service is responsible for producing dataset series. It does so by consuming the `EVENT-TO-ETL` Kafka topic and serialising its messages to `.avro` files suitable for ingestion by Itaipu. The dataset-name should be in the format `series/dataset-name`.
+* The [Curva de Rio](https://github.com/nubank/curva-de-rio) service exposes an HTTP endpoint which allows services not connected to Kafka to send data to Alph.
 
 ## Using Dataset Series
 
@@ -245,7 +245,7 @@ Currently, the metadata fields are the following:
   * `series_event_service_name`
   * `metadata_id`
 
-See [RFC-9878](https://github.com/nubank/riverbend/blob/master/doc/rfc-9878.md) for more details.
+See [RFC-9878](https://github.com/nubank/alph/blob/master/doc/rfc-9878.md) for more details.
 
 ### Primary keys and deduplication
 

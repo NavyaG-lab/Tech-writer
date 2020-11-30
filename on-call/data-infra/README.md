@@ -17,7 +17,7 @@ owner: "#data-infra"
   - [Slack channels to look during on-call](on_call_runbook.md)
 
 - **On-call runbooks**
-  
+
   - [Operations Cookbook](ops_how_to.md)
 
   - [Monitoring nightly run](monitoring_nightly_run.md)
@@ -40,7 +40,7 @@ The responsibilities include:
 
 - Monitoring run during the day even when there are no alerts, and make sure that nodes in Airflow finish successfully in time (usually takes time between 40 minutes to 8 hours). You can proactively solve performance issues if you have bandwidth.
 - Quickly address the Opsgenie pagers related to the run.
-  
+
   Addressing any failures such as:
   - committing datasets empty
   - removing faulty archives
@@ -50,7 +50,6 @@ The responsibilities include:
 
 - Addressing user issues, such as missing data in dataset series or archives.
 - Fix low-priority alarms, such as:
-  - Riverbend lag alarms
   - Cutia dead letter alarms
   - Correnteza alarms
   - Metapod-Datomic transactor health alarms
