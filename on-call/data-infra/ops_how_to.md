@@ -542,6 +542,20 @@ Note:
 
 - If `itaipu-stable` fails to build, due to flaky dependency downloads and such, it might be the case that nobody is able to fix it before the dag is deployed
 
+**After hot-deploying Dagao**
+
+1. After you hot deploy dagao, by triggering the Publish step on GoCD, you **must** re-run the Airflow task named **etl_run_versions** available at the very beginning of the DAG next to **itaipu-the-first**
+
+The **etl_run_versions** task creates (or updates) an Airflow Variable that gets used by every node during the run. This variable is a key-value pair whose key is in the format **prod____etl_run_versions__{target_date}**. The value, in Json format, contains the ETL run versions (such as Itaipu and scale_cluster). The task reads the run versions from the 'DAS' file, present on disk, and creates (or updates) the Variable accordingly.
+
+2. To re-run the Airflow task, click on **etl_run_versions** and then click Clear.
+3. Double-check to ensure that we are clearing the correct task and click OK. This updates a Variable whose key should be in the **prod____etl_run_versions__{target_date}** format.
+
+**Tip:** You can also verify if the above process has worked by navigating to Admin->Variables. Look for the current variable (the one that corresponds to the target_date), and check that the Itaipu version is not the same as the one found in #etl-updates for the given day.
+As the number of Variables grow, it might be difficult to find the current one. So, you can either use the search bar and pass the target date as your search criteria, or you can sort all Variables by key.
+
+**Note:** This  task does not depend on anything; Restarting it won't affect any other running tasks.
+
 ## Checks before old prod-stack teardown
 
 Before the old stack is killed, the engineer will announce to #chapter-engineering so every squad can make sure it is good to continue. Since a big part of the ETL is fed by Kafka messages, we need to make sure that there are no messages left behind.
