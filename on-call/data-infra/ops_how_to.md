@@ -546,6 +546,8 @@ Note:
 
 1. After you hot deploy dagao, by triggering the Publish step on GoCD, you **must** re-run the Airflow task named **etl_run_versions** available at the very beginning of the DAG next to **itaipu-the-first**
 
+![etl-run-versions](../../images/airflow_etl_run_versions.png)
+
 The **etl_run_versions** task creates (or updates) an Airflow Variable that gets used by every node during the run. This variable is a key-value pair whose key is in the format **prod____etl_run_versions__{target_date}**. The value, in Json format, contains the ETL run versions (such as Itaipu and scale_cluster). The task reads the run versions from the 'DAS' file, present on disk, and creates (or updates) the Variable accordingly.
 
 2. To re-run the Airflow task, click on **etl_run_versions** and then click Clear.
