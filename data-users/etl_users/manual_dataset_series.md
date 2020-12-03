@@ -110,7 +110,7 @@ Prepare this file, name it `schema.json`, and place it in the same directory on 
 
 Make sure you have the following access permissions.
 
-- Appending dataset to manual dataset series involves talking directly to `ouroboros`, you'll need the `admin` scope for your AWS user. Use `nu-<country> sec scope show <your-firstname.your-lastname>` to see if you have the `admin` scope. If you don't, ask for it using the access request form pinned to the `#access-request` channel.
+- You'll need the `admin` scope for your AWS user. Use `nu-<country> sec scope show <your-firstname.your-lastname>` to see if you have the `admin` scope. If you don't, ask for it using the access request form pinned to the `#access-request` channel.
 
 - After getting the access, you may need to run `nu-<country> auth get-refresh-token --env prod --country <country>`. The `<country>` is the country from where you are creating your manual series (eg: br, mx).
 
