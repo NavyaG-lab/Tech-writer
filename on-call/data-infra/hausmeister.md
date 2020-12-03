@@ -6,12 +6,15 @@ owner: "#data-infra"
 
 ## Setup
 
-Make sure your work environment is set up and you have the following:
+Before every hausmeister rotation (and particularly before your first rotation), please make sure your work environment is set up and you have the following:
 
-- [VPN functioning properly](https://nubank.slack.com/archives/C024U9800/p1545380162000900).
-- know your way around [Airflow](/airflow.md).
-- know [how to use sabesp](./tools/cli_examples.md).
-- have a [GraphQL client accessible](../../tools/graphql_clients.md).
+- [Proper VPN setup](https://nubank.slack.com/archives/C024U9800/p1545380162000900).
+- AWS Profiles on `br`, `mx`, `data`, `co`, along with certificates for these enviroments (reach out for help on #berlin-it-ops).
+- Essential Scopes: `admin`, `data-infra-admin`, `metapod-admin` (request them on #access-request).
+- [A GraphQL client accessible](../../tools/graphql_clients.md), with tokens refreshed for both `br` & `data` accounts.
+- A working [Single-User cluster on Databricks](/tools/databricks/single_user_clusters/README.md) (use #data-help, in case this needs to be (re-)created).
+- Latest version of the [Hausmeister Toolkit](/on-call/data-infra/tools/on-call-engineer-tool.md).
+- Latest version of [Sabesp](/cli_examples.md), along with `Aurora-Jobs`.
 
 ## Required knowledge
 
