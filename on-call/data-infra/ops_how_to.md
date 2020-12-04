@@ -637,20 +637,66 @@ The above is an async request. You can check whether it is completed with [this 
 
 ## Retracting Manual Appends to Dataset Series
 
-   You will occassionally receive requests from users to retract datasets which were manually appended to a dataset-series. This usually happens in the #manual-dataset-series channel.
+You will occasionally receive requests from users to retract datasets which were manually appended to a dataset-series. This usually happens in the #data-help channel.
 
-1. Use `insomnia`/ `sonar` to get the id of the dataset you want to retract. For eg., `5d94b837-c31e-4109-ac73-b904bbc7bf17`.
-2. Retract using this end-point on metapod:
-  `nu ser curl POST global metapod /api/migrations/retract/dataset-series/dataset/5d94b837-c31e-4109-ac73-b904bbc7bf17`
+1. Run `nu dataset series info <dataset-series-name> --verbose` to get the resource ID of the dataset you want to retract.
 
-If the uploaded dataset has been committed to a transaction, we will also need to retract the raw datasets for that dataset-series.The raw datasets have a naming convention: `series-raw/{dataset-series-name}-*` For eg., for a dataset-series `series/direct-mail`, we may also have to retract
+   The result of the command should look like this, and in this case, the resource ID of the dataset is `5fc56459-6ce9-4202-8fad-0bdc6fde4b0A`.
 
+```
+$ nu-br dataset-series info legal-representants-pf --verbose
+1 datasets in series
+there are 1 different schemas
+the latest was appended at 2020-12-02T21:27:43.859Z
+
+Schema-group
+Schema                                5fc16ecb-6285-4a17-83e3-5aa60cdb2ce7
+NAME                                  TYPE                                  SUBTYPE
+____                                  _______                               _______
+customer__cpf                         string
+...
+_
+Resources:
+ID                                    COMMIT
+____                                  ________
+5fc56459-6ce9-4202-8fad-0bdc6fde4b0A  2020-11-30T21:30:01.848Z
+_
+```
+
+2. Retract using this end-point on ouroboros:
+
+  `nu ser curl POST --env prod global ouroboros /api/admin/migrations/delete-resource -d'{"resource-id": "<resource-id>"}'`
+
+If the uploaded dataset has been committed to a transaction, and in case this dataset is causing issues to the node in which this dataset series runs, we will also need to retract the raw datasets for that dataset series. The raw datasets have a naming convention: `series-raw/{dataset-series-name}-*` e.g., for a dataset-series `series/direct-mail`, we have to retract
+
+**Important**: You must retract the raw datasets only if a Manual Dataset series breaks the node, whereas for the deletion requests from users, retracting the dataset from Ouroboros should suffice.
+
+- "series/direct-mail"
 - "series-raw/direct-mail-contract-avro"
 - "series-raw/direct-mail-contract-parquet"
 - "series-raw/direct-mail-alt-version-0-avro"
 - "series-raw/direct-mail-alt-version-0-parquet"
 
-To retract these raw datasets, we follow the same procedure as above for each one of them: get the `id` of the dataset, and retract using the metapod endpoint.
+To retract these raw datasets, we follow the procedure below for each one of them:
+
+1. Use `insomnia`/ `sonar` to get the ID of the dataset you want to retract from Metapod by using the GraphQL query below.
+
+```
+{
+  transaction(transactionId: "<metapod-transaction-id>") {
+    datasets(
+      datasetNames: [
+      "<dataset-name>","<sucessor-dataset-name>","<other-sucessor-dataset-name>"...]) {
+      id
+      name
+      committed
+    }
+  }
+}
+```
+
+2. Retract the raw datasets using this end-point on metapod:
+   `nu ser curl POST global metapod /api/migrations/retract/dataset-series/dataset/<dataset-id>`
 
 ## Replaying Deadletters
 
