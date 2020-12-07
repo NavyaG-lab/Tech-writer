@@ -1,0 +1,9 @@
+@startuml
+
+!$cli_name = "sbt"
+
+!include sequence.puml
+
+$example($p1, "")
+
+@enduml

@@ -1,0 +1,13 @@
+@startuml
+
+!include sequence.puml
+
+!$cli_name = "**other-build-tool**"
+
+$example($p2, "", %true)
+
+...$p3 clones master from GitHub to his machine and **modifies itaipu root project, such as changing a dataset**...
+
+$example($p3, "", %true)
+
+@enduml

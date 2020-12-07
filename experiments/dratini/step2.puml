@@ -1,0 +1,9 @@
+@startuml
+
+!include step1.puml
+
+...Fulano commits and pushes to GitHub...
+
+$example($p2, "")
+
+@enduml

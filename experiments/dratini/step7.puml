@@ -1,0 +1,13 @@
+@startuml
+
+!include sequence.puml
+
+!$cli_name = "**other-build-tool**"
+
+$example($p2, "", %true)
+
+
+
+$example($p3, "", %true)
+
+@enduml

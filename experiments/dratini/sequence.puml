@@ -1,0 +1,40 @@
+@startuml
+
+hide footbox
+
+!$p1 = "Fulano"
+!$p2 = "CI (Circle/Tekton)"
+!$p3 = "Herman"
+
+actor "$p1"
+participant "$p2"
+actor "$p3"
+
+!procedure $example($name, $note_text = "", $cache = %false())
+  "$name" -> "$name": ""$ $cli_name it:test""
+  activate "$name" #grey
+
+  !if ($cache) && ($name != $p2)
+    database "Build Cache"
+    "$name" <- "Build Cache": **get ""common-etl"" and other subprojects' classes**
+  !else
+    "$name" -> "$name": compile ""common-etl"" and other subprojects
+    !if ($note_text != "")
+      note left #FFAAAA: $note_text
+    !endif
+
+    activate "$name" #orange
+    deactivate "$name"
+
+    !if ($cache)
+      "$name" -> "Build Cache": **write compiled subproject classes to cache**
+    !endif
+  !endif
+
+  "$name" -> "$name": compile ""itaipu"" root project and run tests
+  activate "$name" #lightgreen
+  deactivate "$name"
+  deactivate "$name"
+!endprocedure
+
+@enduml

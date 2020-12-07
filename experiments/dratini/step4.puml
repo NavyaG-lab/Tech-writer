@@ -1,0 +1,9 @@
+@startuml
+
+!include step2.puml
+
+...$p3 clones master from GitHub to his machine and **makes a change to the itaipu root project, like a dataset**...
+
+$example($p3, "Didn't we just do this on CI?  •͡˘㇁•͡˘")
+
+@enduml
