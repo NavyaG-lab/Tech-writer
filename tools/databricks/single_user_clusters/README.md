@@ -16,6 +16,7 @@ owner: "#data-access"
 - [What has changed for end users when accessing Databricks using Single User Clusters?](#What-has-changed-for-end-users-when-accessing-Databricks-using-Single-User-Clusters)
 - [Runbook](runbook.md)
 - [Meta Roles](meta-roles.md)
+- [Automated Cluster Creation Workflow](automation_workflow.md)
 
 ---
 
