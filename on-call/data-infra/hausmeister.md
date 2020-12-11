@@ -9,14 +9,13 @@ owner: "#data-infra"
 Before every hausmeister rotation (and particularly before your first rotation), please make sure your work environment is set up and you have the following:
 
 - [Proper VPN setup](https://nubank.slack.com/archives/C024U9800/p1545380162000900).
-- AWS Profiles on `br`, `mx`, `data`, `co`, along with certificates for these enviroments (reach out for help on #berlin-it-ops).
-- Essential Scopes: `admin`, `data-infra-admin`, `metapod-admin` (request them on #access-request).
+- AWS Profiles on `br`, `mx`, `data`, `co`, along with certificates for these enviroments. Reach out for help at #berlin-it-ops.
+- Essential Scopes: `admin`, `data-infra-admin`, `metapod-admin`. Request them on #access-request.
 - [A GraphQL client accessible](../../tools/graphql_clients.md), with tokens refreshed for both `br` & `data` accounts.
-- A working [Single-User cluster on Databricks](/tools/databricks/single_user_clusters/README.md) (use #data-help, in case this needs to be (re-)created).
+- A working [Single-User cluster on Databricks](/tools/databricks/single_user_clusters/README.md). Reach out for help at #data-help, in case this needs to be re-created.
 - Latest version of the [Hausmeister Toolkit](/on-call/data-infra/tools/on-call-engineer-tool.md).
 - Latest version of [Sabesp](/cli_examples.md), along with `Aurora-Jobs`.
-- Spotinst accounts, for both `nubank` (Brazil) and `nu-data`
-  (worldwide) AWS accounts.
+- Spotinst accounts, for both `nubank` (Brazil) and `nu-data` (worldwide) AWS accounts. Request for Spotinst accounts on #di-hausmeister and cc @alessandro.andrioni or @giorgio-valoti.
 
 ## Required knowledge
 
@@ -128,7 +127,7 @@ The slack channels you should monitor for user questions are:
 |[#di-hausmeister](https://nubank.slack.com/archives/CP3F163C4)|
 |[#etl-integrity-checks](https://nubank.slack.com/archives/CGBLGLYFK) - For failing datasets|
 
-**Important**: As a Hausmeister, your role is to ensure user's problems are addressed, but this does not mean that you are responsible for fixing every single problem you encounter yourself; the reason being that you should always make sure you have the headspace necessary to tackle a hard alarm when it is notified. Do not hesitate to rope in other data infra engineers to help with user requests, and in particular to involve engineers closer to the context of the request who will be able to fix it quicker.
+**Important**: As a Hausmeister, your role is to ensure user's problems are addressed, but this does not mean that you are responsible for fixing every single problem you encounter yourself; the reason being that you should always make sure you have the headspace necessary to tackle a hard alarm when it is notified. Do not hesitate to rope in other data infra engineers to help with user requests, and in particular to involve engineers closer to the context of the request who will be able to fix it quickly.
 
 ## See also
 

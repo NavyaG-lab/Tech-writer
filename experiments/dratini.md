@@ -4,7 +4,7 @@ owner: "#data-infra"
 
 # Dratini
 
-The project in which we explore options to tame the itaipu compile/test time dragon. 
+The project in which we explore options to tame the itaipu compile/test time dragon.
 The initial announcement of the PoC happened on the [Data BU All-Hands 2020-08-19](#org7cc5b26).
 The PoC concluded at the [Data BU All-Hands 2020-09-16](#orgc4c315d).
 
@@ -29,7 +29,7 @@ The project is related to the section on [Improvements to itaipu build times and
 
 ### Why is the Data BU looking at itaipu's build performance?
 
-The performance of builds and tests affects the productivity of itaipu contributors. 
+The performance of builds and tests affects the productivity of itaipu contributors.
 Impacting not only those that are working on datasets, but also developers working on the platform (mostly inside the Data BU).
 
 
@@ -421,7 +421,7 @@ What are the subprojects we have in Gradle?
 
 The same subprojects we currently have in sbt:
 
-    
+
     > Task :projects
     
     ------------------------------------------------------------
@@ -690,7 +690,7 @@ This is the config for the remote caching server:
     BUILD SUCCESSFUL in 11s
     28 actionable tasks: 4 executed, 15 from cache, 9 up-to-date
 
-It finishes very quickly. :tada: 
+It finishes very quickly. :tada:
 It's able to run this quickly because this code was compiled/tested before.
 We'll have the CI push the compiled artifacts and test results to the caching server, after which contributors or subsequent builds on CI can download them as per this example.
 
@@ -753,7 +753,7 @@ Not secure, internet facing, killed quickly after started.
 
 ##### Read permissions
 
-> As the `mobile-cache-read` is an staging scope any other engineer can give you this scope, except you (you can not give scopes to yourself). 
+> As the `mobile-cache-read` is an staging scope any other engineer can give you this scope, except you (you can not give scopes to yourself).
 > This way, feel free to ask any of your colleagues to run the following command changing the name.lastname for your own name and lastname.
 
 <https://github.com/nubank/playbooks/blob/master/squads/mobile-platform/developer-environment/gradle-cache.md>
@@ -768,7 +768,7 @@ Pepijn has the 'CI token' that has writing permissions. Ping him if you want.
 
 ### IDE integration
 
-Opening the project 
+Opening the project
 
 ![img](./dratini/ide.png)
 
@@ -866,7 +866,7 @@ Suggestions?
 
 ### "Modularization Revolution"
 
-In order to get to super fast builds we need to split the main project of itaipu into smaller subprojects. 
+In order to get to super fast builds we need to split the main project of itaipu into smaller subprojects.
 For this, I'm envisioning us to take a similar path as the **Guild Mobile Dev**: <https://app.slack.com/client/T024U97V8/CH8PP85JQ/thread/D2EGF043Y-1599841453.011600>
 Analytics Engineers should take the lead in extracting their domain into subprojects.
 They get faster local builds and tests while the total CI time decreases, benefitting all Nubankers as well.
@@ -876,7 +876,7 @@ They get faster local builds and tests while the total CI time decreases, benefi
 
 ### Think about the development workflow
 
-An itaipu contributor should have instant (through caching) 'fresh' builds (e.g. pulling from master and running tests) and fast incremental compilation. 
+An itaipu contributor should have instant (through caching) 'fresh' builds (e.g. pulling from master and running tests) and fast incremental compilation.
 By switching to Gradle, we only get the former.
 We do, however, have options towards incremental compilation.
 
@@ -923,7 +923,7 @@ There were prior problems with replicating the current classpath when assembling
 ##### TODO Replicate the uberjar from Gradle
 
 
-# Appendix
+## Appendix
 
 
 ### References
@@ -933,7 +933,7 @@ There were prior problems with replicating the current classpath when assembling
 
 #### [Haoyi - SBT](https://www.lihaoyi.com/post/SowhatswrongwithSBT.html)
 
-Haoyi is the author of many popular Scala projects, one of which is Ammonite. 
+Haoyi is the author of many popular Scala projects, one of which is Ammonite.
 He's a respected figure in the Scala community and doesn't like SBT.
 
 

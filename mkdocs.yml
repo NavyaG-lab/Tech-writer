@@ -65,6 +65,7 @@ nav:
       - Query engines: "infrastructure/data-infra/query_engines.md"
       - Serving layer: "infrastructure/data-infra/serving_layer.md"
       - Testing models: "infrastructure/data-infra/testing-models.md"
+      - Test custom images with ECR: "infrastructure/data-infra/test-images.md"
     - Data Access:
       - Setup a new country in Looker : "tools/looker/looker-country-setup.md"
   - Data users:
@@ -113,6 +114,7 @@ nav:
         - Overview: "services/data-processing/itaipu/itaipu.md"
         - Itaipu setup: "services/data-processing/itaipu/project_dev_setup.md"
         - Mergulho: "services/data-processing/itaipu/mergulho.md"
+        - Dratini POC: "experiments/dratini.md"
       - Metapod: "services/data-processing/metapod.md"
     - Data serving: "services/data-serving/serving-layer.md"
     - Data analysis and monitoring: "services/data-analysis-monitoring/analysis-monitoring.md"
@@ -165,6 +167,7 @@ nav:
       - Single user clusters: "tools/databricks/single_user_clusters/README.md"
       - I AM roles in Databricks: "tools/databricks/single_user_clusters/meta-roles.md"
       - Single user clusters runbook: "tools/databricks/single_user_clusters/runbook.md"
+      - Single user clusters automation workflow: "tools/databricks/single_user_clusters/automation_workflow.md"
       - Overloaded cluster: "tools/databricks/overloaded-cluster.md"
       - Ip access list: "tools/databricks/ip_access_list.md"
       - S3 cross account access: "tools/databricks/s3_cross_account_access.md"
