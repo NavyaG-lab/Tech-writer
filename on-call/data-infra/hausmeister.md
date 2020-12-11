@@ -15,6 +15,8 @@ Before every hausmeister rotation (and particularly before your first rotation),
 - A working [Single-User cluster on Databricks](/tools/databricks/single_user_clusters/README.md) (use #data-help, in case this needs to be (re-)created).
 - Latest version of the [Hausmeister Toolkit](/on-call/data-infra/tools/on-call-engineer-tool.md).
 - Latest version of [Sabesp](/cli_examples.md), along with `Aurora-Jobs`.
+- Spotinst accounts, for both `nubank` (Brazil) and `nu-data`
+  (worldwide) AWS accounts.
 
 ## Required knowledge
 
