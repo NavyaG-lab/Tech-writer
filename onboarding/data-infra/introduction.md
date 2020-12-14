@@ -20,7 +20,6 @@ Let's get started by creating the following accounts:
 
 * Slack
 * [github](https://github.com/)
-* [Quay.io](https://quay.io/)
 
 ### Request access for services through IT Ops
 
@@ -53,7 +52,7 @@ The AWS access is given to you through roles, which must be requested directly; 
 1. Select on the list, the role for the country that you are going to interact with (e.g. **BR**). Fill in other required fields.
 1. Submit the request.
 
-**Note**: Make sure you requested access for all the three roles in AWS - **BR**, **MX**, and **Data**.
+**Note**: Make sure you requested access for all the three roles in AWS - **BR**, **MX**, **CO** and **Data**.
 You should now request access for the necessary AWS IAM groups.
 
 #### Requesting AWS IAM groups
@@ -62,7 +61,6 @@ You should now request access for the necessary AWS IAM groups.
 1. Click on **Request Access** -> **AWS** -> **AWS Group**.
 1. Enter the following groups in the **IAM Group/s** field:
 
-    * data-access-engineering
     * data-access-ops
     * data-infra
     * data-infra-aurora-access
@@ -72,27 +70,20 @@ You should now request access for the necessary AWS IAM groups.
 1. Submit the request.
 1. After the request is handled, make sure you have the correct groups by running:
 
-```
+```bash
 nu-<country> sec iam show <your.username>
 ```
 
-**Note**: Make sure you request access for all the three roles in AWS - **BR**, **MX**, and **Data**.
+**Note**: Make sure you request access for all the roles in AWS - **BR**, **MX**, **CO** and **Data**.
 
 ## Requesting necessary Scopes
 
 Access to some services and NuCLI commands is given to you through scopes, which must be requested directly.
 
-1. Log in to [IT Ops](https://nu-itops.atlassian.net/servicedesk/customer/user/login) using Nubank credentials.
-1. Click on **Request Access** -> **Internal** -> **Scope Request**.
-1. Enter the following groups in the **IAM Group/s** field:
-
-    * admin
-    * data-infra-admin (**only if you are participating on the Hausmesiter rotation**)
-
-1. Submit the request.
+1. Request the scope `admin` at [Help Center - Scopes and 3rd requests](https://nubank.atlassian.net/servicedesk/customer/portal/29) for each country `br`, `co`, `data`, `mx`.
 1. After the request is handled, make sure you have the correct scope by running:
 
-```
+```bash
 nu-<country> sec scope show <your.username>
 ```
 
@@ -103,20 +94,12 @@ nu-<country> sec scope show <your.username>
 
 1. If you don't have it, please ask another engineer in Data-Infra to assign you to those scopes by running:
 
-```
+```bash
 nu-<country> sec scope add <your.username> change-scopes --env staging
 nu-<country> sec scope add <your.username> read-scopes --env staging
 ```
 
 **Note**: Make sure you requested access for all the three roles in AWS - **BR**, **MX**, and **Data**.
-
-## How to Join datainfra group in Quay.io
-
-1. You must have created Quay.io account already. If you don't already have an account, [create one](https://quay.io/).
-1. You'll receive an invite on your email to join quay.io "nubank account". If not, reach out to #access-request Slack channel to join.
-1. Then, join the datainfra quay.io team. To do so,
-      * Ping @chico or @schaffer on Slack with your quay.io handle (or)
-      * Join #access-request Slack channel and post your request.
 
 ## Other accounts
 

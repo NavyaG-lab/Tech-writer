@@ -9,13 +9,16 @@ owner: "#data-infra"
 Before every hausmeister rotation (and particularly before your first rotation), please make sure your work environment is set up and you have the following:
 
 - [Proper VPN setup](https://nubank.slack.com/archives/C024U9800/p1545380162000900).
-- AWS Profiles on `br`, `mx`, `data`, `co`, along with certificates for these enviroments. Reach out for help at #berlin-it-ops.
-- Essential Scopes: `admin`, `data-infra-admin`, `metapod-admin`. Request them on #access-request.
-- [A GraphQL client accessible](../../tools/graphql_clients.md), with tokens refreshed for both `br` & `data` accounts.
-- A working [Single-User cluster on Databricks](/tools/databricks/single_user_clusters/README.md). Reach out for help at #data-help, in case this needs to be re-created.
+- AWS Profiles on `br`, `mx`, `data`, `co`, request them at [Help Center - General requests portal](https://nubank.atlassian.net/servicedesk/customer/portal/53), ask for the `eng` group for each profile
+- Certificates  `br`, `mx`, `data`, `co`, request them at [Help Center - General requests portal](https://nubank.atlassian.net/servicedesk/customer/portal/53) and set them up following this [guideline](https://github.com/nubank/playbooks/blob/master/squads/international/dev-env.md#auth-token-and-access-to-services---steps-to-setup-access-to-some-country-services)
+- Essential Scopes: `admin`, `data-infra-admin`, `metapod-admin`, request them at [Help Center - Scopes and 3rd party requests portal](https://nubank.atlassian.net/servicedesk/customer/portal/29) for all the AWS profiles mentioned before.
+- [A GraphQL client accessible](../../tools/graphql_clients.md), with tokens refreshed depending of the profile e.g `br`, `mx`, `data`, `co`.
+- A working [Single-User cluster on Databricks](/tools/databricks/single_user_clusters/README.md) (use #data-help, in case this needs to be (re-)created).
 - Latest version of the [Hausmeister Toolkit](/on-call/data-infra/tools/on-call-engineer-tool.md).
 - Latest version of [Sabesp](/cli_examples.md), along with `Aurora-Jobs`.
 - Spotinst accounts, for both `nubank` (Brazil) and `nu-data` (worldwide) AWS accounts. Request for Spotinst accounts on #di-hausmeister and cc @alessandro.andrioni or @giorgio-valoti.
+
+In case of problems, reach #berlin-it-ops or #di-hausmeister channel
 
 ## Required knowledge
 
