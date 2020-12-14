@@ -17,6 +17,7 @@ owner: "#data-access"
 - [Runbook](runbook.md)
 - [Meta Roles](meta-roles.md)
 - [Automated Cluster Creation Workflow](automation_workflow.md)
+- [PII Access Sync](../pii_access_sync.md)
 
 ---
 
