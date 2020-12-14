@@ -100,7 +100,6 @@ Via `SparkOp`. It's a function over some data. Itaipu allows a declarative defin
 ## See also
 
 - [Contracts](../../../how-tos/itaipu/contracts.md)
-- [Contracts migration from V0 to V1](../../../how-tos/itaipu/contracts_migration_v0_to_v1.md)
 - [Create basic dataset](../../../how-tos/itaipu/create_basic_dataset.md)
 - [Datasetseries compaction](../../../how-tos/itaipu/dataset_series_compaction.md)
 - [Datomic raw cache](../../../how-tos/itaipu/datomic-raw-cache.md)

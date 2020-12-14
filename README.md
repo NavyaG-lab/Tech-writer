@@ -35,7 +35,7 @@ The knowledge base comprises a comprehensive list of all microservices and its d
     </ul></p>
      </td>
   </tr>
-  
+
 </table>
 
 ### Documentation site structure
@@ -48,5 +48,21 @@ The knowledge base comprises a comprehensive list of all microservices and its d
 - **Tools** - contains all squads tools that are used to generate and view dashboards.
 - **Infrastructure** - contains all squads infrastructure - clusters, monitoring tools, tech stacks.
 - **Troubleshooting** - contains all service related troubleshooting topics.
+
+
+## Contributing
+
+If you are contributing to the data-platform-docs please be mindful of the following things:
+
+* Make sure every .md file contains the owner on top and an empty line on bottom. Refer existing files.
+* If a new file is added, make sure its relative path is added in `mkdocs.yml`, under `nav`.
+* If a file is deleted make sure the relative path is deleted as well.
+* If a file is renamed, make sure it's updated in the `nav` in the `mkdocs.yml`.
+
+If you don't want to go through the above list, then before merging your PR,
+use the following commands to check if all the required tests are passed
+
+./bin/run-tests
+./bin/local-build.sh
 
 <!-- markdownlint-disable-file -->

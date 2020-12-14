@@ -10,7 +10,6 @@ owner: "#data-infra"
    * [Creating a New Contract](#creating-a-new-contract)
    * [Updating an Existing Contract](#updating-an-existing-contract)
    * [Limitations in Contract specifications](#limitations-in-contract-specifications)
-   * [Migrating from V0 to V1 Contracts](contracts_migration_v0_to_v1.md)
  * [Datasets, Dimensions, and Fact Tables Workflow](#datasets-dimensions-and-fact-tables-workflow)
    * [Bus matrix](#bus-matrix)
    * [Databricks Approach](#databricks-approach)

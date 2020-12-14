@@ -123,7 +123,6 @@ nav:
       - Itaipu setup: "services/data-processing/itaipu/project_dev_setup.md"
       - Creating basic dataset: "how-tos/itaipu/create_basic_dataset.md"
       - Contracts: "how-tos/itaipu/contracts.md"
-      - Contracts migration from V0 to V1: "how-tos/itaipu/contracts_migration_v0_to_v1.md"
       - Dataset series compaction: "how-tos/itaipu/dataset_series_compaction.md"
       - Datomic raw caches: "how-tos/itaipu/datomic-raw-cache.md"
       - Deploying new DAG: "how-tos/itaipu/deploying_new_dag.md"
