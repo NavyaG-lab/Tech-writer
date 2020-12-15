@@ -15,9 +15,8 @@ owner: "#data-infra"
 ---
 
 ## How to provision new clusters
-This notebook covers everything related to provisioning and administering single user cluster: [SU creation notebook](https://nubank.cloud.databricks.com/#notebook/5445086)
 
-For more options and applying changes in groups refer to this notebook: [SU options notebook](https://nubank.cloud.databricks.com/#notebook/5222538/)
+You can run the lambda detailed at https://github.com/nubank/data-platform-docs/blob/master/tools/databricks/single_user_clusters/automation_workflow.md#automated-cluster-creation-workflow
 
 ### Troubleshooting
 
