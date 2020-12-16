@@ -59,7 +59,7 @@ We asked Databricks to enable the IAM Passthrough feature in our Databricks work
 ```shell
 aws sts assume-role-with-saml --saml-assertion [SAML] --role-arn [role-arn] --principal-arn [idp-arn]
 ```
-(Where *SAML* is the base64 decoded assertion string that Okta passes to Databricks).
+(Where *SAML* is the base64 encoded assertion string that Okta passes to Databricks).
 
 3. When the role is successfully assumed, STS returns tokens that Databricks can use to make calls to AWS. These tokens have a set expiration period, which we can tune in the federated IAM role settings in AWS.
 
