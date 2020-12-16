@@ -65,11 +65,6 @@ The knowledge base contains a comprehensive list of all microservices and its de
 * [Exercise Part I: Creating a dataset](../../onboarding/data-infra/dataset-exercise.md)
 * [Exercise Part II: Creating a service to expose a dataset via API](../../onboarding/data-infra/service-exercise.md)
 
-## Dimensional Modeling (Data Access)
-
-* [Kimball on Dimensional Modeling Quotes](../../data-analytics/dimensional_modeling/kimball.md)
-* [Contribution Margin (and how to update static inputs)](../../data-analytics/dimensional_modeling/contribution_margin.md)
-
 ## See also
 
 - [Slack channels]
