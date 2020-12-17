@@ -51,7 +51,7 @@ Creating a new contract is different than updating an existing contract because 
                 - `:contract/include false` if you want to remove the attribute from the ETL
                 - `:contract/history true` if you want to include the historical values of that attribute (a separate
                 table with columns `audit__cid`, `audit__tags`, `audit__user`, `audit__version`, `db__tx_instant`)
-                - `:contract/clearance :pii` when the attribute is pii ([for more info](https://github.com/nubank/data-platform-docs/blob/master/how-tos/itaipu/pii_and_personal_data.md))
+                - `:contract/clearance :pii` when the attribute is PII ([for more info](pii_and_personal_data.md))
         - `test/[SERVICE-NAME]/db/datomic/config_test.clj`:
             1. [if you are using midje] Add a call to function `common-datomic.contract.test-helpers/enforce-contracts! <country>` for each country that needs to have contracts.
             2. [if you are using clojure.test] Add a deftest calling `common-datomic.contract.new-test-helpers/broken-contracts <db-name> <contract-skeletons> <country>` for each country that needs to have contracts. Check the docstring in the function to see how to write the test.
@@ -109,8 +109,9 @@ Creating a new contract is different than updating an existing contract because 
 ### Updating an Existing Contract
 
 A Clojure service that already has generated contract Scala files will store them in `/resources/nu/data/<country>/dbcontracts/<DB-NAME>/entities/*.scala`.
-When running unit tests on a service with generated contracts, any change to an attribute that is included in a contract
-(or any addition of an attribute without `:contract/include false`) will cause the generated Scala file to no longer match.
+When running unit tests on a service with generated contracts, any change to an attribute that is
+included in a contract (or any addition of an attribute without `:contract/include false`) will
+cause the generated Scala file to no longer match.
 
 If you want to add, change or remove an attribute:
 
@@ -118,10 +119,14 @@ If you want to add, change or remove an attribute:
     1. Make the change you are proposing
     1. Make sure the Datomic model(s) has:
         - an example (`:eg`) and documentation (`:doc`)
-        - potentially a `:contract/name` (if you want to alias it for ETL purposes), `:contract/include false` (to
-        remove that attribute, because the default is to include them all) and `:contract/history true` (if you want to
-        include the historical values of that attribute in a separate table with columns `audit__cid`, `audit__tags`,
-        `audit__user`, `audit__version`, `db__tx_instant`)
+        - possibly:
+          - `:contract/name` (if you want to alias it for ETL purposes)
+          - `:contract/include false` (to remove that attribute, because the default is to include
+          them all)
+          - `:contract/history true` (if you want to include the historical values of that attribute
+          in a separate table with columns `audit__cid`, `audit__tags`,  `audit__user`,
+          `audit__version`, `db__tx_instant`)
+          - `:contract/clearance :pii` (if the attribute is PII - [for more info](pii_and_personal_data.md))
     1. Run `$ lein gen-contracts <country>` (for all countries)
 1. Paste the updated Scala files into a branch of Itaipu
 1. Open pull requests for each and ask someone from data infra squad to review
