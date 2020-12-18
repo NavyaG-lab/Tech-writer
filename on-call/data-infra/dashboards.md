@@ -46,6 +46,23 @@ The following are the dashboards available on Looker, and the data source for th
     <td>data_infra_contract_sla_monitoring &
     data_infra_serving_layer_sla_monitoring</td>
 </tr>
+<tr>
+     <td><a href="https://nubank.looker.com/dashboards/4218">Dagao Timeline</a>
+    </td>
+    <td>How all Dagao nodes performed over the course of a daily ETL run. You can quickly identify bottlenecks, i.e., where the bulk of the time is spent for a specific run.</td>
+    <td>airflow_aurora_operational_metrics</td>
+</tr>
+<tr>
+     <td><a href="https://nubank.looker.com/dashboards-next/4252">Running time of Dagao nodes</a>
+    </td>
+    <td>This line chart allows you to understand the duration of different tasks over the past N ETL runs. It lets you visualise task duration and quickly understand how a given Dagao node is performing over many ETL runs</td>
+    <td>airflow_aurora_operational_metrics</td>
+</tr>
+<tr>
+     <td><a href="https://nubank.looker.com/dashboards/4240">Dataset Lifecycle</a>
+    </td>
+    <td>The purpose of this dashboard is to provide a glimpse of the happy path of a given dataset's lifecycle by enabling the comparison of a given dataset lifecycle between different daily runs; or by comparing different datasets lifecycle within a given daily run.</td>
+    <td>TBD</td>
 </tr>
 </table>
 
