@@ -21,6 +21,7 @@ owner: "#data-infra"
  * [Publishing an itaipu build](#publishing-an-itaipu-build)
    * [Locally](#locally)
    * [On GoCD](#on-gocd)
+ * [Running a debug build](#running-a-debug-build)
  * [Other sources](#other-sources)
  * [Dependencies](#dependencies)
    * [Bumping libraries on itaipu](#bumping-libraries-on-itaipu)
@@ -428,7 +429,24 @@ You can follow [these instructions](../../onboarding/data-infra/dataset-exercise
 
 ### On GoCD
 
-Force-push your changes to the `debug-build` branch of `itaipu` and trigger the [`itaipu-debug-build`](https://go.nubank.com.br/go/tab/pipeline/history/itaipu-debug-build) job on GoCD. This will build the image and once the downstream `itaipu-debug-build-publish` is done the image should appear on [quay.io](https://quay.io/repository/nubank/nu-itaipu?tab=tags)
+1. Force-push your changes to the `debug-build` branch of `itaipu`
+2. Trigger the [`itaipu-debug-build`](https://go.nubank.com.br/go/tab/pipeline/history/itaipu-debug-build) job on GoCD. This will build the image and once the downstream `itaipu-debug-build-publish` is done the image should appear on our image registry ECR.
+3. You can get the image with the nucli command `nu registry list-images nu-itaipu`.
+
+## Running a debug build
+
+1. Follow the steps written out in the section [On GoCD](#on-gocd)
+2. Then use `sabesp` to run a build with your image:
+
+```sh
+nu datainfra sabesp -- --aurora-stack=cantareira-dev jobs itaipu prod ARBITRARY_NAME s3a://nu-spark-metapod-ephemeral-1 s3a://nu-spark-metapod-ephemeral-1 10 --itaipu=YOUR_IMAGE_ID --scale=MOST_RECENT_SCALE_ID --filter-by-prefix=contract-aloka
+```
+
+Where:
+`ARBITRARY_NAME` is how you identify your testrun in logs and metrics. E.g. [your.name]-test
+`YOUR_IMAGE_ID` is found via nucli from the registry
+`MOST_RECENT_SCALE_ID` can be found at #etl-updates channel in the first message by the aurora app each day (at 1:00 AM) with all the version details about the current run.
+
 
 ## Other sources
 
