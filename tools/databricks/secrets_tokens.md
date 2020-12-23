@@ -28,6 +28,8 @@ using `conda` environment:
    Databricks Host (should begin with https://): https://nubank.cloud.databricks.com
    Token: <insert the token from the previous step>
    ```
+   
+1. Check if you are connected to the VPN for next steps
 
 1. Check the current secret scopes (<https://docs.databricks.com/security/secrets/secret-scopes.html#list-secret-scopes>):
 
@@ -50,8 +52,18 @@ using the `scope` above:
    ```
    
    For example, use `<key-name>` = `github-token`.
+   
+1. Your default text editor will pop up (probably Sublime or Vim) and you should put your secret there directly and save (remember that any trailing new line will be stripped):
 
-1. Use the secrets in a Databricks notebook (<https://docs.databricks.com/security/secrets/example-secret-workflow.html#secret-example-notebook>).
+   ```txt
+   mytokenhere
+   
+   #-----------
+   # Do not edit...
+   ```
+
+
+1. Your secrets are now saved and can already be used in a Databricks notebook (<https://docs.databricks.com/security/secrets/example-secret-workflow.html#secret-example-notebook>).
 For example:
 
    ```python
