@@ -85,6 +85,9 @@ nav:
       - How fresh data is processed and transformed: data-users/streaming-contracts/data-freshness.md
     - Debugging load issues: squad/data-access/debugging-load-issues.md
     - FAQs: "data-users/etl_users/FAQ.md"
+  - Process flows:
+    - Overview of Data flow in ETL: "process-flows/overview-dataflow.md"
+    - How the data from data sources is ingested into ETL environment and transformed: "process-flows/data-transformation.md"
   - Oncall:
     - Data Infra:
       - Overview: "on-call/data-infra/README.md"
@@ -170,6 +173,7 @@ nav:
       - Overloaded cluster: "tools/databricks/overloaded-cluster.md"
       - Ip access list: "tools/databricks/ip_access_list.md"
       - S3 cross account access: "tools/databricks/s3_cross_account_access.md"
+      - PII access: "tools/databricks/pii_access_sync.md"
     - Looker:
       - Overview: "tools/looker/README.md"
       - Looker Common Tasks: "tools/looker/looker-common-tasks.md"

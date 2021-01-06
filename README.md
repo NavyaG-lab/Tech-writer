@@ -52,7 +52,7 @@ The knowledge base comprises a comprehensive list of all microservices and its d
 
 ## Contributing
 
-If you are contributing to the data-platform-docs please be mindful of the following things:
+If you are contributing to the data-platform-docs, please be mindful of the following things:
 
 * Make sure every .md file contains the owner on top and an empty line on bottom. Refer existing files.
 * If a new file is added, make sure its relative path is added in `mkdocs.yml`, under `nav`.
@@ -62,7 +62,7 @@ If you are contributing to the data-platform-docs please be mindful of the follo
 If you don't want to go through the above list, then before merging your PR,
 use the following commands to check if all the required tests are passed
 
-./bin/run-tests
-./bin/local-build.sh
+- ./bin/run-tests
+- ./bin/local-build.sh
 
 <!-- markdownlint-disable-file -->
