@@ -750,7 +750,8 @@ aws --profile $country-$env \
     [2020-11-03 Tue], the color is `blue`.
 
 The command will return the ID of the security group, which you can
-then use for the next step:
+then use for the next step. You will also need to look up the security group id for
+`prod-long-lived-resources-kubernetes-nodes-sg` in the AWS console and pass it in as the source-group option:
 
 ```{.shell}
 aws --profile $country-$env \
@@ -758,8 +759,7 @@ aws --profile $country-$env \
     --group-id <sg-id> \
     --protocol tcp \
     --port 5432 \
-    --source-group prod-long-lived-resources-kubernetes-nodes-sg
-```
+    --source-group <source-group-id>
 
 **NOTES:**
   * `prod-long-lived-resources-kubernetes-nodes-sg` is the name of the
@@ -907,7 +907,6 @@ nu-$country ser curl get $prototype barragem /api/version --env staging
 
 If this deployment runs correctly on **staging**, repeat this operation using the
 **prod** environment.
-
 
 ### Schedule segments processing
 
