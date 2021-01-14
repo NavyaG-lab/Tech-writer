@@ -76,6 +76,13 @@ When a DAG is deployed while another is running, airflow will use the current st
 
 To update Airflow you need to first bump the `base-airflow` [Dockerfile](https://github.com/nubank/dockerfiles/blob/master/base-airflow/Dockerfile), merge it and wait until the GoCD pipeline is done building and publishing it. Once it is done, you need to change its version on [deploy](https://github.com/nubank/deploy/blob/master/lib/recipes/airflow.rb#L21). You can find the latest tag by running `nu registry latest-tag nu-base-airflow`.
 
+*Before proceeding further*. It’s important to remember that we are
+updating Airflow _service_, not the database. This means that,
+during the operations described below, at some point, there will be
+_two_ Airflow instances interacting with the same database. Nothing
+bad will happen, provided that you don’t keep running both of them for
+more than the few minutes needed to perform the update.
+
 You can now open the `deploy` console in the cantareira environment (`cd $NU_HOME/deploy; ./console cantareira`) and run
 
 `Airflow.create!("x")`
