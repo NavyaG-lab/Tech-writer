@@ -616,7 +616,7 @@ nu ser curl POST --env prod --country br global ouroboros /api/admin/migrations/
 In cases when an archive from a dataset series is corrupt and you wish to delete it:
 
 ```bash
-nu ser curl POST --env prod --country br global ouroboros /api/admin/migrations/delete-transaction-archives -d'{"transaction-id": "<transaction-id>", "series-name": "series/<series-name>"}'
+nu ser curl POST --env prod --country br global ouroboros /api/admin/migrations/delete-transaction-archives -d'{"transaction-id": "<transaction-id>", "series-name": "series/<series-name>", "series-country": "<country>"}'
 ```
 
 ### Deleting all archives from a given Metapod transaction
@@ -630,7 +630,7 @@ nu ser curl POST --env prod --country br global ouroboros /api/admin/migrations/
 ### Deleting a series completely
 
 ```bash
-nu ser curl POST --env prod --country br global ouroboros /api/admin/migrations/delete-record-series -d'{"series-name": "series/<series-to-delete>"}'
+nu ser curl POST --env prod --country br global ouroboros /api/admin/migrations/delete-record-series -d'{"series-name": "series/<series-to-delete>", "series-country": "<country>"}'
 ```
 
 The above is an async request. You can check whether it is completed with [this Mordor query](https://backoffice.nubank.com.br/eye-of-mauron/#/s0/mordor/5e3c3390-9cdb-4752-b03b-71a626b23b6e); simply insert the name of your series in the argument field.
