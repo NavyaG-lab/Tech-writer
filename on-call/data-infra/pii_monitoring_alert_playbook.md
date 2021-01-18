@@ -120,13 +120,11 @@ worry about. Any number above that is reason for concern.
 There is data that malzahar excised but that was never extracted by us and
 cannot be found in our databases at all. In theory, it means that the PII data
 isn't in the ETL, so problem solved... But in practice, that probably means
-that something about the entire system is broken. This means we need a thorough
-investigation what's up.
+that something about the entire system is broken. An issue we had was that [new
+databases are excised](#new-databases-are-excised-from) from. If that's not the
+problem, it means we need a thorough investigation what's up.
 
 ### What to do
-
-(Probably, just escalate straight away. This shouldn't happen.) If you want to
-check it yourself, here is the strategy:
 
 1. Check the dataset with the following query:
 
@@ -137,7 +135,10 @@ ORDER BY excised_at DESC
 LIMIT 10000
 ```
 
-1. Check the malzahar contracts for the entities that cannot be reextracted.
+1. Check the `database` column to see if contracts for all the databases are
+   declared as inputs to the `DatomicReextractions` sparkop of that country. If
+   that's the case, see [here](#new-databases-are-excised-from).
+1. If that's not the problem, check the malzahar contracts for the entities that cannot be reextracted.
 2. Try to find those entities 'manually' by running sql queries on the
    contracts or raw logs.
    1. If you can find them, maybe the sparkOp logic to find them automatically
@@ -171,3 +172,19 @@ deletions and starting the next run. Hence, the following will happen:
    another day, we will get one more duplication alert, but also a timing alert
    since the third reextraction seems to be 'late'. This timing alert is then
    of no relevance of course since the problem lies elsewhere.)
+
+### New databases are excised from
+
+Lead to: Completeness alerts
+
+Our reextract-op defines the datomic contracts of the databases that excisions
+happen on as its' inputs. If we didn't do this explicitly, we'd have to mark
+all contracts as inputs which isn't necessary and constrains when the
+reextract-op can run too much. Every once in a while, new databases are added
+to be excised from. In such cases, we won't find the data that malzahar marked
+as excised because we don't join against the contracts from those new
+databases yet. If you then inspect the `database` column in the completeness
+monitoring table and find any databases that aren't listed as dependencies of
+that countrie's `DatomicReextractions` sparkop, then that is the reason we
+couldn't find the data. The solution is then to add the respective contracts as
+inputs to the reextract-op.
