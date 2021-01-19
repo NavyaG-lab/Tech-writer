@@ -41,4 +41,5 @@ Debugging process:
 
 ## Adding a new BPO to Looker
 
+Refer to this [video guide](https://drive.google.com/file/d/1jjVEI2lIN7mnGAiR3MZ3jvlJ1SEgPSmz/view) on how to do this.
 Ask @leonardo.matsuura for help.
