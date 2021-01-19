@@ -67,6 +67,7 @@ nav:
       - Serving layer: "infrastructure/data-infra/serving_layer.md"
       - Testing models: "infrastructure/data-infra/testing-models.md"
       - Test custom images with ECR: "infrastructure/data-infra/test-images.md"
+      - New shards: "infrastructure/data-infra/new_shards.md"
     - Data Access:
       - Setup a new country in Looker : "tools/looker/looker-country-setup.md"
   - Data users:
@@ -142,13 +143,10 @@ nav:
       - Performance: "how-tos/itaipu/performance/README.md"
       - Scala style guide: "style_guide.md"
       - Tekton: "how-tos/itaipu/tekton/README.md"
+      - Itaipu states: "services/data-processing/itaipu/itaipu_states.md"
     - Metapod: "how-tos/metapod.md"
     - Data deletion:
       - Datomic data deletion: "how-tos/data-deletion/setup-datomic-pii-data-deletion.md"
-    - Dimensional modelling:
-      - Iglu: "data-analytics/dimensional_modeling/iglu.md"
-      - Kimball: "data-analytics/dimensional_modeling/kimball.md"
-      - Contributing margin dataset: "data-analytics/dimensional_modeling/contribution_margin.md"
   - Onboarding:
     - Data Infra:
       - Dataset exercise: "onboarding/data-infra/dataset-exercise.md"
@@ -176,6 +174,7 @@ nav:
       - S3 cross account access: "tools/databricks/s3_cross_account_access.md"
       - PII access: "tools/databricks/pii_access_sync.md"
       - Secret tokens: "tools/databricks/secrets_tokens.md"
+      - Automation decisions: "tools/databricks/single_user_clusters/automation_decisions.md"
     - Ice mold:
       - Ice mold guide: "tools/ice_mold/guide.md"
       - User stories: "tools/ice_mold/user_stories.md"
