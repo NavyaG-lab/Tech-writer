@@ -121,14 +121,16 @@ Over the course of the week our customers (Nubank's data scientists, business an
 
 The slack channels you should monitor for user questions are:
 
-|Slack channels|
-|--------------|
-|[#squad-data-infra](https://nubank.slack.com/messages/C0XRWDYQ2/)|
-|[#data-tribe](https://nubank.slack.com/archives/C1SNEPL5P)|
-|[#data-announcements](https://nubank.slack.com/messages/C20GTK220/)|
-|[#data-help](https://nubank.slack.com/messages/C06F04CH1/)|
-|[#di-hausmeister](https://nubank.slack.com/archives/CP3F163C4)|
-|[#etl-integrity-checks](https://nubank.slack.com/archives/CGBLGLYFK) - For failing datasets|
+|Slack channels| Purpose|Audience|
+|--------------|--------|--------|
+|[#data-crash](https://nubank.slack.com/archives/CE98NE603)|<ul><li>All the hard alerts that require immediate action are posted to this channel automatically from OpsGenie tool</li><li>The Data Access team can also manually post data tool crashes by setting channel topics accordingly.</li></ul>
+|[#data-help](https://nubank.slack.com/messages/C06F04CH1/)|During your Hausmeister week, use this channel to <ul><li>monitor user requests and acknowledge them promptly.</li><li>You must primarily focus on triaging the user issues and <ul><li>solve them if it is a quick fix, or</li> <li>delegate to the relevant pack or inform the PMs as needed.</li></ul></ul>|Some Data users, Data Platform operators|
+|[#squad-di-alarms](https://nubank.slack.com/messages/C0XRWDYQ2/)|Alerts and warnings from automated Data Infra monitoring tools such as OpsGenie, Splunk, Prometheus, Aurora, and Airflow.|Data Infra team|
+|[#etl-integrity-checks](https://nubank.slack.com/archives/CGBLGLYFK)|Notifications on datasets due to integrity exceptions i.e the result of anomaly checks on datasets is notified automatically on this channel through Splunk.|Some Data users and Data platform operators|
+|[#di-hausmeister](https://nubank.slack.com/archives/CP3F163C4)|Internal channel for the Data BU team to discuss about the on-going incidents.| Some of the Data BU Engineers|
+|[#data-tribe](https://nubank.slack.com/archives/C1SNEPL5P)|Use this channel to<ul><li>notify users about the datasets failure and follow-up on the same, or </li><li>skipping some datasets from the current run.</li> While posting a message, make sure you provide the list of datasets failing and provide reasons for skipping datasets from the current run.</ul>|Data users and Data Platform Operators|
+|[#data-announcements](https://nubank.slack.com/messages/C20GTK220/)|Use this channel to<ul><li>announce crashes in (#data-crash)</li><li>any new Data platform updates </li> This is to keep the more widespread audience well-informed of the crashes.</ul>|All Data users, Nubank Management|
+
 
 **Important**: As a Hausmeister, your role is to ensure user's problems are addressed, but this does not mean that you are responsible for fixing every single problem you encounter yourself; the reason being that you should always make sure you have the headspace necessary to tackle a hard alarm when it is notified. Do not hesitate to rope in other data infra engineers to help with user requests, and in particular to involve engineers closer to the context of the request who will be able to fix it quickly.
 

@@ -54,6 +54,7 @@ nav:
   - Data Infra overview: "about/data-infra/overview.md"
   - Data Infra history: "about/data-infra/history.md"
   - Data Infra anguages and stacks: "about/data-infra/services-language-stacks.md"
+  - Slack channels: "about/data-infra/slack-channels.md"
   - Glossary: "glossary.md"
   - Infrastructure:
     - Data Infra:
@@ -174,6 +175,13 @@ nav:
       - Ip access list: "tools/databricks/ip_access_list.md"
       - S3 cross account access: "tools/databricks/s3_cross_account_access.md"
       - PII access: "tools/databricks/pii_access_sync.md"
+      - Secret tokens: "tools/databricks/secrets_tokens.md"
+    - Ice mold:
+      - Ice mold guide: "tools/ice_mold/guide.md"
+      - User stories: "tools/ice_mold/user_stories.md"
+      - Ice mold: "tools/ice_mold/ice_mold.md"
+    - Iglu: "tools/iglu/iglu.md"
+    - Kimball: "tools/iglu/kimball.md"
     - Looker:
       - Overview: "tools/looker/README.md"
       - Looker Common Tasks: "tools/looker/looker-common-tasks.md"
@@ -183,6 +191,8 @@ nav:
       - Looker New Country Setup: "tools/looker/looker-country-setup.md"
   - Troubleshooting:
     - Dataset series compaction: "troubleshooting/dataset_series_compaction.md"
+  - Analytics Productivity:
+    - Contribution margin dataset: "squad/analytics-productivity/contribution_margin.md"
   - Writing:
     - Writing runbooks: "writing/writing_runbooks.md"
     - Templates:

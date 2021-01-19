@@ -67,5 +67,5 @@ The knowledge base contains a comprehensive list of all microservices and its de
 
 ## See also
 
-- [Slack channels]
-- [Services owned]
+- [Slack channels](slack-channels.md)
+- [Services owned](services-language-stacks.md)
