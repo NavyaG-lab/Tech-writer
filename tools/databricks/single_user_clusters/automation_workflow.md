@@ -37,10 +37,21 @@ nu-br serverless invoke databricks-lambdas-create-sucluster --env prod --invoke-
 
 ```"{\"error_code\":\"BAD_REQUEST\",\"message\":\"Principal: UserName(roberta.zaviolo@nubank.com.br) does not exist\"}"```
 
-The error will say that the user does not exist. This happens when the user requests for access but they haven't logged into Databricks even once. The cluster is created but the Passthrough email is not set on the cluster.
+The error will say that the user does not exist. This happens when the user requests for access but they haven't logged into Databricks even once. The cluster is created but the necessary permissions are not set, rendering the cluster unusable by the person.
 
-In this case, ask the person to login to Databricks through Okta once, which will create the user on Databricks. Ask them to let you know when they did that, so you can trigger the cluster creation process manually afterwards. To perform this, use the same command listed above:
+In this case, ask the person to login to Databricks once, which will create the user on Databricks. Ask them to let you know when they did that, so you can trigger the cluster creation process manually afterwards. In the meantime, make sure to remove the existing unusable cluster:
+
+1. Go to the Clusters page: https://nubank.cloud.databricks.com/#setting/clusters
+2. Search for the cluster named after the user. You can use the search bar and type the user name in the e-mail, including the dot since it's a fuzzy search (in this example e-mail, search for "roberta.zaviolo" until you see "roberta_zaviolo_su_cluster")
+3. Delete the cluster by clicking the X icon, last one to the right side of the cluster row.
+
+![image](https://user-images.githubusercontent.com/1674699/105362696-f4525780-5bd9-11eb-988d-24a2c996c887.png)
+
+Then, use the same command listed above to create a new cluster:
 
 ```bash
 nu-br serverless invoke databricks-lambdas-create-sucluster --env prod --invoke-type sync --payload '{"username":"<user-email>"}'
 ```
+
+You need the group `data-access-ops` to be able to invoke this lambda.
+Check the output of the command to ensure no errors happened.
