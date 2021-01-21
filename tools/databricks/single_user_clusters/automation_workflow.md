@@ -39,12 +39,8 @@ nu-br serverless invoke databricks-lambdas-create-sucluster --env prod --invoke-
 
 The error will say that the user does not exist. This happens when the user requests for access but they haven't logged into Databricks even once. The cluster is created but the Passthrough email is not set on the cluster.
 
-In this case, ask the person to login to Databricks through Okta once which will create the user on Databricks.
-Then manually edit the cluster to set the passthrough email on it. To do this follow these steps:
-1. Goto Databricks and Cluster Tab
-1. Find the cluster it will have the name firstname_lastname_su_cluster (from user name)
-1. Click Edit and then under Advanced Options at the bottom of the page
-1. Select the username in the dropdown labelled 'Single User Access'
-1. Click 'Confirm and Restart' button at the top of the page.
+In this case, ask the person to login to Databricks through Okta once, which will create the user on Databricks. Ask them to let you know when they did that, so you can trigger the cluster creation process manually afterwards. To perform this, use the same command listed above:
 
-![](../../../images/databricks_iam_passthrough1.png)
+```bash
+nu-br serverless invoke databricks-lambdas-create-sucluster --env prod --invoke-type sync --payload '{"username":"<user-email>"}'
+```
