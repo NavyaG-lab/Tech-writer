@@ -107,3 +107,19 @@ Use Spark standard functions (functions that live on `org.apache.spark.sql.funct
 #### Wait, but why
 
 Spark has a lot of stuff built-in that helps it to do things as efficiently as possible. When we are using "default" functions, such as `join`, `where`, `avg`, everything that lives in `org.apache.spark.sql.functions`, we are leveraging Spark built-in optimization. When we define our own UDFs though, Spark doesn't really know how to deal with it. For Spark, our UDFs are black boxes (read more [here](https://jaceklaskowski.gitbooks.io/mastering-spark-sql/spark-sql-udfs-blackbox.html)). If the UDF is lightweight it could be a non issue, but the general rule is to avoid it as much as possible.
+
+### 5. Spark Actions
+
+#### Problem
+This is tightly connected not to spark but to the way we run SparkOps on our ETL. One of the principles we follow is that SparkOps need to be lazily evaluated, meaning that from the beggining to the end of the code, no evaluation needs to be done (i. e., no references to the real data that is represented by a DataFrame). Some of the common Spark Actions are:
+
+- `.count` In order to get the number of rows of a DataFrame, you need to access the "real data"
+  - Be aware that `DataFrame.count` is different from the `count()` function on `spark.sql.functions`. The first cannot be used because it needs to access the real data in order to retrieve a row count, the second one can be used and and behaves as any other `COUNT` statement on SQL
+- `.collect` The method itself get's the "real data" to the spark driver
+- `.pivot(...)` without passing a list of columns to be pivotted. If you don't pass this argument, Spark will try to access the "real data" in order to do the pivotting
+
+#### Solution
+This needs a case-by-case approach, because you need to understand why exactly you are relying on the real data to do whatever you are trying to do. In most of the cases this is avoidable, but you can always ask #data-help for guidance on how to achieve your objectives without violating this constraint
+
+#### Wait, but why
+Having lazily evaluated SparkOps reduces complexity on the ETL and increases reliability. By having this guarantee, the infrastructure can have total control on when the SparkOp is actually evaluated, guaranteeing that the whole environment is ready and correctly configured at the right time.
