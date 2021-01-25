@@ -83,18 +83,10 @@ normal attributes as they are all set in the abstraction.
 Then the main task is to get the malzahar contract names and the raw logs of
 the db's you are looking for.
 
-The list of contracts/databases we excise from is as follows:
+The list of contracts/databases we excise from can be found in [malzahar's
+config branch](https://github.com/nubank/malzahar/tree/config/src/prod)
 
-1. Acquisition
-2. Bureau
-3. Customers
-4. KarmaPolice
-5. Tubarao
-6. Yellow pages
-
-Not all of those exist for every country. Find the contracts that exist in the
-countries respective `contracts` folder (e.g. `nu.data.mx.dbcontracts`) and add
-those to your op. Here is a minimal example of the op that is needed for `mx`:
+Here is a minimal example of the op that is needed for `mx`:
 
 ```scala
 object DatomicReextractions extends DatomicReextractOp {
@@ -102,9 +94,9 @@ object DatomicReextractions extends DatomicReextractOp {
   override def country: Country                     = Country.MX
   override def qualityAssessment: QualityAssessment = QualityAssessment.Neutral(asOf = LocalDate.parse("2020-08-26"))
 
-  override lazy val exciseRequestsName: String = DatabaseContractOps.lookup(ExciseRequests).name
-  override lazy val exciseFieldsName: String   = DatabaseContractOps.lookup(ExciseFields).name
-  override lazy val exciseEntitiesName: String = DatabaseContractOps.lookup(ExciseEntities).name
+  override lazy val exciseRequestsName: String = Names.contract(ExciseRequests)
+  override lazy val exciseFieldsName: String   = Names.contract(ExciseFields)
+  override lazy val exciseEntitiesName: String = Names.contract(ExciseEntities)
 
   override val v1Contracts: Seq[DatabaseContract] = Seq(Acquisition, Customers, KarmaPolice, BureauMX)
 }
@@ -144,18 +136,22 @@ here automatically isn't trivial for now.
 ## How it works
 
 The first sparkOp you add in step 1 above is used in our `ManagedOps` section
-to create 15 more sparkOps:
+to creates many more sparkOps:
 
+1. An Op that joins together all relevant malzahar information:
+   PreprocessMalzaharContracts
+1. An Op per Datomic database to be excised finds the information to excise by joining it against Malzahar: SingleDatabaseReextractOp.
+   excised by joining agains malzahar: SingleDatabaseReextractOp
 1. The ServingOp
-2. The JoinHistoryOp (and a derived archive)
-3. MonitorTiming: Check if reextraction of excised data is late
-4. MonitorCompleteness: Check if every excised entity in malzahar is either
+1. The JoinHistoryOp (and a derived archive)
+1. MonitorTiming: Check if reextraction of excised data is late
+1. MonitorCompleteness: Check if every excised entity in malzahar is either
    served today or was joined in the past
-5. MonitorDuplication: Check if any excised entity in malzahar is found in the
+1. MonitorDuplication: Check if any excised entity in malzahar is found in the
    current joins or the joinHistory twice: Indicating that it was served for
    deletion before but something went wrong
-6. The JoinHistoryOpArchive DSS and predecessors (4 in total)
-7. The ReextractionDSS and predecessors (4 in total)
+1. The JoinHistoryOpArchive DSS and predecessors (4 in total)
+1. The Reextraction DSS and predecessors (4 in total)
 
 The monitoringOps are set up in a way that they only contain rows for
 errors/concerning information. We use mergulho row counts to check whether the
