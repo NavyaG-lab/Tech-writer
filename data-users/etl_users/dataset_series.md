@@ -332,7 +332,7 @@ Example - Let's take the Archived dataset `dataset-customers-responsys-integrati
 
 `nu dataset-series diff dataset-customers-responsys-integration-rewards --country BR`
 
-This allows us to identify potential schema mismatches between the current `contractSchema` defined in your local copy of Itaipu and the several appending schemas that the ETL has in its metadata store.
+This command identifies the potential schema mismatches in the current version of `contractSchema` defined in your local copy of Itaipu. With that said, this command compares only the current local `contractSchema` version (but not the past versions) against all the schemas available in the ETL metadata store.
 
 At the time of writing, once this command was issued, the user was presented with the following output:
 
@@ -349,7 +349,7 @@ Let's breakdown this output for a better understading:
 
 **Line number 1**: `>> Schema >> dataset-customers-responsys-integration-rewards - BR (Append Dates: 2020-07-01 - 2020-08-19) matches local version of Itaipu contract schema`
 
-The schema known by ETL's metadata store with the most recent append dates has NO schema mismatches.
+The schema known by ETL's metadata store with the most recent append dates has NO schema mismatches. If you're trying to check whether the local contract schema matches, then **Line number 1** is the only line you should consider.
 
 ***Note:*** The output will always bring schema mismatches sorted by the most recent append dates.*
 
@@ -404,6 +404,12 @@ The attribute `database` of type `integer` differs from the type `string` known 
 ---
 
 As we have seen, the tool will list the potential schema mismatches (attribute name and type) for each different schema known by the ETL metadata store. This tool should be able to tell you not only additions and absences of fields but also attribute type mismatches.
+
+If you want to identity schema mismatches for `alternativeSchemas`, specify your dataset series name and run:
+
+`nu-br ser curl POST --env prod global ouroboros /api/record-series/schema-diagnostics -d'{"series-name": "series/<your-dataset-series-here>", "series-country": "<country>"}' | jq .`
+
+This will list the schema that Ouroboros has for each version of your dataset series.
 
 
 ### Troubleshooting dropped schemas
