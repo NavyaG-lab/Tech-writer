@@ -88,6 +88,8 @@ owner: "#data-infra"
     - [Airflow: Dagão run failed](#airflow-dagão-run-failed)
       - [Diagnosis](#diagnosis)
       - [Solution](#solution-16)
+    - [Airflow tasks are queueing up](#airflow-tasks-are-queueing-up)
+    - [Airflow task scheduler delay is too high](#airflow-task-scheduler delay-is-too-high)
     - [Decrease in row count on databases](#decrease-in-row-count-on-databases)
 
 This document is a resource for engineers *on-call*.
@@ -678,14 +680,52 @@ Every once in a while, Aurora goes down. `sabesp` commands, such as ones involve
  5. Retry dagão.
  6. If it still doesn't work, rollback to a version that worked and retry dagão.
 
+
+### Airflow tasks are queueing up
+
+#### Diagnosis
+
+Airflow scheduler is probably hanging. Check [the
+dashboard](https://prod-grafana.nubank.com.br/d/wMprEQbMz/airflow-metrics)
+to validate the hypothesis
+
+#### Solution
+
+SSH into the instance:
+
+```
+nu ser ssh airflow \
+    --env cantareira \
+    --suffix <current color>
+```
+
+or
+
+```
+nu-data ser ssh foz airflow \
+    --suffix <current color> \
+    --env prod
+```
+
+Restart the scheduler:
+
+```
+sudo systemctl restart af-scheduler
+```
+
+### Airflow task scheduler delay is too high
+
+[See above](#airflow-tasks-are-queueing-up)
+
+
  ### Decrease in row count on databases
 
  #### Context
 
- Sometimes, you will be notified or alarmed about the decrease in row count on production databases, whereas the current run seems to be normal. Some possible reasons for this is, 
- - duplicate rows in the previous day run or 
- - data is deleted from some databases. 
- 
+ Sometimes, you will be notified or alarmed about the decrease in row count on production databases, whereas the current run seems to be normal. Some possible reasons for this is,
+ - duplicate rows in the previous day run or
+ - data is deleted from some databases.
+
 Currently, the anomaly detection system checks only for the significant increase in row count and cannot count the duplicate rows / keep track of deleted rows on DB. Even if the current day run is processing well and shows the correct row count, an alarm raises as there is a decrease in row count from previous day to current day.
 
  #### Reason for duplicate rows
@@ -701,7 +741,7 @@ In case the cache creation time in Pollux happens simultaneously at the same tim
     - To find the cache creation time (which is stored in castor service), use the following `curl` query:
 
       `nu-br ser curl GET --env prod global castor /api/active-snapshot/BR/<shard>/<name of the database> | jq .`
-    
+
       Ex - `nu-br ser curl GET --env prod global castor /api/active-snapshot/BR/s6/chargebacks | jq`
     - To find the commit-time of the last contract computed in a day’s transaction, query Metapod using the graphql.
 
@@ -727,7 +767,7 @@ In case the cache creation time in Pollux happens simultaneously at the same tim
     - Filter the result and look for the latest `committedAt` value.
 
       `$.data.transaction.datasets[?(@.name.match(/^contract-/))].committedAt`
-    
+
     or Check the end time of the node in the Airflow.
 
 1. Then, check when the cache is refreshed lately.
