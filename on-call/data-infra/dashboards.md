@@ -62,7 +62,7 @@ The following are the dashboards available on Looker, and the data source for th
      <td><a href="https://nubank.looker.com/dashboards/4240">Dataset Lifecycle</a>
     </td>
     <td>The purpose of this dashboard is to provide a glimpse of the happy path of a given dataset's lifecycle by enabling the comparison of a given dataset lifecycle between different daily runs; or by comparing different datasets lifecycle within a given daily run.</td>
-    <td>TBD</td>
+    <td>sparkop_evaluation_events, aurora_pipeline_events, data_infra_serving_layer_sla_monitoring, spark_op_types, and metapod__transactions</td>
 </tr>
 </table>
 
@@ -88,6 +88,10 @@ The following are the dashboards available on Looker, and the data source for th
 <tr>
     <td><a href="https://prod-grafana.nubank.com.br/d/A8ULVDTmz/correnteza-datomic-extractor-service?orgId=1">Monitor Datomic Ingestion</a></td>
     <td>Use this for monitoring the Correnteza, a datomic data extractor service.</td>
+</tr>
+<tr>
+    <td><a href="https://prod-grafana.nubank.com.br/d/wMprEQbMz/airflow-metrics?orgId=1">Airflow Metrics</a></td>
+    <td>Use this for monitoring number of tasks queued on Airflow, delay in scheduling the tasks on Airflow.</td>
 </tr>
 </td>
 </table>
