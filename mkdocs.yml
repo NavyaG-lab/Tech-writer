@@ -50,12 +50,14 @@ plugins:
 nav:
   - Home: "README.md"
   - What's new: "whats-new.md"
-  - About squads: "about/data-bu-squads.md"
-  - Data Infra overview: "about/data-infra/overview.md"
-  - Data Infra history: "about/data-infra/history.md"
-  - Data Infra anguages and stacks: "about/data-infra/services-language-stacks.md"
-  - Slack channels: "about/data-infra/slack-channels.md"
   - Glossary: "glossary.md"
+  - About BU Squads:
+    - About all squads: "about/data-bu-squads.md"
+    - Data Infra overview: "about/data-infra/overview.md"
+    - Data Infra history: "about/data-infra/history.md"
+    - Data Infra anguages and stacks: "about/data-infra/services-language-stacks.md"
+    - Slack channels: "about/data-infra/slack-channels.md"
+    - Dashboards: "about/data-infra/dashboards-all.md"
   - Infrastructure:
     - Data Infra:
       - Bumping Spark: "infrastructure/data-infra/bumping-spark.md"

@@ -2,9 +2,9 @@
 owner: "#data-infra"
 ---
 
-# Dashboards
+# Dashboards for Hausmeisters
 
-This guide provides you with a list of dashboards in Looker and Grafana that DI engineers and Managers can visualize and monitor the data.
+This guide provides you with a list of dashboards in Looker and Grafana that Hausmeisters and Engineers can visualize and monitor the data.
 
 The dashboards that are available in Looker under Data Infra will provide the visibility on yesterday's (D(current day)-1) data. The following are the list of use cases that describes how a Hausmeister can use these dashboards:
 
@@ -68,8 +68,6 @@ The following are the dashboards available on Looker, and the data source for th
 
 ## Grafana Dashboards
 
-### Data Infra specific dashboards
-
 <table>
 <tr>
     <td><b>Dashboards</b></td>
@@ -82,44 +80,8 @@ The following are the dashboards available on Looker, and the data source for th
         Use this to monitoring dataset propogation details, rate of rows loaded by datasets, batch load and propogation latency, serve throughput etc.</td>
 </tr>
 <tr>
-    <td><a href=" https://prod-grafana.nubank.com.br/d/000000301/dataset-series-ingestion?orgId=1&refresh=5m">Monitor Dataset series Ingestion</a></td>
-    <td>Use this for monitoring the kafka messages processing rate, kafka lag on prototypes and prototypes lag over time.</td>
-</tr>
-<tr>
-    <td><a href="https://prod-grafana.nubank.com.br/d/A8ULVDTmz/correnteza-datomic-extractor-service?orgId=1">Monitor Datomic Ingestion</a></td>
-    <td>Use this for monitoring the Correnteza, a datomic data extractor service.</td>
-</tr>
-<tr>
     <td><a href="https://prod-grafana.nubank.com.br/d/wMprEQbMz/airflow-metrics?orgId=1">Airflow Metrics</a></td>
     <td>Use this for monitoring number of tasks queued on Airflow, delay in scheduling the tasks on Airflow.</td>
 </tr>
 </td>
-</table>
-
-### General dashboards
-
-<table>
-<tr>
-    <td><b>Dashboards</b></td>
-    <td><b>Purpose</b></td>
-</tr>
-<tr>
-    <td><a href="https://prod-grafana.nubank.com.br/d/000000222/kafka-lags-topic-view?orgId=1&refresh=1m">About Kafka lags</a>
-    </td>
-    <td>
-        Use this for inspecting Kafka topics and monitoring lag.
-    </td>
-</tr>
-<tr>
-    <td><a href="https://prod-grafana.nubank.com.br/d/000000276/jvm-by-service?orgId=1">JVM Metrics monitoring</a>
-    </td>
-    <td>Use this for monitoring JVM metrics (total instances, CPU usage, memory used etc) of Clojure service.
-    </td>
-</tr>
-<tr>
-     <td><a href="https://prod-grafana.nubank.com.br/d/000000268/kubernetes-cpu-and-memory-pod-metrics?orgId=1&refresh=1m">Kubernetes CPU & Memory Pod Metrics</a>
-    </td>
-    <td>Use this for monitoring Kubernetes resources usage.</td>
-</tr>
-</tr>
 </table>
