@@ -17,6 +17,7 @@ owner: "#data-infra"
       - [Solution](#solution)
     - [Alph - kafka lag above threshold](#alph---kafka-lag-above-threshold)
       - [Solution](#solution-1)
+    - [compaction triggered on Airflow](#compaction-triggered-on-airflow)
     - [Correnteza database-claimer is failing](#correnteza-database-claimer-is-failing)
     - [Correnteza attempt-checker is failing](#correnteza-attempt-checker-is-failing)
     - [Barragem - segment handling time above threshold](#barragem---segment-handling-time-above-threshold)
@@ -188,6 +189,13 @@ Open [Alph Grafana Dashboard](https://prod-grafana.nubank.com.br/d/000000301/dat
 - First, check on the Kubernetes dashboard for frequent restarts; this is usually visible for example on the memory usage graph where you'll see a lot of new lines appearing through time as new processes are added. Under normal circumstances the memory usage lines should be mostly stable.
 - If there are frequent restarts, check the memory usage of the pods (both average and per pod) on the same dashboard to see whether Alph may be under-provisioned on that shard. If it is, you'll need to bump memory by submitting a PR on [definition](https://github.com/nubank/definition) or, if you want to go fast or if there isn't anyone around to approve your PR, directly by editing the k8s deployment with `nu-"$country" k8s ctl --country "$country" --env "$env" "$prototype" -- edit deploy "$env-$prototype-$stack-alph-deployment"`.
 - If there are no restarts, the next step is to check directly the alph dashboard to see if the issue is occuring on all partitions or only on a single one. Usually if the issue is not due to provisioning, there'll be a single stuck partition. In this case the fix is to cycle alph: `nu-$country k8s cycle --env prod $prototype alph`. It'll take some time for processing to resume, usually between 10 minutes and an hour, but you should eventually see a dip in the lag.
+
+### compaction triggered on Airflow
+
+This alert means that the Compaction DAG encountered an error. The Compaction DAG is expected to run every day, and so errors in its execution are unexpected and should be treated with some urgency. Below are a few steps you can take to investigate the issue:
+
+- Open the [Compaction DAG view on Airflow](https://airflow.nubank.com.br/admin/airflow/graph?dag_id=ouroboros-compaction) and confirm that the node marked `compaction` is the one failing (and not the scale-up/scale-down nodes)
+- Check the [job logs](https://nubank.splunkcloud.com/en-US/app/search/etl_job_logs?form.the_time.earliest=-24h%40h&form.the_time.latest=now&form.search=*&form.job=aurora%2Fprod%2Fjobs%2Fcompaction) for any error
 
 ### Correnteza database-claimer is failing
 
