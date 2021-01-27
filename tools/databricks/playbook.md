@@ -1,5 +1,5 @@
 ---
-owner: "#data-infra"
+owner: "#data-access"
 ---
 
 # Databricks Playbook
@@ -15,6 +15,41 @@ owner: "#data-infra"
 ](#Manually-run-the-autobump_itaipu_and_restart_clusters-job)
   - [Monitor Set Tables in BR / MX](#Monitor-Set-Tables-in-BR--MX)
   - [Meta Loads](#Meta-Loads)
+
+## The domain nubank.cloud.databricks.com is not accessible
+
+You can check if there’s a general databricks outage on the [Databricks Status Page](https://status.databricks.com). Only check this for us-east-1 because all Nubank databricks machines exist only in this zone. The status page is auto-updated.
+
+If this isn’t the case and you can’t load the [homepage](https://nubank.cloud.databricks.com/) page then it’s probably an issue with Networking changes related to VPC. Were there any recent changes done?
+
+If you are able to load the homepage but can’t login into your account then isolate if this is a problem with SSO login. Try logging in databricks with your admin credentials.
+If you are able to login, then check for any recent changes done on the SSO login flow. Check the [Databricks SSO configuration](https://nubank-admin.okta.com/admin/app/databricks/instance/0oa1ihag8m5EU9dRf0h8/#tab-signon) on Okta for this. If you are an engineer in Data Access you should already have this access.
+
+## Clusters are not starting
+
+Check the events tab on the cluster for any instances of failures when starting. Usually, clicking in an event should give you more details on why this happened, such as:
+“Cloud Provider launch failure” (followed by an AWS error message)
+Means that instances could not be acquired. Try changing the AZ under the “Edit” page of the cluster in the last section.
+“Init script failure”
+This means one of the init scripts failed, which causes the cluster boot to also fail. Try disabling some init scripts by clicking “Edit” in the cluster page and accessing the “Init Scripts” tab in the section further down the page.
+
+Alternatively, you can also check the Driver Logs tab, the “standard error” contents can shed some light into what is the underlying cause.
+
+## Shared clusters are not stable (including shared job clusters)
+
+https://github.com/nubank/data-platform-docs/blob/master/tools/databricks/playbook.md#a-databricks-cluster-is-unhealthy
+
+## Single User clusters are not usable
+
+Check if the person can use the cluster with a new (blank) notebook, to make the distinction between the notebook having problems or the entire cluster. If it’s still not usable, check this [runbook](#a-databricks-cluster-is-unhealthy):
+
+## Jobs scheduled on automated job clusters are not running/failing to start
+
+Look at the cluster events page to check if there's an event that gives visibility to what's happening.
+
+If this is due to some deeper issues like library incompatibility or spark problems, you'll be able to trace this from the driver logs. Note that driver logs only exist if the driver was able to successfully boot up.
+
+If this is happening for all cluster check for [cluster policy template](https://nubank.cloud.databricks.com/#setting/clusters/cluster-policies/view/0F5F4DE6E0000001) from which all automated clusters are created.
 
 ## A Databricks cluster is unhealthy
 
@@ -81,6 +116,8 @@ Ensure this checklist applies:
 | [Monitor Set Tables in BR](https://nubank.cloud.databricks.com/#job/28028)            | [monitor-set-tables-in-context](https://nubank.cloud.databricks.com/#notebook/2378848) | Every 30 minutes    | <details><summary>Expand</summary><p>This job monitors the `set-tables-in-context` job execution, which sends an alert to slack in case there is a failed run for the monitored job.</p></details>                                                              |
 | [Monitor Set Tables in MX](https://nubank.cloud.databricks.com/#job/28047)            | [monitor-set-tables-in-context](https://nubank.cloud.databricks.com/#notebook/2378848) | Every 30 minutes    | <details><summary>Expand</summary><p>This job monitors the `mx-datasets-load` job execution, which sends an alert to slack in case there is a failed run for the monitored job. </p></details>                                                                  |
 | [set-clusters-autoscale](https://nubank.cloud.databricks.com/#job/37632)            | [set-clusters-autoscale](https://nubank.cloud.databricks.com/#notebook/3904159/) | Every 30 minutes    | <details><summary>Expand</summary><p>This job checks if the clusters with `autotermination` set to zero should have normal or minimal instances running, based on working hours. The settings can be applied per cluster using `custom_tags`. Check the notebook for more information. </p></details>                                                                  |
+| [backup_meta_loads](https://nubank.cloud.databricks.com/#job/120581) | [backup_meta_loads](https://nubank.cloud.databricks.com/#notebook/7644417) | Every day at 6:00am | <details><summary>Expand</summary><p>This job makes a backup of the meta.loads table which contains logs of loading etl datasets onto databricks.</p></details> |
+| [databricks-jobs-s3](https://nubank.cloud.databricks.com/#job/37595) | [databricks-jobs-s3](https://nubank.cloud.databricks.com/#notebook/3720862) | Every day at midnight BRT | <details><summary>Expand</summary><p>This job makes a backup of the databricks job runs.</p></details> |
 
 ## Manually run the [autobump_itaipu_and_restart_clusters](https://nubank.cloud.databricks.com/#job/8737) job
 

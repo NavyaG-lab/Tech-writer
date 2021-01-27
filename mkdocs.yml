@@ -188,6 +188,7 @@ nav:
       - Looker Support: "tools/looker/looker-support.md"
       - LookML Basics: "tools/looker/lookml-basics.md"
       - Looker New Country Setup: "tools/looker/looker-country-setup.md"
+      - Looker Playbook: "tools/looker/playbook.md"
   - Troubleshooting:
     - Dataset series compaction: "troubleshooting/dataset_series_compaction.md"
   - Analytics Productivity:
