@@ -38,14 +38,23 @@ Follow the steps below to create a Manual Dataset Series:
 
 #### Creating the Parquet file
 
-1. Create a Parquet file from whatever tool / source you want.
+1. Create a Parquet file from whatever tool / source you want. If you want to use the databricks, you do something like:
+```scala
+val importantData = spark.read.format("csv")
+  .load("s3://nu-tmp/me/my-dataset.csv")
 
-2. Place it on an S3 bucket, under a key for which you have read access (i.e `s3://nu-tmp/me/my-dataset`).
+importantData
+  .write.format("parquet")
+  .mode("overwrite")
+  .save("s3://nu-tmp/me/my-dataset")
+```
 
-3. Open it up on databricks and take a look at the schema of the resulting dataframe:
+Remember to place it on an S3 bucket, under a key for which you have read access (i.e `s3://nu-tmp/me/my-dataset`).
+
+2. Open it up on databricks and take a look at the schema of the resulting dataframe:
 
 ```scala
-val df = spark.read.parquet("dbfs:/mnt/nu-tmp/my-dataset")
+val df = spark.read.parquet("s3://nu-tmp/me/my-dataset")
 df.schema
 // results in:
 StructType(
@@ -78,28 +87,10 @@ This is the reason we define our own logical type schema.
 
 The logical type schema describes the schema of the dataset using our own internal schema language instead of that of Parquet. They differ a little bit, hence we don't have a tool to generate them automatically. Having said that, we do validate that the Parquet and logical type schemas match up before committing the dataset to the series.
 
-[Here is a full example of the logical type schema](manual_series_schema.json) for the dataframe above.
+How to generate the schema json automatically [here](https://nubank.slack.com/archives/CH99T2U9X/p1583425158036900) and a full example of the schema json [here](manual_series_schema.json). But you could run on databricks something like this:
 
-It looks roughly like:
-
-```json
-{
-    "attributes": [
-      {
-        "name": "example_enum",
-        "primaryKey": false,
-        "logicalType": "DOUBLE",
-        "logicalSubType": null
-      },
-      {
-        "name": "id",
-        "primaryKey": true,
-        "logicalType": "UUID",
-        "logicalSubType": null
-      },
-      ...
-      ]
-}
+```scala
+val schemaManualData: String = schemaToManualDatasetSeries(Seq("PrimeyKey"), importantData)
 ```
 
 Prepare this file, name it `schema.json`, and place it in the same directory on s3 where your Parquet file is at (i.e `s3://nu-tmp/me/schema.json`).
