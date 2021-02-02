@@ -112,6 +112,30 @@ at the cost of taking the extra time to run the datasets from scratch.
 There's a global `--disable-castor` CLI flag that disables communication with Castor entirely. Bear in mind that this
 wouldn't uncommit/retract any Datomic Raw datasets that have been pre-committed to a Metapod Transaction.
 
+### How can I run Pollux manually? ###
+
+You can run Pollux manually on Aurora using Sabesp as follows:
+```
+nu datainfra sabesp -- --aurora-stack=<AURORA-STACK> jobs pollux-manual prod <NUM-MACHINES> <DATABASE> <PROTOTYPE> <COUNTRY> --itaipu=<ITAIPU-VERSION> --scale <SCALE-VERSION>
+```
+- AURORA-STACK controls which Aurora environment will be used to run the job. Options are `cantareira-dev` or `cantareira-stable`.
+- NUM-MACHINES is the number of machines which will be used for the job.
+- DATABASE is the name of the database for which the cache is to be generated.
+- PROTOTYPE is a comma-separated list of prototypes for which the cache is to be generated.
+- COUNTRY is the country for which the cache is to be generated. Options are `br`, `mx`, `co`, or `data`.
+- ITAIPU-VERSION is the version of Itaipu to be used for the job.
+- SCALE-VERSION is the version of scale-cluster to be used for the job.
+
+An example is as follows:
+```
+nu datainfra sabesp -- --aurora-stack=cantareira-dev jobs pollux-manual prod 100 customers s0,s1,s2,s3,s4 br --itaipu=ccf481f --scale=fcb9196
+```
+
+For a complete list of flags available for `pollux-manual`, you can use:
+```
+nu datainfra sabesp -- jobs pollux-manual
+```
+
 ## Alert Playbook ##
 
 ### Itaipu <-> Castor failure ###
