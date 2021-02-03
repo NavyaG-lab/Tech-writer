@@ -90,7 +90,7 @@ You can read more about the tags [here](https://docs.google.com/document/d/1YRCK
 ### StaticOps
 
 * If you are a committer not from data-access squad, ask on #squad-data-access to run the cp command
-Check for [PII](https://github.com/nubank/data-platform-docs/blob/master/how-tos/itaipu/pii_and_personal_data.md) columns
+Check for [PII](../../how-tos/data-deletion/pii_and_personal_data.md) columns
 * People sometimes want us to delete the files from a StaticOp and replace them. We do not do that. Instead, whe ask them to change the `name` attribute of the StaticOp, putting the date of the change at the end, and upload the new files to the new folder.
 
 ### DatasetSeries
@@ -117,13 +117,13 @@ In the case above, a possible solution could be taking the most recent archive u
 
 Since the issues faced when reviewing a PR are recurring and the changes requested in those cases are usually standard, there are some macros we can use. You can set up your github macros using [this tutorial](https://help.github.com/en/github/writing-on-github/creating-a-saved-reply).
 
-### Unsure about [PII](https://github.com/nubank/data-platform-docs/blob/master/how-tos/itaipu/pii_and_personal_data.md) leakage in SparkOp
+### Unsure about [PII](../../how-tos/data-deletion/pii_and_personal_data.md) leakage in SparkOp
 
-Does this sparkOp contain PII information? If so, it should have a clearance PII. Please also refer to: <https://github.com/nubank/data-platform-docs/blob/master/how-tos/itaipu/pii_and_personal_data.md>.
+Does this sparkOp contain PII information? If so, it should have a clearance PII. Please also refer to: [PII](../../how-tos/data-deletion/pii_and_personal_data.md).
 
-### Unsure about [PII](https://github.com/nubank/data-platform-docs/blob/master/how-tos/itaipu/pii_and_personal_data.md) leakage in StaticOp
+### Unsure about [PII](../../how-tos/data-deletion/pii_and_personal_data.md) leakage in StaticOp
 
-Does this staticOp contain PII information? If so, it should have a clearance PII (and it would go to s3://nu-spark-static/pii/staticop-name/). Please also refer to: <https://github.com/nubank/data-platform-docs/blob/master/how-tos/itaipu/pii_and_personal_data.md>.
+Does this staticOp contain PII information? If so, it should have a clearance PII (and it would go to s3://nu-spark-static/pii/staticop-name/). Please also refer to: [PII](../../how-tos/data-deletion/pii_and_personal_data.md).
 
 ### StaticOp command not correctly pasted
 
@@ -274,7 +274,7 @@ This form will be regularly reviewed by either [#itaipu-reviewers](https://app.s
   * [StaticOps](https://github.com/nubank/ds-knowledge/blob/master/tutorials/dataset-tutorial/8-StaticOp.md)
   * [Dataset Series](https://github.com/nubank/data-platform-docs/blob/master/data-users/etl_users/dataset_series.md)
   * [Unit Tests](https://github.com/nubank/data-platform-docs/blob/master/how-tos/itaipu/create_basic_dataset.md#7---testing)
-  * [PII](https://github.com/nubank/data-platform-docs/blob/master/how-tos/itaipu/pii_and_personal_data.md)
+  * [PII](../../how-tos/data-deletion/pii_and_personal_data.md)
   * [Contracts](https://github.com/nubank/data-platform-docs/blob/master/how-tos/itaipu/contracts.md)
   * [Metapod](https://github.com/nubank/data-platform-docs/blob/master/how-tos/metapod.md)
   * [SparkOp](https://github.com/nubank/data-platform-docs/blob/master/how-tos/itaipu/create_basic_dataset.md#3---understanding-the-sparkop-class)

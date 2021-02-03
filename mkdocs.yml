@@ -88,10 +88,13 @@ nav:
       - View batch and streaming contracts in BigQuery: data-users/streaming-contracts/views-bigquery.md
       - How fresh data is processed and transformed: data-users/streaming-contracts/data-freshness.md
     - Debugging load issues: squad/data-access/debugging-load-issues.md
-    - FAQs: "data-users/etl_users/FAQ.md"
+    - FAQs:
+      - General FAQs: data-users/etl_users/FAQ.md
+      - PII data deletion: "data-users/FAQs/pii-data.md" 
   - Process flows:
     - Overview of Data flow in ETL: "process-flows/overview-dataflow.md"
     - How the data from data sources is ingested into ETL environment and transformed: "process-flows/data-transformation.md"
+    - Datomic data deletion: "process-flows/datomic-data-deletion-flow.md"
   - Oncall:
     - Data Infra:
       - Overview: "on-call/data-infra/README.md"
@@ -137,7 +140,6 @@ nav:
       - Reviewing and merging a PR: "how-tos/itaipu/itaipu_reviewer.md"
       - Updating the log cache: "how-tos/itaipu/log_cache_update.md"
       - Opening PRs: "how-tos/itaipu/opening_prs.md"
-      - PII and Personal data: "how-tos/itaipu/pii_and_personal_data.md"
       - Pororoca: "how-tos/itaipu/pororoca.md"
       - Retry logic in Itaipu: "how-tos/itaipu/retries.md"
       - Style guide: "how-tos/itaipu/styleguide.md"
@@ -149,6 +151,8 @@ nav:
     - Metapod: "how-tos/metapod.md"
     - Data deletion:
       - Datomic data deletion: "how-tos/data-deletion/setup-datomic-pii-data-deletion.md"
+      - PII and Personal data: "how-tos/data-deletion/pii_and_personal_data.md"
+      - How to classify PII Datomic data on Ryze: "how-tos/data-deletion/pii-classification.md"
   - Onboarding:
     - Data Infra:
       - Dataset exercise: "onboarding/data-infra/dataset-exercise.md"

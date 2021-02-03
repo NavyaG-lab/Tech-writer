@@ -49,7 +49,7 @@ Creating a new contract is different than updating an existing contract because 
                 - `:contract/include false` if you want to remove the attribute from the ETL
                 - `:contract/history true` if you want to include the historical values of that attribute (a separate
                 table with columns `audit__cid`, `audit__tags`, `audit__user`, `audit__version`, `db__tx_instant`)
-                - `:contract/clearance :pii` when the attribute is PII ([for more info](pii_and_personal_data.md))
+                - `:contract/clearance :pii` when the attribute is PII ([for more info](../data-deletion/pii_and_personal_data.md))
             - [Example](https://github.com/nubank/metapod/blob/master/src/metapod/models/transaction.clj#L13)
         - `test/[SERVICE-NAME]/db/datomic/config_test.clj`:
             1. [if you are using midje] Add a call to function `common-datomic.contract.test-helpers/enforce-contracts! <country>` for each country that needs to have contracts. [Example](https://github.com/nubank/metapod/blob/master/test/unit/metapod/db/datomic/config_test.clj).
@@ -126,7 +126,7 @@ If you want to add, change or remove an attribute:
           - `:contract/history true` (if you want to include the historical values of that attribute
           in a separate table with columns `audit__cid`, `audit__tags`,  `audit__user`,
           `audit__version`, `db__tx_instant`)
-          - `:contract/clearance :pii` (if the attribute is PII - [for more info](pii_and_personal_data.md))
+          - `:contract/clearance :pii` (if the attribute is PII - [for more info](../data-deletion/pii_and_personal_data.md))
     1. Run `$ lein gen-contracts <country>` (for all countries)
 1. Paste the updated Scala files into a branch of Itaipu
 1. Open pull requests for each and ask someone from data infra squad to review

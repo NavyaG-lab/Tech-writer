@@ -47,4 +47,4 @@ The warning messages usually include an alternative way of doing what you're try
 
 ## What should I consider as PII data in my datasets
 
-Please refer to this primer on [identifying PII data & its handling in Itaipu](../../how-tos/itaipu/pii_and_personal_data.md).
+Please refer to this primer on [identifying PII data & its handling in Itaipu](../../how-tos/data-deletion/pii_and_personal_data.md).
