@@ -90,7 +90,7 @@ owner: "#data-infra"
       - [Diagnosis](#diagnosis)
       - [Solution](#solution-16)
     - [Airflow tasks are queueing up](#airflow-tasks-are-queueing-up)
-    - [Airflow task scheduler delay is too high](#airflow-task-scheduler delay-is-too-high)
+    - [Airflow task scheduler delay is too high](#airflow-task-scheduler-delay-is-too-high)
     - [Decrease in row count on databases](#decrease-in-row-count-on-databases)
 
 This document is a resource for engineers *on-call*.
@@ -691,9 +691,17 @@ Every once in a while, Aurora goes down. `sabesp` commands, such as ones involve
 
 ### Airflow tasks are queueing up
 
+The meaning and hence the usefulness of this alert is still under
+validation. It’s still a good idea to check [the
+dashboard](https://prod-grafana.nubank.com.br/d/wMprEQbMz/airflow-metrics)
+and what is going on the DAGs page.
+
+
+### Airflow task scheduler delay is too high
+
 #### Diagnosis
 
-Airflow scheduler is probably hanging. Check [the
+Airflow scheduler could be hanging. Check [the
 dashboard](https://prod-grafana.nubank.com.br/d/wMprEQbMz/airflow-metrics)
 to validate the hypothesis
 
@@ -720,10 +728,6 @@ Restart the scheduler:
 ```
 sudo systemctl restart af-scheduler
 ```
-
-### Airflow task scheduler delay is too high
-
-[See above](#airflow-tasks-are-queueing-up)
 
 
  ### Decrease in row count on databases
