@@ -32,7 +32,7 @@ Follow the steps below to create a Manual Dataset Series:
 
 ### Preparing the data
 
-1. Place your parquet file on s3 somewhere (`s3://nu-tmp/me/my-dataset`) and place your logical type json schema in the same directory and name it `schema.json` (`s3://nu-tmp/me/schema.json`)
+1. Place your parquet file on s3 somewhere (e.g., `s3://nu-tmp/your.name/my-dataset`) and place your logical type json schema in the same directory and name it `schema.json` (e.g., `s3://nu-tmp/your.name/schema.json`)
 
 2. Add these files to a bucket of the country where you want to create the manual series. Examples of buckets: in BR `nu-tmp`, in MX `nu-tmp-mx`
 
@@ -41,20 +41,20 @@ Follow the steps below to create a Manual Dataset Series:
 1. Create a Parquet file from whatever tool / source you want. If you want to use the databricks, you do something like:
 ```scala
 val importantData = spark.read.format("csv")
-  .load("s3://nu-tmp/me/my-dataset.csv")
+  .load("s3://nu-tmp/your.name/my-dataset.csv")
 
 importantData
   .write.format("parquet")
   .mode("overwrite")
-  .save("s3://nu-tmp/me/my-dataset")
+  .save("s3://nu-tmp/your.name/my-dataset")
 ```
 
-Remember to place it on an S3 bucket, under a key for which you have read access (i.e `s3://nu-tmp/me/my-dataset`).
+Remember to place it on an S3 bucket, under a key for which you have read access (i.e `s3://nu-tmp/your.name/my-dataset`).
 
 2. Open it up on databricks and take a look at the schema of the resulting dataframe:
 
 ```scala
-val df = spark.read.parquet("s3://nu-tmp/me/my-dataset")
+val df = spark.read.parquet("s3://nu-tmp/your.name/my-dataset")
 df.schema
 // results in:
 StructType(
@@ -93,13 +93,13 @@ How to generate the schema json automatically [here](https://nubank.slack.com/ar
 val schemaManualData: String = schemaToManualDatasetSeries(Seq("PrimeyKey"), importantData)
 ```
 
-Prepare this file, name it `schema.json`, and place it in the same directory on s3 where your Parquet file is at (i.e `s3://nu-tmp/me/schema.json`).
+Prepare this file, name it `schema.json`, and place it in the same directory on s3 where your Parquet file is at (i.e. `s3://nu-tmp/your.name/schema.json`).
 
 You can run the folowing code to add `schema.json` to s3 through Databricks:
 
 ```scala
 val schemaFileName: String = "schema.json"
-val schemaFilePath: String = "s3://nu-tmp/me/%s".format(schemaFileName)
+val schemaFilePath: String = "s3://nu-tmp/your.name/%s".format(schemaFileName)
 
 dbutils.fs.put(schemaFilePath, schemaManualData)
 ```
@@ -146,7 +146,7 @@ nu-<country> dataset-series info my-series
 1. Do a dry-run of the append to check that the schemas match up
 
 ```
-nu-<country> dataset-series append my-series s3://nu-tmp/me/my-dataset --dry-run
+nu-<country> dataset-series append my-series s3://nu-tmp/your.name/my-dataset --dry-run
 ```
 
 ​ If it fails you can get more information regarding the schemas by adding the `--verbose`  flag.
@@ -156,7 +156,7 @@ nu-<country> dataset-series append my-series s3://nu-tmp/me/my-dataset --dry-run
 1. Run the append command
 
  ```
- nu-<country> dataset-series append my-series s3://nu-tmp/me/my-dataset
+ nu-<country> dataset-series append my-series s3://nu-tmp/your.name/my-dataset
  ```
 
 - If there is an s3 file copy error, save the output of the command and ask on `#manual-dataset-series` channel.
