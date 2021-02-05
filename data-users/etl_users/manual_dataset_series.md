@@ -95,6 +95,21 @@ val schemaManualData: String = schemaToManualDatasetSeries(Seq("PrimeyKey"), imp
 
 Prepare this file, name it `schema.json`, and place it in the same directory on s3 where your Parquet file is at (i.e `s3://nu-tmp/me/schema.json`).
 
+You can run the folowing code to add `schema.json` to s3 through Databricks:
+
+```scala
+val schemaFileName: String = "schema.json"
+val schemaFilePath: String = "s3://nu-tmp/me/%s".format(schemaFileName)
+
+dbutils.fs.put(schemaFilePath, schemaManualData)
+```
+
+If a file with the same name already exists in the path, you need to remove the current file before adding the new one:
+
+```scala
+dbutils.fs.rm(schemaFilePath)
+```
+
 ### Appending dataset to manual dataset series
 
 #### Before appending your dataset
