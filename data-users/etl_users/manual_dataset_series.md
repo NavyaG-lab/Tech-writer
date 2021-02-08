@@ -223,12 +223,12 @@ In order for this process to be as smooth and quick as possible, you'll need to 
 - Run the following nucli command:
 
 ```
-nu dataset-series info <my-series> -v
+nu-<country> dataset-series info <my-series> -v
 ```
 
 - Running the above should return a list of resources (files) and their ids. Find the resource you want to delete there (usually you'd look for the date at which you appended it) and get a hold of its `id` attribute
 - Open a ticket on [#data-help](https://nubank.slack.com/archives/C06F04CH1), marking it with the `:data-infra-ticket:` reaction and providing:
-  - your dataset series' precise name (e.g. `series/direct-mail`)
+  - your dataset series' precise name (e.g. `series/direct-mail`) and its country
   - the id(s) of the resources(s) you wish deleted
   - the reason for wishing to delete the data
 
