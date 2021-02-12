@@ -92,6 +92,7 @@ owner: "#data-infra"
     - [Airflow tasks are queueing up](#airflow-tasks-are-queueing-up)
     - [Airflow task scheduler delay is too high](#airflow-task-scheduler-delay-is-too-high)
     - [Decrease in row count on databases](#decrease-in-row-count-on-databases)
+    - [Host Alerts](#host-alerts)
 
 This document is a resource for engineers *on-call*.
 
@@ -789,3 +790,16 @@ If the alarm is raised because of the data deleted from the DBs (as per data del
 #### Solution, a Work around:
 
 To avoid the problem that arises due to time overlap, Pollux's cache creation time is changed to 1 pm UTC, whereas the computation of all the contracts is done by 12 pm UTC usually.
+
+### Host alerts
+
+#### Overview
+A number of alerts is set to go off if anything looks weird on the OS level. Most of the alerts are safe to postpone to a later date for investigation. The exception is the alerts that tell you the disk will fill soon.
+
+#### Troubleshooting
+The disk issue indicates that Spark is creating too many temporary files and is not able to clean them up in timely manner (although it [shoud](https://spark.apache.org/docs/latest/rdd-programming-guide.html#removing-data)).
+
+Most probably the error messages will therefore be on Spark level (log messages in Aurora), but you can also investigate the syslog messages in [Splunk](https://nubank.splunkcloud.com/en-US/app/search), by checking the host msg in format `host=ip-10-130-0-80.ec2.internal`
+
+#### Solution
+If error messages do not yield meaningful results on which we can act upon, it should be relatively safe to plain drop the node through AWS UI. The Spotinst autoscaling group should take care of spinning up a new node and connecting to the cluster.
