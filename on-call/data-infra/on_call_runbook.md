@@ -91,6 +91,7 @@ owner: "#data-infra"
       - [Solution](#solution-16)
     - [Airflow tasks are queueing up](#airflow-tasks-are-queueing-up)
     - [Airflow task scheduler delay is too high](#airflow-task-scheduler-delay-is-too-high)
+    - [Airflow: More than one instance running](#airflow-more-than-one-instance)
     - [Decrease in row count on databases](#decrease-in-row-count-on-databases)
     - [Host Alerts](#host-alerts)
 
@@ -730,6 +731,16 @@ Restart the scheduler:
 sudo systemctl restart af-scheduler
 ```
 
+### Airflow more than one instance
+
+#### Diagnosis
+
+It should be pretty straightforward: Someone spun up a new
+CloudFormation stack and forgot to delete the old one.
+
+#### Solution
+
+[Delete the old stack](/tools/airflow.md#updating-airflow).
 
  ### Decrease in row count on databases
 
