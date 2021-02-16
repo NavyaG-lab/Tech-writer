@@ -8,6 +8,7 @@ This guide aims at providing the Hausmeisters, a compendium of how-to-do tasks t
 
 This is a guide where each section contains the steps required (how-to-do-it) to follow the recipe. It also provides the context or an overview of the topic and helpful links to other useful information for the recipe.
 
+* [Restart Mesos](#restart-mesos)
 * [Restart Aurora](#restart-aurora)
 * [Hot-deploying service rollbacks](#hot-deploying-service-rollbacks)
 * [Re-deploying the DAG during a run](#re-deploying-the-dag-during-a-run)
@@ -50,15 +51,41 @@ This is a guide where each section contains the steps required (how-to-do-it) to
 * [Regenerating Expired Certificates](#regenerating-expired-certificates)
 * [Rebalancing Contract nodes to meet SLOs](#rebalancing-contract-nodes)
 
+## Mesos
+
+### Restart Mesos
+There are three types of nodes that make up a mesos cluster: mesos-master, mesos-on-demand and mesos-fixed. In case you need to restart any of them, please use the [deploy](https://github.com/nubank/deploy) repository. 
+
+The `deploy` repo works on CloudFormation level, either creating a new stack, or upserting an existing one.
+
+Currently, for the two stacks, the deployment must be done with separate branches: `cantareira` must be deployed with `master` and `data` must be deployed with `giorgio-valoti/ch125837/spin-new-airflow-from-deploy` (many moving things, to be consolidated later).
+
+First, update all tokens you have:
+```
+nu-<country> aws credentials refresh
+nu-<country> auth get-refresh-token
+nu-<country> auth get-access-token
+```
+
+Secondly, you can run the console, `./console`. Creating/upserting mesos-master on both environments in cantareira would look as follows: 
+```
+[1] STAGING> MesosMaster.create!('stable')
+[1] STAGING> MesosMaster.create!('dev')
+```
+!Note if at some point you are getting the `Aws::Route53::Errors::ExpiredToken` error, feel free to comment out the internals of `self.resolve_dns_with_nubank_delegation_set!`.
+
+For `data` environments, you must connect ny specifying the env first: `./console prod` or `./console staging`. When running the commands, pls speify the color of the stack:
+```
+MesosMaster.create!(ENVIRONMENT, 'foz', 'liquorice')
+```
+
 ## Aurora
 
-## Restart Aurora
+### Restart Aurora
 
 Every once in a while, Aurora goes down. `sabesp` commands, such as ones involved in running the DAG, won't work in this case. The steps involved in restarting the Aurora are as follows:
 
-1. Restart Mesos Master:
-
-- cycle `mesos-master`: `nu ser cycle mesos-master --env cantareira --suffix stable --region us-east-1`
+1. [Restart](#restart-mesos) Mesos Master
 
 1. Restart Aurora Scheduler:
 
@@ -83,7 +110,7 @@ Every once in a while, Aurora goes down. `sabesp` commands, such as ones involve
 curl -XPOST 10.130.1.61:5050/master/teardown -d 'frameworkId=67386329-1fe2-48f4-9457-0d45d924db5d-0000'
 ```
 
-## Controlling aurora jobs via the CLI
+### Controlling aurora jobs via the CLI
 
 [see sabesp cli examples](./tools/cli_examples.md)
 

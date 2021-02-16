@@ -94,6 +94,9 @@ owner: "#data-infra"
     - [Airflow: More than one instance running](#airflow-more-than-one-instance)
     - [Decrease in row count on databases](#decrease-in-row-count-on-databases)
     - [Host Alerts](#host-alerts)
+    - [Mesos master is down](#mesos-master-is-down)
+    - [Mesos master leader election issues](#mesos-master-cannot-select-a-leader)
+    - [Other mesos alerts](#other-mesos-alerts)
 
 This document is a resource for engineers *on-call*.
 
@@ -814,3 +817,31 @@ Most probably the error messages will therefore be on Spark level (log messages 
 
 #### Solution
 If error messages do not yield meaningful results on which we can act upon, it should be relatively safe to plain drop the node through AWS UI. The Spotinst autoscaling group should take care of spinning up a new node and connecting to the cluster.
+
+
+### Mesos master is down
+#### What is the impact?
+Existing itaipu jobs will continue to run, but no more will be accepted for processing.
+
+#### How to fix
+
+Simply [restart the Mesos master](ops_how_to.md#restart-aurora).
+
+If, for some reason, you cannot use the method above, you can use the [deploy repository](https://github.com/nubank/deploy) and re-deploy the master with current configuration.
+
+
+### Mesos master cannot select a leader
+#### How to fix
+
+Check that overall cluster connection (between mesos-master, mesos-fixed and mesos-on-demand) is not impacted by security groups or firewall rules.
+
+Simply [restart the Mesos master](https://github.com/nubank/data-platform-docs/blob/master/on-call/data-infra/ops_how_to.md#restart-mesos).
+
+If, for some reason, you cannot use the method above, you can use the [deploy repository](https://github.com/nubank/deploy) and re-deploy the master with current configuration.
+
+### Other mesos alerts
+Other mesos alerts are aimed at investigation, rather than urgent issues to be fixed.
+
+#### How to debug
+Most of the alerts are associated with a specific job and you can get logs for this job either by looking in Aurora UI, or by querying Splunk,
+ex `job=aurora/prod/jobs/itaipu-without-models`
