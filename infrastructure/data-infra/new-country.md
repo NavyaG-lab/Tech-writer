@@ -727,8 +727,9 @@ particular:
 
 Prerequisites:
   * You need the following temporary permissions
-      * `barragem-aurora-spin`
-      * `barragem-aurora-enhanced-monitoring`
+      * `nu-<country> iam allow <aws-name> generic data-infra barragem-aurora-spin --until=1week --env prod`
+      * `nu-<country> iam allow <aws-name> generic data-infra barragem-aurora-enhanced-monitoring --until=1week --env prod`
+      * `nu-<country> iam allow <aws-name> write bucket nu-secrets-<country>-prod/barragem_secret_config.json --until=1week`
   * Your AWS profiles should be correctly set up. This is also why we
     do not use something like `nu aws ctl`: with profiles in place
     there is no need to (plus `nucli` doesn’t actually play well with
