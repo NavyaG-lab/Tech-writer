@@ -108,6 +108,8 @@ nav:
       - On-call engineer tools: "on-call/data-infra/tools/on-call-engineer-tool.md"
       - Dashboards: "on-call/data-infra/dashboards.md"
       - PII monitoring alert playbooks: "on-call/data-infra/pii_monitoring_alert_playbook.md"
+    - User support Documentation:
+      - Dataset series: "on-call/data-infra/user-support.md"
     - Data access:
       - Rotations: "on-call/data-access/data-access-rotations.md"
       - Support: "on-call/data-access/data-support.md"
