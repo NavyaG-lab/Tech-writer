@@ -43,3 +43,9 @@ Debugging process:
 
 Refer to this [video guide](https://drive.google.com/file/d/1jjVEI2lIN7mnGAiR3MZ3jvlJ1SEgPSmz/view) on how to do this.
 Ask @leonardo.matsuura for help.
+
+## Disable Users who left Nubank
+
+This process is done to free up Looker licenses, as disabled users do not count as used licenses.
+
+To disable users refer to this notebook [this notebook](https://github.com/nubank/data-access/blob/master/looker-migration/not-nubanker-disabler.ipynb).
