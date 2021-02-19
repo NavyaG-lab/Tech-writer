@@ -73,6 +73,11 @@ nav:
     - Data Access:
       - Setup a new country in Looker : "tools/looker/looker-country-setup.md"
   - Data users:
+    - FAQs:
+      - All Dataplatform FAQs: "data-users/FAQs/README.md"
+      - PII data deletion: "data-users/FAQs/pii-data.md"
+      - Dataset series: "data-users/FAQs/dataset-series.md"
+      - Error messages: "data-users/etl_users/FAQ.md"
     - Dataset series:
       - Dataset series on ETL: "data-users/etl_users/dss-on-etl.md"
       - Event DSS: "data-users/etl_users/dataset_series.md"
@@ -88,9 +93,7 @@ nav:
       - View batch and streaming contracts in BigQuery: data-users/streaming-contracts/views-bigquery.md
       - How fresh data is processed and transformed: data-users/streaming-contracts/data-freshness.md
     - Debugging load issues: squad/data-access/debugging-load-issues.md
-    - FAQs:
-      - General FAQs: data-users/etl_users/FAQ.md
-      - PII data deletion: "data-users/FAQs/pii-data.md" 
+    
   - Process flows:
     - Overview of Data flow in ETL: "process-flows/overview-dataflow.md"
     - How the data from data sources is ingested into ETL environment and transformed: "process-flows/data-transformation.md"
