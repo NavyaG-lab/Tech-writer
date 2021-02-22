@@ -189,7 +189,6 @@ nav:
     - Ice mold:
       - Ice mold guide: "tools/ice_mold/README.md"
       - User stories: "tools/ice_mold/user_stories.md"
-      - Ice mold: "tools/ice_mold/ice_mold.md"
     - Iglu: "tools/iglu/iglu.md"
     - Kimball: "tools/iglu/kimball.md"
     - Looker:
