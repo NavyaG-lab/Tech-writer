@@ -187,7 +187,7 @@ nav:
       - Secret tokens: "tools/databricks/secrets_tokens.md"
       - Automation decisions: "tools/databricks/single_user_clusters/automation_decisions.md"
     - Ice mold:
-      - Ice mold guide: "tools/ice_mold/guide.md"
+      - Ice mold guide: "tools/ice_mold/user_stories.md"
       - User stories: "tools/ice_mold/user_stories.md"
       - Ice mold: "tools/ice_mold/ice_mold.md"
     - Iglu: "tools/iglu/iglu.md"

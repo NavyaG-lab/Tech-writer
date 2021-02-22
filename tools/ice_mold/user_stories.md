@@ -4,14 +4,14 @@ owner: "#squad-analytics-productivity"
 
 # Ice Mold Use Cases
 
-The idea of this document is to imagine some real use cases for the tools we are building, 
-and thinking on how users would use our products to solve them. 
+The idea of this document is to imagine some real use cases for the tools we are building,
+and thinking on how users would use our products to solve them.
 Attribute and squad names are not important here.
 
 ## Use Case 1
 
-**Problem:** An analyst is building a SparkOp for themself. 
-On their dataset, they already have the column `customer__id`, 
+**Problem:** An analyst is building a SparkOp for themself.
+On their dataset, they already have the column `customer__id`,
 but they need to have a column `active_customer` 
 and they don't know where this information lives
 
@@ -80,3 +80,5 @@ and evolving those central SparkOps becomes a hard challenge.
 Ice Mold + IceQL provides a "clear way" from the contracts to your SparkOp, 
 while taking care of necessary dependencies and 'inner layers' 
 (e. g., creating intermediary SparkOps for performance reasons)
+
+<!-- markdownlint-disable-file -->
