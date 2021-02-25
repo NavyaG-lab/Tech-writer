@@ -6,6 +6,7 @@ repo_url: https://github.com/nubank/data-platform-docs/
 edit_uri: edit/master/
 theme:
   name: 'material'
+  analytics: {gtag: 'G-J9MKG0NSEP'}
   custom_dir: 'overrides'
   favicon: assets/nubank-favicon.ico
   logo: assets/nubank-logo.svg
@@ -47,6 +48,14 @@ plugins:
   - mkdocs-jupyter
   - git-revision-date-localized
   - minify
+  - exclude:
+      glob:
+        - https://github.com/nubank/data-platform-docs/tree/master/writing
+        - "*.tmp"
+        - "*.pdf"
+        - "*.gz"
+      regex:
+        - '.*\.(tmp|bin|tar)$'
 nav:
   - Home: "README.md"
   - What's new: "whats-new.md"
