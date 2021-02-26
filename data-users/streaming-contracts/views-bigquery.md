@@ -14,21 +14,28 @@ You can have access to the following views:
 
 - Contract history
 - Contracts
-- Contracts PII
-- Contracts history PII
+- PII: requires [PII access](https://nubank.atlassian.net/servicedesk/customer/portal/53/group/246/create/920)
 
 Contract history tables provide the entire information about Datomic contracts - from the moment the data is being processed by Barragem up until the current time. If you choose to have the most recent version of data of the customers, use the **Contracts** view.
-
-!!! Important: Currently, the above materialised views are restricted to all. To access the data, you must first [get access](streaming-contracts-intro.md) to the Streaming Contracts feature.
 
 ## Viewing batch and streaming contracts
 
 In BigQuery, by default, the tables for batch contracts and streaming contracts are under different projects.
 
-- For batch contracts - [nu-br-data](https://console.cloud.google.com/bigquery?project=nu-br-data&p=nu-br-data&d=contract&page=dataset)
-- For streaming contracts - [nu-br-streaming](https://console.cloud.google.com/bigquery?project=nu-br-streaming&p=nu-br-streaming&d=contract&page=dataset)
+Batch Contracts:
 
-Currently, the streaming contracts system computes only some real-time Contracts, as the system currently supports very specific use cases. However, you can use batch contracts ([nu-br-data](https://console.cloud.google.com/bigquery?project=nu-br-data&p=nu-br-data&d=contract&page=dataset)) as it is guaranteed that Itaipu contains all datasets and the historical data.
+- 🇧🇷 Brazil: [nu-br-data](https://console.cloud.google.com/bigquery?project=nu-br-data)
+- 🇲🇽 Mexico: [nu-mx-data](https://console.cloud.google.com/bigquery?project=nu-mx-data)
+- 🇨🇴 Colombia: [nu-co-data](https://console.cloud.google.com/bigquery?project=nu-co-data)
+- Data: [nu-data-data](https://console.cloud.google.com/bigquery?project=nu-data-data)
+
+Streaming Contracts:
+
+- 🇧🇷 Brazil: [nu-br-streaming](https://console.cloud.google.com/bigquery?project=nu-br-streaming)
+- 🇲🇽 Mexico: [nu-mx-streaming](https://console.cloud.google.com/bigquery?project=nu-mx-streaming)
+- 🇨🇴 Colombia: [nu-co-streaming](https://console.cloud.google.com/bigquery?project=nu-co-streaming)
+
+Currently, the streaming contracts system computes only some real-time Contracts, as the system currently supports very specific use cases. However, you can use batch contracts as it is guaranteed that Itaipu contains all datasets and the historical data.
 
 If you need a new database to be added to the streaming contracts system, request it via a slack channel - **#tf-streaming-contracts**.
 
@@ -40,8 +47,8 @@ All rows in the streaming contract table contain a `db__tx_instant field`, which
 
 You can access the contracts data using the following tools:
 
-- [Google Bigquery](https://console.cloud.google.com/bigquery?project=nu-br-streaming&p=nu-br-streaming&d=contract&page=dataset)
+- Google Bigquery
 - Jupyter Notebook
 You can access streaming contracts from Jupyter Notebook through [Tapajós](https://github.com/nubank/belomonte):
 
-`tp = belomonte. Tapajos(project_id_override='nu-br-streaming')`
+`tp = belomonte. Tapajos(project_id_override='nu-<COUNTRY-CODE>-streaming')`

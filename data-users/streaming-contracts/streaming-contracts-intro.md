@@ -69,4 +69,11 @@ BigQuery provides fine-grained access to sensitive data in columns using policy 
 
 ### Get feature access
 
-If you would like to try streaming contracts or eventually migrate from Mordor to Streaming contracts, all you need to do is - [submit the form to show your interest](https://forms.gle/isYrmebwiWzFvUkK6). Someone from the Streaming Contracts team will get in touch with you for further information.
+All Nubankers should have general access to streaming contracts:
+
+- 🇧🇷 Brazil: [nu-br-streaming](https://console.cloud.google.com/bigquery?project=nu-br-streaming)
+- 🇲🇽 Mexico: [nu-mx-streaming](https://console.cloud.google.com/bigquery?project=nu-mx-streaming)
+- 🇨🇴 Colombia: [nu-co-streaming](https://console.cloud.google.com/bigquery?project=nu-co-streaming)
+
+
+For PII access fill out this [forms](https://nubank.atlassian.net/servicedesk/customer/portal/53/group/246/create/920).

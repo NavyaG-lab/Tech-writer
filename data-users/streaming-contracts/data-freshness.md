@@ -23,8 +23,9 @@ The following diagram illustrates that the microservices ensure fresh data is pr
         - Meta
         - Attribute
         - BigQueryID
-    - Using the BigQueryID, Anduin processes the data, and uploads entity snapshots into the Google BigQuery.
-    - Creates the materialised views of data and the views are available in Google BigQuery.
+    - Using the BigQueryID, Anduin processes the data, and uploads entity snapshots into the Google BigQuery. 
+    - All data that is inserted by Anduin is deleted after 7 days to comply with customer's right to be forgotten. 
+    - Creates the materialised views of data by combining Barragem data with Itaipu data and the views are available in Google BigQuery.
 1. Anduin pulls the schema of contracts from Itaipu to ensure that the schema of the contracts generated in Anduin are matched correctly.
 1. The Google Cloud Storage in Google BigQuery stores the history of all the generated contracts data.
 

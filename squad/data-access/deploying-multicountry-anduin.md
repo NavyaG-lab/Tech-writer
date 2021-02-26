@@ -1,3 +1,9 @@
+---
+owner: "#data-access"
+---
+
+<!-- markdownlint-disable -->
+
 # Deploying Anduin in a new country
 
 Table of Contents
@@ -72,4 +78,3 @@ Update Dashboards to consider new indexes by editing the Source dropdown:
 # You're done
 
 If [barragem](https://github.com/nubank/barragem/) is up and running in the env already, the `raw` dataset should appear soon, and once the itaipu PR is done, the contracts should appear once a new transaction is run. Be aware for large amounts of lag, as anduin has to consume any messages barragem has already produced, and deadletters that may appear because of the new dbs. They can simply be replayed and will be processed normally.
-
