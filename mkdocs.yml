@@ -43,6 +43,7 @@ extra_javascript:
   - js/search.js
   - js/elasticsearch.js
   - js/mark-as-outdated.js
+  - js/gtm.js
 
 plugins:
   - mkdocs-jupyter
@@ -81,6 +82,7 @@ nav:
       - New shards: "infrastructure/data-infra/new_shards.md"
     - Data Access:
       - Setup a new country in Looker : "tools/looker/looker-country-setup.md"
+      - Deploying Anduin in new country: "squad/data-access/deploying-multicountry-anduin.md"
   - Data users:
     - FAQs:
       - All Dataplatform FAQs: "data-users/FAQs/README.md"

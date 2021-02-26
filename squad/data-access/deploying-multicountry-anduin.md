@@ -2,12 +2,9 @@
 owner: "#data-access"
 ---
 
-<!-- markdownlint-disable -->
-
 # Deploying Anduin in a new country
 
-Table of Contents
-=================
+**Table of Contents**
 
 * [GCP Setup](#gcp-setup)
   * [Create Projects for prod and staging](#create-projects-for-prod-and-staging)
@@ -53,6 +50,7 @@ Look for the values inside the *dataset-names keys* in [Anduin's config](https:/
 ### Setup Service Accounts
 
 Create service accounts by entering the project, clicking the hamburger menu on the top left, and going to IAM & Admin > Service Accounts. An alternative is going into this link, but replacing `nu-br-streaming` with your desired project: https://console.cloud.google.com/iam-admin/serviceaccounts?project=nu-br-streaming
+
 - Name: anduin-\<country-code\> for Prod, anduin-\<country-code\>-staging for staging. The service accounts should be created *in the project they will act on*.
 - Create the Anduin Role: use [this](https://console.cloud.google.com/iam-admin/roles/details/projects%3Cnu-co-streaming%3Croles%3CCustomRole?project=nu-co-streaming) role as base. Grant the role to the service account at both the project level on the streaming project and on the batch project.
 - Update the offboarding credentials document with the new service accounts: [example PR](https://github.com/nubank/data-access/pull/188)
@@ -63,18 +61,19 @@ Create service accounts by entering the project, clicking the hamburger menu on 
 
 ## AWS
 
- - Deploy Anduin: [Example PR](https://github.com/nubank/definition/pull/13406)
+- Deploy Anduin: [Example PR](https://github.com/nubank/definition/pull/13406)
 
 ## Itaipu
 
- - Add the serving layer dataset: [Example PR](https://github.com/nubank/itaipu/pull/19085)
+- Add the serving layer dataset: [Example PR](https://github.com/nubank/itaipu/pull/19085)
 
 ## Splunk
 
 Update Dashboards to consider new indexes by editing the Source dropdown:
- - [Data Access - Anduin Data Insertion](https://nubank.splunkcloud.com/en-US/app/search/data_access__anduin_data_insertion?form.index=main&form.prototype=&form.search=)
- - [Data Access - Anduin Views](https://nubank.splunkcloud.com/en-US/app/search/data_access__anduin_views?form.index=main&form.table_id=)
 
-# You're done
+- [Data Access - Anduin Data Insertion](https://nubank.splunkcloud.com/en-US/app/search/data_access__anduin_data_insertion?form.index=main&form.prototype=&form.search=)
+- [Data Access - Anduin Views](https://nubank.splunkcloud.com/en-US/app/search/data_access__anduin_views?form.index=main&form.table_id=)
+
+## You're done
 
 If [barragem](https://github.com/nubank/barragem/) is up and running in the env already, the `raw` dataset should appear soon, and once the itaipu PR is done, the contracts should appear once a new transaction is run. Be aware for large amounts of lag, as anduin has to consume any messages barragem has already produced, and deadletters that may appear because of the new dbs. They can simply be replayed and will be processed normally.
