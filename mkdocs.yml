@@ -51,7 +51,7 @@ plugins:
   - minify
   - exclude:
       glob:
-        - https://github.com/nubank/data-platform-docs/tree/master/writing
+        - "writing/"
         - "*.tmp"
         - "*.pdf"
         - "*.gz"
