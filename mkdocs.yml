@@ -51,7 +51,7 @@ plugins:
   - minify
   - exclude:
       glob:
-        - "writing/"
+        - writing/
         - "*.tmp"
         - "*.pdf"
         - "*.gz"
