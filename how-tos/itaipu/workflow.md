@@ -376,15 +376,8 @@ reasons for that:
   * Downstream services such as databricks-loading assume a single tx
     per day.
 
-<<<<<<< HEAD:how-tos/itaipu/workflow.md
 So how do we ensure this strict constraint? We cut new releases from, well, Itaipu’s `release` branch, which is derived from `master`. This
 allows us to keep merging new PR in the `master` branch without impacting production. Briefly:
-=======
-So how do we ensure this strict constraint? We cut new releases from,
-well, Itaipu’s `release` branch, which is derived from `master`. This
-allows us to keep merging new PR in the `master` branch without
-impacting production. Briefly:
->>>>>>> master:itaipu/workflow.md
 
   * Pull requests generally target that branch, i.e. `master`. Once
     they are merged, circleci tests and builds the repo.
