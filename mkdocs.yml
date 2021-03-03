@@ -51,7 +51,7 @@ plugins:
   - minify
   - exclude:
       glob:
-        - writing/
+        - writing/*
         - "*.tmp"
         - "*.pdf"
         - "*.gz"
@@ -219,9 +219,3 @@ nav:
     - Dataset series compaction: "troubleshooting/dataset_series_compaction.md"
   - Analytics Productivity:
     - Contribution margin dataset: "squad/analytics-productivity/contribution_margin.md"
-  - Writing:
-    - Writing runbooks: "writing/writing_runbooks.md"
-    - Templates:
-      - Alerts playbook: "writing/templates/alerts-playbook.md"
-      - Getting started: "writing/templates/getting-started.md"
-      - Services README: "writing/templates/service-playbook.md"
