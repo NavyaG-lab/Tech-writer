@@ -106,7 +106,7 @@ This tutorial will focus on designing and spinning up the ETL pipeline which wil
 
 **Goal: Figure out which Datasets should we use to build the derivative dataset**
 
-For this exercise, we want information about the customer and their bills. Our data warehouse is organized into facts and dimensions, using the terminology from [Kimball's DW books](/tools/iglu/kimball.md).
+For this exercise, we want information about the customer and their bills. Our data warehouse is organized into facts and dimensions, using the terminology from [Kimball's DW books](/tools/frozen_suite/iglu/kimball.md).
 
 In our case, our main *fact* will the *bill*, and our main dimensions will be *customer* and *date*.
 

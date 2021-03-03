@@ -15,7 +15,7 @@ owner: "#data-infra"
   * Itaipu's mini-DAG
     * Because datasets depend on contracts and other datasets, this produces a directed acyclic dependency graph. Confusingly, this is a mini-DAG. The overall DAG is a superset of the Itaipu mini-DAG.
   * Dimensions & fact tables
-    * [Kimball principles](../../../tools/iglu/kimball.md)
+    * [Kimball principles](../../../tools/frozen_suite/iglu/kimball.md)
   * Unit testing approach
     * [Unit tests in Itaipu](../../../how-tos/itaipu/styleguide.md#unit-test-style) are designed to [test any non-trivial transformation step in isolation](../../../how-tos/itaipu/styleguide.md#transform-test-granularity). Generally we do not test the entire SparkOp on a unit basis.
   * Integration test

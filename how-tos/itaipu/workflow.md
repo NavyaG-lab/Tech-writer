@@ -156,7 +156,7 @@ Our contract system does not yet support component entities that are used as [pa
 
 Creating datasets:
 
-- [See quotes from Kimball on designing dimensional models here](../../tools/iglu/kimball.md)
+- [See quotes from Kimball on designing dimensional models here](../../tools/frozen_suite/iglu/kimball.md)
 
 ### Bus matrix
 

@@ -197,11 +197,16 @@ nav:
       - PII access: "tools/databricks/pii_access_sync.md"
       - Secret tokens: "tools/databricks/secrets_tokens.md"
       - Automation decisions: "tools/databricks/single_user_clusters/automation_decisions.md"
-    - Ice mold:
-      - Ice mold guide: "tools/ice_mold/README.md"
-      - User stories: "tools/ice_mold/user_stories.md"
-    - Iglu: "tools/iglu/iglu.md"
-    - Kimball: "tools/iglu/kimball.md"
+    - Frozen Suite:
+      - Overview: "tools/frozen_suite/README.md"
+      - User stories: "tools/frozen_suite/ice_mold/user_stories.md"
+      - IceQL: "tools/frozen_suite/ice_mold/README.md"
+        - IceQL technical docs: "tools/frozen_suite/ice_mold/technical_docs.md"
+      - Ice mold: "tools/frozen_suite/ice_mold/README.md"
+        - Ice mold technical docs: "tools/frozen_suite/ice_mold/technical_docs.md"
+      - Iglu: "tools/frozen_suite/iglu/iglu.md"
+        - Iglu technical docs: "tools/frozen_suite/iglu/technical_docs.md"
+    - Kimball: "tools/frozen_suite/iglu/kimball.md"
     - Looker:
       - Overview: "tools/looker/README.md"
       - Looker Common Tasks: "tools/looker/looker-common-tasks.md"
