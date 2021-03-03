@@ -94,6 +94,7 @@ owner: "#data-infra"
     - [Airflow: More than one instance running](#airflow-more-than-one-instance)
     - [Decrease in row count on databases](#decrease-in-row-count-on-databases)
     - [Host Alerts](#host-alerts)
+    - [OOM kill detected](#oom-kill-detected)
     - [Mesos master is down](#mesos-master-is-down)
     - [Mesos master leader election issues](#mesos-master-cannot-select-a-leader)
     - [Other mesos alerts](#other-mesos-alerts)
@@ -806,7 +807,6 @@ If the alarm is raised because of the data deleted from the DBs (as per data del
 To avoid the problem that arises due to time overlap, Pollux's cache creation time is changed to 1 pm UTC, whereas the computation of all the contracts is done by 12 pm UTC usually.
 
 ### Host alerts
-
 #### Overview
 A number of alerts is set to go off if anything looks weird on the OS level. Most of the alerts are safe to postpone to a later date for investigation. The exception is the alerts that tell you the disk will fill soon.
 
@@ -818,6 +818,9 @@ Most probably the error messages will therefore be on Spark level (log messages 
 #### Solution
 If error messages do not yield meaningful results on which we can act upon, it should be relatively safe to plain drop the node through AWS UI. The Spotinst autoscaling group should take care of spinning up a new node and connecting to the cluster.
 
+### OOM kill detected
+This is not a critical issue and you can allow the job to restart and finish(even though it may restart several times).
+In the context of itaipu, OOM tends to happen when the memory allocated to a process is not enough. So far this has only been the case for driver processes, which run on `mesos-fixed` nodes. You can search for these in [Splunk](https://nubank.splunkcloud.com/en-US/app/search/search) using the query `KILLED .*slave-type:mesos-on-demand-itaipu`. Default driver size (currently 20G) is not enough, so another option is 50G for bigger loads.  
 
 ### Mesos master is down
 #### What is the impact?
