@@ -8,35 +8,30 @@ owner: "#data-infra"
 
 Data Platform Docs is a central documentation hub for Data platform Engineers and Data users. It is a one-stop store that contains the detailed documentation for developers to understand and work on the internal microservices and collaborate to create new services. This platform helps developers and data users to focus on a single documentation source, instead of hunting down several individual guides for different services.
 
-The knowledge base comprises a comprehensive list of all microservices and its details, information on thought-through architectures, step-by-step guides, Incident response guides, Dataset series guides, FAQs, and more.
+The knowledge base comprises a comprehensive list of all microservices and its details, information on thought-through architectures, step-by-step guides, Incident response guides, Dataset series guides, FAQs, and more. 
 
-<table>
-  <tr>
-  <td>
-    <p><img src="images/data-users.png" width="40" height=""/><b>Data Users</b></p>
-    <p>
-     <ul>
-     <li><a href="https://data-platform-docs.nubank.com.br/data-users/etl_users/dss-on-etl/">Dataset series on ETL</a></li>
-     <li><a href="https://data-platform-docs.nubank.com.br/data-users/etl_users/optimizing_your_sparkop/">Optimizing your SparkOp</a></li>
-     <li><a href="https://data-platform-docs.nubank.com.br/how-tos/itaipu/itaipu_reviewer/">Reviewing and merging a PR on Itaipu</a></li>
-     <li><a href="https://data-platform-docs.nubank.com.br/data-users/etl_users/manual_dataset_series/">Manual Dataset series<a></li>
-     <li><a href="https://data-platform-docs.nubank.com.br/data-users/etl_users/ingestion/archives/">Archive Dataset series<a></li>
-     </ul></p>
-     </td>
-  <td>
-    <p><img src="images/data-infra-icon.png" width="40" height=""/><b>Data Infrastructure</b></a>
-     <ul>
-      <li><a href="https://data-platform-docs.nubank.com.br/infrastructure/data-infra/inventory/">Services</a></li>
-      <li><a href="https://data-platform-docs.nubank.com.br/on-call/data-infra/on_call_runbook/">Hausmeister / On-call runbook</a></li>
-      <li><a href="https://data-platform-docs.nubank.com.br/services/data-processing/itaipu/itaipu/">Overview of Itaipu</a></li>
-        <li><a href="https://data-platform-docs.nubank.com.br/how-tos/itaipu/contracts/">How-tos</a></li>
-        <li><a href="https://data-platform-docs.nubank.com.br/onboarding/data-infra/introduction/">Onboarding</a></li>
-        <li><a href="https://data-platform-docs.nubank.com.br/tools/databricks/">Tools</a></li>
-    </ul></p>
-     </td>
-  </tr>
+<br/>
 
-</table>
+|![](images/data-infra-icon.png)Data Infrastructure|![](images/data-infra-icon.png)Analytics Productivity|
+:--------------------------------------------:|:------------------------------:
+|[Dataset series on ETL](data-users/etl_users/dss-on-etl.md)|[About Analytics Productivity](https://playbooks.nubank.com.br/squads/analytics-productivity/)|
+|[Manual Dataset Series](data-users/etl_users/manual_dataset_series.md)|[Optimize your SparkOp](data-users/etl_users/optimizing_your_sparkop.md)|
+|[Archive Dataset series](data-users/etl_users/archived_datasets.md)|[Core Datasets](datasets/core-datasets/README.md)|
+|[Services](services/data-ingestion/intro.md)|[Frozen Suite](https://docs.google.com/document/d/1tJx9ifOhscM7P4MtFifblbtDUoGTk-JqkDN9DXCqPsI/edit#heading=h.h1dr4jt5gg6g)|
+|[Overview of Itaipu](services/data-processing/itaipu/itaipu.md)|[Iglu](tools/frozen_suite/iglu/README.md)|
+|[Opening PRs on Itaipu](how-tos/itaipu/opening_prs.md)|[Ice mold](https://github.com/nubank/itaipu/tree/master/src/main/scala/etl/warehouse/ice_mold)|
+|[Reviewing and merging PR on Itaipu](how-tos/itaipu/itaipu_reviewer.md)|[IceQL](tools/frozen_suite/iceql/README.md)|
+
+
+<br/>
+
+|![](images/data-users.png)Data Access|![](images/data-users.png)Data users - FAQs|
+|:----:|:---------------------------:|
+|[Databricks](tools/databricks/README.md)|[Dataset series](data-users/FAQs/dataset-series.md)|
+|[Looker](tools/looker/README.md)|[PII Data](data-users/FAQs/pii-data.md)|
+|[Airflow](tools/airflow.md)|[Compilated failed - Itaipu](data-users/etl_users/FAQ.md)|
+
+<br/>
 
 ### Documentation site structure
 

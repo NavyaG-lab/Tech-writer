@@ -64,10 +64,18 @@ nav:
   - About BU Squads:
     - About all squads: "about/data-bu-squads.md"
     - Data Infra overview: "about/data-infra/overview.md"
-    - Data Infra history: "about/data-infra/history.md"
-    - Data Infra anguages and stacks: "about/data-infra/services-language-stacks.md"
-    - Slack channels: "about/data-infra/slack-channels.md"
-    - Dashboards: "about/data-infra/dashboards-all.md"
+    - Data Analytics: "https://playbooks.nubank.com.br/squads/analytics-productivity/"
+    - Onboarding:
+      - Onboarding:
+        - Dataset exercise: "onboarding/data-infra/dataset-exercise.md"
+        - Introduction: "onboarding/data-infra/introduction.md"
+        - Reading: "onboarding/data-infra/reading.md"
+        - Setup: "onboarding/data-infra/setup.md"
+        - Onboarding exercise: "onboarding/data-infra/service-exercise.md"
+        - Data Infra history: "about/data-infra/history.md"
+        - Data Infra anguages and stacks: "about/data-infra/services-language-stacks.md"
+        - Slack channels: "about/data-infra/slack-channels.md"
+        - Dashboards: "about/data-infra/dashboards-all.md"
   - Infrastructure:
     - Data Infra:
       - Bumping Spark: "infrastructure/data-infra/bumping-spark.md"
@@ -104,6 +112,8 @@ nav:
       - View batch and streaming contracts in BigQuery: data-users/streaming-contracts/views-bigquery.md
       - How fresh data is processed and transformed: data-users/streaming-contracts/data-freshness.md
     - Debugging load issues: squad/data-access/debugging-load-issues.md
+    - Datasets:
+      - Core Datasets: "datasets/core-datasets/README.md"
     
   - Process flows:
     - Overview of Data flow in ETL: "process-flows/overview-dataflow.md"
@@ -169,13 +179,6 @@ nav:
       - Datomic data deletion: "how-tos/data-deletion/setup-datomic-pii-data-deletion.md"
       - PII and Personal data: "how-tos/data-deletion/pii_and_personal_data.md"
       - How to classify PII Datomic data on Ryze: "how-tos/data-deletion/pii-classification.md"
-  - Onboarding:
-    - Data Infra:
-      - Dataset exercise: "onboarding/data-infra/dataset-exercise.md"
-      - Introduction: "onboarding/data-infra/introduction.md"
-      - Reading: "onboarding/data-infra/reading.md"
-      - Setup: "onboarding/data-infra/setup.md"
-      - Onboarding exercise: "onboarding/data-infra/service-exercise.md"
   - Tools:
     - Airflow: "tools/airflow.md"
     - Graphql: "tools/graphql_clients.md"
@@ -199,12 +202,15 @@ nav:
       - Automation decisions: "tools/databricks/single_user_clusters/automation_decisions.md"
     - Frozen Suite:
       - Overview: "tools/frozen_suite/README.md"
-      - User stories: "tools/frozen_suite/ice_mold/user_stories.md"
-      - IceQL: "tools/frozen_suite/ice_mold/README.md"
-        - IceQL technical docs: "tools/frozen_suite/ice_mold/technical_docs.md"
-      - Ice mold: "tools/frozen_suite/ice_mold/README.md"
+      - User stories: "tools/frozen_suite/user_stories.md"
+      - IceQL: 
+        - Overview: "tools/frozen_suite/iceql/README.md"
+        - IceQL technical docs: "tools/frozen_suite/iceql/technical_docs.md"
+      - Ice mold: 
+        - Overview: "tools/frozen_suite/ice_mold/README.md"
         - Ice mold technical docs: "tools/frozen_suite/ice_mold/technical_docs.md"
-      - Iglu: "tools/frozen_suite/iglu/iglu.md"
+      - Iglu: 
+        - Overview: "tools/frozen_suite/iglu/iglu.md"
         - Iglu technical docs: "tools/frozen_suite/iglu/technical_docs.md"
     - Kimball: "tools/frozen_suite/iglu/kimball.md"
     - Looker:
@@ -217,5 +223,6 @@ nav:
       - Looker Playbook: "tools/looker/playbook.md"
   - Troubleshooting:
     - Dataset series compaction: "troubleshooting/dataset_series_compaction.md"
-  - Analytics Productivity:
+  - Datasets:
+    - Core Datasets: "datasets/core-datasets/README.md" 
     - Contribution margin dataset: "squad/analytics-productivity/contribution_margin.md"
