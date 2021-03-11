@@ -88,6 +88,8 @@ nav:
       - Testing models: "infrastructure/data-infra/testing-models.md"
       - Test custom images with ECR: "infrastructure/data-infra/test-images.md"
       - New shards: "infrastructure/data-infra/new_shards.md"
+      - Granular access controls:
+        - index: "infrastructure/granular-access-controls/index.md"
     - Data Access:
       - Setup a new country in Looker : "tools/looker/looker-country-setup.md"
       - Deploying Anduin in new country: "squad/data-access/deploying-multicountry-anduin.md"
@@ -174,6 +176,7 @@ nav:
       - Scala style guide: "style_guide.md"
       - Tekton: "how-tos/itaipu/tekton/README.md"
       - Itaipu states: "services/data-processing/itaipu/itaipu_states.md"
+      - Change continuous deployment pipeline: "how-tos/itaipu/change-continuous-deployment-pipeline.md"
     - Metapod: "how-tos/metapod.md"
     - Data deletion:
       - Datomic data deletion: "how-tos/data-deletion/setup-datomic-pii-data-deletion.md"
@@ -206,11 +209,12 @@ nav:
       - IceQL: 
         - Overview: "tools/frozen_suite/iceql/README.md"
         - IceQL technical docs: "tools/frozen_suite/iceql/technical_docs.md"
+        - IceQL step by step approach: "tools/frozen_suite/iceql/technical_docs.md"
       - Ice mold: 
         - Overview: "tools/frozen_suite/ice_mold/README.md"
         - Ice mold technical docs: "tools/frozen_suite/ice_mold/technical_docs.md"
       - Iglu: 
-        - Overview: "tools/frozen_suite/iglu/iglu.md"
+        - Overview: "tools/frozen_suite/iglu/README.md"
         - Iglu technical docs: "tools/frozen_suite/iglu/technical_docs.md"
     - Kimball: "tools/frozen_suite/iglu/kimball.md"
     - Looker:
