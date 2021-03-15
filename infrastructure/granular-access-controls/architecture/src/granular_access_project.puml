@@ -1,0 +1,21 @@
+@startuml
+
+!include includes/C4_Context.puml
+!include includes/shared.puml
+
+LAYOUT_WITH_LEGEND()
+'LAYOUT_AS_SKETCH()
+
+title System Context Diagram Granular Access Controls Project (C4 level: 1)
+
+$addItaipuDatasets(itaipuDatasets)
+
+$addDataProtection(dataProtection) {
+  $addMonitoring(piiMonitoring)
+  $addGovMetadata(govMeta)
+}
+
+$addSub1(itaipuDatasets, govMeta)
+$addSub2(piiMonitoring, govMeta, itaipuDatasets)
+
+@enduml

@@ -1,0 +1,20 @@
+@startuml
+
+!include includes/C4_Context.puml
+!include includes/shared.puml
+
+LAYOUT_WITH_LEGEND()
+'LAYOUT_AS_SKETCH()
+
+title System Context Diagram: ACG Governance & Access Flows (C4 level: 1)
+
+$addDataProtection(dataProtection) {
+  $addGovMetadata(govMeta)
+  $addMonitoring(piiMonitoring)
+}
+
+$addItaipuDatasets(itaipuDatasets)
+
+$addSub2(piiMonitoring, govMeta, itaipuDatasets)
+
+@enduml

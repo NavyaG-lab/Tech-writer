@@ -88,11 +88,11 @@ nav:
       - Testing models: "infrastructure/data-infra/testing-models.md"
       - Test custom images with ECR: "infrastructure/data-infra/test-images.md"
       - New shards: "infrastructure/data-infra/new_shards.md"
-      - Granular access controls:
-        - index: "infrastructure/granular-access-controls/index.md"
     - Data Access:
       - Setup a new country in Looker : "tools/looker/looker-country-setup.md"
       - Deploying Anduin in new country: "squad/data-access/deploying-multicountry-anduin.md"
+    - Granular Access Controls:
+      - Index: "infrastructure/granular-access-controls/index.md"
   - Data users:
     - FAQs:
       - All Dataplatform FAQs: "data-users/FAQs/README.md"

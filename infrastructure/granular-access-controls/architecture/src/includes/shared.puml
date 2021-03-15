@@ -1,0 +1,135 @@
+!unquoted procedure $addDataInfra($symbol)
+  Boundary($symbol, "Data Infra")
+!endprocedure
+
+!unquoted procedure $addDataAccess($symbol)
+  Boundary($symbol, "Data Access")
+!endprocedure
+
+!unquoted procedure $addDataProtection($symbol)
+  Boundary($symbol, "Data Protection")
+!endprocedure
+
+!unquoted procedure $addEngHorizontals($symbol)
+  Boundary($symbol, "Data Infra")
+!endprocedure
+
+!unquoted procedure $addInfoSec($symbol)
+  Boundary($symbol, "InfoSec")
+!endprocedure
+
+!unquoted procedure $addITOps($symbol)
+  Boundary($symbol, "IT Ops")
+!endprocedure
+
+!unquoted procedure $addIAMPolicies($symbol)
+  System($symbol, "nubank/iam-policies", "GitHub repo with IAM CloudFormation templates")
+!endprocedure
+
+!unquoted procedure $addGovernanceOps($symbol)
+  Person($symbol, "Analytics Engineering Chapter", "Wearing the 'Data Stewards' hat")
+!endprocedure
+
+!unquoted procedure $addDataConsumer($symbol)
+  Person_Ext($symbol, "Nubanker", "Business Analyst, Data Scientist, Analytics Engineer, etc.")
+!endprocedure
+
+!unquoted procedure $addDecisionMakers($symbol)
+  Person_Ext($symbol, "Decision Makers", "BU leadership, IT Risk, MT, etc.")
+!endprocedure
+
+!unquoted procedure $addMonitoring($symbol)
+  System($symbol, "PII Exposure Monitoring", "Writes (user, ACG, platform, date) quadruples to dataset series and aggregates these data in BI dashboards.")
+!endprocedure
+
+!unquoted procedure $addItaipuRuntime($symbol)
+  System($symbol, "Itaipu Runtime", "The nightly ETL run that writes data to S3.")
+!endprocedure
+
+!unquoted procedure $addOkta($symbol)
+  System_Ext($symbol, "Okta", "Not considered for the initial tombinhos, but will be when we implement BigQuery.")
+!endprocedure
+
+!unquoted procedure $addDatabricks($symbol)
+  System($symbol, "Databricks", "Including lambdas to manage auth{entication,orization}")
+!endprocedure
+
+!unquoted procedure $addGovMetadata($symbol)
+  System($symbol, "Governance Metadata", "Includes a library that generates S3 prefixes base clearance, restriction, owner squad, etc.")
+!endprocedure
+
+!unquoted procedure $addIAM($symbol)
+  System_Ext(iam, "AWS IAM")
+!endprocedure
+
+!unquoted procedure $addItaipuDatasets($symbol)
+  System($symbol, "Itaipu Datasets", "Inside itaipu monorepo. Every dataset has ACG-related metadata such as clearance and restriction.")
+!endprocedure
+
+!unquoted procedure $addSub1($itaipuDatasets, $govMeta)
+  Boundary(tbdOwner, "TBD owner") {
+    System(catalog, "ACG Catalog.", "Documentation. TBD, maybe Looker dashboard or CLI")
+  }
+  System_Ext(s3, "AWS S3")
+  $addDataInfra(dataInfra) {
+    $addItaipuRuntime(itaipuRuntime)
+  }
+  Boundary(dsProd, "DS Prod") {
+      System_Ext(kubeFlow, "Kubeflow", "Already operates using personal IAM roles. No changes necessary.")
+    }
+  $addDataAccess(dataAccess) {
+    $addDatabricks(databricks)
+    System_Ext(bigQuery, "BigQuery", "Will be integrated after Databricks.")
+  }
+
+  System_Ext(sts, "AWS STS")
+
+  $addDataConsumer(dataConsumer)
+
+  Rel(dataConsumer, databricks, "Run queries")
+  Rel(dataConsumer, kubeFlow, "Run queries")
+  Rel(dataConsumer, bigQuery, "Run queries")
+  Rel(dataConsumer, catalog, "Find the right ACGs to request access to (e.g. based on a dataset they need), and show ACGs currently associated with Nubanker")
+  Rel(databricks, sts, "Get token to assume DATA account role")
+  Rel(databricks, s3, "Read data")
+  Rel(itaipuRuntime, s3, "Write data")
+  Rel(itaipuRuntime, $itaipuDatasets, "Get queries to run")
+  Rel(kubeFlow, s3, "Read data")
+  Rel(itaipuRuntime, govMeta, "Library dependency: get deterministic S3 prefix for PII data assets")
+!endprocedure
+
+
+!unquoted procedure $addSub2($piiMonitoring, $govMeta, $itaipuDatasets)
+  Boundary(itRisk, "IT Risk") {
+    System(scopeMatrix, "Scope Matrix")
+  }
+  $addITOps(itOps) {
+    System(jira, "Jira", "Where users request access to ACGs they need.")
+    $addOkta(okta)
+  }
+
+  System_Ext(iam, "AWS IAM")
+
+  $addInfoSec(infoSec) {
+    $addIAMPolicies(iamPolicies)
+  }
+
+  $addGovernanceOps(govOps)
+  $addDecisionMakers(decMakers)
+  $addDataConsumer(dataConsumer2)
+
+  Rel_Up(dataConsumer2, jira, "Request access")
+  Rel(govOps, iamPolicies, "Commit changes to ACGs")
+  Rel(govOps, itRisk, "Help with building and maintaining the scope matrix (using AE domain knowledge)")
+  Rel(govOps, jira, "Approve/deny manually if outside of scope matrix or other edge case")
+  Rel(piiMonitoring, iam, "Extract ACGs per user for PII exposure OKR")
+  Rel(govOps, $govMeta, "Add/remove clearances")
+
+  Rel(iamPolicies, iam, "Deploy groups")
+
+  Rel(piiMonitoring, itaipuDatasets, "Get enumerator for PII OKR by counting datasets per clearance/restriction")
+  Rel_Up(decMakers, piiMonitoring, "Monitor")
+  Rel(jira, iam, "Trigger processes that associate (automatically expiring) ACG policies to data account roles of the Nubanker in IAM")
+  Rel(scopeMatrix, jira, "Build the approval flow with automatic approve/deny based on squad+chapter per ACG (nubank/maat like)")
+  Rel(iamPolicies, govMeta, "Check correctness of S3 prefixes in S3 groups during CI/CD")
+!endprocedure

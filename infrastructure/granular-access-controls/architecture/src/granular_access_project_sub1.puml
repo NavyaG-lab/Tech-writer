@@ -1,0 +1,19 @@
+@startuml
+
+!include includes/C4_Context.puml
+!include includes/shared.puml
+
+LAYOUT_WITH_LEGEND()
+'LAYOUT_AS_SKETCH()
+
+title System Context Diagram: Nubanker day-to-day data analysis 'inner loop' (C4 level: 1)
+
+$addDataProtection(dataProtection) {
+  $addGovMetadata(govMeta)
+}
+
+$addItaipuDatasets(itaipuDatasets)
+
+$addSub1(itaipuDatasets, govMeta)
+
+@enduml
