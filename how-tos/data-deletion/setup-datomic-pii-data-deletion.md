@@ -140,8 +140,8 @@ to creates many more sparkOps:
 
 1. An Op that joins together all relevant malzahar information:
    PreprocessMalzaharContracts
-1. An Op per Datomic database to be excised finds the information to excise by joining it against Malzahar: SingleDatabaseReextractOp.
-   excised by joining agains malzahar: SingleDatabaseReextractOp
+1. An Op per Datomic database to be excised finds the information to excise by
+   joining it against Malzahar: SingleDatabaseReextractOp.
 1. The ServingOp
 1. The JoinHistoryOp (and a derived archive)
 1. MonitorTiming: Check if reextraction of excised data is late

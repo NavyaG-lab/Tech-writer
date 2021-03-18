@@ -47,11 +47,22 @@ laggard.
 
 ### What to do
 
-1. Check the dataset:
+1. Check the dataset, once with the join, once without. The join already
+   provides additional information but it can duplicate rows.
 
 ```sql
+
+with history_and_today as (
+    SELECT join_id, excised_at, e, t, excision_t, database, prototype, excise_field__identifier_type, attribute_name, archive_date FROM `nu-br-data.series_contract.dataset_datomic_reextract_join_history`
+    union all
+    select join_id, excised_at, e, t, excision_t, database, prototype, excise_field__identifier_type, attribute_name, cast(current_date() as STRING) as archive_date
+    from `nu-br-data.dataset.datomic_reextract_base`
+    where t is not null and t < excision_t
+)
 SELECT *
 FROM `nu-br-data.dataset.monitor_datomic_reextractions_timing`
+LEFT JOIN history_and_today
+  using (join_id)
 ORDER BY reextracted_at desc
 LIMIT 10000
 ```
@@ -65,9 +76,26 @@ LIMIT 10000
    probable cause why it is late is the serving layer. Work your way backwards
    through the flow:
    1. Check the `correnteza-reextractions` dataset series for the related
-      entries and see if all makes sense.
-   2. Check the `datomic-reextract-serve-data` dataset with databricks and the
-      `datomic-reextract-base`
+      entries and see if all makes sense: Were the data reextracted before? If
+      they were, you should see a duplication alert. If not, why weren't they
+      reextracted earlier? Maybe they weren't even served for reextraction
+      correctly (step 3)?
+      Note: This dataset has a different grain, and thus cannot be joined
+      directly with the timing dataset. Comparing reextraction date, database
+      and prototype should let you identify the corresponding extractions:
+      ```sql
+      SELECT *
+      FROM `nu-br-data.series_contract.correnteza_reextractions`
+      order by reextracted_at desc
+      LIMIT 10000
+      ```
+   2. Check the `datomic-reextract-serve-data` dataset with databricks to see
+      if the data was not served in cases where it wasn't reextracted. If it
+      was served at an earlier point in time but wasn't reextracted, you know
+      something went wrong within correnteza when handling the data. Splunk
+      logs are your next station then. If nothing was served, the error lies
+      with our joins in the base stage. This should show up in as a
+      [completeness alert](#completeness-dataset-fires) already.
 3. Else: Escalate
 
 
@@ -81,20 +109,26 @@ it was not effectful. The most likely problem are - once again - the
 
 ### What to do
 
-1. Check the monitoring dataset itself. It requires unnesting of a bigquery
-   array to be done efficiently, so here is the query:
+1. Check the monitoring dataset itself. As above, joining history and today
+   gives more information. If you want to see the recent duplications, leave
+   the query order by `archive_date` otherwise switch to the commented line
+   which groups by join_id so you can see related duplications. In that case,
+   you also need to add a filter for the join_id's you are checking.
 
 ```sql
-SELECT join_id, `count`, reextracted_at
-  , coalesce(current_base.database, archive_base.database) database
-  , coalesce(current_base.prototype, archive_base.prototype) prototype
-FROM `nu-br-data.dataset.monitor_datomic_reextractions_duplication`
-, unnest(archive_dates) as reextracted_at
-LEFT JOIN `nu-br-data.dataset.datomic_reextract_base` current_base
-  USING (join_id)
-LEFT JOIN `nu-br-data.series_contract.dataset_datomic_reextract_join_history` archive_base
-  USING (join_id)
-ORDER BY join_id, reextracted_at desc
+with history_and_today as (
+    SELECT join_id, excised_at, e, t, excision_t, database, prototype, excise_field__identifier_type, attribute_name, cast(archive_date as date) as archive_date FROM `nu-br-data.series_contract.dataset_datomic_reextract_join_history`
+    union all
+    select join_id, excised_at, e, t, excision_t, database, prototype, excise_field__identifier_type, attribute_name, current_date() as archive_date
+    from `nu-br-data.dataset.datomic_reextract_base`
+    where t is not null and t < excision_t
+)
+SELECT *
+FROM `nu-br-data.dataset.monitor_datomic_reextractions_duplication` dd
+LEFT JOIN history_and_today hat
+  on dd.join_id = hat.join_id and cast(dd.archive_date as date) = hat.archive_date
+order by dd.archive_date desc
+--order by dd.join_id, dd.archive_date desc
 LIMIT 10000
 ```
 
@@ -102,9 +136,24 @@ LIMIT 10000
   and prototype.
 
 2. Check when the last caches were updated for the respective database and
-   prototype. If it wasn't updated, raise with whoever owns pollux to see if:
+   prototype.
+
+   ```sql
+    SELECT snapshot__country, snapshot__db_name, snapshot__prototype, max(snapshot__created_at) last_snapshot_date
+    `nu-br-data.contract.castor__snapshots`
+    where snapshot__db_name in ('[your database here]', '[maybe your other database here]')
+    group by 1,2,3
+    order by 2,3
+    LIMIT 1000
+   ```
+
+   If it wasn't updated after the last reextraction, raise with whoever owns
+   castor/pollux to see if:
    1. As a quick fix we can update the cache now.
-   2. As a long term fix, see if it is feasible to update the caches each day.
+   2. As a long term fix, see if it is feasible to update the caches more
+      frequently.
+   3. Double-check if the cache invalidation request works: In theory, a cache
+      should be updated after each correnteza refresh.
 
 3. Else: Escalate
 
@@ -139,8 +188,8 @@ LIMIT 10000
    declared as inputs to the `DatomicReextractions` sparkop of that country. If
    that's the case, see [here](#new-databases-are-excised-from).
 1. If that's not the problem, check the malzahar contracts for the entities that cannot be reextracted.
-2. Try to find those entities 'manually' by running sql queries on the
-   contracts or raw logs.
+2. Try to find those entities 'manually' by running queries on raw logs in
+   databricks.
    1. If you can find them, maybe the sparkOp logic to find them automatically
       needs an update.
    2. If you cannot find them, escalate
