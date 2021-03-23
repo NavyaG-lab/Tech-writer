@@ -20,7 +20,7 @@ simplification of these states and its transitions for other Itaipu users.
 
 ## State machine diagram
 
-![SparkOp State Machine](../../../images/DataInfraArchitecture.png)
+![SparkOp State Machine](../../../images/state-machine-itaipu.png)
 
 ## State description
 
