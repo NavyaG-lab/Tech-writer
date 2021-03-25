@@ -28,7 +28,7 @@ Follow the steps below to create a Manual Dataset Series:
 ### Prerequisites
 
 1. [Download and install Docker](https://download.docker.com/mac/stable/Docker.dmg), if you don't already have it installed. For more information, see the documentation on [Docker](https://docs.docker.com/docker-for-mac/install/) and [containers](https://en.wikipedia.org/wiki/Docker_(software)).
-2. You'll need to have an AWS account and AWS CLI 1.18+ set on your machine to use ECR. For more information on ECR setup, see [ECR documentation on playbooks](https://playbooks.nubank.com.br/ci-cd/ecr/getting-started/).
+2. You'll need to have an AWS account and AWS CLI 1.18+ set on your machine to use ECR. For more information on ECR setup, see [ECR documentation on playbooks](https://playbooks.nubank.com.br/cicd/ecr/getting-started/).
 
 ### Preparing the data
 
