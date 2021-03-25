@@ -319,6 +319,55 @@ If a bug is found on Barragem side, a fix needs to be put in place as soon as po
 
 Please consider informing Foundation (#foundation-tribe) in case of any issue on Tempo side.
 
+### tapir PARTITION-TO-SERVE deadletter_count_above_threshold
+
+#### Overview
+ 
+ By consuming this Topic, tapir loads data to the serving layer.
+ The alert happens if an Exception is thrown while consuming a Kafka message.
+ Usually the deadletters in this Topic is related to transient communication errors with S3 or DynamoDB. We need to verify if that's the case before acting on it.
+
+### Alert Severity
+
+Usually not urgent, but it should be dealt in the same day.
+
+### Verification
+
+You can click on "See on Prometheus" to check if the metric is still above threshold.
+
+### Troubleshooting
+
+Check if the error is transient and related to S3 or DynamoDB connection issues.
+Check "Related Links" on how to see deadletters.
+
+An example of an error caused by DynamoDB communication:
+```
+  {:type java.net.SocketTimeoutException
+   :message Read timed out
+   :at [java.net.SocketInputStream socketRead0 SocketInputStream.java -2]}]
+ :trace
+ [[java.net.SocketInputStream socketRead0 SocketInputStream.java -2]
+ ...
+  [com.amazonaws.http.AmazonHttpClient execute AmazonHttpClient.java 530]
+  [com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient doInvoke AmazonDynamoDBClient.java 6164]
+  ...
+```
+
+A second important check is on the deadletter's timestamp. You can get the timestamp from the payload of it.
+
+If the deadletter is thrown today, it can be safely replayed.
+
+If the deadletter is thrown a day ago, the deadletter can be stale and a new message could have already loaded newer data. If this stale message is replayed, it will overwrite the newer data. In this case, you need to check if the dataset in question has already been loaded today.
+
+#### Escalation
+
+No need to escalate.
+
+#### Related Links
+
+How to replay deadletters: https://github.com/nubank/data-platform-docs/blob/master/on-call/data-infra/ops_how_to.md#replaying-deadletters
+
+
 ### Warning: [PROD] correnteza_last_t_greater_than_basis_t
 
 #### Context
