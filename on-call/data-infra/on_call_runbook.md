@@ -32,6 +32,7 @@ owner: "#data-infra"
       - [Troubleshooting](#troubleshooting-1)
       - [Solution](#solution-4)
       - [Escalation](#escalation-1)
+    - [tapir PARTITION-TO-SERVE deadletter_count_above_threshold](#tapir-partition-to-serve-deadletter_count_above_threshold)
     - [Warning: [PROD] correnteza_last_t_greater_than_basis_t](#warning-prod-correnteza_last_t_greater_than_basis_t)
       - [Context](#context)
       - [Solution](#solution-5)
