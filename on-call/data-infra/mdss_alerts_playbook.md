@@ -4,6 +4,8 @@ owner: "#data-infra"
 
 # MDSS Alerts Playbook
 
+## Ouroboros - Number of newly created manual series resource groups higher than expected!
+
 ## Number of newly created manual series resource groups higher than expected!
 
 ### Overview
@@ -49,7 +51,7 @@ and ask them about the expected future behavior of the series.
 
 ### Solution
 
-If the increase in the number of new resource groups for this series was a one-time thing and we don't expect it to continue getting similar numbers of resources on a regular basis, nothing is to be done.
+If the increase in the number of new resource groups for this series was a one-time thing and we don't expect it to continue getting similar numbers of resources on a regular basis, nothing needs to be done.
 
 If the series is not PII and we expect its resource groups to continue growing regularly, it should be added to the deletion-deny-list in the appropriate country's config(s) (e.g. [BR config](https://github.com/nubank/ouroboros/blob/config/src/prod/ouroboros_br_config.json#L6))
 

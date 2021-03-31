@@ -39,6 +39,7 @@ owner: "#data-infra"
       - [Delete all the extractions for the databases that the alarm is going off for](#delete-all-the-extractions-for-the-databases-that-the-alarm-is-going-off-for)
       - [Cycle Correnteza in the corresponding prototype](#cycle-correnteza-in-the-corresponding-prototype)
       - [Monitor re-extractions](#monitor-re-extractions)
+  - [Ouroboros - Number of newly created manual series resource groups higher than expected!](#ouroboros---number-of-newly-created-manual-series-resource-groups-higher-than-expected)
   - [Itaipu/Aurora/Mesos/Spot: Job has not accepted any resources](#itaipuauroramesosspot-job-has-not-accepted-any-resources)
     - [Alert Severity](#alert-severity)
     - [Overview](#overview-2)
@@ -436,6 +437,10 @@ The dashboard has a lot more useful information about Correnteza's extractions, 
 important bits for this purpose are highlighted in the screenshot.
 
 [correnteza-extractor-dashboard]: https://prod-grafana.nubank.com.br/d/A8ULVDTmz/correnteza-datomic-extractor-service?orgId=1&var-stack_id=All&var-host=All&var-database=skyler&var-prototype=s0&var-prometheus=prod-thanos
+
+## Ouroboros - Number of newly created manual series resource groups higher than expected!
+
+Please consult the [MDSS alerts playbook](https://github.com/nubank/data-platform-docs/blob/master/on-call/data-infra/mdss_alerts_playbook.md).
 
 ## Itaipu/Aurora/Mesos/Spot: Job has not accepted any resources
 
