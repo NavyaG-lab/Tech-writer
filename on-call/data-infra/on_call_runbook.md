@@ -100,6 +100,7 @@ owner: "#data-infra"
     - [Mesos master is down](#mesos-master-is-down)
     - [Mesos master leader election issues](#mesos-master-cannot-select-a-leader)
     - [Other mesos alerts](#other-mesos-alerts)
+    - [Docker daemon is not starting](#docker-daemon-is-not-starting)
 
 This document is a resource for engineers *on-call*.
 
@@ -324,7 +325,7 @@ Please consider informing Foundation (#foundation-tribe) in case of any issue on
 ### tapir PARTITION-TO-SERVE deadletter_count_above_threshold
 
 #### Overview
- 
+
  By consuming this Topic, tapir loads data to the serving layer.
  The alert happens if an Exception is thrown while consuming a Kafka message.
  Usually the deadletters in this Topic is related to transient communication errors with S3 or DynamoDB. We need to verify if that's the case before acting on it.
@@ -875,7 +876,7 @@ If error messages do not yield meaningful results on which we can act upon, it s
 
 ### OOM kill detected
 This is not a critical issue and you can allow the job to restart and finish(even though it may restart several times).
-In the context of itaipu, OOM tends to happen when the memory allocated to a process is not enough. So far this has only been the case for driver processes, which run on `mesos-fixed` nodes. You can search for these in [Splunk](https://nubank.splunkcloud.com/en-US/app/search/search) using the query `KILLED .*slave-type:mesos-on-demand-itaipu`. Default driver size (currently 20G) is not enough, so another option is 50G for bigger loads.  
+In the context of itaipu, OOM tends to happen when the memory allocated to a process is not enough. So far this has only been the case for driver processes, which run on `mesos-fixed` nodes. You can search for these in [Splunk](https://nubank.splunkcloud.com/en-US/app/search/search) using the query `KILLED .*slave-type:mesos-on-demand-itaipu`. Default driver size (currently 20G) is not enough, so another option is 50G for bigger loads.
 
 ### Mesos master is down
 #### What is the impact?
@@ -903,3 +904,35 @@ Other mesos alerts are aimed at investigation, rather than urgent issues to be f
 #### How to debug
 Most of the alerts are associated with a specific job and you can get logs for this job either by looking in Aurora UI, or by querying Splunk,
 ex `job=aurora/prod/jobs/itaipu-without-models`
+
+### Docker daemon is not starting
+
+This alert is about potential problems with Docker in newly started
+on-demand nodes and it fires when we detect metrics from the node, but
+not from Mesos exporter, which runs in a container.
+
+[More info here](https://github.com/nubank/definition/pull/13978)
+
+#### Check the impact
+
+Before any corrective action, we need to understand the impact. More
+concretely: how many nodes are showing this problem and for which job?
+It’s also important to try to understand if the problem appears to be
+transitory or not: do jobs started at a later time show the problem?
+
+#### Solution
+
+Assuming the problem is transitory and the it is severely impacting
+the job or, even worse, the whole run you need:
+- Log into AWS with account tied to the origin of the alert: if it’s
+  `cantareira` it’s Brazil, if it’s `foz` it’s `nu-data`.
+- Navigate to the EC2 section of the console.
+- Filter the nodes running job(s) reported in the alert
+- Terminate them
+
+At this point, Spot’s Elastigroup logic will kick in and spin up new
+machines.
+
+You can also choose to do nothing. If it’s a single node among 100 and
+you’re ok in seeing the alert firing off for a while, the only thing
+happening a slighly slower execution for that job.
