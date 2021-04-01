@@ -216,6 +216,7 @@ nav:
       - Iglu: 
         - Overview: "tools/frozen_suite/iglu/README.md"
         - Iglu technical docs: "tools/frozen_suite/iglu/technical_docs.md"
+        - Iglu Guide: "tools/frozen_suite/iceql/GUIDE.md"
     - Kimball: "tools/frozen_suite/iglu/kimball.md"
     - Looker:
       - Overview: "tools/looker/README.md"
@@ -228,5 +229,10 @@ nav:
   - Troubleshooting:
     - Dataset series compaction: "troubleshooting/dataset_series_compaction.md"
   - Datasets:
+    - Dataset creation flow: "datasets/basic-datasets/create-dataset-flow.md"
+    - Create a dataset: "datasets/basic-datasets/create-dataset.md"
+    - Write tests for dataset: "datasets/basic-datasets/testing-dataset.md"
+    - Mandatory Verification checklist for a dataset: "datasets/basic-datasets/dataset-verification-checklist.md"
+    - How to check dataset commit status on ETL: "datasets/basic-datasets/check-dataset-output.md"
     - Core Datasets: "datasets/core-datasets/README.md" 
     - Contribution margin dataset: "squad/analytics-productivity/contribution_margin.md"
