@@ -63,9 +63,14 @@ They interact with systems owned by all aforementioned squads in this subgraph.
 
 ### Changelog
 
-#### 2021-03-05 
+#### 2021-03-25
 
-- First iteration of architecture diagrams ahead of the Data BU All-hands presentation
+- Added the
+  [business agnostic approval endpoint of the `maat` service](https://docs.google.com/document/d/1Ouwf9mjdqG2U4DTWsfrZ78TS11igwiotIrW0XDfjKCQ/edit).
+
+#### 2021-03-05
+
+- First iteration of architecture diagrams ahead of the Data BU All-hands presentation.
 
 ### Contributing to Diagrams
 

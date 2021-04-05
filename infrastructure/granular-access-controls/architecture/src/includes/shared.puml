@@ -7,7 +7,7 @@
 !endprocedure
 
 !unquoted procedure $addDataProtection($symbol)
-  Boundary($symbol, "Data Protection")
+  Boundary($symbol, "Owner: Data Protection")
 !endprocedure
 
 !unquoted procedure $addEngHorizontals($symbol)
@@ -15,15 +15,15 @@
 !endprocedure
 
 !unquoted procedure $addInfoSec($symbol)
-  Boundary($symbol, "InfoSec")
+  Boundary($symbol, "Owner: InfoSec")
 !endprocedure
 
 !unquoted procedure $addITOps($symbol)
-  Boundary($symbol, "IT Ops")
+  Boundary($symbol, "Owner: IT Ops")
 !endprocedure
 
 !unquoted procedure $addIAMPolicies($symbol)
-  System($symbol, "nubank/iam-policies", "GitHub repo with IAM CloudFormation templates")
+  System($symbol, "Nubank IAM", "IAM related containers such as nubank/iam-policies and AWS IAM itself")
 !endprocedure
 
 !unquoted procedure $addGovernanceOps($symbol)
@@ -66,7 +66,11 @@
   System($symbol, "Itaipu Datasets", "Inside itaipu monorepo. Every dataset has ACG-related metadata such as clearance and restriction.")
 !endprocedure
 
-!unquoted procedure $addSub1($itaipuDatasets, $govMeta)
+!unquoted procedure $addRequisitionSystem($symbol)
+  System($symbol, "Requisition System", "Request access to ACG and interface for approvers (based on Jira).")
+!endprocedure
+
+!unquoted procedure $addSub1($itaipuDatasets, $govMeta, $dataConsumer)
   Boundary(tbdOwner, "TBD owner") {
     System(catalog, "ACG Catalog.", "Documentation. TBD, maybe Looker dashboard or CLI")
   }
@@ -84,8 +88,6 @@
 
   System_Ext(sts, "AWS STS")
 
-  $addDataConsumer(dataConsumer)
-
   Rel(dataConsumer, databricks, "Run queries")
   Rel(dataConsumer, kubeFlow, "Run queries")
   Rel(dataConsumer, bigQuery, "Run queries")
@@ -99,37 +101,33 @@
 !endprocedure
 
 
-!unquoted procedure $addSub2($piiMonitoring, $govMeta, $itaipuDatasets)
-  Boundary(itRisk, "IT Risk") {
-    System(scopeMatrix, "Scope Matrix")
+!unquoted procedure $addSub2($piiMonitoring, $govMeta, $itaipuDatasets, $reqSystem, $dataProtection, $dataConsumer)
+  $addGovernanceOps(govOps)
+  $addDecisionMakers(decMakers)
+
+  $addInfoSec(infoSec) {
+      System(maat, "'maat' Service", "Business agnostic approval system")
+      $addIAMPolicies(iam)
   }
+
   $addITOps(itOps) {
-    System(jira, "Jira", "Where users request access to ACGs they need.")
     $addOkta(okta)
   }
 
-  System_Ext(iam, "AWS IAM")
-
-  $addInfoSec(infoSec) {
-    $addIAMPolicies(iamPolicies)
+  Boundary(itRisk, "IT Risk") {
   }
 
-  $addGovernanceOps(govOps)
-  $addDecisionMakers(decMakers)
-  $addDataConsumer(dataConsumer2)
-
-  Rel_Up(dataConsumer2, jira, "Request access")
-  Rel(govOps, iamPolicies, "Commit changes to ACGs")
-  Rel(govOps, itRisk, "Help with building and maintaining the scope matrix (using AE domain knowledge)")
-  Rel(govOps, jira, "Approve/deny manually if outside of scope matrix or other edge case")
+  Rel(dataConsumer, reqSystem, "Request access")
+  Rel_Up(itRisk, govOps, "Help with building and maintaining the access matrix (using AE domain knowledge)")
+  Rel_Up(maat, govOps, "Approve/deny manually if outside of access matrix or other edge case")
   Rel(piiMonitoring, iam, "Extract ACGs per user for PII exposure OKR")
-  Rel(govOps, $govMeta, "Add/remove clearances")
-
-  Rel(iamPolicies, iam, "Deploy groups")
+  Rel(govOps, govMeta, "Add/remove clearances")
 
   Rel(piiMonitoring, itaipuDatasets, "Get enumerator for PII OKR by counting datasets per clearance/restriction")
-  Rel_Up(decMakers, piiMonitoring, "Monitor")
-  Rel(jira, iam, "Trigger processes that associate (automatically expiring) ACG policies to data account roles of the Nubanker in IAM")
-  Rel(scopeMatrix, jira, "Build the approval flow with automatic approve/deny based on squad+chapter per ACG (nubank/maat like)")
-  Rel(iamPolicies, govMeta, "Check correctness of S3 prefixes in S3 groups during CI/CD")
+  Rel_Down(decMakers, piiMonitoring, "Monitor")
+  Rel(reqSystem, iam, "Trigger processes that associate (automatically expiring) ACG policies to data account roles of the Nubanker in IAM")
+  Rel(itRisk, reqSystem, "Maintain access matrix")
+  Rel(iam, govMeta, "Build policies based on clearances")
+  Rel(reqSystem, maat, "Fallback of access matrix")
+  Rel(dataProtection, itOps, "Ask for help with Jira")
 !endprocedure

@@ -10,12 +10,15 @@ title System Context Diagram Granular Access Controls Project (C4 level: 1)
 
 $addItaipuDatasets(itaipuDatasets)
 
+$addDataConsumer(dataConsumer)
+
 $addDataProtection(dataProtection) {
-  $addMonitoring(piiMonitoring)
+  $addRequisitionSystem(reqSystem)
   $addGovMetadata(govMeta)
+  $addMonitoring(piiMonitoring)
 }
 
-$addSub1(itaipuDatasets, govMeta)
-$addSub2(piiMonitoring, govMeta, itaipuDatasets)
+$addSub1(itaipuDatasets, govMeta, dataConsumer)
+$addSub2(piiMonitoring, govMeta, itaipuDatasets, reqSystem, dataProtection, dataConsumer)
 
 @enduml

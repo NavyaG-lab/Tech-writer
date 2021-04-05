@@ -12,8 +12,10 @@ $addDataProtection(dataProtection) {
   $addGovMetadata(govMeta)
 }
 
+$addDataConsumer(dataConsumer)
+
 $addItaipuDatasets(itaipuDatasets)
 
-$addSub1(itaipuDatasets, govMeta)
+$addSub1(itaipuDatasets, govMeta, dataConsumer)
 
 @enduml

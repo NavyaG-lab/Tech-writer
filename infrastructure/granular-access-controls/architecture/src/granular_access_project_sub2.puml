@@ -11,10 +11,13 @@ title System Context Diagram: ACG Governance & Access Flows (C4 level: 1)
 $addDataProtection(dataProtection) {
   $addGovMetadata(govMeta)
   $addMonitoring(piiMonitoring)
+  $addRequisitionSystem(reqSystem)
 }
+
+$addDataConsumer(dataConsumer)
 
 $addItaipuDatasets(itaipuDatasets)
 
-$addSub2(piiMonitoring, govMeta, itaipuDatasets)
+$addSub2(piiMonitoring, govMeta, itaipuDatasets, reqSystem, dataProtection, dataConsumer)
 
 @enduml
