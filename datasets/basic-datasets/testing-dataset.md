@@ -283,6 +283,6 @@ Now that you've done all that, pass one more time if you've formatted everything
 That is all for now! See you next dataset!
 
 ### What's Next?
-- How to debug dataset issues using Databricks?
+- [How to debug dataset issues using Databricks?](debug-datasets.md)
 - [How to optimize your SparkOp (dataset)?](../../data-users/etl_users/optimizing_your_sparkop.md))
 - [How to check your dataset status on ETL run?](check-dataset-output.md)

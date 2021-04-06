@@ -134,6 +134,7 @@ nav:
       - On-call engineer tools: "on-call/data-infra/tools/on-call-engineer-tool.md"
       - Dashboards: "on-call/data-infra/dashboards.md"
       - PII monitoring alert playbooks: "on-call/data-infra/pii_monitoring_alert_playbook.md"
+      - Manual Dataset series alert playbook: "on-call/data-infra/mdss_alerts_playbook.md"
     - User support Documentation:
       - Dataset series: "on-call/data-infra/user-support.md"
     - Data access:
@@ -234,5 +235,6 @@ nav:
     - Write tests for dataset: "datasets/basic-datasets/testing-dataset.md"
     - Mandatory Verification checklist for a dataset: "datasets/basic-datasets/dataset-verification-checklist.md"
     - How to check dataset commit status on ETL: "datasets/basic-datasets/check-dataset-output.md"
+    - Debug Dataset issues: "datasets/basic-datasets/debug-datasets.md"
     - Core Datasets: "datasets/core-datasets/README.md" 
     - Contribution margin dataset: "squad/analytics-productivity/contribution_margin.md"
