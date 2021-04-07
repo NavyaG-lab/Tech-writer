@@ -101,6 +101,7 @@ owner: "#data-infra"
     - [Mesos master leader election issues](#mesos-master-cannot-select-a-leader)
     - [Other mesos alerts](#other-mesos-alerts)
     - [Docker daemon is not starting](#docker-daemon-is-not-starting)
+    - [Airflow is down](#airflow-is-down)
 
 This document is a resource for engineers *on-call*.
 
@@ -936,3 +937,44 @@ machines.
 You can also choose to do nothing. If it’s a single node among 100 and
 you’re ok in seeing the alert firing off for a while, the only thing
 happening a slighly slower execution for that job.
+
+
+### Airflow is down
+
+#### How to debug
+
+This can be tricky, because both Airflow’s UI and systemd units can
+appear fine and dandy. At the same time, since this alert is coming
+from the load balancer in front of the service, the EC2 instance will
+be replaced with a new one within five minutes if the health check
+(which hits the `/admin/` endpoint) keeps failing. At the same time,
+it’s also good to remember that all the jobs that were already running
+are safe: only _new_ won’t be scheduled.
+
+In any case, assuming you have the opportunity, the surest sign of
+Airflow’s distress is the _ABSENCE_ of lines like the following
+
+```
+[2021-04-07 09:27:16,819] {logging_mixin.py:95} INFO - [2021-04-07 09:27:16,819] {jobs.py:2100} INFO - [backfill progress] | finished run 0 of 1 | tasks waiting: 2 | succeeded: 1 | running: 1 | failed: 0 | skipped: 0 | deadlocked: 0 | not ready: 2
+```
+
+from the logs of a task -- you can pick any or [use
+Splunk](https://nubank.splunkcloud.com/en-US/app/search/search?q=search%20source%3Dairflow%20tasks%20waiting&display.page.search.mode=verbose&dispatch.sample_ratio=1&earliest=-30m%40m&latest=now&sid=1617796546.111715_DE08CBB6-443D-4023-8E7E-1C4456F2B708)--
+that is running. If do _NOT_ see lines like this, Airflow is probably
+hanging.
+
+You can also cross check with monitoring data from [the load
+balancer](https://console.aws.amazon.com/ec2/v2/home?region=us-east-1#LoadBalancers:search=airflow;sort=loadBalancerName).
+
+#### Solution
+
+If the instance is indeed being marked as unhealthy by the load
+balancer, the first best option is simply to wait until the EC2
+instance got replaced. At that point, the jobs that were currently
+running will get retried (this is normal), so it’s a good idea to
+follow the events to make sure you don’t have to manually clear (i.e.
+restart) them further because all the automatic retries have been
+executed (and in this case you might get paged).
+
+More importantly, though, you should keep an eye on Airflow to make
+sure _new_ jobs are scheduled.
