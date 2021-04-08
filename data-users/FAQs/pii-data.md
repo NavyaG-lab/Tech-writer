@@ -26,42 +26,13 @@ The Xpeer will confirm deletion to the data subject and close the ticket.
 
 ## What is considered as Pii and Personal Data?
 
+A definition of what is Pii and personal data can be found [here](../../how-tos/data-deletion/pii_and_personal_data.md).
+
 **KEEP IN MIND THIS IS A NON EXHAUSTIVE LIST AND NEW Pii MAY APPEAR OVER TIME.**
 
 After you have a better understanding of the data that is considered as PII and personal, make sure you classify it as PII by setting the clearance attribute. For information on how to do that, see [How do I identify and Set attributes as Pii in Itaipu](./pii-data.md#how-do-i-identify-and-set-attributes-as-pii-in-itaipu)
 
-Now that we know the definition of Pii, here is a NON exhaustive list of Pii data we have on Nubank's environment:
-
-|PII data|
-|--------|
-|Tax identifier or social identifier numbers (such as CPF, RG, Driver License in Brazil)|
-|Passport number|
-|Biometric information|
-|Contact information (such as email, phone or mobile number)|
-|Complete Address (note that if we do NOT have the street name, for example, we would not be able to identify the person; same if we only have the CEP)|
-|Complete name|
-|Credit card number|
-|Account number|
-|Geolocation|
-|Pictures from the customer onboarding|
-
-Besides the Pii data, we also have the personal data, which would be any kind of information associated with an identified or identifiable person. Below we have a non exhaustive list of personal data (only if they are associated to an identified or identifiable person):
-
-|Personal data|
-|-------------|
-|Credit card transactions, bill, installments etc.|
-|Nuconta transactions, balance, transferences etc.|
-|Credit scores and general bureau data|
-|Travel notification|
-|Profession|
-|Income|
-|Birth date|
-|Nationality|
-|Gender|
-|Relatives info (such as Mother's name)|
-|Device information|
-
-**Important**: New attributes may keep adding to the PII data list and you can check all the attributes considered as PII at [Code base](https://github.com/nubank/ryze/blob/master/resources/br/compliance/actions.edn#L132). The list of attributes (tags) under Right-to-be-forgotten are considered as PII. Here is the list of attributes (tags) [description](https://github.com/nubank/ryze/blob/master/resources/br/compliance/tags.edn).
+**Important**: New attributes may keep adding to the PII data list and you can check all the attributes considered as PII at [Code base](https://github.com/nubank/ryze/blob/master/resources/br/compliance/actions.edn#L132). The list of attributes (tags) under Right-to-be-forgotten are considered as PII linked. Here is the list of attributes (tags) [description](https://github.com/nubank/ryze/blob/master/resources/br/compliance/tags.edn).
 
 **Example**:
 

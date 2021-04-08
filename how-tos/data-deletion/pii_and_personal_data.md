@@ -11,6 +11,7 @@ This document aims to provide relevant terms definitions for data privacy and pr
 
 * **Pii** - Personally identifiable information (PII) is any data that could potentially identify a specific individual. Any information that can be used to distinguish one person from another and can be used for de-anonymizing anonymous data can be considered PII
 * **Personal Data** - According to the law, personal data means any information relating to an identified or identifiable individual; an identifiable person is one who can be identified, directly or indirectly, in particular by reference to an identification number (e.g. social security number) or one or more factors specific to his physical, physiological, mental, economic, cultural or social identity (e.g. name and first name, date of birth, biometrics data, fingerprints, DNA…)
+* **Pii vs Personal Data** - PII is used in the US but no single legal document defines it. On the other hand, personal data has one legal meaning, which is defined by the General Data Protection regulation (GDPR) in Europe and other data protection laws as Lei geral de proteção de dados (LGPD) in Brasil. What kind of data is a personal data can may vary from country to country. In most cases we are going to use both PII and personal data as synonyms.
 * **Anonymization** - It is a type of information sanitization whose intent is privacy protection. It is the process of either encrypting or removing personally identifiable information from data sets, so that the people whom the data describe remain anonymous
 * **Pseudonymization** - Pseudonymisation enhances privacy by replacing most identifying fields within a data record by one or more artificial identifiers, or pseudonyms. There can be a single pseudonym for a collection of replaced fields or a pseudonym per replaced field. Pseudonymous data still allows for some form of re-identification (even indirect and remote), while anonymous data cannot be re-identified.
 
@@ -31,7 +32,7 @@ Now that we know the definition of Pii, here is a NON exhaustive list of Pii dat
 * Geolocation
 * Pictures from the customer onboarding
 
-Besides the Pii data, we also have the personal data, which would be any kind of information associated with an identified or identifiable person. Below we have a non exhaustive list of personal data (only if they are associated to an identified or identifiable person):
+The list above provides the PII data linked to a person, in other words it is the personal data that identifies the person directly. In addition to the above, we have some Pii that is linkable, or personal data that can identify a person indirectly. Some data may not be enough to identify a person, but combining it with another piece of information could identify, trace or locate a person. Below we have a non-exhaustive list of personal data that can identify a person indirectly when combined:
 
 * Credit card transactions, bill, installments etc.
 * Nuconta transactions, balance, transferences etc.
@@ -44,6 +45,15 @@ Besides the Pii data, we also have the personal data, which would be any kind of
 * Gender
 * Relatives info (such as Mother's name)
 * Device information
+
+There is also a category called "Sensitive personal data" that must be tried with more security. This is the data that can lead to discrimination of a person. Here is a non-exhaustive list of sensitive data:
+
+* Racial or ethnic origin;
+* Political opinions;
+* Religious or philosophical beliefs;
+* Trade union membership;
+* Genetic data; and
+* Biometric data (where processed to uniquely identify someone).
 
 There are still ongoing discussion between privacy authorities if the following should be considered as personal data:
 
@@ -108,6 +118,8 @@ object PJWaitingList extends DatasetSeriesContractOp {
 This will make the materialized table inaccessible to those without the clearance needed, and avoid possible Pii leakage. In Databricks, for instance, this dataset would be made unavailable if you are trying to access it without proper permissions:
 
 ![](../../images/databricks_pii_error.png)
+
+**CURRENTLY WE DO NOT HAVE A GRANULAR CONTROL OF WHICH PII DATA SOMEONE HAS ACCESS, FOR THIS REASON WE DO NOT DEFINE EMPLOYEE DATA AS PII IN ORDER TO AVOID PEOPLE NEED TO WORK WITH EMPLOYEES DATA HAVE ACCESS TO CUSTOMER DATA**
 
 ## I need more information
 
