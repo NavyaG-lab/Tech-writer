@@ -238,4 +238,4 @@ nav:
     - Debug Dataset issues: "datasets/basic-datasets/debug-datasets.md"
     - Core Datasets: "datasets/core-datasets/README.md" 
     - Contribution margin dataset: "squad/analytics-productivity/contribution_margin.md"
-    SparkOp best practices: "datasets/sparkop-bestpractices.md"
+    - SparkOp best practices: "datasets/sparkop-bestpractices.md"
