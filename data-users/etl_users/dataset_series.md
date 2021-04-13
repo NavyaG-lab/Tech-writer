@@ -345,7 +345,7 @@ At the time of writing, once this command was issued, the user was presented wit
 6. >>+ recommendation_transaction__merchant_name - string => added locally but absent on metadata store
 ```
 
-Let's breakdown this output for a better understading:
+Let's breakdown this output for a better understanding:
 
 **Line number 1**: `>> Schema >> dataset-customers-responsys-integration-rewards - BR (Append Dates: 2020-07-01 - 2020-08-19) matches local version of Itaipu contract schema`
 
