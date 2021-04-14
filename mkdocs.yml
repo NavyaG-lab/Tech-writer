@@ -179,6 +179,8 @@ nav:
       - Itaipu states: "services/data-processing/itaipu/itaipu_states.md"
       - Change continuous deployment pipeline: "how-tos/itaipu/change-continuous-deployment-pipeline.md"
     - Metapod: "how-tos/metapod.md"
+    - Ryze: 
+      - Classification of data on S3: "how-tos/ryze/classify-s3.md"
     - Data deletion:
       - Datomic data deletion: "how-tos/data-deletion/setup-datomic-pii-data-deletion.md"
       - PII and Personal data: "how-tos/data-deletion/pii_and_personal_data.md"
