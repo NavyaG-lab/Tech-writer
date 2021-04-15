@@ -914,12 +914,20 @@ not from Mesos exporter, which runs in a container.
 
 [More info here](https://github.com/nubank/definition/pull/13978)
 
-#### Check the impact
+#### How to debug
 
-Before any corrective action, we need to understand the impact. More
-concretely: how many nodes are showing this problem and for which job?
-It’s also important to try to understand if the problem appears to be
-transitory or not: do jobs started at a later time show the problem?
+  * Log into [Spot console](https://console.spotinst.com)
+  * Search for the corresponding Elastigroup: it has the same name as
+    the job
+  * Once you found it, select it and click on the “INSTANCES” tab
+  * Now you need to select an instance showing the problem. Most of
+    the times it is widespread enough that you can pick any instance
+    at random. If that’s _not_ the case, you then have to select all
+    of them so that you can find a faulty one.
+  * Execute `Detach` from the `Actions` menu.
+  * SSH into the instance(s) and check what’s going on: after you
+    login, systemd should greet you with the list of faulty units.
+    Start from there.
 
 #### Solution
 
@@ -933,11 +941,6 @@ the job or, even worse, the whole run you need:
 
 At this point, Spot’s Elastigroup logic will kick in and spin up new
 machines.
-
-You can also choose to do nothing. If it’s a single node among 100 and
-you’re ok in seeing the alert firing off for a while, the only thing
-happening a slighly slower execution for that job.
-
 
 ### Airflow is down
 
