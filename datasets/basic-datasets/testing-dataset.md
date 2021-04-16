@@ -182,14 +182,19 @@ Also, you can create a file on the `/usr/local/bin` directory with the name `sbt
 
 ## Step 7 - Adding your dataset (SparkOp) to Itaipu
 ***
-Thought we were done? Think again. Don't worry, though, we're almost there.
+
 Now that we created the Dataset and its tests, we need to add them to Itaipu. There are two possibilities on what you needed to do, depending on where you put your new class.
  - [If you created a new folder](#if-you-created-a-new-folder)
  - [If you used an existing folder](#if-you-used-an-existing-folder)
+ 
 
-### If you created a new folder
+### If you have created a new folder
 
-If you have created your new Scala class in a new folder, then you need to create a new file called `package.scala` in the same folder. It will be like this:
+If you have created your new Scala class in a new folder, then you need to create a new file called `package.scala` in the same folder.
+
+_*Note:*_ It is recommended to create a package.scala object for every folder / sub folder. Note that each sparkOp must be added in some package object, otherwise the SparkOp cannot be included in the ETL run.
+
+It will be like this:
 
 ```scala
 //If it is a subfolder of dataset, use this
@@ -219,9 +224,11 @@ package object folder_name {
     subfolder3.allOps(referenceDate)   
 }
 ```
-If you're a subfolder of a `dataset` subfolder, then you'll need to add folder_name.allOps to the allOps of the parent folder.
-If you're simply a subfolder of `dataset`, Then you will need to add folder_name.allOps to opsToRun in [itaipu/src/main/scala/etl/itaipu/Itaipu.scala](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/itaipu/Itaipu.scala). 
-Do try, in both cases, to simply add a new line and not change any of the existing ones. That means, if you have:
+If you've a subfolder of a `dataset` subfolder, then you'll need to add folder_name.allOps to the allOps of the parent folder.
+If you've a subfolder of `dataset`, Then you will need to add folder_name.allOps to opsToRun in [itaipu/src/main/scala/etl/itaipu/Itaipu.scala](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/itaipu/Itaipu.scala).
+
+In both cases, if you have:
+
 ```scala
 folder1.allOps ++
 folder2.allOps ++
@@ -244,7 +251,7 @@ your_folder.allOps)
 !! **Important**
 _*To try to avoid branch conflicts. Also, remember to format everything with scalafmt.*_
 
-### If you used an existing folder
+### If you have used an existing folder
 If you used an existing folder, all you have to do is go to the folder's `package.scala` file and add your subfolder.allOps to its allOps.
 
 Do try to simply add a new line and not change any of the existing ones, and keep it into alphabetical order. That means, if you have:
