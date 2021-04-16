@@ -11,7 +11,7 @@ owner: "#Analytics-productivity"
 
 For exploring data and creating an SQL query, it is recommended to use Google BigQuery. You can also use Databricks for this purpose, and the steps on how to use it are provided in the following sections.
 
-1. Go to [Google BigQuery](https://console.cloud.google.com/bigquery?project=nu-mx-data&p=nu-br-data&page=project). Note that to explore data and create a query, you must have view access to the projects `nu-br-data`, `nu-mx-data`, `nu-co-data`.
+1. Go to [Google BigQuery](https://console.cloud.google.com/bigquery?project=nu-mx-data&p=nu-br-data&page=project). Note that to explore data and create a query, you must have view access to the projects `nu-br-data`, `nu-mx-data`, `nu-co-data`, `nu-data-data`.
 1. Choose projects and select datasets or contracts with which you want to create your dataset.
 1. Create your query in the **Query editor** text area and run it. In Query search results, if you have the desired data in the dataset (table), then move to the next step - [Understanding the SparkOp class](#understanding-the-sparkop-class).
 
@@ -22,6 +22,8 @@ For exploring data and creating an SQL query, it is recommended to use Google Bi
 
 2. Enter a meaningful name for your Notebook. You can name your notebook based on the task you're performing. In this Tutorial, we will be checking the calls from Ouvidoria.
 3. Select the notebook's default language as `Scala` and cluster can be any one of the `general-purpose-*` (for intance, `general-purpose-1`).
+
+_*Note*_: If you are creating a dataset with PII data, you'll need to use your Single User (SU) cluster. To get access to the SU cluster, you can reach out to #data-help and request for access.
 
 When you click **create** a new notebook is created and is associated with the cluster selected during the notebook creation process.
 
@@ -169,6 +171,7 @@ If you want create a dataset where input for that is another dataset, you can th
 
 #### Create dataset using contract
 
+
 ```scala
 import ...
 import nu.data.br.dbcontracts.stevie.entities.Calls
@@ -199,7 +202,13 @@ object OuvidoriaCalls extends SparkOp with DeclaredSchema {
 
 1. Let's create a dataset that lists the calls made to the Nubank's Ouvidoria. For this we use  `Calls` `ContractOp`, located at `nu.data.br.dbcontracts.stevie.entities.Calls`.
 1. Give a meaningful name to your dataset and provide description as shown in the above excerpt. Name of the dataset - "ouvidoria-calls" and description - "Dataset to list all calls made to Nubank's Ouvidoria".
- 1. Then we need to define a function in Scala.
+1. Then we need to define a function in Scala.
+
+**Extending SparkOp with Declared Schema**
+
+The first thing you need to do is extend your SparkOp with the `DeclaredSchema`. Currently, all generated datasets are accessible via Databricks or can get paths by querying Metapod or using Sonar (which is a UI for Metapod)) or searching with datasets names as Databricks tables or via Compass tool.
+
+If your SparkOp has a `DeclaredSchema`, Itaipu uses this information to load it to our data warehouse and those datasets can easily be accessed via SQL queries in Google BigQuery as well.
 
 **`filterCalls` function**
 
@@ -298,8 +307,6 @@ MetapodAttribute("reason", LogicalType.EnumType(enums = Calls.attributes.find(_.
     }))
 ```
 Yeah, it isn't pretty, and we'll probably do something to wrap it neatly in a function in the future, but for now we got nothing.
-
-Also, let's put a description on those fields, so to let people know what they're all about.
 
 That finishes our definition.
 

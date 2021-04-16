@@ -8,38 +8,39 @@ owner: "#data-infra" "#Analytics-productivity"
 
 Imagine if someone updated a dataset with incorrect code, then this will mess your dataset and add more work for you to figureout the issue and a solution to fix it. Therefore writing tests for your dataset can help you to avoid the given situation. The tests ensure that your dataset won't actually be updated unless all the tests are passed.
 
-Here's what a test looks like. You can save this template IntelliJ under `Name: ETL - Scala Class Test` and `Extension: scala`
+Here's what a test looks like. You can save this template IntelliJ under `Name: ETL - Scala Class Test` and `Extension: scala`.
+
  ```scala
- package etl.dataset.${PACKAGE_NAME}
+  package etl.dataset.${PACKAGE_NAME}
 
-import etl.NuDataFrameSuiteBase
-import etl.TestHelpers.checkDataFrameAssertion
-import etl.implicits._
-import org.scalatest.{FlatSpec, Matchers}
+  import etl.NuDataFrameSuiteBase
+  import etl.TestHelpers.checkDataFrameAssertion
+  import etl.implicits._
+  import org.scalatest.{FlatSpec, Matchers}
 
-class ${NAME} extends FlatSpec with NuDataFrameSuiteBase with Matchers {
-  import spark.implicits._
+  class ${NAME} extends FlatSpec with NuDataFrameSuiteBase with Matchers {
+    import spark.implicits._
 
-  "methodName" should "do something" in {
-    val date   = nuSQLDate"2016-10-31"
-    val number = 1L
-    val amount = big"1337"
-    val someId = "some-id"
-    
-    val input = ""
+    "methodName" should "do something" in {
+      val date   = nuSQLDate"2016-10-31"
+      val number = 1L
+      val amount = big"1337"
+      val someId = "some-id"
+      
+      val input = ""
 
-    val result = className.methodName(input)
+      val result = className.methodName(input)
 
-    val expected = Seq(
-      (1, "foo"))
-      .toDF("num", "text")
+      val expected = Seq(
+        (1, "foo"))
+        .toDF("num", "text")
 
-    checkDataFrameAssertion(
-      assertDataFrameEquals,
-      expected,
-      result)
+      checkDataFrameAssertion(
+        assertDataFrameEquals,
+        expected,
+        result)
+    }
   }
-}
  ```
  The tests for your newly generated class are going to be *almost* at the same path as your class, except you're going to change the folder `main` to `test`. So if your class is in `src/main/scala/etl/nu/br/dataset/folder_name/` then your test class will be in `src/test/scala/etl/nu/br/dataset/folder_name/`. The test class should have the same name as the original class + Spec in the end. So `YourDataset` has the test `YourDatasetSpec`.
  
@@ -92,15 +93,15 @@ class ${NAME} extends FlatSpec with NuDataFrameSuiteBase with Matchers {
  We also have to transform it into a DataFrame and give the column names. Like this:
  
  ```scala
- val fakeCalls = Seq(
-      ("1", Some(nuSQLDate"2016-10-13"), Some("11111111111"), Some("call_reason__logistics")),
-      ("2", Some(nuSQLDate"2017-10-13"), Some("11111111111"), Some("call_reason__logistics")),
-      ("3", Some(nuSQLDate"2016-10-13"), Some("08008870463"), Some("call_reason__logistics")),
-      ("4", Some(nuSQLDate"2017-10-13"), Some("08008870463"), Some("call_reason__logistics")),
-      ("5", None,                        Some("08008870463"), Some("call_reason__logistics")),
-      ("6", Some(nuSQLDate"2017-10-13"), None,                Some("call_reason__logistics")),
-      ("7", Some(nuSQLDate"2017-10-13"), Some("08008870463"), None)
-    ).toDF("call__id", "call__started_at", "call__our_number", "call__reason")
+  val fakeCalls = Seq(
+        ("1", Some(nuSQLDate"2016-10-13"), Some("11111111111"), Some("call_reason__logistics")),
+        ("2", Some(nuSQLDate"2017-10-13"), Some("11111111111"), Some("call_reason__logistics")),
+        ("3", Some(nuSQLDate"2016-10-13"), Some("08008870463"), Some("call_reason__logistics")),
+        ("4", Some(nuSQLDate"2017-10-13"), Some("08008870463"), Some("call_reason__logistics")),
+        ("5", None,                        Some("08008870463"), Some("call_reason__logistics")),
+        ("6", Some(nuSQLDate"2017-10-13"), None,                Some("call_reason__logistics")),
+        ("7", Some(nuSQLDate"2017-10-13"), Some("08008870463"), None)
+      ).toDF("call__id", "call__started_at", "call__our_number", "call__reason")
  ```
  Now we pass this fake DataFrame to the `filterCalls` function.
  ```scala
