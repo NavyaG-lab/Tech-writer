@@ -57,8 +57,8 @@ The `classification.edn` will look like the following samples:
 - `:squad` - the squad who owns the bucket
 - `:metadata` - contains data related to the category, like services data in service buckets
 - `:countries` - countries that uses the bucket - **accounts that are worldwide does belongs to a specific country and all the countries that uses buckets are available here**
-- `:ccounts-alias` - the account alias where the bucket was created
-- `:validated` - define if someone has to validate all the information from the bucket
+- `:accounts-alias` - the account alias where the bucket was created
+- `:validated` - define if someone has validated all the information from the bucket
 - `:paths` - One bucket may store data with different use cases. To enhance the usage of a bucket, you are allowed to define the uses cases based on the path
   - `:path` - path inside the bucket
     - `:description` - description about the data is being stored
