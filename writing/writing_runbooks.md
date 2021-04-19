@@ -45,4 +45,4 @@ Quoting from the [runbook](../on-call/data-infra/on_call_runbook.md):
     check its effects.
 
 For a more complex example, please take a look at
-[alert-itaipu-contracts](../on-call/data-infra/on_call_runbook.md#alert-itaipu-contracts-triggered-on-airflow).
+[alert-itaipu-contracts](../on-call/data-infra/on_call_runbook.md#Alert itaipu-name-of-job triggered on Airflow).

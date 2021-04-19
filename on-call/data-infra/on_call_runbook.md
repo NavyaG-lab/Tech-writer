@@ -2,106 +2,9 @@
 owner: "#data-infra"
 ---
 
-<!-- markdownlint-disable-file-->
+# Data Infra On-call runbook
 
-# On-Call Runbook
-
-- [On-Call Runbook](#on-call-runbook)
-  - [Incident response](#incident-response)
-  - [Alarms](#alarms)
-    - [alert-itaipu-contracts triggered on Airflow](#alert-itaipu-contracts-triggered-on-airflow)
-      - [Check reason for the failure](#check-reason-for-the-failure)
-      - [Restart the task](#restart-the-task)
-      - [Checking errors directly in Airflow](#checking-errors-directly-in-airflow)
-    - [Alph - No file upload in the last hour](#alph---no-file-upload-in-the-last-hour)
-      - [Solution](#solution)
-    - [Alph - kafka lag above threshold](#alph---kafka-lag-above-threshold)
-      - [Solution](#solution-1)
-    - [compaction triggered on Airflow](#compaction-triggered-on-airflow)
-    - [Correnteza database-claimer is failing](#correnteza-database-claimer-is-failing)
-    - [Correnteza attempt-checker is failing](#correnteza-attempt-checker-is-failing)
-    - [Barragem - segment handling time above threshold](#barragem---segment-handling-time-above-threshold)
-      - [Solution](#solution-2)
-    - [Barragem - segment processing errors](#barragem---segment-processing-errors)
-      - [Overview](#overview)
-      - [Troubleshooting](#troubleshooting)
-      - [Solution](#solution-3)
-      - [Escalation](#escalation)
-    - [Barragem - not receiving requests from scheduler](#barragem---not-receiving-requests-from-scheduler)
-      - [Overview](#overview-1)
-      - [Troubleshooting](#troubleshooting-1)
-      - [Solution](#solution-4)
-      - [Escalation](#escalation-1)
-    - [tapir PARTITION-TO-SERVE deadletter_count_above_threshold](#tapir-partition-to-serve-deadletter_count_above_threshold)
-    - [Warning: [PROD] correnteza_last_t_greater_than_basis_t](#warning-prod-correnteza_last_t_greater_than_basis_t)
-      - [Context](#context)
-      - [Solution](#solution-5)
-      - [Delete all the extractions for the databases that the alarm is going off for](#delete-all-the-extractions-for-the-databases-that-the-alarm-is-going-off-for)
-      - [Cycle Correnteza in the corresponding prototype](#cycle-correnteza-in-the-corresponding-prototype)
-      - [Monitor re-extractions](#monitor-re-extractions)
-  - [Ouroboros - Number of newly created manual series resource groups higher than expected!](#ouroboros---number-of-newly-created-manual-series-resource-groups-higher-than-expected)
-  - [Itaipu/Aurora/Mesos/Spot: Job has not accepted any resources](#itaipuauroramesosspot-job-has-not-accepted-any-resources)
-    - [Alert Severity](#alert-severity)
-    - [Overview](#overview-2)
-    - [Verification](#verification)
-    - [Solution](#solution-6)
-  - [Itaipu OutOfMemory error](#itaipu-outofmemory-error)
-    - [Alert Severity](#alert-severity-1)
-    - [Overview](#overview-3)
-    - [Verification](#verification-1)
-    - [Troubleshooting](#troubleshooting-2)
-    - [Solution](#solution-7)
-    - [Escalation](#escalation-2)
-    - [Relevant links](#relevant-links)
-  - [No space left on device](#no-space-left-on-device)
-    - [Symptoms](#symptoms)
-    - [Solution](#solution-8)
-    - [Dagao is using an out-of-date version of itaipu's release branch](#dagao-is-using-an-out-of-date-version-of-itaipus-release-branch)
-      - [Context](#context-1)
-      - [Solution](#solution-9)
-  - [Escafandro - responses with empty data points above threshold](#escafandro---responses-with-empty-data-points-above-threshold)
-    - [Overview](#overview-4)
-      - [Alert Severity](#alert-severity-2)
-    - [Verification](#verification-2)
-    - [Troubleshooting](#troubleshooting-3)
-    - [Solution](#solution-10)
-    - [Escalation](#escalation-3)
-    - [Relevant links](#relevant-links-1)
-  - [Frequent dataset failures](#frequent-dataset-failures)
-    - [Leaf dataset is failing because of bad definition](#leaf-dataset-is-failing-because-of-bad-definition)
-      - [Symptoms](#symptoms-1)
-      - [Solution](#solution-11)
-      - [Notes](#notes)
-    - [Dataset partition not found on s3](#dataset-partition-not-found-on-s3)
-      - [Symptoms](#symptoms-2)
-      - [Solution](#solution-12)
-  - [Aurora "More than one prod-dagao running"](#aurora-more-than-one-prod-dagao-running)
-    - [Overview](#overview-5)
-      - [Alert Severity](#alert-severity-3)
-    - [Verification](#verification-3)
-    - [Solution](#solution-13)
-    - [Escalation](#escalation-4)
-  - [Issues related to services](#issues-related-to-services)
-    - [Queued Jobs in PENDING state - aurora web UI](#queued-jobs-in-pending-state---aurora-web-ui)
-      - [Symptom](#symptom)
-      - [Solution](#solution-14)
-    - [Non-responsive Aurora](#non-responsive-aurora)
-      - [Symptom](#symptom-1)
-      - [Solution](#solution-15)
-    - [Airflow: Dagão run failed](#airflow-dagão-run-failed)
-      - [Diagnosis](#diagnosis)
-      - [Solution](#solution-16)
-    - [Airflow tasks are queueing up](#airflow-tasks-are-queueing-up)
-    - [Airflow task scheduler delay is too high](#airflow-task-scheduler-delay-is-too-high)
-    - [Airflow: More than one instance running](#airflow-more-than-one-instance)
-    - [Decrease in row count on databases](#decrease-in-row-count-on-databases)
-    - [Host Alerts](#host-alerts)
-    - [OOM kill detected](#oom-kill-detected)
-    - [Mesos master is down](#mesos-master-is-down)
-    - [Mesos master leader election issues](#mesos-master-cannot-select-a-leader)
-    - [Other mesos alerts](#other-mesos-alerts)
-    - [Docker daemon is not starting](#docker-daemon-is-not-starting)
-    - [Airflow is down](#airflow-is-down)
+[TOC]
 
 This document is a resource for engineers *on-call*.
 
@@ -109,7 +12,7 @@ The general layout of the Alerts part is “alert, reason, action”. All the al
 
 The frequent dataset failures should enumerate the symptoms of the particular failure, along with the best known way to mitigate it. Links to Slack threads about the previous failures are appreciated for traceability.
 
-*Before contributing, please keep in mind [the following guidelines](/writing_runbooks.md).*
+*Before contributing, please keep in mind [the following guidelines](../../writing/writing_runbooks.md).*
 
 ## Incident response
 
@@ -129,60 +32,114 @@ After the incident has been taken care of and resolved, change the topic back to
 
 ## Alarms
 
-### alert-itaipu-contracts triggered on Airflow
+### Alert itaipu-name-of-job triggered on Airflow
 
-This means the first task in our daily DAG failed. This task is a dependency
-to all the rest of the DAG, so it's important that it runs smoothly and
-on time in order for us to meet our SLA.
+#### Overview
+
+This means that a job failed after all attempts were exhausted. Airflow retries 3 times, so in total the job was attempted 4 times before alerting the HM.
+Depending of the job that failed, it's impact could depend, for example:
+
+- A job in the early run that process contracts, typically identified with the prefix "itaipu-contracts", they are a dependency to all the rest of the DAG
+- A job at the end of the run that process serving datasets, typically identified with the prefix like "itaipu-serving", they have few dependencies and are situated at the end of the DAG
 
 _You need VPN access to follow the steps below._
 
-#### Check reason for the failure
+#### Verification
+
+##### Check reason for the failure in Aurora job logs
 
 Check what was the reason for the failure, by following these steps:
 
-1. Access [](https://cantareira-stable-aurora-scheduler.nubank.com.br:8080/scheduler/jobs/prod/itaipu-contracts?jobView=history)
+1. Access [Aurora jobs](https://cantareira-stable-aurora-scheduler.nubank.com.br:8080/scheduler/jobs/prod)
+1. Search for the name of the failed job e.g "itaipu-contracts-contracts-1"
 1. You'll see the past instances of that task. Check if the first entry has failed around the time you got the alarm. If this entry indicates the task finished too long ago (15-23 hours ago), that was the previous run. That means the task was failed to be created in Aurora. In this case, refer to the section further below [Checking errors directly in Airflow](#checking-errors-directly-in-airflow).
 1. To see the logs, click on the link that is an IP address that starts like `10.` ![image](https://user-images.githubusercontent.com/1674699/37596958-2dd3da18-2b7e-11e8-8b12-9ea541753656.png)
 1. Click the `stderr` link in the right end of the screen that will appear. `stdout` might also have useful info.
 1. Check the logs for any errors you can read, in some cases there could be an error message or an exception type that makes it clear what is the specific cause for the failure.
 1. Check the `#crash` channel in Slack for possible ongoing outages that might cause the DAG run to fail.
-1. If you are not sure what is the cause for the failure, or you are not sure what to do about it, jump to the next step which is to restart the task.
 
 > If there is no content in that page or if you get a connection error, that means the task host machine is down and we can't get to the logs that way. In this case, we need to resort to Splunk. Use [this search](https://nubank.splunkcloud.com/en-US/app/search/etl_job_logs?form.the_time.earliest=-60m%40m&form.the_time.latest=now&form.search=*&form.job=aurora%2Fprod%2Fjobs%2Fitaipu-contracts)
 
-#### Restart the task
-
-1. Access https://airflow.nubank.com.br/admin/airflow/graph?dag_id=prod-dagao
-1. You'll see the state of the entire DAG in this page. The status of each node in the graph is represented by its stroke color. There is a reference on the upper right corner. In this specific scenario, the first node named `itaipu-contracts` should have a red stroke color.
-1. Click on the `itaipu-contracts` node, and you will see a pop-up appear with some buttons. Click the "Clear" button (dark green), while making sure the "Downstream" and "Recursive" options are pressed (which means enabled) beside it.
-_What you just did is "clearing" the state of the node. This will effectively make Airflow try to figure out the next steps to try to get the state to a "succeeded" state, which is first transitioning into a "running" state by executing the task_
-1. After a few seconds, the node stroke color should be back to light green. If not, refresh the graph view after a few seconds via the refresh button in the upper-right corner.
-
-After executing these steps, there is a possibility that the task fails once more. In this case, escalate to the next layer of on-call and coordinate with another engineer to figure out next steps.
-
-
-#### Checking errors directly in Airflow
+##### Checking errors directly in Airflow
 
 It is possible that a failure happens before the task is created in Aurora, and the usual case is lack of credentials to access the aurora API. To verify that:
 
 1. Access https://airflow.nubank.com.br/admin/airflow/graph?dag_id=prod-dagao
-1. Click on the `itaipu-contracts` node in the graph, and you will see a pop-up appear. Click "Zoom into Sub DAG".
-1. In the graph that will appear, click the `itaipu-contracts` node. Then, click "View Log".
+1. Click on the failed node e.g `itaipu-contracts` in the graph, and you will see a pop-up appear. Click "Zoom into Sub DAG".
+1. In the graph that will appear, click the the failed node e.g `itaipu-contracts` node. Then, click "View Log".
 1. You'll be seeing the log of the last attempt to start that task. If there was a failure, you'll see a stack trace, and right before that, a line that starts with:
 
 `
 {base_task_runner.py:98} INFO - Subtask: [2018-03-22 00:32:36,584] {create.py:52} ERROR - job failed with status FAILED and message [...]
 `
 
-- What is logged after "status FAILED and message <message>" is the reason why the task failed. If it reads simply `Task failed`, that means the task was started in Aurora, but the actual failure should be inspected via the Aurora logs. For that, jump back to the [Check reason for the failure](#check-reason-for-the-failure) step for this alarm.
-- In other cases, you might see a message such as: `Subtask: 401 Client Error: Unauthorized for url`. This means there was an error fetching credentials to talk to the Aurora API. Restarting the task should be enough. To achieve that, follow the steps in the [Restart the task](#restart-the-task) section above.
+- What is logged after "status FAILED and message <message>" is the reason why the task failed. If it reads simply `Task failed`, that means the task was started in Aurora, but the actual failure should be inspected via the Aurora logs. For that, jump back to the [Check reason for the failure](#check-reason-for-the-failure-in-aurora-job-logs) step for this alarm.
+- In other cases, you might see a message such as: `Subtask: 401 Client Error: Unauthorized for url`. This means there was an error fetching credentials to talk to the Aurora API. Restarting the task should be enough. To achieve that, follow the steps in the [Restart the task](#restart-the-task).
+
+#### Solution
+
+##### Leaf dataset is failing because of bad definition
+
+In case logs point out to failures processing specific datasets.
+
+  1. Check if recent changes were made to datasets with failures.
+  1. Revert the most recent commits modifying the failing datasets along with any other commits that depend on
+    those recent changes.
+  1. [Commit an empty dataset](ops_how_to.md#manually-commit-a-dataset-to-metapod) in place of the failing
+    datasets in order to ignore this dataset for the rest of the ETL run.
+  1. Announce in [#data-tribe](https://nubank.slack.com/archives/C1SNEPL5P) about the reverted changes.
+  1. [Restart the job](#restart-the-task)
+  
+ **Notes**
+
+* You should be aware that reverting changes spanning more than one dataset might cause problems if some of
+    the datasets have already been committed but are then consumed by the reverted-to earlier versions of the
+    other datasets.
+  * This solution doesn't apply to non-leaf datasets since then the situation is more complicated and it would
+    require different actions based on the kinds of datasets involved.
+
+##### Dataset partition not found on s3
+
+In case logs point out to `java.io.FileNotFoundException: No such file or directory`. An exception thrown on a Spark executor for a file on S3.
+The partition file in question is accounted for in the mentioned bucket via the AWS console web UI (because the AWS CLI is usually unable to find it either), and it has no permissions listed then it's most likely this issue.
+
+Some instances of this happening include:
+
+- https://nubank.slack.com/archives/CE98NE603/p1566893108104300
+  - https://nubank.slack.com/archives/CE98NE603/p1566115955069000?thread_ts=1566105267.068700&cid=CE98NE603
+  - https://nubank.slack.com/archives/CE98NE603/p1573363471193700
+
+
+  1. [Retracting](ops_how_to.md#retracting-datasets-in-bulk) the inputs for the failing datasets in order to recompute the inputs and re-store them on s3 usually fixes it.
+
+
+##### Job failed due to timeouts communicating with Metapod
+
+In case the log points out to the error `Resiliently getOrCreate transaction failed after 3 tries with error`:
+
+  1. This transient failure could be recover by restarting the task.
+
+  1. If the failure persist, investigate health of Metapod:
+
+- [Metapod GraphQL metrics, particularly the query response time of `GetTransactionsWithDatasets`](https://prod-grafana.nubank.com.br/d/000000260/graphql-monitoring?orgId=1&from=now-1h&to=now&var-PROMETHEUS=prod-thanos&var-prototype=global&var-service=metapod&var-resolver=All&var-stack=blue&var-percentile=0.95&var-interval=$__auto_interval_interval)
+  - [JVM metrics](https://prod-grafana.nubank.com.br/d/000000276/jvm-by-service?orgId=1&from=now-1h&to=now&var-ENVIRONMENT=prod&var-PROMETHEUS=prod-thanos&var-SERVICE=metapod&var-PROTOTYPE=global&var-STACK_ID=All&var-POD=All)
+
+##### Restart the task
+
+1. Access https://airflow.nubank.com.br/admin/airflow/graph?dag_id=prod-dagao
+1. You'll see the state of the entire DAG in this page. The status of each node in the graph is represented by its stroke color. There is a reference on the upper right corner. Search for the node name that failed, e.g `itaipu-contracts`, it should have a red stroke color.
+1. Click on the failed node, and you will see a pop-up appear with some buttons. Click the "Clear" button (dark green), while making sure the "Downstream" and "Recursive" options are pressed (which means enabled) beside it.
+_What you just did is "clearing" the state of the node. This will effectively make Airflow try to figure out the next steps to try to get the state to a "succeeded" state, which is first transitioning into a "running" state by executing the task_
+1. After a few seconds, the node stroke color should be back to light green. If not, refresh the graph view after a few seconds via the refresh button in the upper-right corner.
+
+After executing these steps, there is a possibility that the task fails once more. In this case, escalate to the next layer of on-call and coordinate with another engineer to figure out next steps.
 
 ### Alph - No file upload in the last hour
 
 This alert means that [Alph](https://github.com/nubank/alph) is not properly consuming, batching and uploading incoming messages.
 
 #### Solution
+
 - First, check on Grafana if that's really the case [Grafana Dashboard](https://prod-grafana.nubank.com.br/d/000000301/dataset-series-ingestion)
 - If that's the case and files upload is actually 0 in the last couple hours you should cycle alph, `nu k8s cycle global alph`
 - After a while check if it gets back to normal.
@@ -331,20 +288,21 @@ Please consider informing Foundation (#foundation-tribe) in case of any issue on
  The alert happens if an Exception is thrown while consuming a Kafka message.
  Usually the deadletters in this Topic is related to transient communication errors with S3 or DynamoDB. We need to verify if that's the case before acting on it.
 
-### Alert Severity
+#### Alert Severity
 
 Usually not urgent, but it should be dealt in the same day.
 
-### Verification
+#### Verification
 
 You can click on "See on Prometheus" to check if the metric is still above threshold.
 
-### Troubleshooting
+#### Troubleshooting
 
 Check if the error is transient and related to S3 or DynamoDB connection issues.
 Check "Related Links" on how to see deadletters.
 
 An example of an error caused by DynamoDB communication:
+
 ```
   {:type java.net.SocketTimeoutException
    :message Read timed out
@@ -391,7 +349,7 @@ with the service owners that the database was re-created**.
 
 The solution involves 3 steps:
 
-#### Delete all the extractions for the databases that the alarm is going off for
+##### Delete all the extractions for the databases that the alarm is going off for
 
 There is an admin endpoint in Correnteza exactly for this purpose, but it's protected with
 the scope `correnteza-extraction-delete`.
@@ -406,7 +364,7 @@ The command runs asynchronously, so the expected response is `HTTP 202 Accepted`
 the extractions were actually deleted, query the [Correnteza docstore](https://sa-east-1.console.aws.amazon.com/dynamodb/home?region=sa-east-1#tables:selected=prod-correnteza-docstore;tab=items) in the AWS console. To check the items corresponding to the command above, the filter would
 be `db-prototype = skyler-s0`.
 
-#### Cycle Correnteza in the corresponding prototype
+##### Cycle Correnteza in the corresponding prototype
 
 After the extractions are deleted, the next step is to cycle the instances of Correnteza that
 are connected to that DB prototype. This is necessary to refresh the `last-t` kept by
@@ -426,7 +384,8 @@ To check the progress of the service cycling, run this command:
 # parameterised with service name (correnteza) and prototype (s0)
 watch --differences --interval 10 nu k8s ctl s0 -- get po -l nubank.com.br/name=correnteza
 ```
-#### Monitor re-extractions
+
+##### Monitor re-extractions
 
 After the service has cycled, wait for a few minutes. Correnteza's startup is noticeably
 slow because it has to discover and connect to many Datomic databases.
@@ -440,52 +399,53 @@ important bits for this purpose are highlighted in the screenshot.
 
 [correnteza-extractor-dashboard]: https://prod-grafana.nubank.com.br/d/A8ULVDTmz/correnteza-datomic-extractor-service?orgId=1&var-stack_id=All&var-host=All&var-database=skyler&var-prototype=s0&var-prometheus=prod-thanos
 
-## Ouroboros - Number of newly created manual series resource groups higher than expected!
+### Ouroboros - Number of newly created manual series resource groups higher than expected
 
 Please consult the [MDSS alerts playbook](https://github.com/nubank/data-platform-docs/blob/master/on-call/data-infra/mdss_alerts_playbook.md).
 
-## Itaipu/Aurora/Mesos/Spot: Job has not accepted any resources
+### Itaipu/Aurora/Mesos/Spot: Job has not accepted any resources
 
-### Alert Severity
+#### Alert Severity
 
 Critical
 
-### Overview
+#### Overview
 
 This error indicates that the cluster has insufficient resources to run the current job; This is usually related to a scale up issue, i.e., Spot not being able to spin on-demand instances in a certain availability zone.
 
-### Verification
+#### Verification
 
 In order to verify this, you should
+
 1) Open the Aurora logs, and you will probably see several messages like this one `job has not accepted any resources; check your cluster UI to ensure that workers are registered and have sufficient resources`. This means that there are no nodes available to run the current job on.
 2) Open the Spot UI and look at the logs from the faulty job (Okta -> Spotinst -> Elasticgroup -> Groups -> filter by job name, for example `itaipu-brando` -> Log -> select the time period), and you might see something like `08/26/2020, 18:44:02, ERROR, Can't Spin On-Demand Instance: Code: InsufficientInstanceCapacity, Message: We currently do not have sufficient r5.4xlarge capacity in the Availability Zone you requested (us-east-1c). Our system will be working on provisioning additional capacity. You can currently get r5.4xlarge capacity by not specifying an Availability Zone in your request or choosing us-east-1a, us-east-1b, us-east-1d, us-east-1f.` This indicates that `Spot` is not working as expected and failing to create on demand instances.
 
-### Solution
+#### Solution
 
 Since a random AZ is selected every time we run a scale-up job, re-triggering the entire Airflow SubDag from scratch will hopefully fix it.
 
-## Itaipu OutOfMemory error
+### Itaipu OutOfMemory error
 
-### Alert Severity
+#### Alert Severity
 
 Soft alert.
 
-### Overview
+#### Overview
 
 While computing a dataset, an Itaipu node fails with `java.lang.OutOfMemoryError`. This error is usually thrown during a Spark stage when there are insufficient resources to process said dataset. It is a Soft Alert because **usually**, these datasets get eventually computed and succeed, as they end up running on a different node.
 
-### Verification
+#### Verification
 
 The OOM check runs every hour, and we get alerted only once - within a 45 minute window - per job name. The issue is still ongoing if we get subsequent alerts for the same job name, 45m after the first one.
 If OOM happens in two jobs within the 45m window, two alerts - one per each job - are sent.
 
-### Troubleshooting
+#### Troubleshooting
 
 First things first, we are going to need to understand which dataset has failed, and you can do this by parsing the Itaipu logs (*stderr* from the Aurora page). This is not very straightforward, because multiple threads log to that file, and for that reason, it might not be easy to identity which dataset is the culprit, but you should at least be able to narrow it down to a few candidates.
 
 And now, it is time to understand if said dataset was already committed (potentially in different node), by running, for example, `nu-br etl info <dataset-name>`, e.g., `nu-br etl info nu-br/dataset/customer-eavt-pivotted`; if yes, you should still warn the users (see the Escalation section), informing them that the dataset failed, and that its stability might not be the best.
 
-### Solution
+#### Solution
 Even though sometimes no action needs to be taken (as the dataset often succeeds in a different node), **you should consider committing the faulty dataset empty if it keeps failing, and a critical part of the run is getting blocked by it.**
 Something else worth trying is to isolate the faulty dataset in a different node, i.e., `itaipu-other-flaky-datasets`, and see if its behaviour changes during the next run.
 
@@ -493,23 +453,23 @@ Most of the time, our users are the ones coming up with the long term solutions 
 
 We do have one known event that can cause these issues, and that we can try to solve on our side: a combination of a Spark listener event queue being too big (we control their size) for a given job, and an issue with a Dataset - user behaviour, this can cause the node to OOM and we can try to fix it by reducing the size of the queue. We do this by changing a variable called `spark_listener_bus_capacity` inside `dagao.py`. You can set a smaller value in the order of tens of thousands. The default set by Spark is 10k. You must hot deploy `dagao` if you want these changes to take effect right away.
 
-### Escalation
+#### Escalation
 If the problem is found to originate from user behaviour, we should leave a message in #data-tribe, informing our users that a specific dataset(s) is having OOM issues. We should inform them that the dataset succeeded on a different node, but that we are concerned about its long term stability. Please follow our [communication templates](https://docs.google.com/document/d/1L5MwBH2OZ0uvr5sTHG-LrLQTFRtx44Az8HyeN46rnc8/edit). They should investigate.
 
-### Relevant links
+#### Relevant links
 
 * https://spark.apache.org/docs/latest/configuration.html, `spark.scheduler.listenerbus.eventqueue.capacity` field.
 
-## No space left on device
+### No space left on device
 
-### Symptoms
+#### Symptoms
 
 No real symptoms. This alert directly points to the real cause: one or
 more EC2 instances running Spark Executors are out of disk space.
 
-### Solution
+#### Solution
 
-  * Consider decreasing the workload. For example if the job is a periodic
+* Consider decreasing the workload. For example if the job is a periodic
     maintenance job like `pollux-auto` consider [decreasing the number of databases](https://github.com/nubank/castor/blob/master/resources/castor_config.json.base)
     it updates the cache for at a time, as long it can still maintain the service
     SLO.
@@ -533,8 +493,8 @@ Dagao](/itaipu/workflow.md#how-itaipu-is-deployed-to-the-dagao).
 
 #### Solution
 
-  * Set release back to the correct version
-      * If we know there were no hotdeploys that day, we can get the
+* Set release back to the correct version
+      *If we know there were no hotdeploys that day, we can get the
         correct release from
         [`#etl-updates`](https://nubank.slack.com/archives/CCYJHJHR9/p1597104023128200),
         otherwise the user should go check out the commit history to
@@ -545,7 +505,7 @@ Dagao](/itaipu/workflow.md#how-itaipu-is-deployed-to-the-dagao).
     in `dagao`, i.e. [the `>|>` arrow after the `create-release`
     step](https://go.nubank.com.br/go/tab/pipeline/history/dagao).
   * Restart the failing jobs
-      * Kill the job with `nu-<country> datainfra sabesp -- --aurora-stack <stack-name> jobs kill jobs prod <job-name>`
+    * Kill the job with `nu-<country> datainfra sabesp -- --aurora-stack <stack-name> jobs kill jobs prod <job-name>`
       * [Clear the nodes in Airflow](/airflow.md#triggering-a-DAG-vs-clearing-a-DAG-and-its-tasks)
 
   * Change the storage class for the instances assigned to that job in
@@ -557,11 +517,11 @@ Dagao](/itaipu/workflow.md#how-itaipu-is-deployed-to-the-dagao).
     to trace back to the context leading to that PR.
   * If the job is critical, run it manually with this override.
 
-## Escafandro - responses with empty data points above threshold
+### Escafandro - responses with empty data points above threshold
 
 Escafandro - responses with empty data points above threshold
 
-### Overview
+#### Overview
 
 The purpose of this alert is to hint On-Call Engineers that there are more responses with empty datapoints than expected. This means that Itaipu is not being provided with enough data to perform `(Strictly)IncreasingRowCountCheck` checks, an anomaly check that helps our users to make sure the output of our ETL is behaving in a sane manner.
 
@@ -569,11 +529,11 @@ The purpose of this alert is to hint On-Call Engineers that there are more respo
 
 Soft alert.
 
-### Verification
+#### Verification
 
 To verify whether there is an on-going situation, access [Escafandro Monitoring](https://prod-grafana.nubank.com.br/d/b3gOJwFMz/escafandro-monitoring?orgId=1)  Grafana dashboard, more especifically checking the [Range Endpoint - Empty Responses](https://prod-grafana.nubank.com.br/d/b3gOJwFMz/escafandro-monitoring?orgId=1&viewPanel=2) chart. This dashboard gives you an overview of empty responses that Escafandro usually sends back to Itaipu. One reasonable explanation for empty responses to be provided is when a new dataset is added to the ETL. Once this happens, Escafandro will not have any datapoints for the very first run of the recently-added dataset.
 
-### Troubleshooting
+#### Troubleshooting
 
 Before jumping into problem solving mode, it's important to understand whether there actually is something to be fixed in the current situation.
 
@@ -583,6 +543,7 @@ One way to check whether this is the case, you can collect the name of some data
 To kick-start troubleshooting this, your first stop is again accessing [Escafandro Monitoring](https://prod-grafana.nubank.com.br/d/b3gOJwFMz/escafandro-monitoring?orgId=1) Grafana dashboard. Compare the [Persist Endpoint - Metric created](https://prod-grafana.nubank.com.br/d/b3gOJwFMz/escafandro-monitoring?orgId=1&viewPanel=4) pane with the [Range Endpoint - Empty Responses](https://prod-grafana.nubank.com.br/d/b3gOJwFMz/escafandro-monitoring?orgId=1&viewPanel=2). There should be an inversely proportional relationship between the number of metrics created vs the number empty datapoint responses. Meaning, the less metrics being created on a given day the higher is the likelyhood of the number of empty datapoints response on the upcoming day. E.g., On 1st October if `nu-br/important-dataset` does not create metrics, the execution of `nu-br/important-dataset` on 2nd October will return empty datapoints.
 
 So, look for possibly big gaps in the metrics creation over the past days. If that's the case, you might have to start digging into why did this happen by checking the following Grafana dashboards:
+
 - [Datomic Transactor Metrics](https://prod-grafana.nubank.com.br/d/XbZytFTWk/datomic-transactor-metrics?orgId=1&var-PROMETHEUS=prod-thanos&var-PROTOTYPE=All&var-TRANSACTOR=escafandro-1-datomic)
 - [Kubernetes CPU and Memory pod metrics](https://prod-grafana.nubank.com.br/d/000000268/kubernetes-cpu-and-memory-pod-metrics?orgId=1&refresh=1m&var-PROMETHEUS=prod-thanos&var-namespace=default&var-container=nu-escafandro&var-PROTOTYPE=All&var-stack_id=All)
 - [JVM by Service](https://prod-grafana.nubank.com.br/d/000000276/jvm-by-service?orgId=1&var-ENVIRONMENT=prod&var-PROMETHEUS=prod-thanos&var-SERVICE=escafandro&var-PROTOTYPE=global&var-STACK_ID=All&var-POD=All)
@@ -590,7 +551,7 @@ So, look for possibly big gaps in the metrics creation over the past days. If th
 
 It's also possible to use Splunk to assert [Escafandro](https://github.com/nubank/escafandro/)'s behavior from the perspective of the consumer of the API, in this case [Itaipu/Mergulho](https://github.com/nubank/itaipu/). [This link](https://nubank.splunkcloud.com/en-US/app/search/search?q=search%20index%3Dcantareira%20step%3DCheckAnomaliesUsingMetricValues&display.page.search.mode=verbose&dispatch.sample_ratio=1&earliest=-24h%40h&latest=now&sid=1602083082.13899927_441E883E-2B06-437D-97A4-B78C146189E2) should take you to Splunk with the following initial search query `index=cantareira step=CheckAnomaliesUsingMetricValues`. From there, one can refine the search to validate potential hypothesis. E.g. Is the anomaly check being correctly performed over the critical dataset `xyz`? If not, it's worth escalate to the owners of the datasets. (see: [Escalation](#escalation-2) section)
 
-### Solution
+#### Solution
 As mentioned above, there might be cases where too many new datasets might have been added on the same day, and therefore there is nothing to worry about.
 
 In case this alert is firing too ofen throughout the days, It could mean that the threshold set for this alert is too low and we should consider increasing it.
@@ -598,7 +559,7 @@ The current state of this alert can be found [here](https://github.com/nubank/de
 
 If it has not been possible to draw any conclusion about the actual problem by checking the above mentioned elemets for troubleshooting, you might have to look for recent changes over either [Escafandro](https://github.com/nubank/escafandro/) or [Itaipu/Mergulho](https://github.com/nubank/itaipu/).
 
-### Escalation
+#### Escalation
 
 Whenever you find yourself in doubt, escalating to the L2 Engineer should be your first step.
 
@@ -606,58 +567,18 @@ As mentioned in the [Troubleshooting](#troubleshooting-2) section above, in case
 
 **Important**: Ensure that you inform our users via #data-announcements slack channel about the ongoing issue.
 
-### Relevant links
+#### Relevant links
 
 Escafandro's relevant links are:
+
 - [README](https://github.com/nubank/escafandro/)
 - [Datomic Transactor Metrics](https://prod-grafana.nubank.com.br/d/XbZytFTWk/datomic-transactor-metrics?orgId=1&var-PROMETHEUS=prod-thanos&var-PROTOTYPE=All&var-TRANSACTOR=escafandro-1-datomic)
 - [Kubernetes CPU and Memory pod metrics](https://prod-grafana.nubank.com.br/d/000000268/kubernetes-cpu-and-memory-pod-metrics?orgId=1&refresh=1m&var-PROMETHEUS=prod-thanos&var-namespace=default&var-container=nu-escafandro&var-PROTOTYPE=All&var-stack_id=All)
 - [JVM by Service](https://prod-grafana.nubank.com.br/d/000000276/jvm-by-service?orgId=1&var-ENVIRONMENT=prod&var-PROMETHEUS=prod-thanos&var-SERVICE=escafandro&var-PROTOTYPE=global&var-STACK_ID=All&var-POD=All)
 
-## Frequent dataset failures
-### Leaf dataset is failing because of bad definition
+### Aurora "More than one prod-dagao running"
 
-#### Symptoms
-
-  * Any of the steps during running the dataset is failing
-  * It's not an environment issue, but purely specific to how the dataset is defined
-  * The dataset has been recently modified/introduced
-
-
-#### Solution
-  * Revert the most recent commits modifying the failing datasets along with any other commits that depend on
-    those recent changes.
-  * [Commit an empty dataset](ops_how_to.md#manually-commit-a-dataset-to-metapod) in place of the failing
-    datasets in order to ignore this dataset for the rest of the ETL run.
-  * Announce in [#guild-data-eng](https://nubank.slack.com/archives/C1SNEPL5P) about the reverted changes.
-
-#### Notes
-
-  * You should be aware that reverting changes spanning more than one dataset might cause problems if some of
-    the datasets have already been committed but are then consumed by the reverted-to earlier versions of the
-    other datasets.
-  * This solution doesn't apply to non-leaf datasets since then the situation is more complicated and it would
-    require different actions based on the kinds of datasets involved.
-
-### Dataset partition not found on s3
-
-#### Symptoms
-
-  * A thrown `java.io.FileNotFoundException: No such file or directory` on a Spark executor for a file on S3.
-  * The partition file in question is accounted for in the mentioned bucket via the AWS console web UI (because the AWS CLI is usually unable to find it either), and it has no permissions listed then it's most likely this issue.
-
-Some instances of this happening include:
-  - [1] https://nubank.slack.com/archives/CE98NE603/p1566893108104300
-  - [2] https://nubank.slack.com/archives/CE98NE603/p1566115955069000?thread_ts=1566105267.068700&cid=CE98NE603
-  - [3] https://nubank.slack.com/archives/CE98NE603/p1573363471193700
-
-#### Solution
-
-[Retracting](ops_how_to.md#retracting-datasets-in-bulk) the inputs for the failing datasets in order to recompute the inputs and re-store them on s3 usually fixes it.
-
-## Aurora "More than one prod-dagao running"
-
-### Overview
+#### Overview
 
 The purpose of this alert is to hint On-Call Engineers that there is more than one dagao running at the same time, and there is currently a hard cap of 2 running DAGs in Data-Infra's Airflow. Whenever it in this state, we are at risk of not properly scheduling the next day's DAG. If we have a DAG running over into the next day it usually means something is wrong with some jobs and it needs to be addressed.
 
@@ -667,7 +588,7 @@ Let’s say the ETL runs late on day D1, and continues running throughout D2 (ma
 
 Soft alert.
 
-### Verification
+#### Verification
 
 To verify whether there is an on-going situation, [open the Airflow](https://airflow.nubank.com.br/admin/) running `Dagao`. Notice that the DAG `prod-dagao` will be marked with red. Indicating that there are already two DAGs running at the same time.
 
@@ -675,9 +596,10 @@ To verify whether there is an on-going situation, [open the Airflow](https://air
 
 By clicking at [prod-dagao](https://airflow.nubank.com.br/admin/airflow/graph?dag_id=prod-dagao) link listed in the list of DAGs, you should be able to see the current day running DAG.
 
-### Solution
+#### Solution
 
 To prevent Aurora job failing due to name clashes, or even Airflow failing to schedule the following day's DAG, the usual actions required in this case are:
+
 - Inspect the previous day’s DAG to figure out what’s still running
 ![image](../../images/airflow_previous_day_dag_run.png)
 - Identify the remaining running nodes
@@ -690,49 +612,10 @@ It may happen that Aurora fails to automatically finish some of the scheduled or
 
 Alternatively, one can also perform the same through Spotinst UI by accessing the service through your Okta account.
 
-### Escalation
+#### Escalation
 
 Whenever you find yourself in doubt, escalating to the L1 or L2 Engineer should be your first step.
 
-## Issues related to services
-
-
-### Queued Jobs in PENDING state - [aurora web UI](https://cantareira-stable-aurora-scheduler.nubank.com.br:8080)
-
-#### Symptom
-
-[aurora web UI](https://cantareira-stable-aurora-scheduler.nubank.com.br:8080) leaving tasks in PENDING state for more than 20 minutes. Currently, we don't have a mechanism to detect the Aurora Jobs in PENDING state for long time and indicate the hausmeister about it.
-
-#### Solution
-
-1. SSH into aurora-scheduler, via `nu ser ssh aurora-scheduler --suffix stable --env cantareira --region us-east-1` and look at the aurora logs via `journalctl -u aurora-scheduler` to find out why the jobs are not being scheduled. Often these will be in the form of exceptions.
-2. If the logs seem normal, kill one of the pending jobs via sabesp. Run the following to kill each job:
-
-    `nu datainfra sabesp -- --aurora-stack cantareira-stable jobs kill jobs prod <job-name>`
-3. Do a sanity check to ensure that no job is scheduled.
-4. If the issued is not fixed using the above steps, [Restart Mesos](ops_how_to.md#restart-aurora)
-4. If the issue still persists, [restart Aurora](ops_how_to.md#restart-aurora). It takes ~5 mins to resume the jobs.
-5. If the jobs are not resumed, then [restart Airflow](/airflow.md#restarting-the-airflow-process).
-
-**Important** The result of restarting aurora is an orphaned mesos framework. You must delete orphan mesos frameworks as indicated in the [Operations Cookbook](ops_how_to.md#restart-aurora) doc.
-
-### Non-responsive Aurora
-
-Every once in a while, Aurora goes down. `sabesp` commands, such as ones involved in running the DAG, won't work in this case.
-
-#### Symptom
-
-- The [aurora web UI](https://cantareira-stable-aurora-scheduler.nubank.com.br:8080) does not load, but the [mesos web UI](https://cantareira-stable-mesos-master-bypass.nubank.com.br) does.
-
-#### Solution
-
-1. SSH into `aurora-scheduler`, via `nu ser ssh aurora-scheduler --suffix stable --env cantareira --region us-east-1` and look at the aurora logs via `journalctl -u aurora-scheduler` to find out why the jobs are not being scheduled. Often these will be in the form of exceptions.
-2. If the logs seem normal, kill one of the pending jobs via sabesp. Run the following to kill each job:
-
-`nu datainfra sabesp -- --aurora-stack cantareira-stable jobs kill jobs prod <job-name>`
-
-3. [Restart Mesos](ops_how_to.md#restart-aurora).
-4. If the issue still persists, [restart Aurora](ops_how_to.md#restart-aurora).
 
 ### Airflow: Dagão run failed
 
@@ -803,17 +686,18 @@ CloudFormation stack and forgot to delete the old one.
 
 [Delete the old stack](/tools/airflow.md#updating-airflow).
 
- ### Decrease in row count on databases
+### Decrease in row count on databases
 
- #### Context
+#### Context
 
  Sometimes, you will be notified or alarmed about the decrease in row count on production databases, whereas the current run seems to be normal. Some possible reasons for this is,
- - duplicate rows in the previous day run or
- - data is deleted from some databases.
+
+- duplicate rows in the previous day run or
+- data is deleted from some databases.
 
 Currently, the anomaly detection system checks only for the significant increase in row count and cannot count the duplicate rows / keep track of deleted rows on DB. Even if the current day run is processing well and shows the correct row count, an alarm raises as there is a decrease in row count from previous day to current day.
 
- #### Reason for duplicate rows
+#### Reason for duplicate rows
 
 In case the cache creation time in Pollux happens simultaneously at the same time of contracts computation (commit-time of the last contract computed in the run) in Itaipu, there is a time overlap during the run, which led to creating duplicate rows.
 
@@ -859,7 +743,7 @@ In case the cache creation time in Pollux happens simultaneously at the same tim
 
 If the alarm is raised because of the data deleted from the DBs (as per data deletion requests), consider it as a false alarm.
 
-#### Solution, a Work around:
+#### Solution, a Work around
 
 To avoid the problem that arises due to time overlap, Pollux's cache creation time is changed to 1 pm UTC, whereas the computation of all the contracts is done by 12 pm UTC usually.
 
@@ -933,6 +817,7 @@ not from Mesos exporter, which runs in a container.
 
 Assuming the problem is transitory and the it is severely impacting
 the job or, even worse, the whole run you need:
+
 - Log into AWS with account tied to the origin of the alert: if it’s
   `cantareira` it’s Brazil, if it’s `foz` it’s `nu-data`.
 - Navigate to the EC2 section of the console.
@@ -981,3 +866,43 @@ executed (and in this case you might get paged).
 
 More importantly, though, you should keep an eye on Airflow to make
 sure _new_ jobs are scheduled.
+
+## Issues related to services
+
+
+### Queued Jobs in PENDING state - [aurora web UI](https://cantareira-stable-aurora-scheduler.nubank.com.br:8080)
+
+#### Symptom
+
+[aurora web UI](https://cantareira-stable-aurora-scheduler.nubank.com.br:8080) leaving tasks in PENDING state for more than 20 minutes. Currently, we don't have a mechanism to detect the Aurora Jobs in PENDING state for long time and indicate the hausmeister about it.
+
+#### Solution
+
+1. SSH into aurora-scheduler, via `nu ser ssh aurora-scheduler --suffix stable --env cantareira --region us-east-1` and look at the aurora logs via `journalctl -u aurora-scheduler` to find out why the jobs are not being scheduled. Often these will be in the form of exceptions.
+2. If the logs seem normal, kill one of the pending jobs via sabesp. Run the following to kill each job:
+
+    `nu datainfra sabesp -- --aurora-stack cantareira-stable jobs kill jobs prod <job-name>`
+3. Do a sanity check to ensure that no job is scheduled.
+4. If the issued is not fixed using the above steps, [Restart Mesos](ops_how_to.md#restart-aurora)
+4. If the issue still persists, [restart Aurora](ops_how_to.md#restart-aurora). It takes ~5 mins to resume the jobs.
+5. If the jobs are not resumed, then [restart Airflow](/airflow.md#restarting-the-airflow-process).
+
+**Important** The result of restarting aurora is an orphaned mesos framework. You must delete orphan mesos frameworks as indicated in the [Operations Cookbook](ops_how_to.md#restart-aurora) doc.
+
+### Non-responsive Aurora
+
+Every once in a while, Aurora goes down. `sabesp` commands, such as ones involved in running the DAG, won't work in this case.
+
+#### Symptom
+
+- The [aurora web UI](https://cantareira-stable-aurora-scheduler.nubank.com.br:8080) does not load, but the [mesos web UI](https://cantareira-stable-mesos-master-bypass.nubank.com.br) does.
+
+#### Solution
+
+1. SSH into `aurora-scheduler`, via `nu ser ssh aurora-scheduler --suffix stable --env cantareira --region us-east-1` and look at the aurora logs via `journalctl -u aurora-scheduler` to find out why the jobs are not being scheduled. Often these will be in the form of exceptions.
+2. If the logs seem normal, kill one of the pending jobs via sabesp. Run the following to kill each job:
+
+`nu datainfra sabesp -- --aurora-stack cantareira-stable jobs kill jobs prod <job-name>`
+
+3. [Restart Mesos](ops_how_to.md#restart-aurora).
+4. If the issue still persists, [restart Aurora](ops_how_to.md#restart-aurora).
