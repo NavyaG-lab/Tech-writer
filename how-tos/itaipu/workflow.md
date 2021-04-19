@@ -35,12 +35,14 @@ Creating a new contract is different than updating an existing contract because 
 1. **On the relevant Clojure service**
     1. Create or edit the following files:
         - `contract/contract_main.clj`:
+            
             1. Create it, if it doesn't exist, with the same content as [here](https://github.com/nubank/metapod/blob/master/contract/contract_main.clj))
         - `project.clj`:
             1. Add `:contract` to the `:profiles` ([example](https://github.com/nubank/metapod/blob/a889decd116c284e22692b2d492f134bb65effcf/project.clj#L63)), and `"gen-contracts"` to the `:aliases` ([example](https://github.com/nubank/metapod/blob/a889decd116c284e22692b2d492f134bb65effcf/project.clj#L79))
             1. Ensure the project is using the latest version of
             [`common-datomic`](https://github.com/nubank/common-datomic/blob/master/project.clj).
         - `src/[SERVICE-NAME]/db/datomic/config.clj`:
+            
             1. Add the desired skeletons to `contract-skeletons` ([example](https://github.com/nubank/metapod/blob/a889decd116c284e22692b2d492f134bb65effcf/src/metapod/db/datomic/config.clj#L29)).
         - `src/[SERVICE-NAME]/models/*.clj`:
             1. Ensure every attribute in the `skeleton` has documentation (`:doc`)
@@ -55,18 +57,19 @@ Creating a new contract is different than updating an existing contract because 
             1. [if you are using midje] Add a call to function `common-datomic.contract.test-helpers/enforce-contracts! <country>` for each country that needs to have contracts. [Example](https://github.com/nubank/metapod/blob/master/test/unit/metapod/db/datomic/config_test.clj).
             2. [if you are using clojure.test] Add a deftest calling `common-datomic.contract.new-test-helpers/broken-contracts <db-name> <contract-skeletons> <country>` for each country that needs to have contracts. [Example](https://github.com/nubank/cerberus/blob/master/test/unit/cerberus/db/datomic/config_test.clj).
     1. Run `$ lein gen-contracts <country>` (for all countries) to generate the initial contracts in
-    `resources/nu/data/<country>/dbcontracts/<DB-NAME>/entities`.
+`resources/nu/data/<country>/dbcontracts/<DB-NAME>/entities`.
         - If you receive the following error:
-
+    
           ```
-          java.lang.AssertionError: Assert failed: Either `:contract/ref-ids` or `:skeleton` must explicitly specified as metadata on a schema.
+      java.lang.AssertionError: Assert failed: Either `:contract/ref-ids` or `:skeleton` must explicitly specified as metadata on a schema.
           ```
-
+    
           It is probably because it cannot infer some references inside your skeletons. You can fix it by explicitly declaring it in your schema.
           Look at the file `src/tyriel/models/payment_source.clj` from this PR as a reference: <https://github.com/nubank/tyrael/pull/54>.
-    1. Open a pull request adding the generated files. 
+1. Open a pull request adding the generated files. 
+       
        - [Example](https://github.com/nubank/escafandro/pull/37/files)
-
+    
 1. **Before Itaipu**
     1. Make sure that the database exists in prod and is being extracted before adding the contract to Itaipu.
 
@@ -94,7 +97,7 @@ Creating a new contract is different than updating an existing contract because 
             - The code should be a direct copy & paste from the contract Scala file(s) generated (with `lein gen-contracts`) 
                in the Clojure project into `itaipu/src/main/scala/nu/data/<country>/dbcontracts/<DB-NAME>/entities/`.               
                 - The files are found in `resources/nu/data/<country>/<DB-NAME>/entities/*.scala` at the service repo.
-               
+       
     1. If this is not the first contract for this database:
        1. _Create a Scala object for the contract entity_
             - Follow step 3.i.d.
@@ -146,10 +149,33 @@ Our contract system does not yet support component entities that are used as [pa
 3. Re-generate the contracts via `lein gen-contracts`. You should now see the contract for the component entity.
 4. Create a new PR with the new contract on Itaipu.
 
+#### Entities with tuple attributes
+
+`common-datomic` allows you to specify attributes of type `CompositeTuple`, including for id attribute. Tuples are currently not supported in the ETL and trying to generate a contract for an entity with a composite tuple will fail with a compilation error. For this reason, when working with attributes of this type in your service, you'll need to remove them from the generated contract by adding `:contract/include false` on them ([example][exclude-composite-tuple-example]).
+
+If the attribute was meant to be a primary key of the entity, you'll likely need to create an alternate primary key for your entity, which is more suitable for ETL processing, such as a UUID field.
+
+#### Entities with more than one polymorphic attribute
+
+An attribute is considered polymorphic if it is a reference attribute pointing to more than one entity type in your model (in your code, this will usually be attributes which use a conditional schema). When generating contracts for your service, the contract generator will generate one contract file per possible type of that attribute for your entity.
+
+For example, we can imagine a data model where there is a `Request` entity with a `:request/source` attribute. If there are multiple possible sources for this entity, then the schema for `:request/source` will likely look something like `(s/conditional ... SourceType1 ... SourceType2)`. In such a case, the `:request/source` attribute is considered polymorphic (because there are more than one entity types it points to). As a result, Request entity will not have one but two contract files: `SourceType1Requests` and `SourceType2Requests`.
+
+Because we generate one file per possible type of the polymorphic attribute, an entity can have at most 1 polymorphic attribute on its schema (to avoid combinatorial explosion). If your entity has more, you should either rework your data model to get back to having a single one, or exclude all but one of those attributes from the contract (and thus exclude them from the ETL). Attributes can be excluded from contracts by adding `:contract/include false` on their skeleton ([example][exclude-composite-tuple-example]).
+
+#### Optional polymorphic attributes
+
+When an attribute is polymorphic (see section above for detailed explanation), one contract file is generated per possible type of entity that the attribute points to. As a result, any instance of your entity that does not have a value for this attribute (i.e. where the value is missing in Datomic) will not have a corresponding contract file to generate a table in the ETL. Consequently, while there will be no errors when implementing your service and generating your contracts, the outcome is those entities where this particular attribute is missing will not appear in the ETL.
+
+#### Cardinality-many PII attributes
+
+Cardinality-many PII attributes are currently not supported due to a bug.
+
 [component-entity-blog-post]: https://blog.datomic.com/2013/06/component-entities.html
 [component-skeleton-example]: https://github.com/nubank/ouroboros/blob/3873ef74be7dc9bd6e1f545de1b19fd03f9f8d77/src/ouroboros/models/resource_group.clj#L31
 [one-many-cardinality-example]: https://github.com/nubank/ouroboros/blob/3873ef74be7dc9bd6e1f545de1b19fd03f9f8d77/src/ouroboros/models/resource_group.clj#L30-L32
 [exclude-component-metadata-example]: https://github.com/nubank/ouroboros/blob/3873ef74be7dc9bd6e1f545de1b19fd03f9f8d77/src/ouroboros/models/record_series.clj#L43-L48
+[exclude-composite-tuple-example]: https://github.com/nubank/arnaldo/blob/a7bfdd87b2e28202e55ea7a1a56c7b7769ebfbf8/src/arnaldo/models/reissue_request.clj#L84
 [contract-skeleton-def-example]: https://github.com/nubank/ouroboros/blob/3873ef74be7dc9bd6e1f545de1b19fd03f9f8d77/src/ouroboros/db/datomic/config.clj#L25
 
 ## Datasets, Dimensions, and Fact Tables Workflow
@@ -211,7 +237,7 @@ below.
 [itaipu/src/main/scala/nu/data/[country]/datasets/](https://github.com/nubank/itaipu/tree/master/src/main/scala/nu/data/br/datasets/):
     1. Create the (sub)folder, e.g., `folder_name`
     1. Create a package file called `package.scala` inside the new (sub)folder with the following content (assuming that
-      the file that you will create in the next step is called `FileName.scala`):
+         the file that you will create in the next step is called `FileName.scala`):
         ```scala
         package nu.data.<country>.datasets.parent_folder_name_if_subfolder
 
@@ -239,7 +265,7 @@ below.
         }
         ```
     1. Add `folder_name.allOps` to `all` in
-      [itaipu/src/main/scala/nu/data/[country]/datasets/package.scala](https://github.com/nubank/itaipu/blob/master/src/main/scala/nu/data/br/datasets/package.scala)
+         [itaipu/src/main/scala/nu/data/[country]/datasets/package.scala](https://github.com/nubank/itaipu/blob/master/src/main/scala/nu/data/br/datasets/package.scala)
 1. Create the dataset file in the same folder as the package file
 
     - The filename must be in PascalCase format (e.g., `FileName.scala`) and must be the same as the object name
