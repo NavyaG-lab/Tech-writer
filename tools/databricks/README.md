@@ -16,3 +16,4 @@ Databricks is a web-based interface where users can run analysis, develop new ET
 - [Databricks Libraries Structure](libraries.md)
 - [Databricks S3 Inventory](s3_inventory.md)
 - [Databricks Single User Clusters](single_user_clusters/README.md)
+- [Databricks Add Bucket](add_bucket.md)
