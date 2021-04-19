@@ -33,6 +33,8 @@ The knowledge base comprises a comprehensive list of all microservices and its d
 
 <br/>
 
+![Image of our infra](../../images/DataInfraArchitecture.png)
+
 ### Documentation site structure
 
 - **About** - Contains all Data BU Squads overview, services owned and slack channels.
