@@ -33,7 +33,7 @@ The knowledge base comprises a comprehensive list of all microservices and its d
 
 <br/>
 
-![Image of our infra](../../images/DataInfraArchitecture.png)
+![Image of our infra](images/DataInfraArchitecture.png)
 
 ### Documentation site structure
 
