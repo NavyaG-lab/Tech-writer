@@ -89,7 +89,7 @@ In case logs point out to failures processing specific datasets.
     datasets in order to ignore this dataset for the rest of the ETL run.
   1. Announce in [#data-tribe](https://nubank.slack.com/archives/C1SNEPL5P) about the reverted changes.
   1. [Restart the job](#restart-the-task)
-  
+
  **Notes**
 
 * You should be aware that reverting changes spanning more than one dataset might cause problems if some of
@@ -635,46 +635,6 @@ Whenever you find yourself in doubt, escalating to the L1 or L2 Engineer should 
  6. If it still doesn't work, rollback to a version that worked and retry dagão.
 
 
-### Airflow tasks are queueing up
-
-The meaning and hence the usefulness of this alert is still under
-validation. It’s still a good idea to check [the
-dashboard](https://prod-grafana.nubank.com.br/d/wMprEQbMz/airflow-metrics)
-and what is going on the DAGs page.
-
-
-### Airflow task scheduler delay is too high
-
-#### Diagnosis
-
-Airflow scheduler could be hanging. Check [the
-dashboard](https://prod-grafana.nubank.com.br/d/wMprEQbMz/airflow-metrics)
-to validate the hypothesis
-
-#### Solution
-
-SSH into the instance:
-
-```
-nu ser ssh airflow \
-    --env cantareira \
-    --suffix <current color>
-```
-
-or
-
-```
-nu-data ser ssh foz airflow \
-    --suffix <current color> \
-    --env prod
-```
-
-Restart the scheduler:
-
-```
-sudo systemctl restart af-scheduler
-```
-
 ### Airflow more than one instance
 
 #### Diagnosis
@@ -800,6 +760,9 @@ not from Mesos exporter, which runs in a container.
 
 #### How to debug
 
+_NB These debug instructions assume you have the time and the need to
+understand what’s going on, otherwise you can skip to the solution._
+
   * Log into [Spot console](https://console.spotinst.com)
   * Search for the corresponding Elastigroup: it has the same name as
     the job
@@ -815,8 +778,15 @@ not from Mesos exporter, which runs in a container.
 
 #### Solution
 
-Assuming the problem is transitory and the it is severely impacting
-the job or, even worse, the whole run you need:
+Assuming the problem is transitory and it is severely impacting the
+job or, even worse, the whole run you need the following command:
+
+```
+nu datainfra ec2 scale_down cantareira stable <job name>
+```
+
+If that fails, please refresh your tokens; if it stills fails, you can
+always do the following:
 
 - Log into AWS with account tied to the origin of the alert: if it’s
   `cantareira` it’s Brazil, if it’s `foz` it’s `nu-data`.
@@ -824,8 +794,9 @@ the job or, even worse, the whole run you need:
 - Filter the nodes running job(s) reported in the alert
 - Terminate them
 
-At this point, Spot’s Elastigroup logic will kick in and spin up new
-machines.
+
+In any case, after you scaled down the machines, Spot’s Elastigroup
+logic will kick in and spin up new machines.
 
 ### Airflow is down
 
