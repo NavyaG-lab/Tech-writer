@@ -19,7 +19,7 @@ workflows:
   run-tests:
     jobs:
       - tests
-  build:
-    jobs:
-      - md-sheriff/run-lint:
-          name: run-lint
+      - build:
+          jobs:
+            - md-sheriff/run-lint:
+                name: run-lint
