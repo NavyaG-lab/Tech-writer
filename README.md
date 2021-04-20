@@ -61,5 +61,6 @@ use the following commands to check if all the required tests are passed
 
 - ./bin/run-tests
 - ./bin/local-build.sh
+- ./bin/run-lint.sh
 
 <!-- markdownlint-disable-file -->

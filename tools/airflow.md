@@ -7,6 +7,7 @@ owner: "#data-infra"
 Table of contents
 
 * [Useful links](#useful-links)
+* [Checking Airflow logs](#checking-airflow-logs)
 * [Manually stopping a run](#manually-stopping-a-run)
 * [Deploying job changes to Airflow](#deploying-job-changes-to-airflow)
 * [Updating Airflow](#updating-airflow)
@@ -17,6 +18,49 @@ Table of contents
 
 * [Monitoring the run on Airflow](../on-call/data-infra/monitoring_nightly_run.md)
 * [Airflow DOCS on Creating a new DAG](https://airflow.apache.org/tutorial.html), Basically you need to create a python file, that has the definition of your DAG inside the airflow directory, then just follow the `Deploying job changes to Airflow`
+
+## Checking Airflow logs
+
+### Simple way: Splunk
+
+Airflow logs are exported to [Splunk](https://nubank.splunkcloud.com/en-US/app/search/search). They can be consulted with the following query:
+
+#### BR
+```
+index=cantareira source=airflow
+```
+
+#### Data
+```
+index=prod-data source=airflow
+```
+
+### Alternative way: on the instance
+
+> Note: in order to SSH into the BR instances of Airflow, you may need to manually add a `br-cantareira` profile in your `~/.aws/config` and `~/.aws/credentials` file. The credentials entry should be identical to `br-prod` and the config file entry should use `us-east-1` as a region
+
+- Find out the current Airflow suffix (can be found on the AWS EC2 console, search for instances with 'airflow' in their name)
+- Set up some parameters:
+  - For BR:
+    ```
+    export COUNTRY=br
+    export ENV=prod
+    export SUFFIX=yellow # changes regularly, see preceding point
+    ```
+  - In the Data environment:
+    ```
+    export COUNTRY=data
+    export PROTOTYPE=foz
+    export ENV=prod
+    export SUFFIX=silver # changes regularly, see preceding point
+    ```
+- ssh into the instance:
+  - BR: `nu-$COUNTRY ser ssh airflow --env $ENV --suffix $SUFFIX`
+  - Data: `nu-$COUNTRY ser ssh $PROTOTYPE airflow --env $ENV --suffix $SUFFIX`
+
+Once you are logged into the instance you can run the following to inspect the logs:
+- Logs of the scheduler: `journalctl -u af-scheduler`
+- Logs of the webserver: `journalctl -u af-webserver`
 
 ## Manually stopping a run
 
@@ -48,7 +92,6 @@ When a job is changed on [`aurora-jobs`](https://github.com/nubank/aurora-jobs),
      Pipeline](https://go.nubank.com.br/go/pipeline/history/dagao). The main test
      that is run in this pipeline is called [`dry-run-tests`](#dry-run-tests). This needs to be
      manually `release` in order for Airflow to have access to it.
-
      *Don't do this during an active DAG run unless you know what you are doing ([see below](#additional-details-on-deploying-a-new-dag)).*
 
       ![releasing dagao](../images/release_dagao.png)

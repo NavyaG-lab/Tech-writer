@@ -1,3 +1,7 @@
+---
+owner: "#data-infra"
+---
+
 # Datomic data deletion
 
 This documents describes part of the process to fulfill a data deletion request from a data subject to the ETL. In particular, it ensures that all the data subject data that was deleted from our Datomic data sources is propagated to the ETL.
@@ -13,6 +17,7 @@ It is composed by 3 manual steps:
 1. Find the Datomic transactions (Ts) affected by a completed excision request stored in Malzahar
 2. Re-extract the Datomic log segments containing the affected Ts in Correnteza
 3. Recompute the Datomic log caches for the affected databases in Castor
+
 [comment]: <> (TODO: Add detailed step-by-step guide)
 
 ## Find the Datomic transactions affected by an excision request
