@@ -273,7 +273,7 @@ This form will be regularly reviewed by either [#itaipu-reviewers](https://app.s
 * Should know about:
   * [StaticOps](https://github.com/nubank/ds-knowledge/blob/master/tutorials/dataset-tutorial/8-StaticOp.md)
   * [Dataset Series](https://github.com/nubank/data-platform-docs/blob/master/data-users/etl_users/dataset_series.md)
-  * [Unit Tests](https://github.com/nubank/data-platform-docs/blob/master/how-tos/itaipu/create_basic_dataset.md#7---testing)
+  * [Unit Tests](https://github.com/nubank/data-platform-docs/blob/master/how-tos/itaipu/create_basic_dataset.md#8---testing)
   * [PII](../../how-tos/data-deletion/pii_and_personal_data.md)
   * [Contracts](https://github.com/nubank/data-platform-docs/blob/master/how-tos/itaipu/contracts.md)
   * [Metapod](https://github.com/nubank/data-platform-docs/blob/master/how-tos/metapod.md)

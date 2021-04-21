@@ -11,14 +11,15 @@ owner: "#data-infra"
 - [Creating SQL Query in Databricks](#2---create-your-query-in-sql-in-databricks)
 - [Understanding SparkOp Class](#3---understanding-the-sparkop-class)
 - [Create your SparkOp class](#4---create-your-sparkop-class)
-- [Recreating  you query in Scala](#5---recreating-your-query-in-scala)
-- [Final Product](#6---the-final-product)
-- [Testing](#7---testing)
-- [Final Test](#8---final-test)
-- [Running tests](#9---running-tests)
-- [Adding it to Itaipu](#10---adding-it-to-itaipu)
-- [Verification Checklist](#11---verification-checklist)
-- [Finishing up and pushing](#12---finishing-up-and-pushing)
+- [Extracting the correct input names](#5---extracting-the-correct-input-names)
+- [Recreating your query in Scala](#6---recreating-your-query-in-scala)
+- [Final Product](#7---the-final-product)
+- [Testing](#8---testing)
+- [Final Test](#9---final-test)
+- [Running tests](#10---running-tests)
+- [Adding it to Itaipu](#11---adding-it-to-itaipu)
+- [Verification Checklist](#12---verification-checklist)
+- [Finishing up and pushing](#13---finishing-up-and-pushing)
 
 ## 1 - Preparation
 
@@ -150,7 +151,58 @@ object ${NAME} extends SparkOp with DeclaredSchema {
 ```
 We'll explain everything that's in there in a bit. For now, just copy the contents of this file you've created, except the `package etl.dataset.${PACKAGE_NAME}`, into a new block in Databricks.
 
-## 5 - Recreating your query in Scala
+## 5 - Extracting the correct input names
+We mentioned, in the `input` component of a SparkOp, that input names should not be hardcoded - there is a proper way to extract them, depending on the input type.
+The overall flow is to find the ETL object that generates the dataset you want to use as an input, import it, and, then, extract the name from that specific object (sometimes, this will require usage of a special function). Usually, this name is stored into a value, since it will be used more than once in the code.
+
+The most common entities you will come across on ETL are other SparkOps, contracts, core datasets and dataset series. For each of those, there is a different way of extracting names in order to use them as inputs:
+
+- **SparkOps**
+
+    SparkOps will usually be found under the `datasets` package. You just need to access their `.name` property. Below, we show how to extract the name of the `AmlConsultingCurrentPepList` SparkOp. The name you put under the `name` attribute of your SparkOp is what others will access when they use it as an input to their SparkOps.
+
+    ```scala
+    import etl.dataset.aml.restriction_lists.AmlConsultingCurrentPepList
+    
+    def AmlConsultingCurrentPepListName = AmlConsultingCurrentPepList.name
+    ```
+
+- **Dataset series**
+
+    Dataset series will usually be found under the package `dataset_series`. In order to access their name, you need a special function, as shown below, where we extract the name of the `AmlConsultingPepDailyList` dataset series. For more information on dataset series, please refer to their [documentation](../../data-users/etl_users/dataset_series.md). 
+    
+    ```scala
+    import nu.data.br.dataset_series.manual.aml.AmlConsultingPepDailyList
+    import nu.data.infra.util.dataset_series.DatasetSeriesOpNameLookup
+  
+    val amlConsultingPepDailyListName = DatasetSeriesOpNameLookup.datasetSeriesContractOpName(AmlConsultingPepDailyList)
+    ```
+  
+- **Core datasets**
+
+    Core datasets will always be in the `core` package. In order to extract their names, you need to use special functions, depending on the kind of table you want to use as input. Below, you can see how to extract data for daily and current snapshot tables for the `CreditCardAccountDimension` core dataset. For more information on core datasets, please refer to their [documentation](./../../datasets/core-datasets/README.md).
+
+    ```scala
+    import nu.data.br.core.dimensions.credit_card_account.CreditCardAccountDimension
+    import etl.warehouse.api.v1.DimensionNames
+    
+    val dailySnapshotName   = DimensionNames.dailySnapshot(CreditCardAccountDimension)
+    val currentSnapshotName = DimensionNames.currentSnapshot(CreditCardAccountDimension)
+    ```
+
+- **Contracts**
+
+    Contract datasets will always be in the `contracts` package. In order to extract their names, you need to use special functions, depending on the kind of table you want to use as input. Below, you can see how to extract data for the `Agreements` contract, as well as the history table for one its attributes, `agreement_status`. For more information on contracts datasets, please refer to their [documentation](./contracts.md).
+    
+    ```
+    import nu.data.br.dbcontracts.sr_barriga.entities.Agreements
+    import nu.data.infra.api.datasets.v1.Names
+  
+    val agreementsName              = Names.contract(Agreements)
+    val agreementsStatusHistoryName = Names.entityAttributeHistory(Agreements, "agreement__status")
+    ```
+
+## 6 - Recreating your query in Scala
 Jump back to your Databricks notebook and copy your class to a new cell. (Leave the package declaration out of it) e.g:
 
 ```scala
@@ -279,7 +331,7 @@ Also, let's put a description on those fields, so to let people know what they'r
 
 That finishes our definition.
 
-## 6 - The Final Product
+## 7 - The Final Product
 ```scala
 import common_etl.implicits._
 import common_etl.metadata.{Country, Squad}
@@ -344,7 +396,7 @@ Does everything look good? GREAT! Copy that beauty back into IntelliJ and format
 
 But you're still not done. There are tests to be done.
 
-## 7 - Testing
+## 8 - Testing
 Imagine, the **distant future**. The apocalypse has happened! The machines have taken over the world! Aliens are invading! And they all have a single goal:
 To mess your dataset up.
 You can't let them do that, because that would be bad.
@@ -444,7 +496,7 @@ Then we compare them.
 checkDataFrameAssertion(assertDataFrameEquals, expected, result)
 ```
 
-## 8 - Final Test
+## 9 - Final Test
 
 Here's the final result.
 ```scala
@@ -481,7 +533,7 @@ class OuvidoriaCallsSpec extends FlatSpec with NuDataFrameSuiteBase with Matcher
 ```
 Also, remember to format everything with scalafmt.
 
-## 9 - Running tests
+## 10 - Running tests
 First, [install sbt](https://www.scala-sbt.org/1.0/docs/Setup.html).
 
 Now that you have `sbt` installed, run it.
@@ -505,13 +557,13 @@ There's a chance that you will have problems with "GC overhead limit excedeed" e
 
 Also, you can create a file on the `/usr/local/bin` directory with the name `sbtopts` and write `-mem 9000` inside it, so everytime you launch `sbt` it will automatically add the flag.
 
-## 10 - Adding it to Itaipu
+## 11 - Adding it to Itaipu
 Thought we were done? Think again. Don't worry, though, we're almost there.
 Now that we created the Dataset and its tests, we need to add them to Itaipu. There are two possibilities on what you needed to do, depending on where you put your new class.
- - [If you created a new folder](#101---if-you-created-a-new-folder)
- - [If you used an existing folder](#102---if-you-used-an-existing-folder)
+ - [If you created a new folder](#111---if-you-created-a-new-folder)
+ - [If you used an existing folder](#112---if-you-used-an-existing-folder)
 
-### 10.1 - If you created a new folder
+### 11.1 - If you created a new folder
 If when you were creating your new class you created a new folder, then you need to create a new file called `package.scala` in the same folder. It will be like this:
 ```scala
 //If it is a subfolder of dataset, use this
@@ -565,9 +617,9 @@ your_folder.allOps)
 ```
 To try to avoid branch conflicts. Also, remember to format everything with scalafmt.
 
-[Finishing up](#11---verification-checklist)
+[Finishing up](#12---verification-checklist)
 
-### 10.2 - If you used an existing folder
+### 11.2 - If you used an existing folder
 If you used an existing folder, all you have to do is go to the folder's `package.scala` file and add your subfolder.allOps to its allOps.
 
 Do try to simply add a new line and not change any of the existing ones, and keep it into alphabetical order. That means, if you have:
@@ -592,7 +644,7 @@ c_your_subfolder.allOps)
 ```
 To try to avoid branch conflicts. Also, remember to format everything with scalafmt.
 
-## 11 - Verification Checklist
+## 12 - Verification Checklist
 Here's a quick list to check before asking for a PR.
 
 CHECKLIST FOR CREATING A NEW DATASET
@@ -628,7 +680,7 @@ Other things:
 After you create the Pull Request:
   - Did it pass in all Circle-ci tests?
 
-## 12 - Finishing up and pushing
+## 13 - Finishing up and pushing
 Now that you've done all that, pass one more time if you've formatted everything with scalafmt, create a new branch and push your commit, then ask for a pull request. We'll try to review it as soon as possible, but please remember that we have other things to do. 
 
 That is all for now! See you next dataset!
