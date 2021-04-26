@@ -185,8 +185,8 @@ Also, you can create a file on the `/usr/local/bin` directory with the name `sbt
 ***
 
 Now that we created the Dataset and its tests, we need to add them to Itaipu. There are two possibilities on what you needed to do, depending on where you put your new class.
- - [If you created a new folder](#if-you-have-created-a-new-folder)
- - [If you used an existing folder](#if-you-have-used-an-existing-folder)
+ - [If you have created a new folder](#if-you-have-created-a-new-folder)
+ - [If you have used an existing folder](#if-you-have-used-an-existing-folder)
  
 
 ### If you have created a new folder
@@ -253,6 +253,7 @@ your_folder.allOps)
 _*To try to avoid branch conflicts. Also, remember to format everything with scalafmt.*_
 
 ### If you have used an existing folder
+
 If you used an existing folder, all you have to do is go to the folder's `package.scala` file and add your subfolder.allOps to its allOps.
 
 Do try to simply add a new line and not change any of the existing ones, and keep it into alphabetical order. That means, if you have:
