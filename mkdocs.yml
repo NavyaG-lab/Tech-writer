@@ -49,14 +49,6 @@ plugins:
   - mkdocs-jupyter
   - git-revision-date-localized
   - minify
-  - exclude:
-      glob:
-        - writing/*
-        - "*.tmp"
-        - "*.pdf"
-        - "*.gz"
-      regex:
-        - '.*\.(tmp|bin|tar)$'
 nav:
   - Home: "README.md"
   - What's new: "whats-new.md"
@@ -241,3 +233,9 @@ nav:
     - Core Datasets: "datasets/core-datasets/README.md" 
     - Contribution margin dataset: "squad/analytics-productivity/contribution_margin.md"
     - SparkOp best practices: "datasets/sparkop-bestpractices.md"
+  - Writing:
+    - Writing runbooks: "writing/writing_runbooks.md"
+    - Templates:
+      - Alerts Playbook: "writing/templates/alerts-playbook.md"
+      - Getting started: "writing/templates/getting-started.md"
+      - Service Playbook: "writing/templates/service-playbook.md"
