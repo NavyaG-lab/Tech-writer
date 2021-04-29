@@ -771,31 +771,43 @@ understand what’s going on, otherwise you can skip to the solution._
     the times it is widespread enough that you can pick any instance
     at random. If that’s _not_ the case, you then have to select all
     of them so that you can find a faulty one.
-  * Execute `Detach` from the `Actions` menu.
+  * Note their IDs. You will need them to avoid terminating the
+    instance you are going to detach.
+  * Execute `Detach` from the `Actions` menu (the one above the list).
   * SSH into the instance(s) and check what’s going on: after you
     login, systemd should greet you with the list of faulty units.
     Start from there.
 
 #### Solution
 
-Assuming the problem is transitory and it is severely impacting the
-job or, even worse, the whole run you need the following command:
+Assuming the problem is transitory, i.e. it can be fixed by simply
+retrying, and it is severely impacting the job or, even worse, the
+whole run, you have two choices.
+
+##### If you detached some instances
+
+If you detached some instances for debugging purposes you cannot use
+the command showed below, instead, you need to
+- Log into AWS with account tied to the origin of the alert: if it’s
+  `cantareira` it’s Brazil, if it’s `foz` it’s `nu-data`.
+- Navigate to the EC2 section of the console.
+- Filter the nodes running job(s) reported in the alert except the
+  ones you detached.
+- Terminate them.
+
+##### If you didn’t detached any instances
+
+You need the following command:
 
 ```
 nu datainfra ec2 scale_down cantareira stable <job name>
 ```
 
 If that fails, please refresh your tokens; if it stills fails, you can
-always do the following:
+always use the AWS console, as showed above. In this case, of course
+there won’t be any detached instance to skip.
 
-- Log into AWS with account tied to the origin of the alert: if it’s
-  `cantareira` it’s Brazil, if it’s `foz` it’s `nu-data`.
-- Navigate to the EC2 section of the console.
-- Filter the nodes running job(s) reported in the alert
-- Terminate them
-
-
-In any case, after you scaled down the machines, Spot’s Elastigroup
+In both cases, after you scaled down the machines, Spot’s Elastigroup
 logic will kick in and spin up new machines.
 
 ### Airflow is down
