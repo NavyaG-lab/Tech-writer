@@ -14,6 +14,15 @@ only supported use is through `sabesp`.
 
 Please refer to [this guide][1] for the details.
 
+In the specific case of Itaipu, you can create a local image by running
+the following script
+
+```bash
+./local/itaipu-docker-build.sh # assumes that you are in Itaipu's repo root dir
+```
+
+The script will automatically tag the image and print it to stdout (e.g.,
+`nu-itaipu:jtorres-9086d1dbb23`). Use that tag for the remaining steps.
 
 ## Use the test image
 
@@ -61,7 +70,7 @@ Please note that you don’t have to change _both_ `--itaipu` and
 `scale-cluster`, not both.[^2]
 
 
-[1]: https://playbooks.nubank.com.br/ci-cd/ecr/push-test-images-to-ecr/
+[1]: https://playbooks.nubank.com.br/cicd/ecr/push-test-images-to-ecr/
 
 [^1]: This is just an example. You will probably want to change most
     of the parameters for your concrete use case.
