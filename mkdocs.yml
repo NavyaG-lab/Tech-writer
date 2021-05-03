@@ -108,7 +108,7 @@ nav:
     - Debugging load issues: squad/data-access/debugging-load-issues.md
     - Datasets:
       - Core Datasets: "datasets/core-datasets/README.md"
-    
+
   - Process flows:
     - Overview of Data flow in ETL: "process-flows/overview-dataflow.md"
     - How the data from data sources is ingested into ETL environment and transformed: "process-flows/data-transformation.md"
@@ -171,7 +171,7 @@ nav:
       - Itaipu states: "services/data-processing/itaipu/itaipu_states.md"
       - Change continuous deployment pipeline: "how-tos/itaipu/change-continuous-deployment-pipeline.md"
     - Metapod: "how-tos/metapod.md"
-    - Ryze: 
+    - Ryze:
       - Classification of data on S3: "how-tos/ryze/classify-s3.md"
     - Data deletion:
       - Datomic data deletion: "how-tos/data-deletion/setup-datomic-pii-data-deletion.md"
@@ -201,14 +201,14 @@ nav:
     - Frozen Suite:
       - Overview: "tools/frozen_suite/README.md"
       - User stories: "tools/frozen_suite/user_stories.md"
-      - IceQL: 
+      - IceQL:
         - Overview: "tools/frozen_suite/iceql/README.md"
         - IceQL technical docs: "tools/frozen_suite/iceql/technical_docs.md"
         - IceQL step by step approach: "tools/frozen_suite/iceql/technical_docs.md"
-      - Ice mold: 
+      - Ice mold:
         - Overview: "tools/frozen_suite/ice_mold/README.md"
         - Ice mold technical docs: "tools/frozen_suite/ice_mold/technical_docs.md"
-      - Iglu: 
+      - Iglu:
         - Overview: "tools/frozen_suite/iglu/README.md"
         - Iglu technical docs: "tools/frozen_suite/iglu/technical_docs.md"
         - Iglu Guide: "tools/frozen_suite/iceql/GUIDE.md"
@@ -221,8 +221,6 @@ nav:
       - LookML Basics: "tools/looker/lookml-basics.md"
       - Looker New Country Setup: "tools/looker/looker-country-setup.md"
       - Looker Playbook: "tools/looker/playbook.md"
-  - Troubleshooting:
-    - Dataset series compaction: "troubleshooting/dataset_series_compaction.md"
   - Datasets:
     - Dataset creation flow: "datasets/basic-datasets/create-dataset-flow.md"
     - Create a dataset: "datasets/basic-datasets/create-dataset.md"
@@ -230,7 +228,7 @@ nav:
     - Mandatory Verification checklist for a dataset: "datasets/basic-datasets/dataset-verification-checklist.md"
     - How to check dataset commit status on ETL: "datasets/basic-datasets/check-dataset-output.md"
     - Debug Dataset issues: "datasets/basic-datasets/debug-datasets.md"
-    - Core Datasets: "datasets/core-datasets/README.md" 
+    - Core Datasets: "datasets/core-datasets/README.md"
     - Contribution margin dataset: "squad/analytics-productivity/contribution_margin.md"
     - SparkOp best practices: "datasets/sparkop-bestpractices.md"
   - Writing:

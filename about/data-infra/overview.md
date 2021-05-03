@@ -47,7 +47,7 @@ The knowledge base contains a comprehensive list of all microservices and its de
 * [Workflow](../../how-tos/itaipu/workflow.md)
 * [Bumping Itaipu on Databricks](../../tools/databricks/library_bump.md)
 * [Updating the Log Cache](../../how-tos/itaipu/log_cache_update.md)
-* [Dataset Series Compaction](../../troubleshooting/dataset_series_compaction.md)
+* [Dataset Series Compaction](../../how-tos/itaipu/dataset_series_compaction.md)
 * [Pororoca](../../how-tos/itaipu/pororoca.md)
 
 ## Infrastructure

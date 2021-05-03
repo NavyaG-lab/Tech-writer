@@ -4,193 +4,212 @@ owner: "#data-infra"
 
 # Dataset Series Compaction
 
-Dataset Series Compaction is a mechanism developed to optimize the processing of Dataset Series in [Itaipu][3].
-It essentially consists of code which groups pieces of data in a Dataset Series into bigger partition files in S3, making it more efficient for the entire Dataset Series to be processed by Itaipu using Spark.
-
-For more information on Dataset Series, see [here][1].
+Dataset series compaction is a mechanism developed to optimize the
+processing of dataset series in [Itaipu][3].  It essentially consists
+of code which groups pieces of data in a dataset series into bigger
+partition files in S3, making it more efficient for the entire dataset
+series to be processed by Itaipu using Spark. For more information on
+dataset series, see [here][1].
 
 ## Problem statement
 
-Due to the nature of batching incoming data into smaller pieces, encoded in [alph][2], each batch of data ends up in a dataset with one single partition (an Avro file in S3), and [alph][2] appends it to Dataset Series, via [metapod][4].
+Due to the nature of batching incoming data into smaller pieces,
+encoded in [Alph][2], each batch of data ends up in a dataset with one
+single partition (an Avro file in S3), and [Alph][2] appends it to
+dataset series, via [Ouroboros][4].
 
-Each file (called a 'partition') is rather small, and as time went by, and more data was appended to Dataset Series, it became very inefficient to:
+Each file (called a 'partition') is rather small, and as time went by,
+and more data was appended to dataset series, it became very
+inefficient to:
 
-- fetch all this data from metapod via HTTP (we bumped into timeouts when executing the HTTP requests due to too much data)
+- fetch all this meta data from Ouroboros via HTTP (we bumped into timeouts when executing the HTTP requests due to too much data)
 - read and process the data, because Spark performs better when there are fewer and larger files, to be distributed across executors.
 
 ## Solution
 
-The solution we implemented was to write a batch job which reads all data from a Dataset Series, and re-partitions the resulting DataFrame to create larger and fewer partition files in S3. It then commits those partitions into a new dataset in a new [metapod transaction][5], and replaces the original datasets in the Dataset Series with this new aggregated dataset, which has larger partition files. These files are also written in Parquet format, further improving performance of Spark jobs which will read them (namely `itaipu-dataset-series`).
+The solution we implemented was to write a batch job which reads all
+data from a dataset series, and re-partitions the resulting data frame
+to create larger and fewer partition files in S3. The batch job
+updates the metadata of the dataset series in [Ouroboros][4], so it
+can hand out the paths to the compacted files, instead of the
+un-compacted ones. The compacted files are written in the Parquet
+format, which improves the performance of Spark jobs reading
+them. This is a high level description of the process. For more
+details on how compaction works in Ouroboros, take a look at the
+[record series compaction
+ADR](https://github.com/nubank/ouroboros/blob/master/doc/adr/0003_record_series_compaction.md).
 
-### Finding out which dataset series should be compacted
+## Compaction DAGs
 
-The candidate dataset-series' for compaction are the ones with large number of partition files. However, it is time-consuming to calculate how many partitions exist for a series, and it requires running a Databricks notebook. Instead, a good proxy for the size of a dataset-series is the number of datasets they contain.
+The compaction of dataset series is an automated process which runs
+daily at 15h ATC (Aurora Time Zone) scheduled by Airflow. We run
+compaction on all dataset series types (archived, events and manual)
+and have a DAG for each country. The following table links to the DAGs
+on Airflow and to the Aurora scheduler being used for each country:
 
-This light-weight [Mordor query](https://backoffice.nubank.com.br/eye-of-mauron/#/s0/mordor/5ccab752-2e3d-40c9-8a76-543ed5ed5ee2) lists the size of dataset-series by number of datasets. You can order by the number of datasets by clicking on the column header `(count ?dataset)`.
+| Airflow Production      | Aurora Production       | Airflow Staging         | Aurora Staging          |
+|-------------------------|-------------------------|-------------------------|-------------------------|
+| [Brazil][AIR-BR-PROD]   | [Brazil][AUR-BR-PROD]   | Brazil n/a              | [Brazil][AUR-BR-STAG]   |
+| [Colombia][AIR-CO-PROD] | [Colombia][AUR-CO-PROD] | [Colombia][AIR-CO-STAG] | [Colombia][AUR-CO-STAG] |
+| [Data][AIR-DATA-PROD]   | [Data][AUR-DATA-PROD]   | [Data][AIR-DATA-STAG]   | [Data][AUR-DATA-STAG]   |
+| [Mexico][AIR-MX-PROD]   | [Mexico][AUR-MX-PROD]   | [Mexico][AIR-MX-STAG]   | [Mexico][AUR-MX-STAG]   |
 
-An alternative to using the Mordor query is to using this `nu` command:
+[AIR-BR-PROD]: https://airflow.nubank.com.br/admin/airflow/graph?dag_id=dataset-series-compaction-br
 
-```
-nu datainfra series-to-compact --cutoff 10000 |sort
-```
+[AIR-CO-PROD]: https://airflow.nubank.world/admin/airflow/graph?dag_id=dataset-series-compaction-co
+[AIR-CO-STAG]: https://staging-airflow.nubank.world/admin/airflow/graph?dag_id=dataset-series-compaction-co
 
-*A heuristic is to run compaction for all dataset-series' that have more than 10k datasets.*
+[AIR-DATA-PROD]: https://airflow.nubank.world/admin/airflow/graph?dag_id=dataset-series-compaction-data
+[AIR-DATA-STAG]: https://staging-airflow.nubank.world/admin/airflow/graph?dag_id=dataset-series-compaction-data
 
+[AIR-MX-PROD]: https://airflow.nubank.world/admin/airflow/graph?dag_id=dataset-series-compaction-mx
+[AIR-MX-STAG]: https://staging-airflow.nubank.world/admin/airflow/graph?dag_id=dataset-series-compaction-mx
 
+[AUR-BR-PROD]: https://cantareira-stable-mesos-master.nubank.com.br:8080/scheduler/jobs/prod/dataset-series-compaction-br
+[AUR-BR-STAG]: https://cantareira-dev-mesos-master.nubank.com.br:8080/scheduler/jobs/staging/dataset-series-compaction-br
 
-### Starting a compaction run
+[AUR-CO-PROD]: https://prod-foz-aurora-scheduler.nubank.world/scheduler/jobs/prod/dataset-series-compaction-co
+[AUR-CO-STAG]: https://staging-foz-aurora-scheduler.nubank.world/scheduler/jobs/staging/dataset-series-compaction-co
 
-Currently, there is an airflow DAG which will:
+[AUR-DATA-PROD]: https://prod-foz-aurora-scheduler.nubank.world/scheduler/jobs/prod/dataset-series-compaction-data
+[AUR-DATA-STAG]: https://staging-foz-aurora-scheduler.nubank.world/scheduler/jobs/staging/dataset-series-compaction-data
 
-- scale up the necessary EC2 machines
-- run the compaction code in Itaipu, which will:
-  - read data from the Dataset Series
-  - re-partition data into larger files
-  - commit a new dataset in a new [metapod transaction][5]
-  - detach original datasets and append the new one to the Dataset Series (atomically, implemented in [metapod][4])
-- terminate the EC2 machines
+[AUR-MX-PROD]: https://prod-foz-aurora-scheduler.nubank.world/scheduler/jobs/prod/dataset-series-compaction-mx
+[AUR-MX-STAG]: https://staging-foz-aurora-scheduler.nubank.world/scheduler/jobs/staging/dataset-series-compaction-mx
 
-This DAG is parameterized, which means it requires extra parameters to be passed in to its execution. Currently, that's only supported via a cURL call to its API (clicking the 'Play' button in the airflow UI will not pass the correct parameters). To execute it, first get the name of the desired Dataset Series to compact (e.g. `series/dataset-partitions`).
+The DAG for Brazil should be disabled on the Airflow installation in
+the Data account, and the DAGs for Colombia, Data and Mexico should be
+disabled on the Brazilian Airflow installation. The compaction job
+will fail on startup, if you try to run compaction on an invalid
+infrastructure and country combination (compacting Brazilian event
+dataset series in the Data account for example).
 
-Then, use the following command, replacing `DATASET_SERIES_NAME`:
+## AWS accounts
 
-```
-nu datainfra compaction --itaipu-version <ITAIPU_VERSION> DATASET_SERIES_NAME
-```
+At Data Infra we run Airflow, Aurora and the Spark clusters in 2
+different AWS accounts, the Brazilian AWS account and the Data AWS
+account. This is due to historical reasons and also the fact that we
+have a lot more data in Brasil than in the other countries. The
+following table gives an overview for which series are computed in
+which account.
 
-You can check the progress in the [compaction DAG page](https://airflow.nubank.com.br/admin/airflow/graph?dag_id=dataset-series-compaction)
-And also the task page in aurora: https://cantareira-stable-aurora-scheduler.nubank.com.br:8080/scheduler/jobs/prod/compaction-<SERIES_NAME_WITHOUT_SERIES_PREFIX>
+| Source   | Archived Series | Event Series | Manual Series |
+|----------|-----------------|--------------|---------------|
+| Brasil   | AWS Data        | AWS Brazil   | AWS Brazil    |
+| Colombia | AWS Data        | AWS Data     | AWS Data      |
+| Data     | AWS Data        | AWS Data     | AWS Data      |
+| Mexico   | AWS Data        | AWS Data     | AWS Data      |
 
-#### Running a compaction during a run
+## Rolling back a compaction
 
-One of the more common reasons for wishing to compact a series is when this series is failing to compute in the daily run due to metapod timing out when requesting the series ids.
+A compaction of a dataset series can be rolled back. This can be
+useful in case something went wrong during the compaction process (a
+bug in the compaction code for example, or if we accepted a faulty
+deletion request and we need to restore the original data). The
+rollback of a compaction changes the metadata of a dataset series to
+the state it has been in before applying the compaction. More details
+about this process can be found in the [compaction rollback
+ADR](https://github.com/nubank/ouroboros/blob/master/doc/adr/0004_compaction_rollback.md). In
+order to rollback a compaction the following requirements have to be
+met:
 
-When running a compaction in this context, extra care should be taken to avoid inconsistent state of the series raws. This is because series raws are not committed all at once, but rather per schema/format; meaning that if a compaction is run while a node is querying the data, the final state of the raws may contain both the original avros and the compacted parquets.
+- You have a compaction id at hand (you can find it in the logs of the compaction job on Aurora)
+- The compaction to rollback is the most recent one
+- The compaction hasn't been rolled back already
+- The inputs of the compaction have not been deleted
 
-The recommended approach for compacting a series that's midway through being computed is:
-
-- Ensure the relevant dataset-series job is not running (beware that dowstream nodes can also compute this series)
-- Start the compaction:
-
-```
-nu datainfra compaction --itaipu-version <ITAIPU_VERSION> DATASET_SERIES_NAME
-```
-
-- Query for the committed series-raws ( by querying for committed datasets in the transaction and searching the output for your series' name)
-
-```
-{
-  transaction(transactionId: "<transaction-id>") {
-    datasets(committed: ONLY_COMMITTED) {
-      id
-      name
-    }
-  }
-}
-```
-
-* retract them using:
-
-```
-nu ser curl POST global metapod /api/migrations/retract/committed-dataset/<dataset-id>
-```
-
-* Wait for the compaction to be fully applied:
-  * Wait for the compaction job to be finished (you can check in aurora, it will be under `compaction-<series-name>`)
-  * Waiting for all lag on Metapod's`APPLY-COMPACTION`topic to be resolved, for example using [this grafana dashboard](https://prod-grafana.nubank.com.br/d/000000222/kafka-lags-topic-view?orgId=1&refresh=1m&var-PROMETHEUS=prod-thanos&var-GROUP_ID=METAPOD-COMPACTION&var-TOPIC=APPLY-COMPACTION&var-PROTOTYPE=All&var-STACK_ID=v)
-* start the node again
-
-#### Unapply compactions
-
-In case something goes wrong when reading the data back from its compacted state, we can always "unapply" the compactions, restoring the original datasets back into the Dataset Series. To do that, use the admin endpoint in [metapod][4].
-
-1. Get the transaction ID generated from the compaction run you wish to revert. To get this info, you can for example query Metapod with:
-
-   ```graphQL
-   query GetDatasetSeries {
-     datasetSeries(datasetSeriesName: "series/customer-tracking") {
-       name
-       datasets(compactedStatus: COMPACTED) {
-         id
-         compaction {
-           id
-           transaction {
-             id
-             startedAt
-           }
-         }
-       }
-     }
-   }
-   ```
-
-
-2. Call the admin endpoint:
-
-```
-nu ser curl PUT global metapod /api/migrations/transaction/TRANSACTION_ID/unapply-compactions
-```
-
-#### Running compaction in staging
-
-##### Scale the cluster up
-
-To run a compaction job some machine need to be scaled up in AWS. The
-following command scales up a cluster of 5 machines that can be used
-with an Aurora job called `compaction`.
+If those requirements are met, the following command should rollback
+the compaction with the given id:
 
 ```shell
-nu datainfra sabesp -- --aurora-stack=cantareira-dev \
-   jobs create staging scale-ec2-compaction \
-   --filename scale-ec2 \
-   --job-version "scale_cluster=cc59ad8" \
-   INSTANCE_TYPE=m5.2xlarge \
-   NODE_COUNT=5 \
-   SLAVE_TYPE=compaction \
-   SPOT_RATIO=100 \
-   STORAGE_CLASS=standard \
-   USE_SPOTINST=
+export COMPACTION_ID="11111111-1111-1111-1111-111111111111"
+nu ser curl DELETE global ouroboros /api/compactions/$COMPACTION_ID \
+   --cid COMPACTION.ROLLBACK \
+   --country br \
+   --env staging
 ```
 
-##### Running the compaction job
+If the compaction you want to roll back is not the most recent one,
+you need to rollback all compactions that have been applied after it,
+in reverse order. First the most recent compaction, then the one
+before, etc.
 
-The following command runs a compaction for the `series/example`
-dataset series.
+**Important**: If you rollback a compaction that has applied deletions
+from Lethe (you can find this out by searching for `Deletion groups
+without failures` in the Aurora job logs of the compaction), please
+follow the [Rollback Deletion Group
+guide](https://github.com/nubank/lethe/blob/master/doc/adr/0004_rollback_deletion_group.md)
+instead. Deletions are rolled back together with the compaction that
+applied them and need eventually be re-applied again.
+
+## Manually running compaction
+
+Compaction can be run manually via sabesp. The sabesp command scales
+the cluster up, runs the compaction job and scales the cluster down
+again. The command supports running compaction on all series at once,
+on a list of provided series names, or on a list of series types.
+
+- The `--dry-run` runs compaction, but doesn't re-write the meta data in Ouroboros. Useful for testing.
+- The `--enable-deletion` option applies deletions from Lethe while running compaction.
+- The `--series-to-compact` option can be used to run compaction on the given list of dataset series.
+- The `--series-types` option can be used to run compaction on the dataset series of the given types.
+
+#### Examples
+
+##### Manually running compaction in staging
+
+Compact the dataset series with the name `series/example` for Brazil
+in staging on the Brazilian AWS account.
 
 ```shell
-nu datainfra sabesp -- --aurora-stack=cantareira-dev \
-   jobs create staging compaction \
-   --filename ouroboros-compaction-cli \
-   --job-version "itaipu=1be1fad" \
-   ARGS=BR___s3a://nu-spark-metapod-dataset-series/staging___s3a://nu-spark-metapod-dataset-series/staging___--series-to-compact___series/example \
-   CORES=99999 \
-   COUNTRY=br \
-   DRIVER_MEMORY=23622320128 \
-   DRIVER_MEMORY_JAVA=20G \
-   EXECUTOR_MEMORY=26843545600 \
-   ITAIPU_NAME=compaction \
-   METAPOD_ENVIRONMENT=staging \
-   MOCK_COUNTRY=False
+nu-br datainfra sabesp -- --aurora-stack=cantareira-dev \
+        jobs dataset-series-compaction \
+        --itaipu=ITAIPU_VERSION \
+        --scale=$SCALE_VERSION \
+        --series-to-compact=series/example \
+        staging BR s3a://nu-spark-metapod-permanent-1 s3a://nu-spark-metapod-ephemeral-1 1
 ```
 
-The progress of the job can be monitored in Aurora [here](https://cantareira-dev-mesos-master.nubank.com.br:8080/scheduler/jobs/staging/compaction).
-
-##### Scale the cluster down
-
-After the compaction jobs has finished, please don't forget to scale
-the cluster down again. This can be done with the following command:
+Compact the dataset series with the name `series/example` for
+Colombia, Data and Mexico in staging on the Data AWS account.
 
 ```shell
-nu datainfra sabesp -- --aurora-stack=cantareira-dev \
-   jobs create staging downscale-ec2-compaction \
-   --filename scale-ec2 \
-   --job-version "scale_cluster=cc59ad8" \
-   SLAVE_TYPE=compaction \
-   USE_SPOTINST=
+nu-data datainfra sabesp -- --aurora-stack=staging-foz \
+        jobs dataset-series-compaction \
+        --itaipu=ITAIPU_VERSION \
+        --scale=$SCALE_VERSION \
+        --series-to-compact=series/example \
+        staging CO,MX,DATA s3a://nu-spark-metapod-permanent s3a://nu-spark-metapod-ephemeral 1
+```
+
+##### Manually running compaction in production
+
+Compact the dataset series with the name `series/example` for Brazil
+in production on the Brazilian AWS account.
+
+```shell
+nu-br datainfra sabesp -- --aurora-stack=cantareira-stable \
+        jobs dataset-series-compaction \
+        --itaipu=ITAIPU_VERSION \
+        --scale=$SCALE_VERSION \
+        --series-to-compact=series/example \
+        prod BR s3a://nu-spark-metapod-permanent-1 s3a://nu-spark-metapod-ephemeral-1 1
+```
+
+Compact the dataset series with the name `series/example` for
+Colombia, Data and Mexico in production on the Data AWS account.
+
+```shell
+nu-data datainfra sabesp -- --aurora-stack=prod-foz \
+        jobs dataset-series-compaction \
+        --itaipu=ITAIPU_VERSION \
+        --scale=$SCALE_VERSION \
+        --series-to-compact=series/example \
+        prod CO,MX,DATA s3a://nu-spark-metapod-permanent s3a://nu-spark-metapod-ephemeral 1
 ```
 
 [1]: ../../data-users/etl_users/dataset_series.md
 [2]: https://github.com/nubank/alph
 [3]: https://github.com/nubank/itaipu
-[4]: https://github.com/nubank/metapod
+[4]: https://github.com/nubank/ouroboros
 [5]: ../../glossary.md#transaction
