@@ -40,6 +40,14 @@ dfWithoutNulls
 
 ```
 
+We have an implementation of this strategy on
+[Efficiency Utils](https://github.com/nubank/itaipu/blob/dc34cd6b6900f634c8332e422af00590a5f7a3b3/src/main/scala/etl/common_utils/EfficiencyUtils.scala#L28)
+
+This is one of the common situations, but skew can happen in other ways as well.
+Check
+[Optimizing Skewed SparkOps](optimizing_skew.md)
+if you want to know more
+
 #### - Wait, but why
 
 Spark is a distributed system, meaning that the data you are manipulating is shared (or _partitioned_) among a cluster of machines. That means that, everytime you need to do a transformation that involves "the whole data" at once, machines need to share data between themselves in order to give you a result.
