@@ -89,13 +89,13 @@ dataset series in the Data account for example).
 At Data Infra we run Airflow, Aurora and the Spark clusters in 2
 different AWS accounts, the Brazilian AWS account and the Data AWS
 account. This is due to historical reasons and also the fact that we
-have a lot more data in Brasil than in the other countries. The
+have a lot more data in Brazil than in the other countries. The
 following table gives an overview for which series are computed in
 which account.
 
 | Source   | Archived Series | Event Series | Manual Series |
 |----------|-----------------|--------------|---------------|
-| Brasil   | AWS Data        | AWS Brazil   | AWS Brazil    |
+| Brazil   | AWS Brazil      | AWS Brazil   | AWS Brazil    |
 | Colombia | AWS Data        | AWS Data     | AWS Data      |
 | Data     | AWS Data        | AWS Data     | AWS Data      |
 | Mexico   | AWS Data        | AWS Data     | AWS Data      |
