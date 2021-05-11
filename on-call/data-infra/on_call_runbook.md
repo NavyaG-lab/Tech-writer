@@ -32,15 +32,20 @@ After the incident has been taken care of and resolved, change the topic back to
 
 ## Alarms
 
-### Alert itaipu-name-of-job triggered on Airflow
+### Airflow failure: <[stack-id]> itaipu-<[job-name]> owner: data-infra
+
+#### Example
+
+![image](../../images/airflow-node-failure.png)
 
 #### Overview
 
-This means that a job failed after all attempts were exhausted. Airflow retries 3 times, so in total the job was attempted 4 times before alerting the HM.
-Depending of the job that failed, it's impact could depend, for example:
+A job failed after all attempts were exhausted. Airflow retries 2 times, so in total the job was attempted 3 times before failing.
+The impact of such failure depends on where the job is positioned within the DAG:
 
-- A job in the early run that process contracts, typically identified with the prefix "itaipu-contracts", they are a dependency to all the rest of the DAG
-- A job at the end of the run that process serving datasets, typically identified with the prefix like "itaipu-serving", they have few dependencies and are situated at the end of the DAG
+- A job in the early hours that processes contracts, typically identified with the prefix `itaipu-*-contracts-*`; These are a dependency to every single node in the DAG. They should be fixed ASAP - the HM will get paged.
+- A job at the end of the run that processes ServingLayer or Archive datasets; These are typically identified with the prefix like `itaipu-*-serving-*` or `itaipu-*-serving-*`; They have few dependencies and are situated at the end of the DAG - but the HM will get paged because failing to process ServingLayer or Archive datasets can lead to SLO degradation, meaning it directly impacts our users.
+- A job that processes Flaky or non-critical datasets; These typically do not have successors, the HM will not get paged. We should still investigate, as this might affect different nodes which might lead to a crash.
 
 _You need VPN access to follow the steps below._
 
@@ -50,9 +55,9 @@ _You need VPN access to follow the steps below._
 
 Check what was the reason for the failure, by following these steps:
 
-1. Access [Aurora jobs](https://cantareira-stable-aurora-scheduler.nubank.com.br:8080/scheduler/jobs/prod)
-1. Search for the name of the failed job e.g "itaipu-contracts-contracts-1"
-1. You'll see the past instances of that task. Check if the first entry has failed around the time you got the alarm. If this entry indicates the task finished too long ago (15-23 hours ago), that was the previous run. That means the task was failed to be created in Aurora. In this case, refer to the section further below [Checking errors directly in Airflow](#checking-errors-directly-in-airflow).
+1. Access the Aurora UI, [link for Cantareira](https://cantareira-stable-aurora-scheduler.nubank.com.br:8080/scheduler/jobs/prod), [link for Foz](https://prod-foz-aurora-scheduler.nubank.world/scheduler) Cantareira is the environment where we compute everything BR, and Foz is the environment where we compute everything else, e.g., MX, CO, and Data.
+1. Search for the name of the failed job e.g `itaipu-contracts-contracts-1`
+1. Click on "Completed Tasks". Check if the first entry has failed around the time you got the alarm.
 1. To see the logs, click on the link that is an IP address that starts like `10.` ![image](https://user-images.githubusercontent.com/1674699/37596958-2dd3da18-2b7e-11e8-8b12-9ea541753656.png)
 1. Click the `stderr` link in the right end of the screen that will appear. `stdout` might also have useful info.
 1. Check the logs for any errors you can read, in some cases there could be an error message or an exception type that makes it clear what is the specific cause for the failure.
@@ -62,11 +67,11 @@ Check what was the reason for the failure, by following these steps:
 
 ##### Checking errors directly in Airflow
 
-It is possible that a failure happens before the task is created in Aurora, and the usual case is lack of credentials to access the aurora API. To verify that:
+It is possible that a failure happens before the task is created in Aurora. Network/connectivity issues are usually the problem. To verify that:
 
-1. Access https://airflow.nubank.com.br/admin/airflow/graph?dag_id=prod-dagao
-1. Click on the failed node e.g `itaipu-contracts` in the graph, and you will see a pop-up appear. Click "Zoom into Sub DAG".
-1. In the graph that will appear, click the the failed node e.g `itaipu-contracts` node. Then, click "View Log".
+1. Access Airflow, [link for Cantareira](https://airflow.nubank.com.br/admin/airflow/graph?dag_id=prod-dagao), [link for Foz](https://prod-airflow.nubank.world/admin/airflow/graph?dag_id=prod-daguito)
+1. Click on the failed node, e.g, `itaipu-contracts`, in the graph, and you will see a pop-up appear. Click "Zoom into Sub DAG".
+1. In the graph that will appear, click on failed Itaipu node, e.g, `itaipu-contracts`, node. Then, click "View Log".
 1. You'll be seeing the log of the last attempt to start that task. If there was a failure, you'll see a stack trace, and right before that, a line that starts with:
 
 `
@@ -74,31 +79,57 @@ It is possible that a failure happens before the task is created in Aurora, and 
 `
 
 - What is logged after "status FAILED and message <message>" is the reason why the task failed. If it reads simply `Task failed`, that means the task was started in Aurora, but the actual failure should be inspected via the Aurora logs. For that, jump back to the [Check reason for the failure](#check-reason-for-the-failure-in-aurora-job-logs) step for this alarm.
-- In other cases, you might see a message such as: `Subtask: 401 Client Error: Unauthorized for url`. This means there was an error fetching credentials to talk to the Aurora API. Restarting the task should be enough. To achieve that, follow the steps in the [Restart the task](#restart-the-task).
+- In other cases, you might see a message such as: `Subtask: 401 Client Error: Unauthorized for url`. This means there was an error fetching credentials to talk to the Aurora API. Restarting the task should be enough. To achieve that, follow the steps in the [Restart the task](#restart-an-airflow-task).
 
 #### Solution
 
-##### Leaf dataset is failing because of bad definition
+##### Common reasons for job failure
 
-In case logs point out to failures processing specific datasets.
+###### Health check failure
 
-  1. Check if recent changes were made to datasets with failures.
-  1. Revert the most recent commits modifying the failing datasets along with any other commits that depend on
-    those recent changes.
-  1. [Commit an empty dataset](ops_how_to.md#manually-commit-a-dataset-to-metapod) in place of the failing
-    datasets in order to ignore this dataset for the rest of the ETL run.
-  1. Announce in [#data-tribe](https://nubank.slack.com/archives/C1SNEPL5P) about the reverted changes.
-  1. [Restart the job](#restart-the-task)
+* What is the health check and how it works
 
- **Notes**
+Health checks are specific to Apache Aurora; They are composed of custom code that Aurora uses to verify if a given task is healthy or not. "Healthy" in our context means that Spark is computing datasets, they are making progress, i.e., not stuck. Tasks that do not have enough successful health checks within the first N attempts, are moved to the FAILED state.
 
-* You should be aware that reverting changes spanning more than one dataset might cause problems if some of
-    the datasets have already been committed but are then consumed by the reverted-to earlier versions of the
-    other datasets.
-  * This solution doesn't apply to non-leaf datasets since then the situation is more complicated and it would
-    require different actions based on the kinds of datasets involved.
+* What can cause our jobs to not have enough successful health checks
 
-##### Dataset partition not found on s3
+1. Data Skew. The computation of a dataset is either not making progress or is very slow. A dataset with heavy data skew might spend dozens of minutes, if not hours, trying to compute a single task. Our health check mechanism will see no progress, and will fail the task. If this happens you should try to parse the logs to identify which dataset failed; It is usually the last one you will see in the logs. Identifying this can get tricky, Splunk or Bash can help :rindo-de-nervoso:
+1. Connectivity issues. The health check works by accessing the Spark UI to get the latest state of what is running (Curl command); If the UI is not accessible after N tries Aurora might fail the task.
+1. We spent too much time computing root datasets. These datasets do not involve Spark computations, and for that reason the Spark UI will be empty -- no progress is being made from a Spark perspective. This is why our health checks have a `initial_interval_secs` of 35 minutes; The health check only starts after this period is over, therefore allowing all root datasets to be computed. This is a rare issue that we don't see happening often.
+
+* What you should do
+
+Let's focus on the first point from the section above: Data Skew. Assuming you were able to identify which dataset is causing the health check to fail the job.
+
+1. Understand how critical the dataset is by checking how many and which successors it has.
+1. Check if the dataset has already been committed by a different node `nu-br etl info <dataset-name> --n 2`
+1. If the dataset hasn't been committed: let the users know (#data-tribe) that said dataset is failing, communicate that we are considering [committing empty](ops_how_to.md#manually-commit-a-dataset-to-metapod); If possible let the users comeback to you, in rare occurrences we might need to revert a PR and hot-deploy Itaipu, this might happen if the dataset is critical for business operations. Commit empty or revert PR.
+1. Restart the Job.
+
+Extra, but complementary steps:
+
+1. Check if recent changes were made to the dataset you just identified
+1. Let's assume it is Saturday, you identified a broken dataset, it has thousands of successors, and you've also identified a PR from the day before changing said dataset. Reverting the PR and hot-deploying Itaipu might be the way to go.
+1. Reverting but not hot-deploying Itaipu. Remember that this will only apply from next day run onwards. This is usually helpful so you don't have to commit datasets empty through the weekend.
+
+**Remember. Use your best judgement. Escalate when unsure.**
+
+###### Broken dataset failing integrity checks
+
+* Example
+
+![image](../../images/integrity-check.png)
+
+* What you should do
+
+A dataset is broken. Committing empty is the way. You must let the users know.
+Although committing empty is the default approach, we might need to revert a PR and hot-deploy Itaipu.
+Always commit empty if this is blocking critical jobs, e.g, serving or archives, from starting (or finish).
+Integrity check failures are usually sent to #etl-integrity-checks. Restart the job.
+
+##### Other, not so common reasons, why jobs fail
+
+###### Dataset partition not found on s3
 
 In case logs point out to `java.io.FileNotFoundException: No such file or directory`. An exception thrown on a Spark executor for a file on S3.
 The partition file in question is accounted for in the mentioned bucket via the AWS console web UI (because the AWS CLI is usually unable to find it either), and it has no permissions listed then it's most likely this issue.
@@ -113,7 +144,7 @@ Some instances of this happening include:
   1. [Retracting](ops_how_to.md#retracting-datasets-in-bulk) the inputs for the failing datasets in order to recompute the inputs and re-store them on s3 usually fixes it.
 
 
-##### Job failed due to timeouts communicating with Metapod
+###### Job failed due to timeouts communicating with Metapod
 
 In case the log points out to the error `Resiliently getOrCreate transaction failed after 3 tries with error`:
 
@@ -124,9 +155,9 @@ In case the log points out to the error `Resiliently getOrCreate transaction fai
 - [Metapod GraphQL metrics, particularly the query response time of `GetTransactionsWithDatasets`](https://prod-grafana.nubank.com.br/d/000000260/graphql-monitoring?orgId=1&from=now-1h&to=now&var-PROMETHEUS=prod-thanos&var-prototype=global&var-service=metapod&var-resolver=All&var-stack=blue&var-percentile=0.95&var-interval=$__auto_interval_interval)
   - [JVM metrics](https://prod-grafana.nubank.com.br/d/000000276/jvm-by-service?orgId=1&from=now-1h&to=now&var-ENVIRONMENT=prod&var-PROMETHEUS=prod-thanos&var-SERVICE=metapod&var-PROTOTYPE=global&var-STACK_ID=All&var-POD=All)
 
-##### Restart the task
+### Restart an Airflow task
 
-1. Access https://airflow.nubank.com.br/admin/airflow/graph?dag_id=prod-dagao
+1. Access [Airflow in Cantareira](https://airflow.nubank.com.br/admin/airflow/graph?dag_id=prod-dagao), or [Airflow in Foz](https://prod-airflow.nubank.world/admin/airflow/graph?dag_id=prod-daguito)
 1. You'll see the state of the entire DAG in this page. The status of each node in the graph is represented by its stroke color. There is a reference on the upper right corner. Search for the node name that failed, e.g `itaipu-contracts`, it should have a red stroke color.
 1. Click on the failed node, and you will see a pop-up appear with some buttons. Click the "Clear" button (dark green), while making sure the "Downstream" and "Recursive" options are pressed (which means enabled) beside it.
 _What you just did is "clearing" the state of the node. This will effectively make Airflow try to figure out the next steps to try to get the state to a "succeeded" state, which is first transitioning into a "running" state by executing the task_
