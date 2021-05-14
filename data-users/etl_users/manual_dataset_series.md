@@ -185,7 +185,7 @@ nu-<country> dataset-series append my-series s3://nu-tmp/your.name/my-dataset --
 
 ## Questions
 
-checkout `#manual-dataset-series` channel on slack.
+Checkout `#data-help` channel on slack.
 
 ## Troubleshooting
 
