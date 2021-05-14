@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+set -euxo pipefail
+
+cd "$(dirname "$(readlink $0)")"
+
+make --question || { make && exit 1 ; }

@@ -61,7 +61,21 @@ They interact with systems owned by all aforementioned squads in this subgraph.
 
 ![System Context diagram](architecture/granular_access_project_sub2.png)
 
+#### Requisition System
+
+The following sequence diagram zooms in on the requisition flow.
+
+The dependency of the 'Requisition System' and the  `maat` service above is the desired final state.
+Since the endpoint on `maat` is not yet implemented, however, we need an alternative.
+In the sequence diagram below you can see that alternative.
+
+![Sequence Diagram](architecture/requisition.png)
+
 ### Changelog
+
+#### 2021-05-06
+
+- Added the requisition flow sequence diagram
 
 #### 2021-03-25
 
