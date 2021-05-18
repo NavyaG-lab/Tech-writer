@@ -23,6 +23,7 @@ owner: "#data-infra"
     * [PRs without Tags](#prs-without-tags)
     * [PR tagged with Ready For Merge, not reviewed by Committer](#pr-tagged-with-ready-for-merge-not-reviewed-by-committer)
     * [Check if using current_date, current_timestamp](#check-if-using-current_date-current_timestamp)
+    * [A new subproject is created](#new-subproject-created)
 * [bors](#bors)
   * [Basic Usage](#basic-usage)
     * [Deploy](#deploy)
@@ -71,7 +72,7 @@ You can read more about the tags [here](https://docs.google.com/document/d/1YRCK
   * Attribute's name matches attribute's description
   * All attributes have descriptions (unless it is a model with 100s of attributes)
 * Code
-  * Functions are idempotent (no use of random, current_date, etc)  
+  * Functions are idempotent (no use of random, current_date, etc)
   * Added to package file in alphabetical order
   * Stop usage of hard-coded values in the middle of the code (magic numbers) and enforce that all fixed values are stored in variables that are passed by parameter
   * Enforce naming standards
@@ -177,6 +178,27 @@ targetDate = today (the date Itaipu begins to run)
 referenceDate = yesterday (the day where we have almost complete data)
 
 here’s an example that uses targetDate [https://github.com/nubank/itaipu/blob/11237a945856f7481685e89e85e28c00e26328ff/src/main/scala/etl/dataset/policy/lending/LendingInputDataset.scala#L45](https://github.com/nubank/itaipu/blob/11237a945856f7481685e89e85e28c00e26328ff/src/main/scala/etl/dataset/policy/lending/LendingInputDataset.scala#L45)
+
+### New subproject created
+
+We have a playbook for creating new subprojects with a detailed recommendation
+as to the naming and scoping of the subprojects
+[here](./../../how-tos/itaipu/migrate-sparkop-to-subproject.md). Please ensure that
+users don't create small subprojects for just a few ops or just for their team.
+The idea is to have ~30 subprojects corresponding to larger business domains.
+
+Other checklist things:
+
+* Subprojects most not depend on other subprojects in the
+    `user-defined-datasets` subproject space (exception: all subprojects depend
+    on `shared-user-utils`)
+* Users added their subproject to build.sbt
+* Within the subproject, all ops are in a package object
+* Within itaipu main project, all ops are listed in one or more
+    `SparkOpBundle` s
+* All external dependencies are listed in the
+    `SparkOpBundle.internalToRealOpNames` attribute. Otherwise, integration
+    tests will fail.
 
 ## bors
 
