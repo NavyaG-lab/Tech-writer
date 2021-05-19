@@ -21,11 +21,11 @@
 }
 
 .md-header {
-    --md-primary-fg-color: #530082;
+    --md-primary-fg-color: #820AD1;
 }
 
 .md-nav--primary .md-nav__title[for=__drawer] {
-    --md-primary-fg-color: #530082!important;
+    --md-primary-fg-color: #820AD1!important;
 }
 
 .md-nav__source {
