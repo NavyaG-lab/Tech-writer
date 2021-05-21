@@ -315,9 +315,10 @@ the `#data-help` channel.
 #### Integration tests
 
 An integration test that makes sure all your ops are correct is already created
-with the nucli command. Nothing to do here! You should run that test too during
-local development to see if your changes check out. It will be quick, we
-promise!
+with the nucli command in your project. Nothing to do here! You should run that
+test too during local development to see if your changes check out.
+[See here how to do it](#sanity-checks-How-do-i-know-everything-worked)
+It will be quick, we promise!
 
 
 ### Set up the wiring
@@ -414,7 +415,25 @@ Here is a list of things to do/check:
 4. You can double-check this document quickly to ensure you haven't forgotten
    anything. Especially the adding of ops and bundles to the `package` files.
 
-If this works, you can push your PR. If the integration tests in itaipu work, you should be good.
+**NOTE**: We are talking about running your subproject tests here. Don't run
+the entire itaipu test, because then you are back to the problems with time and
+memory. You shouldn't have to run itaipu main project tests for local dev
+anymore!
+
+**How to run tests?**
+
+You have two options:
+* Go to the respective files in intellij and click on the green buttons next to
+  the tests. (In `it` folders this sometimes does only work once you declare
+  the `it/scala` folder a test folder for intellij. Right-click on it > chose
+  `mark folder as` > chose `test sources root`. Then the green run buttons next
+  to tests should appear)
+* From the itaipu root folder in your terminal, run
+  `sbt "; project [your-project-name-with-dashes]; test; it:test"`
+
+
+If this works, you can push your PR. If the integration tests in itaipu work on
+the CICD during the PR you should be good to merge.
 
 
 ## FAQ/ frequent problems
