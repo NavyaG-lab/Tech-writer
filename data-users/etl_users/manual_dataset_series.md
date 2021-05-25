@@ -40,7 +40,7 @@ With the new workflow, the Nucli append command internally invokes an AWS lambda
 
 However, users now need a new scope `manual-dataset-series-user` to invoke the AWS lambda and this new scope can be requested via the [access request form](https://nubank.atlassian.net/servicedesk/customer/portal/29). This scope has a validity of 90 days compared to the previous access permission that was valid only for a week.
 
-**Note:** If you need to append data immediately i.e until you raise a request for new scope and get access permissions, you can follow the steps provided in the _*[Appending dataset to manual dataset series using Old workflow](#Appending-dataset-to-manual-dataset-series-using-Old-workflow)*_ section. **Note that from 9th June 2021, MDSS no longer supports the data ingestion via old workflow. For more information, see the section _*When do the new changes come into effect section*_ below and plan your migration.**
+**Note:** If you need to append data immediately i.e until you raise a request for new scope and get access permissions, you can follow the steps provided in the _*[Appending dataset to manual dataset series using Old workflow](#appending-dataset-to-manual-dataset-series-using-old-workflow)*_ section. **Note that from 9th June 2021, MDSS no longer supports the data ingestion via old workflow. For more information, see the section _*When do the new changes come into effect section*_ below and plan your migration.**
 
 ## When do the new changes come into effect
 
@@ -59,12 +59,12 @@ However, users now need a new scope `manual-dataset-series-user` to invoke the A
 
 If you are the contributor to a manual dataset series (MDSS) who appends new data via NuCLI, then follow the ste-by-step instructions below for migrating from existing workflow (old workflow) to AWS ingestor Lambda involved workflow (new feature):
 
-1. **Step 1:** Assuming that you have all the [prerequisites](https://github.com/nubank/data-platform-docs/blob/24412e3a325071ac1469acf1a2acd5c524efb23e/data-users/etl_users/manual_dataset_series.md#prerequisites), the first step is to
-request for `manual-dataset-series-user` scope using the [access request form](https://nubank.atlassian.net/servicedesk/customer/portal/29). For detailed information on access permissions refer to the [Required access permissions before appending your dataset](#Required-access-permissions-before-appending-your-dataset) section.
+1. **Step 1:** Assuming that you have all the [prerequisites](#prerequisites), the first step is to
+request for `manual-dataset-series-user` scope using the [access request form](https://nubank.atlassian.net/servicedesk/customer/portal/29). For detailed information on access permissions refer to the [Required access permissions before appending your dataset](#required-access-permissions-before-appending-your-dataset) section.
 
 1. **Step 2:** Then update nucli by running the `nu update` command.
 
-1. **Step 3:** Next, [Prepare data](https://github.com/nubank/data-platform-docs/blob/24412e3a325071ac1469acf1a2acd5c524efb23e/data-users/etl_users/manual_dataset_series.md#preparing-the-data) and [append data using the manual append command](#Appending-dataset-to-manual-dataset-series-by-invoking-AWS-Lambda).
+1. **Step 3:** Next, [Prepare data](https://github.com/nubank/data-platform-docs/blob/24412e3a325071ac1469acf1a2acd5c524efb23e/data-users/etl_users/manual_dataset_series.md#preparing-the-data) and [append data using the manual append command](#appending-dataset-to-manual-dataset-series-by-invoking-aws-lambda).
 
 1. **Step 4:** [Create dataset series contract op for new dataset series](#creating-dataset-series-contract-op-for-new-dataset-series)
 
@@ -318,7 +318,7 @@ When you run the append command, if the response you encounter is 401 status cod
 
 Run the command `nu-br sec scope show <username> --env prod` to check if you have required scopes to append the data. For eg, `nu-br sec scope show shwetha.thammaiah --env prod`.
 
-The command should return the result -  `Current scopes for <username> "admin data-infra-admin manual-dataset-series-user metapod-admin"`. If you don't have all the required scopes, refer to the _*[Required access permissions](#Required-access-permissions-before-appending-your-dataset)*_ section.
+The command should return the result -  `Current scopes for <username> "admin data-infra-admin manual-dataset-series-user metapod-admin"`. If you don't have all the required scopes, refer to the _*[Required access permissions](#required-access-permissions-before-appending-your-dataset)*_ section.
 
 
 ---
