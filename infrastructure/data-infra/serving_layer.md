@@ -33,11 +33,6 @@ The serving layer mode has four modes right now that define how the dataset shou
 - `PropagatedOnly`: datasets can only be consumed via Kafka and are not loaded into Conrado's docstore
 - `LoadedAndPropagated`: datasets can be queried via Conrado and are also propagated via Kafka to notify other services whenever new data is available.
 
-#### schema compatibility with downstream consumers
-
-Tests that fail if you change the schema [like here](https://github.com/nubank/itaipu/blob/93709a89e4243e56b048586a5dba0a8160007284/src/it/scala/etl/itaipu/ItaipuSchemaSpec.scala#L54).
-This is necessary because if we change the schema of a dataset loaded by `tapir` we need to ensure all downstream consumers of the data (your microservices) can handle this schema change.
-
 #### loading into a persistent table
 
 If you use either the `LoadedAndPropagated` or `PropagatedOnly` modes, you also have to specify a propagation key: it ensures we can find the appropriate prototype each row of your dataset belongs to, which is required to route them to the proper Kafka cluster (see [note](#note-on-the-prototype-column) below). The current valid propagation keys are listed [here](https://github.com/nubank/common-etl/blob/master/src/main/scala/common_etl/operator/ServingLayerPropagationKey.scala) (eg: `CreditCardAccount`, `Customer` and `Prospect` that require the columns called `account__id`, `customer__id` and `prospect__id`, respectively). If you want your all the rows to be propagated to the `global` prototype you should use the `Global` key.
@@ -51,6 +46,7 @@ With serving layer data that is loaded into the serving layer table (`LoadedAndP
 ## Tapir
 
 `tapir` is a service that runs in the prod environment and listens to datasets being ready in the datalake using a list of dataset names, loading those datasets from s3 into a single DynamoDB table, and also making each row available as Kafka messages.
+As Nubank's ETL is rewritten on a daily basis, the rows of the propagated dataset will be published as Kafka messages everyday.
 After this loading is done, it can optionally serve the dataset rows as Kafka messages. `conrado` handles serving this data out of the dynamo table via an HTTP interface, as described in the [next section](#conrado).
 
 If the ETL run gets delayed, some datasets get delayed, and if your dataset depends on one of the affected ones, `tapir` may be run on the next calendar day, but still load data from the previous day.
