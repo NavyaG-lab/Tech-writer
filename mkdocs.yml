@@ -80,6 +80,7 @@ nav:
       - Testing models: "infrastructure/data-infra/testing-models.md"
       - Test custom images with ECR: "infrastructure/data-infra/test-images.md"
       - New shards: "infrastructure/data-infra/new_shards.md"
+      - Granular access architecture: "infrastructure/granular-access-controls/architecture/README.md"
     - Data Access:
       - Setup a new country in Looker : "tools/looker/looker-country-setup.md"
       - Deploying Anduin in new country: "squad/data-access/deploying-multicountry-anduin.md"
@@ -134,6 +135,8 @@ nav:
       - Support: "on-call/data-access/data-support.md"
       - Itaipu PR reviewer: "on-call/data-access/itaipu-pr-reviewer.md"
       - On-call engineer: "on-call/data-access/on-call-engineer.md"
+    - Data protection:
+      - PII Expiry: "on-call/data-protection/pii_expiry.md"
   - Services:
     - Data layers: "services/data-ingestion/intro.md"
     - Data-ingestion:
@@ -170,6 +173,8 @@ nav:
       - Tekton: "how-tos/itaipu/tekton/README.md"
       - Itaipu states: "services/data-processing/itaipu/itaipu_states.md"
       - Change continuous deployment pipeline: "how-tos/itaipu/change-continuous-deployment-pipeline.md"
+      - Migrate SparkOps to Subproject: "how-tos/itaipu/migrate-sparkop-to-subproject.md"
+      - Remove subproject: "how-tos/itaipu/remove-a-subproject.md"
     - Metapod: "how-tos/metapod.md"
     - Ryze:
       - Classification of data on S3: "how-tos/ryze/classify-s3.md"
@@ -198,6 +203,7 @@ nav:
       - PII access: "tools/databricks/pii_access_sync.md"
       - Secret tokens: "tools/databricks/secrets_tokens.md"
       - Automation decisions: "tools/databricks/single_user_clusters/automation_decisions.md"
+      - Add bucket - Databricks: "tools/databricks/add_bucket.md" 
     - Frozen Suite:
       - Overview: "tools/frozen_suite/README.md"
       - User stories: "tools/frozen_suite/user_stories.md"
@@ -231,9 +237,16 @@ nav:
     - Core Datasets: "datasets/core-datasets/README.md"
     - Contribution margin dataset: "squad/analytics-productivity/contribution_margin.md"
     - SparkOp best practices: "datasets/sparkop-bestpractices.md"
+    - optimizing Skews: "data-users/etl_users/optimizing_skew.md"
   - Writing:
     - Writing runbooks: "writing/writing_runbooks.md"
     - Templates:
       - Alerts Playbook: "writing/templates/alerts-playbook.md"
       - Getting started: "writing/templates/getting-started.md"
       - Service Playbook: "writing/templates/service-playbook.md"
+  - Datomic data deletion: "etl_operators/datomic_data_deletion.md"
+  
+  
+  
+  
+  
