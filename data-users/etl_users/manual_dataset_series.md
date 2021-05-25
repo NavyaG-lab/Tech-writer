@@ -91,7 +91,7 @@ Make sure you have the following access permissions.
 
 1. After refreshing your token, get a new access token using  - `nu-<country> auth get-access-token --env prod --country <country>` to use MDSS workflow. The <country> is the country from where you are creating your manual series (eg: br, mx).
 1. Run the command `nu-br sec scope show <username> --env prod`
-  to check if you have required scopes to append the data. The above command returns the result -  `Current scopes for <username> "admin data-infra-admin manual-dataset-series-user metapod-admin"`.
+  to check if you have required scopes to append the data. The above command returns the result -  `Current scopes for <username> "admin manual-dataset-series-user"`.
 
 #### To use the old workflow until 8th June 2021
 
@@ -318,7 +318,7 @@ When you run the append command, if the response you encounter is 401 status cod
 
 Run the command `nu-br sec scope show <username> --env prod` to check if you have required scopes to append the data. For eg, `nu-br sec scope show shwetha.thammaiah --env prod`.
 
-The command should return the result -  `Current scopes for <username> "admin data-infra-admin manual-dataset-series-user metapod-admin"`. If you don't have all the required scopes, refer to the _*[Required access permissions](#required-access-permissions-before-appending-your-dataset)*_ section.
+The command should return the result -  `Current scopes for <username> "admin manual-dataset-series-user"`. If you don't have all the required scopes, refer to the _*[Required access permissions](#required-access-permissions-before-appending-your-dataset)*_ section.
 
 
 ---
