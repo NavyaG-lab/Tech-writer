@@ -18,17 +18,17 @@ Starting **25th May 2021**, you can ingest data manually into your dataset serie
 ## Table of contents
 
 - [What's changed](#what-has-changed)
-- [When do the new changes come into effect](#When-do-the-new-changes-come-into-effect)
-- [What do I need to do as an MDSS user to migrate to the new workflow](#What-do-I-need-to-do-as-an-MDSS-user-to-migrate-to-the-new-workflow)
+- [When do the new changes come into effect](#when-do-the-new-changes-come-into-effect)
+- [What do I need to do as an MDSS user to migrate to the new workflow](#what-do-I-need-to-do-as-an-MDSS-user-to-migrate-to-the-new-workflow)
 - Steps to append data
   - [Prerequisites](#prerequisites)
-  - [Required access permissions](#Required-access-permissions-before-appending-your-dataset)
-  - [Preparing the data](#Preparing-the-data)
-  - [Appending dataset to manual dataset series by invoking AWS Lambda](#Appending-dataset-to-manual-dataset-series-by-invoking-AWS-Lambda) - _***New workflow***_
-  - [Appending dataset to manual dataset series using Old workflow](#Appending-dataset-to-manual-dataset-series-using-Old-workflow) - _***Old workflow deprecates on 8th June 2021***_
-  - [Creating dataset series contract op for new dataset series](#Creating-dataset-series-contract-op-for-new-dataset-series)
-- [Troubleshooting](#Troubleshooting)
-- [How does it work](#How-does-it-work)
+  - [Required access permissions](#required-access-permissions-before-appending-your-dataset)
+  - [Preparing the data](#preparing-the-data)
+  - [Appending dataset to manual dataset series by invoking AWS Lambda](#appending-dataset-to-manual-dataset-series-by-invoking-AWS-Lambda) - _***New workflow***_
+  - [Appending dataset to manual dataset series using Old workflow](#appending-dataset-to-manual-dataset-series-using-Old-workflow) - _***Old workflow deprecates on 8th June 2021***_
+  - [Creating dataset series contract op for new dataset series](#creating-dataset-series-contract-op-for-new-dataset-series)
+- [Troubleshooting](#troubleshooting)
+- [How does it work](#how-does-it-work)
 
 ---
 
