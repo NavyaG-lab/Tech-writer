@@ -178,6 +178,7 @@ nav:
     - Metapod: "how-tos/metapod.md"
     - Ryze:
       - Classification of data on S3: "how-tos/ryze/classify-s3.md"
+      - Classify non pii databases: "how-tos/ryze/classify-non-pii-databases.md"
     - Data deletion:
       - Datomic data deletion: "how-tos/data-deletion/setup-datomic-pii-data-deletion.md"
       - PII and Personal data: "how-tos/data-deletion/pii_and_personal_data.md"
