@@ -455,6 +455,60 @@ In order to verify this, you should
 
 Since a random AZ is selected every time we run a scale-up job, re-triggering the entire Airflow SubDag from scratch will hopefully fix it.
 
+### Ouroboros lag is too high
+
+This alert is triggered when Ouroboros is behind consuming messages
+from the topic `NEW-SERIES-PARTITIONS`.
+
+Impact: Depending of the size of the lag, some data that was ingested
+for any dataset series type (events, manual or archives) would not be
+included in the next daily run to be processed.
+
+Underlying causes and therefor solutions for this problem are
+potentially many, so it’s not unlikely you’ll have to troubleshoot it
+from scratch, after the suggestions described below are exhausted. In
+any case, usually this problem is caused either by a bug in the logic
+causing lots of retries or it can be due to rebalancing.
+
+#### Verification
+
+Check the obvious. Is the service up at all? We
+should have received at least some alarms about it, but a preliminary
+check shouldn’t hurt.
+
+```
+nu-<country> k8s ctl global --env prod -- get pods -l nubank.com.br/name=ouroboros
+```
+
+and then, if everything looks normal:
+
+```
+nu-<country> ser curl GET global ouroboros --env prod /ops/health | jq .
+```
+
+[Check Splunk for
+exceptions](https://nubank.splunkcloud.com/en-US/app/search/search?q=search%20source%3Douroboros%20%7C%20search%20error&sid=1622095053.2452457_164C9620-A673-43A2-A341-29A4F0940D31&display.page.search.mode=verbose&dispatch.sample_ratio=1&earliest=-30m%40m&latest=now).
+This should help you validate the hypothesis about too many retries.
+
+About Kafka rebalancing. Ouroboros is shard aware, so the alert
+aggregates the lag from all shards. Check Ouroboros Kafka lag metrics
+to check if the problem is happening with one specific shard or is a
+general problem. [Link to the more details Grafana Kafka lag](
+https://prod-grafana.nubank.com.br/d/000000222/kafka-lags-topic-view?orgId=1&from=now-2d&to=now&refresh=1m&var-PROMETHEUS=prod-thanos&var-GROUP_ID=OUROBOROS&var-TOPIC=NEW-SERIES-PARTITIONS&var-PROTOTYPE=All&var-STACK_ID=All)
+
+Finally, [check Ouroboros
+dashboard](https://prod-grafana.nubank.com.br/d/XEIhxKHMz/ouroboros-monitoring?orgId=1)
+
+
+#### Solution
+
+The following list is just a suggestion, since the set of potential
+problems is open-ended.
+
+- Cycle the service
+- Check provisioning of the service, if you have reasons to believe
+  the service needs more resources.
+
 ### Itaipu OutOfMemory error
 
 #### Alert Severity
