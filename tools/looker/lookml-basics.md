@@ -89,6 +89,16 @@ Explores could also be defined inside the `.view` file. In fact, most of LookML 
 
 Once your modifications are saved, you can search for the recently created Explore by clicking on "Explore" in the upper bar.
 
+### 4. Deploying views to production
+Once you've completed all previous steps and think your views are ready to be shared, you nedd to deploy it to production.
+
+With your project and branch select, click in `Validate LookUML` and wait the validation proccess.
+
+So click in `Commit Changes & Push` then select files and type a message to commit, finally click in `Merge & Deploy to Prod` to deploy your views to production.
+
+PS: If you are using `belomonte_custom_queries` project, before validating your views you have to pull the last changes of `belomonte` project. Check [known issues](looker-known-issues.md) for more information.
+
+
 ## Code Examples
 
 ### View Example
