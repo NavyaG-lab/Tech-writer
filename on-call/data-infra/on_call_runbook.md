@@ -127,6 +127,23 @@ Although committing empty is the default approach, we might need to revert a PR 
 Always commit empty if this is blocking critical jobs, e.g, serving or archives, from starting (or finish).
 Integrity check failures are usually sent to #etl-integrity-checks. Restart the job.
 
+###### Manual dataset series contract broken due to schema mismatch
+
+In case logs point out to
+```
+Caused by: org.apache.spark.SparkException: Failed merging schema:
+root
+ |-- account__id: string (nullable = true)
+ |-- current_max_limit: decimal(38,18) (nullable = true)
+ |-- final_limit: double (nullable = true)
+ |-- append_timestamp: timestamp (nullable = false)
+Caused by: org.apache.spark.SparkException: Failed to merge fields 'current_max_limit' and 'current_max_limit'. Failed to merge decimal types with incompatible scala 9 and 18
+```
+
+1. Datasets with this failures typically are manual dataset series, this is caused by recent manual appends with data that is not compliant with the schema. Confirm the failed dataset is a manual dataset series type and follow [Instrunctions in how to retract manual dataset series](ops_how_to.md#retracting-manual-appends-to-dataset-series)
+2. Once the manual dataset series was retracted, go to airflow and clear the failed node, typically those errors happen in `itaipu-manual-dataset-series`, the job will be queued to start again.
+
+
 ##### Other, not so common reasons, why jobs fail
 
 ###### Dataset partition not found on s3

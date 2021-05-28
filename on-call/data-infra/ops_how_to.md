@@ -664,7 +664,10 @@ The above is an async request. You can check whether it is completed with [this 
 
 ## Retracting Manual Appends to Dataset Series
 
-You will occasionally receive requests from users to retract datasets which were manually appended to a dataset-series. This usually happens in the #data-help channel.
+Possible situations to retract manual appends:
+
+- Requests from users to retract datasets which were manually appended to a dataset-series. This usually happens in the #data-help channel.
+- Manual dataset series failed to be processed with recent appendeded data causing the node where it runs to be fail too e.g `itaipu-manual-dataset-series`
 
 1. Run `nu dataset series info <dataset-series-name> --verbose` to get the resource ID of the dataset you want to retract.
 
@@ -694,9 +697,14 @@ _
 
   `nu ser curl POST --env prod global ouroboros /api/admin/migrations/delete-resource -d'{"resource-id": "<resource-id>"}'`
 
-If the uploaded dataset has been committed to a transaction, and in case this dataset is causing issues to the node in which this dataset series runs, we will also need to retract the raw datasets for that dataset series. The raw datasets have a naming convention: `series-raw/{dataset-series-name}-*` e.g., for a dataset-series `series/direct-mail`, we have to retract
+3. Uncommit manual dataset and its raw datasets (parent datasets) in case of the following scenarios:
 
-**Important**: You must retract the raw datasets only if a Manual Dataset series breaks the node, whereas for the deletion requests from users, retracting the dataset from Ouroboros should suffice.
+- Manual dataset was committed to a transaction and is causing issues to the node in which this dataset runs
+- Manual dataset failed to be processed and it caused a node to fail
+
+For the deletion requests from users, retracting the dataset from Ouroboros should suffice.
+
+The raw datasets have a naming convention: `series-raw/{dataset-series-name}-*` e.g., for a dataset-series `series/direct-mail`, we have to retract
 
 - "series/direct-mail"
 - "series-raw/direct-mail-contract-avro"
@@ -704,26 +712,9 @@ If the uploaded dataset has been committed to a transaction, and in case this da
 - "series-raw/direct-mail-alt-version-0-avro"
 - "series-raw/direct-mail-alt-version-0-parquet"
 
-To retract these raw datasets, we follow the procedure below for each one of them:
+To uncommit the manual dataset and its predecessors:
 
-1. Use `insomnia`/ `sonar` to get the ID of the dataset you want to retract from Metapod by using the GraphQL query below.
-
-```
-{
-  transaction(transactionId: "<metapod-transaction-id>") {
-    datasets(
-      datasetNames: [
-      "<dataset-name>","<sucessor-dataset-name>","<other-sucessor-dataset-name>"...]) {
-      id
-      name
-      committed
-    }
-  }
-}
-```
-
-2. Retract the raw datasets using this end-point on metapod:
-   `nu ser curl POST global metapod /api/migrations/retract/dataset-series/dataset/<dataset-id>`
+`nu datainfra hausmeister dataset-uncommit <transaction-id> <dataset-series-name> --include-predecessors`
 
 ## Replaying Deadletters
 
