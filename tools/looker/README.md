@@ -15,3 +15,4 @@ Looker is a business intelligence software and big data analytics platform that 
 - [Looker Support](looker-support.md)
 - [LookML Basics](lookml-basics.md)
 - [Looker New Country Setup](looker-country-setup.md)
+- [Looker Known Issues](looker-known-issues.md)
