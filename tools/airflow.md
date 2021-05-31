@@ -202,7 +202,7 @@ Ssh into the machine
 
 and restart the process
 
-`sudo systemctl restart airflow`
+`sudo systemctl restart af-scheduler`
 
 This should get things going again.
 
