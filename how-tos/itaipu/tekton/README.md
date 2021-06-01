@@ -6,7 +6,7 @@ owner: "#data-infra"
 
 ## Overview
 
-The integration between Github and Tekton was made through webhooks. 
+The integration between Github and Tekton was made through webhooks.
 How does it work? In each push event, Github sends an HTTP post payload to the Tekton webhook's URL. It will create a pipelinerun that starts the tasks defined on it.
 
 As soon as the tasks start, they will be updated in the Checks tab on the Pull Request page. At the moment, inside Github page we can access this in three different ways:
@@ -48,7 +48,7 @@ For example, to read the logs from a step that failed:
 Each commit made in the Itaipu's repository will be verified by the tasks that were set in the [itaipu-ci.yaml](https://github.com/nubank/tektoncd/blob/master/tekton/pipelines/itaipu-ci.yaml) file.
 
 The tasks are defined in `yaml` files, they are located in [tektoncd's repository](https://github.com/nubank/tektoncd/tree/master/tekton/tasks/itaipu). Some tasks are dependents on others. And when the main task failed it will not start the dependent one.
-To know more about the structure and its details, access [Itaipu CI documentation](https://github.com/nubank/tektoncd/blob/master/docs/pipelines/itaipu-ci.md).
+To know more about the structure and its details as well as past and current design decisions, access [Our deep-dive documentation](./deep-dive.md).
 
 ## Debugging builds, stuck builds and getting telemetry
 
@@ -126,6 +126,7 @@ into the pod and use the standard java tools to collect a thread dump:
 The thread dump file can then be inspected on the local machine to analyse the
 JVM situation.
 
-## situation need more information
+
+## I have read the deep dive and still need more information
 
 If you still have questions or need additional information, please reach out to #data-help and you will have the appropriate support provided.

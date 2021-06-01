@@ -146,6 +146,8 @@ abstractions can not be moved out. Working on what remains in itaipu will
 become a lot better once the user defined sparkOps are moved out into
 subprojects.
 
+#### Move the op into the right place in your subproject
+
 Within your subproject create a subfolder structure as you see fit. The
 structure could mirror what you have in itaipu: E.g. your subproject is
 `fraud` and you want to migrate 5 ops relating to `exposure`, create an
@@ -153,6 +155,13 @@ structure could mirror what you have in itaipu: E.g. your subproject is
 over the scala files defining your op to be moved out to `src/main/fraud/.../`
 and the corresponding unit test file to `src/test/fraud/.../`. Intellij will
 make sure the references of successors to your op will remain intact.
+
+**NOTE** One user feedback we got is that sometimes not all references are
+updated correctly when moving the op using intellij if sbt still has import
+errors. So make sure sbt import and indexing in intellij have finished
+successfully.
+
+#### Change your op into a bundleOp
 
 Next, we are going to change the class of your op to a new type, called
 `BundleOp`. Why 'BundleOp'? Because we will organise our ops into smaller
@@ -218,6 +227,8 @@ names with a map later. Just make sure they don't clash with names of internal
 inputs. Note that `definition` can remain as it is in the body. It just gets an
 additional argument `runParams` (see below, why).
 
+#### Change the rest of the bundleOp attributes
+
 In terms of the main changes we need to make subprojects work, that's already
 it on the side of our ops. However, we took the opportunity to improve a few
 other things about the metadata:
@@ -275,6 +286,12 @@ good practice that we already use in itaipu and we recommend you follow it.
 In the normal case you should have to do very little: If your
 `NuDataFrameSuiteBase` import is not found, please import it from
 `import common_etl.NuDataFrameSuiteBase`.
+
+Sometimes itaipu magically removes the imports of implicits during the move. If
+you use the `NuDataFrameSuiteBase`, you will have to import them on top of your
+object (first line of  the object) like so: `import spark.implicits._`. If you
+use helpers such as `nuSQLDate`, you need to `import
+shared_user_utils.implicits._` on top of the file after your imports.
 
 If your sparkOp was a case class and imported runtime parameters such as
 `TargetDate` or `ReferenceDate`, you will need to adjust to the fact that these
@@ -491,3 +508,10 @@ Are those parameters run parameters (target and referenceDate, environmentType,
 itaipu version or transaction_id)? Then look back above. They are availbable
 by default now. If there are other parameters, again, talk to us. We can look
 at what to do.
+
+### I only want to move ops into an existing subproject
+
+Here is a [reference PR](https://github.com/nubank/itaipu/pull/22000/) for this
+simpler case. Note that if by moving an op into a subproject, what was formerly
+and externalInput to other ops in that subproject is now an internalInput! Be
+sure to make those changes accordingly.
