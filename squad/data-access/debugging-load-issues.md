@@ -29,6 +29,7 @@ With the query above we can check what was the most recent transaction that load
 
 If the table is not in the load tables and there are no errors, maybe it hasn't been loaded yet. Try manually triggering the job, which might give you more info.
 
+There is a known issue with datasets that are commited after midnight UTC: when a dataset is committed on a day other than its execution, it will not be loaded into databricks because another itaipu execution already exists, therefore another transaction ongoing. To read these datasets, we need to read the files directly from S3 path, this [notebook](https://nubank.cloud.databricks.com/#notebook/11147162) can help with the procedure.
 
 ## Checking Loads on BigQuery
 
