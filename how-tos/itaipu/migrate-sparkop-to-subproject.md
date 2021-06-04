@@ -515,3 +515,7 @@ Here is a [reference PR](https://github.com/nubank/itaipu/pull/22000/) for this
 simpler case. Note that if by moving an op into a subproject, what was formerly
 and externalInput to other ops in that subproject is now an internalInput! Be
 sure to make those changes accordingly.
+
+### My sparkop used squish to create a dataset series
+
+Now you get an error during build? We have a [BundleOpToSeries](https://github.com/nubank/itaipu/blob/master/common-etl/src/main/scala/nu/data/infra/internal/archived/SquishMetapodExtractor.scala#L68) function already. Change your `SparkOpToSeries` function into this and all is well.
