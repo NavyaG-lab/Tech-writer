@@ -233,7 +233,7 @@ In terms of the main changes we need to make subprojects work, that's already
 it on the side of our ops. However, we took the opportunity to improve a few
 other things about the metadata:
 
-1. `description` is not optional anymore: Change from `Some("[your descritpion]")`
+1. `description` is not optional anymore: Change from `Some("[your description]")`
    to `"[your description]"`. Don't have a description yet? You need to add
    one! A few other recent additions like `qualityAssessment` and even older
    friends such as `ownerSquad` are mandatory as well.
