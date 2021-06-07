@@ -119,6 +119,7 @@ nav:
       - Overview: "on-call/data-infra/README.md"
       - How to get help from other Squads: "on-call/data-infra/getting_help_from_other_squads.md"
       - Hausmeister: "on-call/data-infra/hausmeister.md"
+      - Raw PII data access permission: "on-call/data-infra/raw-pii-access-permissions.md"
       - Incident response checklist: "on-call/data-infra/incident_response_checklist.md"
       - Monitoring nightly run: "on-call/data-infra/monitoring_nightly_run.md"
       - On-call runbook: "on-call/data-infra/on_call_runbook.md"

@@ -139,3 +139,4 @@ The slack channels you should monitor for user questions are:
 - [Monitoring nightly run](monitoring_nightly_run.md)
 - [Operations How-Tos](ops_how_to.md)
 - [On-call runbook](on_call_runbook.md)
+- [How to request access to raw PII data](raw-pii-access-permissions.md)
