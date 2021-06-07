@@ -28,7 +28,7 @@ This section explains what level of access to **perform actions** on Looker each
 
 * **Viewer User:** Most basic access. Can only view dashboards and Looks, through software interface.
   * All Xpeers automatically receive this access.
-* **Basic User:** User with permission to access dashboards, create table calculations, access looks and download with limit.
+* **Basic User:** User with permission to access dashboards, create table calculations, access looks, use SQLRunner and download with limit.
   * This access is granted to Xpeers of specific [levels](https://github.com/nubank/lambda-automation/blob/master/python/lambdas/looker-user/looker.py#L78) and users that are part of a specific [google group](https://github.com/nubank/lambda-automation/blob/master/python/lambdas/looker-user/config.yml#L20). We have a lambda that runs periodically giving these accesses.
 or (just to keep the comments)
   * This role is also granted for users that ask permission on #access-request.
