@@ -837,13 +837,33 @@ If, for some reason, you cannot use the method above, you can use the [deploy re
 
 
 ### Mesos master cannot select a leader
-#### How to fix
+#### How to investigate
 
-Check that overall cluster connection (between mesos-master, mesos-fixed and mesos-on-demand) is not impacted by security groups or firewall rules.
+A good first step is to ssh into the mesos-master or a mesos-fixed instance with:
+```
+# ssh into mesos in BR or Data
+nu-br ser ssh mesos-master --suffix stable --env cantareira --region us-east-1
+nu-data ser ssh foz mesos-master --suffix liquorice --env prod --region us-east-1
+```
 
-Simply [restart the Mesos master](https://github.com/nubank/data-platform-docs/blob/master/on-call/data-infra/ops_how_to.md#restart-mesos).
+> Note that you can find out the `--suffix` for data by looking for the instances in the EC2 console.
 
-If, for some reason, you cannot use the method above, you can use the [deploy repository](https://github.com/nubank/deploy) and re-deploy the master with current configuration.
+Once on the machine, the logs can be accessed with:
+```
+journalctl -u mesos-master ### You can add `-f` to tail the logs as they are produced
+```
+
+If you can't see anything obviously wrong in the logs, you can try the following:
+- while still ssh'd into the instance, restart the mesos process with `systemctl restart mesos-master`
+- if the above doesn't work, consider cycling the master node. The quickest way to do this is to go to the AWS console and terminate the instance. The auto-scaling group will take care of creating a new one.
+
+Note that these actions may cause instabilities on currently running jobs.
+
+Possible things that can be affecting the connection:
+- Misconfigured security group/firewall rules.
+- Issues with the Zookeeper cluster
+
+Mesos is generally supposed to be fairly stable, so if the problems aren't fixed by restarting/cycling and the logs don't give you any clear way forward, consider escalating.
 
 ### Other mesos alerts
 Other mesos alerts are aimed at investigation, rather than urgent issues to be fixed.
