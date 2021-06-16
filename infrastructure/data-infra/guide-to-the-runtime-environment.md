@@ -137,3 +137,15 @@ nu iam create roles stable mesos-fixed --env cantareira
 ```
 
 Done, now the iam-role for **mesos-fixed** in the stack **stable** is updated.
+
+### Cycling a zookeeper instance
+Sometimes we might need to swap an instance in zookeeper cluster, without changing the configuration. This need can occur, for example, when we are notified AWS will retire a node.
+
+Zookeeper can handle node outages fairly well, so there should be no need to back up anything. The operation will be monitored through Exhibitor - a "co-process for instance monitoring, backup/recovery, cleanup and visualization". The order of operation is as follows (pls read through it all first to avoid confusion):
+1. Go to exhibitor UI ([link](http://cantareira-zookeeper.nubank.com.br:8080/exhibitor/v1/ui/index.html) to cantareira) - in the "Control Panel" you will see the list of cluster nodes. They should all be green and "serving". To the right the Hostname for each instance you'll see a link to the Exhibitor for that instance. For consistency's sake We advise you open Exhibitor for each instance and check that the "Config" part is the same. What is especially important is the "Automatic Server List Add/Remove" has to be _enabled_. This will allow the cluster to rebalance once the new node is added / old node is removed.
+2. In the Exhibitor, take note of what the current server list is: Config -> Ensemble -> Servers
+3. Once you've proved that all nodes are up and config is consistent across the cluster (step 1), _and_ you've checked that an autoscaling group is attahced to the Cloudformation config (for cantareira, the ASGroup should be [here](https://console.aws.amazon.com/ec2autoscaling/home?region=us-east-1#/details/cantareira-green-zookeeper-d-CantareiraGreenD-6F5BFD3DZ9HZ?view=details)) you can terminate the instance in question.
+4. Wait for the AWS to terminate the old un and spin up the new instance. It may take a bit. During this time the terminated instance may still appear as unreacheable (red) in other Exhibitors. Once the new instance is up, you can access its Exhibitor by the similar link as in step 1.
+5. Make sure that the new instance has at least one of the remaining instances listed in it's Config -> Ensemble -> Servers, and that "Automatic Server List Add/Remove" is enabled.
+6. Wait for a bit. Current cantareira's config gets checked every 3 mins ("Automatic Server List Add/Remove" -> "Settling Period"). On the cluster's remaining servers' logs (Exhibitor tab), you should see that terminated instance was evicted, and after some time - a new instance is being added.
+7. By the end of rebalancing, all Exhibitors should be consistent and show other nodes as green.
