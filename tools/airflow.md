@@ -232,6 +232,17 @@ Re-running a node by **clearing** its status represents a very different behavio
 
 As we covered before, triggering a DAG (**not** clearing a DAG), will create a totally new DAG run; We can think of this as creating a new *dagao* or a new *daguito* run. One of the first things we do during the first task in one of the DAGs is creating a new Metapod transaction, so yes, creating a new DAG run will result in creating a new transaction, which is something that we do not want, as it might confuse our users on why we have multiple production transactions for the same day.
 
+### What about the `Downstream` and `Recursive` options?
+
+- `Downstream` :: apply the same action to all the nodes downstream to
+  the current one.
+- `Recursive` :: apply the same action to all nodes _inside_ the
+  current one.
+
+Usually you want to apply both options, especially when you are
+**clearing** the node and usually you do **not** want to apply both
+options when marking a node as failed or successful.
+
 ## Running tests for the Airflow DAGs
 
 Running the command below, will spin a environment similar to the production one, and will run and check all tasks in the `main.py` dag.

@@ -1011,3 +1011,43 @@ Every once in a while, Aurora goes down. `sabesp` commands, such as ones involve
 
 3. [Restart Mesos](ops_how_to.md#restart-aurora).
 4. If the issue still persists, [restart Aurora](ops_how_to.md#restart-aurora).
+
+### Itaipu serving jobs haven't started 
+
+These jobs are critical and if they are not started at 18:00UTC, yet,
+something is really broken.
+
+
+#### Verification and diagnosis
+
+1. Check all the jobs with the name starting with `itaipu-serving` in
+   [Airflow][https://airflow.nubank.com.br/admin/airflow/graph?dag_id=prod-dagao].
+   If the alert has fired correctly, all of these nodes should be in
+   either a blank or `upstream_failed` state.
+2. Follow their dependency path backwards and check their state, too.
+   There are two possibilities here:
+    1. An upstream node is still running, delaying the execution of all
+       its children, including the “serving” jobs.
+    2. The state of an upstream node has been updated _without_ the
+       `Downstream` option
+
+#### Solution
+
+- In the first case, you need to find out why the upstream node is so
+  late. A likely reason could be there has been a big crash during the
+  day and we are just late. There’s nothing to do, other than
+  considering the mitigations listed in the next entry.
+- In the second case, we have different options, depending on the
+  actual state of the upstream node.
+    - Failed :: Check the actual extent of the failure. If negligible,
+      see below; if not, you need to first fix the problem with the
+      upstream node and then [clear its
+      state](./tools/airflow.md#triggering-a-dag-vs-clearing-a-dag-and-its-tasks)
+      _without_ the `Dowstream`.
+    - Successful :: Check if it’s really safe to manually start the
+      downstream nodes and, if so, see below.
+    - Once the state of the upstream has been verified and reached a
+      stable state, you need to manually start only the Airflow nodes
+      that are really critical, because at this point we are already
+      so late that we need to be selective and compute only what’s
+      strictly necessary.
