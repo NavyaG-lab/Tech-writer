@@ -510,8 +510,9 @@ This should help you validate the hypothesis about too many retries.
 About Kafka rebalancing. Ouroboros is shard aware, so the alert
 aggregates the lag from all shards. Check Ouroboros Kafka lag metrics
 to check if the problem is happening with one specific shard or is a
-general problem. [Link to the more details Grafana Kafka lag](
+general problem. [Kafka lag dashboard in Grafana](
 https://prod-grafana.nubank.com.br/d/000000222/kafka-lags-topic-view?orgId=1&from=now-2d&to=now&refresh=1m&var-PROMETHEUS=prod-thanos&var-GROUP_ID=OUROBOROS&var-TOPIC=NEW-SERIES-PARTITIONS&var-PROTOTYPE=All&var-STACK_ID=All)
+and [Kafka rebalancing dashboard in Grafana](https://prod-grafana.nubank.com.br/d/000000222/kafka-lags-topic-view?viewPanel=17&orgId=1&refresh=1m&var-PROMETHEUS=prod-thanos&var-GROUP_ID=OUROBOROS&var-TOPIC=NEW-SERIES-PARTITIONS&var-PROTOTYPE=global&var-STACK_ID=blue)
 
 Finally, [check Ouroboros
 dashboard](https://prod-grafana.nubank.com.br/d/XEIhxKHMz/ouroboros-monitoring?orgId=1)
@@ -525,6 +526,29 @@ problems is open-ended.
 - Cycle the service
 - Check provisioning of the service, if you have reasons to believe
   the service needs more resources.
+
+If you have reasons to believe Ouroboros needs more resources, you can
+use one of the following commands:
+
+```
+nu-<country> k8s scale --env prod global ouroboros <baseline> --min <min> --max <max>
+```
+
+Or change CPU `requests` and `limits` in the k8s definition:
+
+```
+nu-<country> k8s ctl global --env prod -- edit deploy prod-global-<color>-ouroboros-deployment
+```
+
+_NB You can use `nu stack current` to find the color._
+
+Or a combination of both.
+
+After this you need to monitor the lag. If your changes proved
+successful, you want to change [the
+definition](https://github.com/nubank/definition/blob/master/resources/br/services/ouroboros.edn)
+for the country (here, Brasil).
+
 
 ### Itaipu OutOfMemory error
 
@@ -746,7 +770,7 @@ CloudFormation stack and forgot to delete the old one.
 
 #### Solution
 
-[Delete the old stack](/tools/airflow.md#updating-airflow).
+[Delete the old stack](../../tools/airflow.md#updating-airflow).
 
 ### Decrease in row count on databases
 
@@ -1012,7 +1036,7 @@ Every once in a while, Aurora goes down. `sabesp` commands, such as ones involve
 3. [Restart Mesos](ops_how_to.md#restart-aurora).
 4. If the issue still persists, [restart Aurora](ops_how_to.md#restart-aurora).
 
-### Itaipu serving jobs haven't started 
+### Itaipu serving jobs haven't started
 
 These jobs are critical and if they are not started at 18:00UTC, yet,
 something is really broken.
@@ -1042,7 +1066,7 @@ something is really broken.
     - Failed :: Check the actual extent of the failure. If negligible,
       see below; if not, you need to first fix the problem with the
       upstream node and then [clear its
-      state](./tools/airflow.md#triggering-a-dag-vs-clearing-a-dag-and-its-tasks)
+      state](../../tools/airflow.md#triggering-a-dag-vs-clearing-a-dag-and-its-tasks)
       _without_ the `Dowstream`.
     - Successful :: Check if it’s really safe to manually start the
       downstream nodes and, if so, see below.
