@@ -160,7 +160,6 @@ Some instances of this happening include:
 
   1. [Retracting](ops_how_to.md#retracting-datasets-in-bulk) the inputs for the failing datasets in order to recompute the inputs and re-store them on s3 usually fixes it.
 
-
 ###### Job failed due to timeouts communicating with Metapod
 
 In case the log points out to the error `Resiliently getOrCreate transaction failed after 3 tries with error`:
@@ -172,6 +171,58 @@ In case the log points out to the error `Resiliently getOrCreate transaction fai
 - [Metapod GraphQL metrics, particularly the query response time of `GetTransactionsWithDatasets`](https://prod-grafana.nubank.com.br/d/000000260/graphql-monitoring?orgId=1&from=now-1h&to=now&var-PROMETHEUS=prod-thanos&var-prototype=global&var-service=metapod&var-resolver=All&var-stack=blue&var-percentile=0.95&var-interval=$__auto_interval_interval)
   - [JVM metrics](https://prod-grafana.nubank.com.br/d/000000276/jvm-by-service?orgId=1&from=now-1h&to=now&var-ENVIRONMENT=prod&var-PROMETHEUS=prod-thanos&var-SERVICE=metapod&var-PROTOTYPE=global&var-STACK_ID=All&var-POD=All)
 
+
+###### Raw contract job fails for inexplicable reason
+ 
+There is a known, very rarely occurring bug, where the data from the `unified-materialized-entities` (e.g. `raw-metapod/materialized-entities`) dataset created as part of contract generation is corrupted on disc. This usually results in the raw contract tables (e.g. `raw-metapod/partitions`) failing with obscure errors, such as:
+ - failure to coerce a field to its datatype due to its value being unparseable for that data type (e.g. `Caused by: java.time.format.DateTimeParseException: Text '2021o@nubank.com.br' could not be parsed at index 4`)
+ - job failing due to losing too many executors (this should never happen in normal circumstances as the raw contract jobs merely filter data and perform some light, highly parallelisable transformations)
+ 
+In both cases, investigation of the `unified-materialized-entities` table will reveal either a field with very strange looking data (which would lead to the data type coercion error) or a field with an abnormally big value on one of its attributes (which would lead to losing executors which cannot hold this value in memory while attempting to parse it). The investigation is usually done via Databricks (see the end of the entry).
+
+It is not currently known what causes this bug. The only known guaranteed remediation is to retract all its contracts and raws, and compute it again.
+1. Using BigQuery or a tool of your choice, query for the names of the contract datasets for the affected contract database, for example if `rewards-ledger` is affected:
+```
+SELECT name 
+FROM `nu-br-data.dataset.spark_ops` 
+WHERE name LIKE "contract-rewards-ledger/%"
+```
+2. Retract all contracts + raws for the database using the list of contracts obtained in the previous step.
+```
+nu-br datainfra hausmeister dataset-uncommit --include-predecessors today contract-rewards-ledger/purchase-metas contract-rewards-ledger/event-metas contract-rewards-ledger/attribute-schema contract-rewards-ledger/partner-ref-metas contract-rewards-ledger/movements contract-rewards-ledger/book-accounts contract-rewards-ledger/entries
+```
+ 
+Once the retraction is completed, restart the node, and normally the job should succeed.
+
+**Note**: the reason we retract everything is that while the transition from `unified-materialized-entities` to raw contract is where the symptoms appear, the corruption can sometimes be coming from one of of the prototype-specific materialized-entities tables. For most databases, it's probably quicker to just retract and recompute everything. However, for bigger databases (such as `ledger` or `double-entry`), you may want to try to dig into the data so that you may retract only the materialized-entities table that contains the corrupt field. One approach, using Databricks, is to isolate the faulty rows so that you may find which prototype they're coming from, and only retract the materialized-entities table of that prototype. Below is an example taken from a crash where the issue was manifesting for `raw-sr-barriga/tx`, when coercing the `db__tx_instant` field:
+```scala
+import org.apache.spark.sql.functions._
+import java.math.BigDecimal
+import java.sql.{Date => SQLDate}
+import java.time.{Instant, LocalDateTime, ZoneId}
+ 
+// This is for the case when you're trying to parse a date. Adapt to whatever data type is failing in your context.
+
+val parseUDF = udf { arr: Seq[String] =>  
+  try {
+    java.sql.Timestamp.from(Instant.parse(arr.head))
+  } catch {
+    case e: Exception => null
+  }
+}
+
+val unifiedMaterializedEntitiesTable = spark.read.parquet("s3://nu-spark-metapod-ephemeral-1-raw/wp7mX80YQEOe-XraQ6kMTA") // this can be obtained by querying Metapod
+
+val faultyRows = unifiedMaterializedEntitiesTable
+  .filter($"prospective_primary_key" === "db__tx_instant")  // the primary key of the contract entity, can be found in the contract on Itaipu. This steps serves to reduce the amount of data we need to process
+  .withColumn("db__tx_instant", parseUDF($"attributes.db__tx_instant")) // apply the parse udf to the column 
+  .filter($"db__tx_instant".isNull) // find rows for which the parsing failed
+ 
+display(faultyRows) // for parsing failures, this will allow you to see specifically what is wrong
+display(faultyRows.drop($"attributes")) // for executor failures, you should first drop the attributes column, as otherwise the Databricks executors will also fail when trying to display it to you
+```
+ 
+ 
 ### Restart an Airflow task
 
 1. Access [Airflow in Cantareira](https://airflow.nubank.com.br/admin/airflow/graph?dag_id=prod-dagao), or [Airflow in Foz](https://prod-airflow.nubank.world/admin/airflow/graph?dag_id=prod-daguito)
