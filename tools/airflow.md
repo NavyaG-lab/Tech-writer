@@ -37,26 +37,7 @@ index=prod-data source=airflow
 
 ### Alternative way: on the instance
 
-> Note: in order to SSH into the BR instances of Airflow, you may need to manually add a `br-cantareira` profile in your `~/.aws/config` and `~/.aws/credentials` file. The credentials entry should be identical to `br-prod` and the config file entry should use `us-east-1` as a region
-
-- Find out the current Airflow suffix (can be found on the AWS EC2 console, search for instances with 'airflow' in their name)
-- Set up some parameters:
-  - For BR:
-    ```
-    export COUNTRY=br
-    export ENV=prod
-    export SUFFIX=yellow # changes regularly, see preceding point
-    ```
-  - In the Data environment:
-    ```
-    export COUNTRY=data
-    export PROTOTYPE=foz
-    export ENV=prod
-    export SUFFIX=silver # changes regularly, see preceding point
-    ```
-- ssh into the instance:
-  - BR: `nu-$COUNTRY ser ssh airflow --env $ENV --suffix $SUFFIX`
-  - Data: `nu-$COUNTRY ser ssh $PROTOTYPE airflow --env $ENV --suffix $SUFFIX`
+SSH into the instance using the docs [here](../on-call/data-infra/ops_how_to.md#ssh-to-a-service)
 
 Once you are logged into the instance you can run the following to inspect the logs:
 - Logs of the scheduler: `journalctl -u af-scheduler`
@@ -196,9 +177,7 @@ Finally, you can delete the old stack with:
 If you try clearing an airflow dag node and it doesn't actually restart the node, something on airflow may be messed up.
 The way forward is to cycle the airflow process.
 
-Ssh into the machine
-
-`nu ser ssh airflow --region us-east-1 --user phillip.mates --env cantareira --suffix t`
+Ssh into the machine as descibed [here](../on-call/data-infra/ops_how_to.md#ssh-to-a-service)
 
 and restart the process
 

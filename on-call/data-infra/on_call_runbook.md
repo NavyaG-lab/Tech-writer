@@ -906,7 +906,7 @@ Existing itaipu jobs will continue to run, but no more will be accepted for proc
 
 #### How to fix
 
-Simply [restart the Mesos master](ops_how_to.md#restart-aurora).
+Simply [restart the Mesos master](ops_how_to.md#restart-mesos).
 
 If, for some reason, you cannot use the method above, you can use the [deploy repository](https://github.com/nubank/deploy) and re-deploy the master with current configuration.
 
@@ -914,14 +914,7 @@ If, for some reason, you cannot use the method above, you can use the [deploy re
 ### Mesos master cannot select a leader
 #### How to investigate
 
-A good first step is to ssh into the mesos-master or a mesos-fixed instance with:
-```
-# ssh into mesos in BR or Data
-nu-br ser ssh mesos-master --suffix stable --env cantareira --region us-east-1
-nu-data ser ssh foz mesos-master --suffix liquorice --env prod --region us-east-1
-```
-
-> Note that you can find out the `--suffix` for data by looking for the instances in the EC2 console.
+A good first step is to ssh into the mesos-master or a mesos-fixed instance: see steps [here](ops_how_to.md#ssh-to-a-service)
 
 Once on the machine, the logs can be accessed with:
 ```

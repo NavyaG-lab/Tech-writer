@@ -8,7 +8,10 @@ This guide aims at providing the Hausmeisters, a compendium of how-to-do tasks t
 
 This is a guide where each section contains the steps required (how-to-do-it) to follow the recipe. It also provides the context or an overview of the topic and helpful links to other useful information for the recipe.
 
+* [SSH to a service](#ssh-to-a-service)
+* [Restart a service](#restart-a-service)
 * [Restart Mesos](#restart-mesos)
+* [Redeploy Mesos](#redeploy-mesos)
 * [Restart Aurora](#restart-aurora)
 * [Hot-deploying service rollbacks](#hot-deploying-service-rollbacks)
 * [Re-deploying the DAG during a run](#re-deploying-the-dag-during-a-run)
@@ -51,10 +54,43 @@ This is a guide where each section contains the steps required (how-to-do-it) to
 * [Regenerating Expired Certificates](#regenerating-expired-certificates)
 * [Rebalancing Contract nodes to meet SLOs](#rebalancing-contract-nodes)
 
-## Mesos
+### SSH to a service
+To be able to debug / interact with services running on ec2 / k8s, use the `nu ser ssh` command. Please note that syntax for `br` and `data` differs.
+
+Find out the current `suffix` (can be found on the AWS EC2 console, search for instances by name) - `suffix` is usually a color, like 'white', 'yellow', 'liquorice' etc.
+
+ssh into the instance (ex for airflow):
+  - BR: `nu-br ser ssh airflow --env cantareira --suffix $SUFFIX` (here, the value of $SUFFIX can be `stable`)
+  - Data: `nu-data ser ssh foz airflow --env prod --suffix $SUFFIX`
+
+Other services include `zookeeper`, `mesos-master`, `mesos-on-demand`, `mesos-fixed`, `aurora-scheduler`.
+
+The above command will pick an instance (if there are several) randomly. To specify an exact instace, use the `--ip $IP` parameter.
+
+> Note: in order to SSH into the BR instances of Airflow, you may need to manually add a `br-cantareira` profile in your `~/.aws/config` and `~/.aws/credentials` file. The credentials entry should be identical to `br-prod` and the config file entry should use `us-east-1` as a region
+
+### Restart a service
+If it is a k8s service, please use the `nu ser cycle` command
+
+If it is a deployed service (mesos, airflow, aurora) - please do as follows:
+- [ssh](#ssh-to-a-service) into the instance
+- Check current systemd unit status: `sudo systemctl status <unit>`
+- Start the unit: `sudo systemctl restart <unit>`
+- Verify that the unit restarted: `journalctl -f -u <unit>`
+
+Most important units include `mesos-master`, `af-scheduler`, `aurora-scheduler`
 
 ### Restart Mesos
-There are three types of nodes that make up a mesos cluster: mesos-master, mesos-on-demand and mesos-fixed. In case you need to restart any of them, please use the [deploy](https://github.com/nubank/deploy) repository. 
+
+To restart mesos nodes with the same configuration, you will have to either [re-deploy](#redeploy-mesos) the instances, or restart each one by hand. It is advised to do the latter, especially considering there is usually only one instance that is faulty.
+
+You can restart mesos using `systemd`, having [ssh-ed](#ssh-to-a-service) to the instance.
+Once inside, [restart](#restart-a-service) the `mesos-master` service
+
+### Redeploy Mesos
+!Note please check if you indeed need to redeploy mesos, or a [restart](#restart-mesos) is enough. Usually, to go for a redeploy you need a strong reason
+
+There are three types of nodes that make up a mesos cluster: mesos-master, mesos-fixed (and mesos-on-demand which is not covered here, see scale-cluster repo for details). In case you need to redeploy any of two, please use the [deploy](https://github.com/nubank/deploy) repository.
 
 The `deploy` repo works on CloudFormation level, either creating a new stack, or upserting an existing one.
 
@@ -74,7 +110,7 @@ Secondly, you can run the console, `./console`. Creating/upserting mesos-master 
 ```
 !Note if at some point you are getting the `Aws::Route53::Errors::ExpiredToken` error, feel free to comment out the internals of `self.resolve_dns_with_nubank_delegation_set!`.
 
-For `data` environments, you must connect ny specifying the env first: `./console prod` or `./console staging`. When running the commands, pls speify the color of the stack:
+For `data` environments, you must connect by specifying the env first: `./console prod` or `./console staging`. When running the commands, pls specify the color of the stack. The colors of existing stacks can be found in the aws console in the node names. If you are creating a stack that does not exist, use a new color. If you are upserting an existing stack, use that color (ex., `liquorice`)
 ```
 MesosMaster.create!(ENVIRONMENT, 'foz', 'liquorice')
 ```
@@ -89,14 +125,8 @@ Every once in a while, Aurora goes down. `sabesp` commands, such as ones involve
 
 1. Restart Aurora Scheduler:
 
-```
-  nu ser ssh aurora-scheduler --suffix stable --env cantareira --region us-east-1
-
-```
-
-- Check current status: `sudo systemctl status aurora-scheduler`
-- Start the service: `sudo systemctl restart aurora-scheduler`
-- Verify that the service restarted: `journalctl -f -u aurora-scheduler`
+SSH into aurora scheduler as described [here]((#ssh-to-a-service)
+Restart the `aurora-scheduler` service as described [here](#restart-a-service)
 
 1. After restarting Aurora:
 
