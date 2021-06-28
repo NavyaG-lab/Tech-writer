@@ -39,6 +39,7 @@ Before going any further make sure you have:
 
 - A working SU cluster. If you don't have one ask on #data-help that you need one in order to access a custom S3 bucket.
 - A data account IAM role. If you don't have one ask on [this Jira form](https://nubank.atlassian.net/servicedesk/customer/portal/53/group/241/create/880)
+- A data account IAM role that's part of the `databricks-general` group. If you are not in this group ask on [this Jira form](https://nubank.atlassian.net/servicedesk/customer/portal/53/group/241/create/882)
 - For Nubank owned custom buckets:
     - The ability to sign commits on GitHub (verified tag). Check the [documentation](https://docs.github.com/en/github/authenticating-to-github/managing-commit-signature-verification) on how to configure it.
     - Be part of the `prod-eng` IAM group. Ask for permission on #tribe-infosec that you need this permission to sync bucket policies.

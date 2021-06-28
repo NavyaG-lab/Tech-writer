@@ -1,5 +1,5 @@
 ---
-owner: "#data-infra"
+owner: "#data-access"
 ---
 
 <!-- markdownlint-disable-file -->
@@ -11,6 +11,7 @@ owner: "#data-infra"
 - [How to add a new role?](#How-to-add-a-new-role)
 - [How to add new bucket permissions?](#How-to-add-new-bucket-permissions)
 - [How to create a lambda to evolve the environment?](#How-to-create-a-lambda-to-evolve-the-environment)
+- [How to enable Nubankers to use their personal data account role](#How-to-enable-nubankers-to-use-their-personal-data-account-role)
 
 ---
 
@@ -104,3 +105,18 @@ But we could have our own lambda repository for this part of the domain in futur
 To deploy the changes you have to ensure that the pipeline of your lambda with the name - `lambda_okta_aws_[lambda-name]` has been successfully run. For anything more related to debugging your lambda, find your lambda inside AWS Lambda and check the runtime logs.
 
 https://github.com/nubank/playbooks/blob/master/docs/clojure-lambdas/creating-a-clojure-lambda.md
+
+## How to enable Nubankers to use their personal data account role
+
+Requisites:
+
+1. The Nubanker's personal data role exists: `nu-data sec iam show <jane.doe>`
+1. Permissions to run the `databricks-lambdas-update-trust` lambda. Ask a permissions admin from Data Access if you don't have it. Command to grant access: `nu-data iam allow <data-access-person> lambda run databricks-lambdas-update-trust`
+1. Permissions to add Okta users to the `gac-rollout` Okta group. Ask a permissions admin from Data Access if you don't have it.
+
+Steps:
+
+1. Allow Databricks to assume the data role via a trust policy: `nu-data serverless invoke databricks-lambdas-update-trust --account-alias data --env prod --invoke-type sync --payload '{"role-name":"<jane.doe>-data-role"}'`
+1. Add the person to the [gac-rollout Okta group](https://nubank-admin.okta.com/admin/group/00g1kmaf1qkgLe3Qt0h8)
+1. Ask the person to log out of Databricks
+1. Confirm with the person that the personal data role is available by asking them to run `dbutils.credentials.showRoles()` in their SU cluster. The personal role has this name pattern: `arn:aws:iam::877163210394:role/<jane.done>-data-role`
