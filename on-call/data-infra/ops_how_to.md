@@ -53,6 +53,7 @@ This is a guide where each section contains the steps required (how-to-do-it) to
 * [Replaying Deadletters](#replaying-deadletters)
 * [Regenerating Expired Certificates](#regenerating-expired-certificates)
 * [Rebalancing Contract nodes to meet SLOs](#rebalancing-contract-nodes)
+* [Open an ISC incident](#open-an-isc-incident)
 
 ### SSH to a service
 To be able to debug / interact with services running on ec2 / k8s, use the `nu ser ssh` command. Please note that syntax for `br` and `data` differs.
@@ -784,3 +785,14 @@ rm aurora.p12
 
 ## Rebalancing Contract Nodes
 We have documented the steps required to do this operation in the following honey post: [Rebalancing the Load for Contracts Nodes](https://honey.is/home/#post/872465)
+
+
+## Open an ISC incident
+Concacting the Inter-Services Communications (ISC) team might be useful, in case we run into critical issues with our Zookeeper cluster. ZK maintenance lies primarily on us, but they will temporarily continue to provide us with support.
+
+In case we need to open a ticket with Inter-Services Communications team, please follow these steps:
+1. Login to OpsGenie
+2. Click on create alert
+3. Choose Platform - ISC - API in API integration
+4. Describe the problem and environment in the alert description
+5. Choose P1-Critical for the priority

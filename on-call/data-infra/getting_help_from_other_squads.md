@@ -12,5 +12,6 @@ If during a crash you find yourself needing urgent help from another squad, you 
 | Platform | Kafka/Kubernetes/Monitoring issues  | \#guild-observability<br />\#kafka <br />\#kubernetes<br />\#platform-tribe (if none of the above work) | platform-incident@nubank.opsgenie.net |
 | IT Ops   | VPN issues                          | \#squad-itops                                                | itops-incident@nubank.opsgenie.net    |
 | ACME     | Tempo, Mortician issues             | \#squad-acme                                                 | acme-incident@nubank.opsgenie.net     |
+| ISC      | Zookeeper                           | \#inter-service-communication-squad                          |   See [here](ops_how_to.md#open-an-isc-incident)  |
 
 For more information, you can check the [guide for paging engineers](https://docs.google.com/document/d/1km02hDDCSgVRBQ6JePW0fheZ9xMVY-rv2HpsDamHa5Y/edit?usp=sharing)
