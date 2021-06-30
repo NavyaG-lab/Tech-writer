@@ -21,9 +21,9 @@ Let's get started by creating the following accounts:
 * Slack
 * [github](https://github.com/)
 
-### Request access for services through IT Ops
+## Request access for services through IT Ops
 
-Raise a request for the following accounts by logging into Nubank's [IT Ops](https://nu-itops.atlassian.net/servicedesk/customer/user/login).
+Raise a request for the following accounts by logging into Nubank's [IT Ops](https://nubank.atlassian.net/servicedesk/customer/portals).
 
 ### Services
 
@@ -35,29 +35,28 @@ Raise a request for the following accounts by logging into Nubank's [IT Ops](htt
 |Looker|Data visualization tool|
 |OpsGenie|An Incident management tool used by Hausmeisters|
 
-#### How to request access
+## How to request access
 
-1. Log in to [IT Ops](https://nu-itops.atlassian.net/servicedesk/customer/user/login) using Nubank credentials.
+1. Log in to [IT Ops](https://nubank.atlassian.net/servicedesk/customer/portals) using Nubank credentials.
 1. Choose the service or tool for which you want to raise a request.
 1. Fill the required fields and submit.
 
-### Requesting AWS access
+### AWS access
 
 The AWS access is given to you through roles, which must be requested directly; The following section explains how to do it.
 
-#### Requesting AWS roles
+### AWS roles
 
-1. Log in to [IT Ops](https://nu-itops.atlassian.net/servicedesk/customer/user/login) using Nubank credentials.
-1. Click on **Request Access** -> **AWS** -> **New Role**.
-1. Select on the list, the role for the country that you are going to interact with (e.g. **BR**). Fill in other required fields.
+1. Log in to [IT Ops](https://nubank.atlassian.net/servicedesk/customer/portal/53/group/241/create/880) using Nubank credentials.
+1. Select the country and AWS role that you need to access (e.g. **GER** country, **DATA role**). Fill in other required fields.
 1. Submit the request.
 
-**Note**: Make sure you requested access for all the three roles in AWS - **BR**, **MX**, **CO** and **Data**.
+**Note**: Make sure you requested access for all the roles in AWS - **BR**, **MX**, **CO** and **Data**.
 You should now request access for the necessary AWS IAM groups.
 
-#### Requesting AWS IAM groups
+### AWS IAM groups
 
-1. Log in to [IT Ops](https://nu-itops.atlassian.net/servicedesk/customer/user/login) using Nubank credentials.
+1. Log in to [IT Ops](https://nubank.atlassian.net/servicedesk/customer/portal/53/group/241/create/882) using Nubank credentials.
 1. Click on **Request Access** -> **AWS** -> **AWS Group**.
 1. Enter the following groups in the **IAM Group/s** field:
 
@@ -66,6 +65,8 @@ You should now request access for the necessary AWS IAM groups.
     * data-infra-aurora-access
     * eng
     * prod-eng
+    * infra-ops
+    * data-access-engineering
 
 1. Submit the request.
 1. After the request is handled, make sure you have the correct groups by running:
@@ -76,11 +77,11 @@ nu-<country> sec iam show <your.username>
 
 **Note**: Make sure you request access for all the roles in AWS - **BR**, **MX**, **CO** and **Data**.
 
-## Requesting necessary Scopes
+## Necessary Scopes
 
 Access to some services and NuCLI commands is given to you through scopes, which must be requested directly.
 
-1. Request the scope `admin` at [Help Center - Scopes and 3rd requests](https://nubank.atlassian.net/servicedesk/customer/portal/29) for each country `br`, `co`, `data`, `mx`.
+1. Request the scope `admin` at [Help Center - Scopes and 3rd requests](https://nubank.atlassian.net/servicedesk/customer/portal/29/group/176/create/802) for each country `br`, `co`, `data`, `mx`.
 1. After the request is handled, make sure you have the correct scope by running:
 
 ```bash
@@ -99,7 +100,7 @@ nu-<country> sec scope add <your.username> change-scopes --env staging
 nu-<country> sec scope add <your.username> read-scopes --env staging
 ```
 
-**Note**: Make sure you requested access for all the three roles in AWS - **BR**, **MX**, and **Data**.
+**Note**: Make sure you requested access for all the three roles in AWS - **BR**, **MX**, **CO** and **Data**.
 
 ## Other accounts
 
@@ -112,7 +113,7 @@ nu-<country> sec scope add <your.username> read-scopes --env staging
 
 An Engineer will have aceess to Production environment by default. For access to staging environment, you must raise a request.
 
-* For Metapod: Raise a request for staging CERT through [IT Ops](https://nu-itops.atlassian.net/servicedesk/customer/user/login).
+* For Metapod: Raise a request for staging CERT through [IT Ops](https://nubank.atlassian.net/servicedesk/customer/portal/29/group/176/create/802).
 
  **Note:** For requests related to access permissions, reach out to #access-request slack channel and post your request.
 
