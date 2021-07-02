@@ -71,6 +71,18 @@ In the sequence diagram below you can see that alternative.
 
 ![Sequence Diagram](architecture/requisition.png)
 
+#### Guidelines to validade a new ACG policy
+
+When you create an ACG you need to be aware that the policy you'll write must not allow any kind of data leakage. Currently AWS policies have a size limit, so to fit its length it is common to use wild cards. However, if this is not made with caution you can accidentally give permissions to buckets with sensitive data.
+To avoid that we recommend you to validate it using [aws simulator](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_testing-policies.html). We created a nucli command to make this test easier: `nu data-protection s3-iam-test check-access`
+
+Since the command is in early stages there's a few manual steps that you need to do:
+1) Specify the [policy name](https://github.com/nubank/nucli/blob/f4f48ba/nucli.d/data-protection.d/s3-iam-test.d/impl/src/s3_policy_test/core.clj#L42) you want to test
+2) Specify the [action](https://github.com/nubank/nucli/blob/f4f48ba/nucli.d/data-protection.d/s3-iam-test.d/impl/src/s3_policy_test/core.clj#L43) you want to test
+3) Specify the [bucket names](https://github.com/nubank/nucli/blob/f4f48ba/nucli.d/data-protection.d/s3-iam-test.d/impl/src/s3_policy_test/core.clj#L13) you want to test against
+
+You can do that locally on your machine. No need to submit a PR.
+
 ### Changelog
 
 #### 2021-05-06
