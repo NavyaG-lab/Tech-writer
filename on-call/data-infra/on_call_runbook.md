@@ -173,25 +173,25 @@ In case the log points out to the error `Resiliently getOrCreate transaction fai
 
 
 ###### Raw contract job fails for inexplicable reason
- 
+
 There is a known, very rarely occurring bug, where the data from the `unified-materialized-entities` (e.g. `raw-metapod/materialized-entities`) dataset created as part of contract generation is corrupted on disc. This usually results in the raw contract tables (e.g. `raw-metapod/partitions`) failing with obscure errors, such as:
  - failure to coerce a field to its datatype due to its value being unparseable for that data type (e.g. `Caused by: java.time.format.DateTimeParseException: Text '2021o@nubank.com.br' could not be parsed at index 4`)
  - job failing due to losing too many executors (this should never happen in normal circumstances as the raw contract jobs merely filter data and perform some light, highly parallelisable transformations)
- 
+
 In both cases, investigation of the `unified-materialized-entities` table will reveal either a field with very strange looking data (which would lead to the data type coercion error) or a field with an abnormally big value on one of its attributes (which would lead to losing executors which cannot hold this value in memory while attempting to parse it). The investigation is usually done via Databricks (see the end of the entry).
 
 It is not currently known what causes this bug. The only known guaranteed remediation is to retract all its contracts and raws, and compute it again.
 1. Using BigQuery or a tool of your choice, query for the names of the contract datasets for the affected contract database, for example if `rewards-ledger` is affected:
 ```
-SELECT name 
-FROM `nu-br-data.dataset.spark_ops` 
+SELECT name
+FROM `nu-br-data.dataset.spark_ops`
 WHERE name LIKE "contract-rewards-ledger/%"
 ```
 2. Retract all contracts + raws for the database using the list of contracts obtained in the previous step.
 ```
 nu-br datainfra hausmeister dataset-uncommit --include-predecessors today contract-rewards-ledger/purchase-metas contract-rewards-ledger/event-metas contract-rewards-ledger/attribute-schema contract-rewards-ledger/partner-ref-metas contract-rewards-ledger/movements contract-rewards-ledger/book-accounts contract-rewards-ledger/entries
 ```
- 
+
 Once the retraction is completed, restart the node, and normally the job should succeed.
 
 **Note**: the reason we retract everything is that while the transition from `unified-materialized-entities` to raw contract is where the symptoms appear, the corruption can sometimes be coming from one of of the prototype-specific materialized-entities tables. For most databases, it's probably quicker to just retract and recompute everything. However, for bigger databases (such as `ledger` or `double-entry`), you may want to try to dig into the data so that you may retract only the materialized-entities table that contains the corrupt field. One approach, using Databricks, is to isolate the faulty rows so that you may find which prototype they're coming from, and only retract the materialized-entities table of that prototype. Below is an example taken from a crash where the issue was manifesting for `raw-sr-barriga/tx`, when coercing the `db__tx_instant` field:
@@ -200,10 +200,10 @@ import org.apache.spark.sql.functions._
 import java.math.BigDecimal
 import java.sql.{Date => SQLDate}
 import java.time.{Instant, LocalDateTime, ZoneId}
- 
+
 // This is for the case when you're trying to parse a date. Adapt to whatever data type is failing in your context.
 
-val parseUDF = udf { arr: Seq[String] =>  
+val parseUDF = udf { arr: Seq[String] =>
   try {
     java.sql.Timestamp.from(Instant.parse(arr.head))
   } catch {
@@ -215,14 +215,14 @@ val unifiedMaterializedEntitiesTable = spark.read.parquet("s3://nu-spark-metapod
 
 val faultyRows = unifiedMaterializedEntitiesTable
   .filter($"prospective_primary_key" === "db__tx_instant")  // the primary key of the contract entity, can be found in the contract on Itaipu. This steps serves to reduce the amount of data we need to process
-  .withColumn("db__tx_instant", parseUDF($"attributes.db__tx_instant")) // apply the parse udf to the column 
+  .withColumn("db__tx_instant", parseUDF($"attributes.db__tx_instant")) // apply the parse udf to the column
   .filter($"db__tx_instant".isNull) // find rows for which the parsing failed
- 
+
 display(faultyRows) // for parsing failures, this will allow you to see specifically what is wrong
 display(faultyRows.drop($"attributes")) // for executor failures, you should first drop the attributes column, as otherwise the Databricks executors will also fail when trying to display it to you
 ```
- 
- 
+
+
 ### Restart an Airflow task
 
 1. Access [Airflow in Cantareira](https://airflow.nubank.com.br/admin/airflow/graph?dag_id=prod-dagao), or [Airflow in Foz](https://prod-airflow.nubank.world/admin/airflow/graph?dag_id=prod-daguito)
@@ -1119,3 +1119,52 @@ something is really broken.
       that are really critical, because at this point we are already
       so late that we need to be selective and compute only what’s
       strictly necessary.
+
+### Aurora scheduler lost connection to Zookeeper
+
+_NB: We still don’t have much operational experience with Zookeeper,
+so everything here is still rather vague and more a set of hints for
+the investigation than a step-by-step guide._
+
+#### Verification and diagnosis
+
+1. The main reason why we care about this message is the potential
+   impact on the daily run. If:
+    1. Everything is ok in [Exhibitor](http://cantareira-zookeeper.nubank.com.br:8080/exhibitor/v1/ui/index.html), and
+    2. You don’t see any alert from Mesos Master, and
+    3. You don’t see any [job retrying in Airflow](https://airflow.nubank.com.br/admin/taskinstance/?flt1_dag_id_equals=prod-dagao&flt2_state_equals=running), and
+    4. The actual number of hits in [Splunk](https://nubank.splunkcloud.com/en-US/app/search/search?s=%2FservicesNS%2Fnobody%2Fsearch%2Fsaved%2Fsearches%2FData%2520Infra%2520-%2520Lost%2520connection%2520to%2520Zookeeer) is very low
+
+Then, there is not much to do. The assumption here is that it’s fine
+for an Aurora job to lose connection with Zookeeper from time to time,
+given the scale we operate at.
+
+If you still believe there is some deeper problem, you can ssh into
+the individual nodes and invoke the following command on _all_ the
+members of the cluster:
+
+```
+/opt/zookeeper/bin/zkServer.sh status
+```
+
+All of them should return immediately and, ça va sans dire, there
+should be only a leader, i.e.
+
+```
+JMX enabled by default
+Using config: /opt/zookeeper/bin/../conf/zoo.cfg
+Mode: leader
+```
+
+or
+
+```
+JMX enabled by default
+Using config: /opt/zookeeper/bin/../conf/zoo.cfg
+Mode: follower
+```
+
+#### Solution
+
+At the moment, the best thing to do is to [escalate the problem to
+Foundation](../data-infra/getting_help_from_other_squads.md).
