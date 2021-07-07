@@ -320,7 +320,21 @@ Run the command `nu-br sec scope show <username> --env prod` to check if you hav
 
 The command should return the result -  `Current scopes for <username> "admin manual-dataset-series-user"`. If you don't have all the required scopes, refer to the _*[Required access permissions](#required-access-permissions-before-appending-your-dataset)*_ section.
 
+### 504 Endpoint request timed out error
 
+#### Reason
+
+The AWS API Gateway that fronts the lambda that we internally use to copy the data over has a timeout of 30 seconds. If your file is large and the copy takes longer than 30 seconds you may face this API Gateway timeout error. Please note that the lambda continues to run to completion irrespective of this gateway error.
+This is a limitation that we are aware of and plan to have a long term solution for tackling this error.
+
+#### Solution
+
+To get around this issue, we have built slack notifications that will notify the status of your append via the `lambda_token_v3` channel.
+
+You can also check the status of the job by viewing the lambda logs.
+
+Running the info command `nu dataset-series info <series-name>` would also be sure shot way of knowing the final outcome of the append operation. 
+You should rely on these methods to check if your append was successful.
 ---
 
 ### I appended a file to my dataset series but it's not appearing in the next run, how can I fix this
