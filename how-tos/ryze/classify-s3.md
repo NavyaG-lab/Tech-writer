@@ -120,5 +120,8 @@ The categories were based on our current knowledge and discussions we had with s
 If your bucket has a service that is responsible to store/read data from a bucket, then the given bucket falls under `:service` category. If your bucket stores general data from `infra` and `secret` then the given bucket falls under  `:secret` category.
 If you're not finding the right category or have further questions, please send us a message on #s3-data-classification explaining your use case.
 
+## Does the classification have any side effects on the bucket? (e.g. policy change)
+In the current version, the classification will not change the bucket settings.
+
 ## Help
 If you need some help about the classification that was not covered by the questions above, for instance "which tag should I use?", send a message on #data-classification Slack channel. 
