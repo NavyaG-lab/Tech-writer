@@ -67,12 +67,12 @@ Non supported commands:
 
 ### Bucket Permissions
 
-If the custom bucket is owned by Nubank, a PR on [iam-policies](https://github.com/nubank/iam-policies) will need to be created. The PR will have two main aspects:
+If the custom bucket is owned by Nubank, a PR on [iam-policies](https://github.com/nubank/iam-policies) will need to be created. The PR will have two main aspects (the sections below give a detailed description about what needs to be done):
 
 1. Allow the Data Account, account number `877163210394`, to access the bucket
 1. An inline policy or group that grants access to the bucket
 1. **Optional**: If you want to access the data written by Databricks outside of Databricks you will need make sure that Databricks is writing files to the custom bucket using the `bucket-owner-full-control` canned ACL. To make sure Databricks is writing data with this flag you can reject uploads without the ACL.
-1. **Optional**: If you want for the files written by Databricks to be owned by the bucket owner, to enforce uniform object ownership across all files, you'll will need to change the bucket settings via a [lambda function](https://github.com/nubank/iam-policies/blob/master/bucket-ownership-controls.edn)
+1. **Optional**: If you want the files written by Databricks to be owned by the AWS account that owns the bucket (to enforce uniform object ownership across all files), you'll will need to change the bucket settings via a lambda function. Without this setting, the object will be owned by the uploading account (in the case of Databricks, the AWS `data` account). More information [here](https://docs.aws.amazon.com/AmazonS3/latest/userguide/about-object-ownership.html).
 
 The choice between inline policy or group depends on the access patterns of the bucket. If people need only temporary permissions on Databricks prefer using inline policies, as those are automatically revoked after a certain amount of time. If people need permanent access to the bucket consider using groups.
 
@@ -304,13 +304,19 @@ This means that the Data Account will only get permissions to write objects in t
 
 ##### Step 4 (Optional)
 
-Add the bucket to [this list](thttps://github.com/nubank/iam-policies/blob/master/bucket-ownership-controls.edn). After the PR is merged, request #ds-productivity permissions to run the following command:
+Add the bucket to [this list](https://github.com/nubank/iam-policies/blob/master/bucket-ownership-controls.edn). After the PR is merged, ask on Slack channel `#ds-productivity` to run the following command (and add a link to these instructions to explain what you are trying to accomplish):
 
-`nu serverless invoke bucket_obj_ownership --account-alias <ACCOUNT-ALIAS> --env prod --invoke-type sync --payload '{"bucket-name":"<BUCKET-NAME>"}'`
+```bash
+nu-<ACCOUNT-ALIAS> serverless invoke iam-policies-bucket-obj-ownership \
+  --account-alias <ACCOUNT-ALIAS> \
+  --env prod \
+  --invoke-type sync \
+  --payload '{"bucket-name":"<BUCKET-NAME>"}'
+```
 
-The `BUCKET-NAME` parameter should ommit the `s3://` prefix.
+The `<BUCKET-NAME>` parameter should ommit the `s3://` prefix (e.g., `nu-tmp`).
 
-These are the account aliases for each account:
+Choose the `<ACCOUNT-ALIAS>` that is the AWS account owner of the `<BUCKET-NAME>` (usually buckets follow a format similar to `nu-...-<ACCOUNT-ALIAS>`, unless it's from the `br` account, in which case the `<ACCOUNT-ALIAS>` is omitted). These are the account aliases for each account:
 
 - Brazil account: `br`
 - Mexico account: `mx`
