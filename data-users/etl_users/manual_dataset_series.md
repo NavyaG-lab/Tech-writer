@@ -333,8 +333,9 @@ To get around this issue, we have built slack notifications that will notify the
 
 You can also check the status of the job by viewing the lambda logs.
 
-Running the info command `nu dataset-series info <series-name>` would also be sure shot way of knowing the final outcome of the append operation. 
+Running the info command `nu dataset-series info <series-name>` would also be sure shot way of knowing the final outcome of the append operation.
 You should rely on these methods to check if your append was successful.
+
 ---
 
 ### I appended a file to my dataset series but it's not appearing in the next run, how can I fix this
