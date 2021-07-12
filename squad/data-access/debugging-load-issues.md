@@ -15,17 +15,17 @@ which will get you information on the dataset in the last few transactions. You 
 
 ## Checking Loads on Databricks
 
-We can check if a table has been properly loaded by checking the table `meta.loads` (BR) or `meta.international_loads` (all other regions).
+We can check if a table has been properly loaded by checking the table `meta.br_loads` (BR) or `meta.international_loads` (all other regions).
 
 ```sql
 %sql
-SELECT * FROM meta.loads 
+SELECT * FROM meta.br_loads 
 WHERE datasetName = '<dataset-name>'
 ORDER BY loadTime
 limit 100
 ```
 
-With the query above we can check what was the most recent transaction that loaded the table and other metadata about said load. This can help you decide where is the problem. Another place you can check is the load jobs ([BR](https://nubank.cloud.databricks.com/#job/13083), [Others](https://nubank.cloud.databricks.com/#job/19327)), from where you might see the specific errors that caused the table not to be loaded.
+With the query above we can check what was the most recent transaction that loaded the table and other metadata about said load. This can help you decide where is the problem. Another place you can check is the load jobs ([BR](https://nubank.cloud.databricks.com/#job/13083), [XP](https://nubank.cloud.databricks.com/#job/2212226), [Others](https://nubank.cloud.databricks.com/#job/19327)), from where you might see the specific errors that caused the table not to be loaded.
 
 If the table is not in the load tables and there are no errors, maybe it hasn't been loaded yet. Try manually triggering the job, which might give you more info.
 
