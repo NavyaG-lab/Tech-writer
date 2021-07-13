@@ -111,7 +111,7 @@ These are Python services to support online machine learning models in productio
 
 ## Accessing data
 
-- [belomonte](https://github.com/nubank/belomonte), ([overview](/primer.md#belo-monte))
+- [belomonte](https://github.com/nubank/belomonte), ([overview](https://wiki.nubank.com.br/index.php/Belo_Monte))
 - [imordor](https://github.com/nubank/imordor)
 
 ## Common libraries
@@ -139,4 +139,4 @@ These are Python services to support online machine learning models in productio
 - Mesos clusters (`stable`, `test`, `dev`, `dev2`)
 - Databricks
 - Google BigQuery (`nubank-data-access`, `staging-nubank-data-access`)
-- Airflow, ([overview](/primer.md#airflow-overview))
+- Airflow, ([overview](https://github.com/nubank/data-platform-docs/blob/master/about/data-infra/services-language-stacks.md#airflow-overview))
