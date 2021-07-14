@@ -521,6 +521,30 @@ Note that the date being passed to `MyCaseClass` is a dummy date and could be an
 
 ### How to create multiple versions in an archive dataset with Squish
 
+The easiest way to manage versions with Squish is making your SparkOp extend `nu.data.infra.internal.archived.SquishDeclaredSchema` instead of `DeclaredSchema`.
+
+By doing this you won't declare `attributes` anymore, but `squishAttributes` instead, where you'll have to define an `addedAt` LocalDate and, if the attribute was dropped, a `droppedAt` Option[LocalDate]:
+
+```scala
+import nu.data.infra.internal.archived.SquishDeclaredSchema
+
+object MySparkOp extends SparkOp with SquishDeclaredSchema {
+  // [your_spark_op]
+
+  def squishAttributes: Set[SquishAttribute] = Set(
+    SquishAttribute("Att1", LogicalType.DateType, primaryKey = true, description = Some("Mocked attribute 1"), addedAt = LocalDate.parse("2020-01-01")),
+    SquishAttribute("Att2", LogicalType.IntegerType, description = Some("Mocked attribute 2"), addedAt = LocalDate.parse("2020-01-02")),
+    SquishAttribute("Att3", LogicalType.StringType, description = Some("Mocked attribute 3"), addedAt = LocalDate.parse("2020-01-02"), droppedAt = Some(LocalDate.parse("2021-01-03")))
+  )
+}
+```
+
+That would automatically generate the `attributes` (as in `DeclaredSchema`) for the SparkOp. For the archive/Dataset Series, it will also generate the `contractSchema` with `Att1` and `Att2`, and two `alternativeSchemas`: one with `Att1` and other with `Att1`, `Att2` and `Att3`.
+
+OBS: You still need to use the method `SparkOpToSeries` in series archive's package by doing this.
+
+**OR USE THE ALTERNATIVE WAY (Not recommended - remember to add `alternativeSchemas` manually if using this option):**
+
 Create a file in the `dataset_series/archived` folder for your Dataset Series. In it, follow the example below:
 
 ```scala
