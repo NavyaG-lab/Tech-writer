@@ -15,7 +15,7 @@ owner: "#data-infra"
    * [Databricks Approach](#databricks-approach)
    * [Creating a new dataset](#creating-a-new-dataset)
    * [Editing an existing dataset](#editing-an-existing-dataset)
-   * [Make the dataset available in Redshift](#make-the-dataset-available-in-redshift)
+   * [Make the dataset available in Google BigQuery](#make-the-dataset-available-in-google-bigquery)
  * [Running Tests](#running-tests)
  * [How Itaipu is deployed to the Dagao](#how-itaipu-is-deployed-to-the-dagao)
  * [Publishing an itaipu build](#publishing-an-itaipu-build)
@@ -331,10 +331,10 @@ edit in an IDE because of type checking, autocompletion, etc.), then go back to 
 1. Open a pull request on Itaipu and ask someone from data infra to review it
 1. Follow the instructions about [merging pull requests](./opening_prs.md)
 
-### Make the dataset available in Redshift
+### Make the dataset available in Google BigQuery
 
-If you want to make the dataset available in Redshift, you need to:
-1. [Override the `SparkOp` member `warehouseMode`](https://github.com/nubank/itaipu/blob/a206527f34acf419cdbb70acfbc145d5899d6be8/src/main/scala/etl/dataset/billing_cycles/BillingCycles.scala#L15) with the value `WarehouseMode.Loaded`.
+If you want to make the dataset available in Google BigQuery, you need to:
+1. Override the `SparkOp` member `warehouseMode` with the value `WarehouseMode.Loaded`. [See the example](https://github.com/nubank/itaipu/blob/a206527f34acf419cdbb70acfbc145d5899d6be8/src/main/scala/etl/dataset/billing_cycles/BillingCycles.scala#L15).
 2. [Extend the class](https://github.com/nubank/itaipu/blob/a206527f34acf419cdbb70acfbc145d5899d6be8/src/main/scala/etl/dataset/billing_cycles/BillingCycles.scala#L15) with the trait `DeclaredSchema`
 3. [Override the `attributes` method](https://github.com/nubank/itaipu/blob/a206527f34acf419cdbb70acfbc145d5899d6be8/src/main/scala/etl/dataset/billing_cycles/BillingCycles.scala#L21-L34).
 
