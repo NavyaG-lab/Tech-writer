@@ -84,7 +84,7 @@ Creating a new contract is different than updating an existing contract because 
        1. _Create a Scala object for the database_ (using PascalCase, aka upper camel case) that will reference each of the
     contract entities - similar to [itaipu/blob/master/src/main/scala/nu/data/br/dbcontracts/metapod/Metapod.scala](https://github.com/nubank/itaipu/blob/master/src/main/scala/nu/data/br/dbcontracts/metapod/Metapod.scala).
             - Only if the database is not sharded (that is, it is mapped to global), add the `prototypes` attribute:
-    `override val prototypes: Seq[Prototype] = Seq(Prototype.Global)`. Otherwise, leave only the attributes `name`,
+    `override val prototypes: Seq[Prototype] = Seq(Prototypes.global)`. Otherwise, leave only the attributes `name`,
     `entities` and `qualityAssessment`.
        1. _Modify_ the `nu/data/<country>/dbcontracts/V1.scala` [file](https://github.com/nubank/itaipu/blob/master/src/main/scala/nu/data/br/dbcontracts/V1.scala)
           by adding a reference to the database in the val `all` inside the V1 object and importing the DatabaseContract 
