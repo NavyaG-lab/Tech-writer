@@ -440,6 +440,7 @@ anymore!
 **How to run tests?**
 
 You have two options:
+
 * Go to the respective files in intellij and click on the green buttons next to
   the tests. (In `it` folders this sometimes does only work once you declare
   the `it/scala` folder a test folder for intellij. Right-click on it > chose
@@ -451,6 +452,35 @@ You have two options:
 
 If this works, you can push your PR. If the integration tests in itaipu work on
 the CICD during the PR you should be good to merge.
+
+### Dataset usage restrictions
+
+When you run the integration test in the `src/it/scala/../BundleOpSpec.scala` file, you may encounter error and one of the reasons for this is
+
+- some of the inputs for your dataset/s are defined as `restrictedDatasets`. See _*DatasetUsageRestriction Fields_* section below.
+
+If some of the inputs for your dataset/s are restricted, you'll need to add your dataset/s to `allowlistedDatasets` in the `[DatasetUsage.scala](https://github.com/nubank/itaipu/blob/06e1f84bf13bae0c113a70b8f33580a4d92d0c8f/src/it/scala/etl/itaipu/dataset_usage/DatasetUsage.scala)` file. This is to allow the datasets (with `restrictedDatasets` usage rule applied) to be used by dependent dataset/s.
+
+Dataset usage restriction rules depend on the name of the datasets and contracts in the Itaipu DAG to be applied. In the case of a `SparkOp`, you can simply get the name of the dataset by accessing the `name` method/attribute of the dataset class/object. When you are working with the `BundleOp` abstraction, it might not be clear where to get the dataset name from.
+
+In the case of the BundleOp abstraction, you usually define the `bundleOpName`, and the rest of the name of the dataset is built for you depending on the metadata of the `BundleOp` (e.g. country). However, the `BundleOp` abstraction also has a [`name` method](https://github.com/nubank/itaipu/blob/80a9a99397aeda2d2f5a417f13273690c1edd5f3/common-etl/src/main/scala/common_etl/operator/op.scala#L184), which is a dataset name on the Itaipu DAG. If you need to add your `BundleOp` to an allow list of a restricted `dataset/contract` or restrict your `BundleOp`, you can use the `name` method directly.
+
+Here is an example - https://github.com/nubank/itaipu/pull/22990/files#diff-8c6d39daeec552ef58ca82c8e692054f4c0168669574d883673092dd2997d54c
+
+#### DatasetUsageRestriction Fields
+
+Here is the list of fields in the DatasetUsageRestriction:
+
+- **restrictedDatasets**: Set names of datasets that should only be used by a restricted few or no SparkOps
+- **allowlistedDatasets**: Set names of SparkOps which can use the restrictedDatasets
+- **replacementDatasets**: Set names of datasets that contain the information in the restricted dataset, or an alternative source of data.
+- **restrictionMotive**: The reason why this dataset was blocked.
+
+If a SparkOp you wish to use is restricted, then there is a reason for it being restricted. **DO NOT SIMPLY ADD YOUR SPARKOP TO THE ALLOWLIST!**.
+First, see if one of the `replacementDatasets` will suffice as input. If they don't, try to understand and talk to the people who blocked its use
+If the ownerSquad of the restricted dataset agrees that your use is valid, then you may add your dataset to the allowlist.
+
+!!! **Important**: Create a dataset that contains the information you needed and add it to the `replacementDatasets` list.
 
 
 ## FAQ/ frequent problems

@@ -109,6 +109,7 @@ nav:
     - Debugging load issues: squad/data-access/debugging-load-issues.md
     - Datasets:
       - Core Datasets: "datasets/core-datasets/README.md"
+    - Custom S3 buckets on Databricks: "data-users/etl_users/custom-s3-buckets-on-databricks.md"
 
   - Process flows:
     - Overview of Data flow in ETL: "process-flows/overview-dataflow.md"
@@ -172,6 +173,7 @@ nav:
       - Performance: "how-tos/itaipu/performance/README.md"
       - Scala style guide: "style_guide.md"
       - Tekton: "how-tos/itaipu/tekton/README.md"
+      - Tekton Deep-dive: "how-tos/itaipu/tekton/deep-dive.md"
       - Itaipu states: "services/data-processing/itaipu/itaipu_states.md"
       - Change continuous deployment pipeline: "how-tos/itaipu/change-continuous-deployment-pipeline.md"
       - Migrate SparkOps to Subproject: "how-tos/itaipu/migrate-sparkop-to-subproject.md"
@@ -229,6 +231,7 @@ nav:
       - LookML Basics: "tools/looker/lookml-basics.md"
       - Looker New Country Setup: "tools/looker/looker-country-setup.md"
       - Looker Playbook: "tools/looker/playbook.md"
+      - Looker known issues: "tools/looker/looker-known-issues.md"
   - Datasets:
     - Dataset creation flow: "datasets/basic-datasets/create-dataset-flow.md"
     - Create a dataset: "datasets/basic-datasets/create-dataset.md"
@@ -247,6 +250,9 @@ nav:
       - Getting started: "writing/templates/getting-started.md"
       - Service Playbook: "writing/templates/service-playbook.md"
   - Datomic data deletion: "etl_operators/datomic_data_deletion.md"
+  
+  
+
   
   
   
