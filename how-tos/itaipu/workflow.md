@@ -278,7 +278,7 @@ below.
     https://wiki.nubank.com.br/index.php/Scala
 1. Add the object to the output of `allOps` in the `package.scala` file
 
-    - It's possible to [make the dataset available in Redshift](#make-the-dataset-available-in-redshift)
+    - It's possible to [make the dataset available in Google BigQuery](#make-the-dataset-available-in-google-bigquery)
 1. Follow the instructions about [editing datasets](#editing-an-existing-dataset)
 
 ### Editing an existing dataset
@@ -472,7 +472,7 @@ When you have a dataset that doesn't originate from a Datomic service and you
 want to utilize Spark to process it (periodically), you can build with
 `itaipu`.  See [`dataset-series`](../../data-users/etl_users/dataset_series.md) and `StaticOp` for more information.
 
-Parquet files are mainly used for accessing data from Spark / Databricks. Avro files are used for loading into Redshift.
+Parquet files are mainly used for accessing data from Spark / Databricks. Avro files are used for loading into Google BigQuery.
 
 ## Dependencies
 
