@@ -53,10 +53,11 @@ nav:
   - Home: "README.md"
   - What's new: "whats-new.md"
   - Glossary: "glossary.md"
+
   - About BU Squads:
     - About all squads: "about/data-bu-squads.md"
     - Data Infra overview: "about/data-infra/overview.md"
-    - Data Analytics: "https://playbooks.nubank.com.br/squads/analytics-productivity/"
+    - Analytics Productivity: "https://playbooks.nubank.com.br/squads/analytics-productivity/"
     - Onboarding:
       - Onboarding:
         - Dataset exercise: "onboarding/data-infra/dataset-exercise.md"
@@ -102,6 +103,8 @@ nav:
       - optimizing your SparkOp: "data-users/etl_users/optimizing_your_sparkop.md"
       - Schema validations: "data-users/etl_users/schema_validations.md"
       - Serving of datasets in staging environment: "data-users/etl_users/serving/serving_to_staging.md"
+      - Custom S3 buckets on Databricks: "data-users/etl_users/custom-s3-buckets-on-databricks.md"
+
     - Streaming contracts:
       - Streaming contracts overview: data-users/streaming-contracts/streaming-contracts-intro.md
       - View batch and streaming contracts in BigQuery: data-users/streaming-contracts/views-bigquery.md
@@ -109,7 +112,6 @@ nav:
     - Debugging load issues: squad/data-access/debugging-load-issues.md
     - Datasets:
       - Core Datasets: "datasets/core-datasets/README.md"
-    - Custom S3 buckets on Databricks: "data-users/etl_users/custom-s3-buckets-on-databricks.md"
 
   - Process flows:
     - Overview of Data flow in ETL: "process-flows/overview-dataflow.md"
@@ -151,6 +153,8 @@ nav:
         - Itaipu setup: "services/data-processing/itaipu/project_dev_setup.md"
         - Mergulho: "services/data-processing/itaipu/mergulho.md"
         - Dratini POC: "experiments/dratini.md"
+        - Metadata POC: "experiments/metadata_testing.md"
+        - Experiments: "home/experiment_description.md"
       - Metapod: "services/data-processing/metapod.md"
     - Data serving: "services/data-serving/serving-layer.md"
     - Data analysis and monitoring: "services/data-analysis-monitoring/analysis-monitoring.md"
@@ -243,18 +247,12 @@ nav:
     - Contribution margin dataset: "squad/analytics-productivity/contribution_margin.md"
     - SparkOp best practices: "datasets/sparkop-bestpractices.md"
     - optimizing Skews: "data-users/etl_users/optimizing_skew.md"
+
   - Writing:
     - Writing runbooks: "writing/writing_runbooks.md"
     - Templates:
       - Alerts Playbook: "writing/templates/alerts-playbook.md"
       - Getting started: "writing/templates/getting-started.md"
       - Service Playbook: "writing/templates/service-playbook.md"
-  - Datomic data deletion: "etl_operators/datomic_data_deletion.md"
-  
-  
-
-  
-  
-  
-  
+  - Datomic data deletion: "etl_operators/datomic_data_deletion.md" 
   
