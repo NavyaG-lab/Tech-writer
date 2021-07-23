@@ -63,7 +63,7 @@ The contractors access to these models is controlled by the Looker Lambda. For N
 - Third Party: People in the `Basic User` group on Looker have edit permissions on this model
 - BPOs: People on the `BPOs Management` group on Looker have edit permission on this model. People on the `bpo-managers@nubank.com.br` google group are added to the Looker group through the lambda.
 
-For Third Parties there's usually no need to give access to people since most of them are already on the `Basic User` group. For BPOs the CX Boosters squad has manage permissions on the google group so they are the ones who control the access.
+For Third Parties there's usually no need to give access to people since most of them are already on the `Basic User` group. For BPOs the Spacecrafters squad has manage permissions on the google group and access can be granted through [this jira form](https://nubank.atlassian.net/servicedesk/customer/portal/86/group/515/create/1770).
 
 ### Permission to view Dashboards
 
