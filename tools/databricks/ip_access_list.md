@@ -72,6 +72,8 @@ owner: "#data-access"
 
 3.221.66.54/32
 
+177.71.243.245 // NAT gateway of AWS Workspaces
+
 ## NAT gateways
 
 54.175.68.95
