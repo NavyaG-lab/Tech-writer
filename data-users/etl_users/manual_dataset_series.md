@@ -114,9 +114,10 @@ Make sure you have the following access permissions.
 
 The way you prepare data is same for both the workflows - new and old workflow.
 
-1. Place your parquet file on s3 somewhere (e.g., `s3://nu-tmp/your.name/my-dataset`) and place your logical type json schema in the same directory and name it `schema.json` (e.g., `s3://nu-tmp/your.name/schema.json`)
+1. Place your parquet file on s3 (e.g., `s3://nu-tmp/your.name/my-dataset`) and place your logical type json schema in the same directory and name it `schema.json` (e.g., `s3://nu-tmp/your.name/schema.json`)
 
-2. Add these files to a bucket of the country where you want to create the manual series. Examples of buckets: in BR `nu-tmp`, in MX `nu-tmp-mx`
+2. Note that these files should be on a `nu-tmp` bucket of the country where you want to create the manual series. Examples of buckets: in BR `nu-tmp`, in MX `nu-tmp-mx`
+
 
 #### Creating the Parquet file
 
@@ -132,7 +133,7 @@ importantData
   .save("s3://nu-tmp/your.name/my-dataset")
 ```
 
-Remember to place it on an S3 bucket, under a key for which you have read access (i.e `s3://nu-tmp/your.name/my-dataset`).
+Remember to place it on an S3 bucket, under a key for which you  and the lambda have read access (i.e `s3://nu-tmp/your.name/my-dataset`).
 
 2. Open it up on databricks and take a look at the schema of the resulting dataframe:
 
