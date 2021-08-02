@@ -878,7 +878,21 @@ In case the cache creation time in Pollux happens simultaneously at the same tim
 
 1. Then, check when the cache is refreshed lately.
 
-If the alarm is raised because of the data deleted from the DBs (as per data deletion requests), consider it as a false alarm.
+1. If the alarm is raised because of the data deleted from the DBs (as per data deletion requests), consider it as a false alarm.
+
+    - You can check for recent data deletion requests by querying `malzahar` contracts. Example:
+    ```SELECT * FROM `nu-br-data.contract.malzahar__excise_fields` where excise_field__database = "customers" order by excise_field__created_at desc```
+
+1. Additionally, and if none of the previous explains the decreasing row counts, you can check for duplicates rows in the `log`. It could be the case that today's row count is still higher than yesterday's if yesterday's `log` contains duplicates.
+
+    - You can do this by opening Databricks, querying the logs and analysing the row counts. Example,
+
+    ```
+    val log_0731 = spark.read.parquet("s3_path")
+    val log_0801 = spark.read.parquet("s3_path")
+    log_0731.distinct.count
+    log_0801.distinct.count
+    ```
 
 #### Solution, a Work around
 
