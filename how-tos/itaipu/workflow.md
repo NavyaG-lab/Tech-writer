@@ -137,10 +137,14 @@ If you want to add, change or remove an attribute:
 
 ### Limitations in Contract specifications
 
-#### Component entities with 1:N cardinality relationships
+#### Nested component entities
 
 In Datomic, if an entity only exists in the context of a parent entity, it is common to declare it as a [component entity][component-entity-blog-post].
 In our skeleton schemas, an entity can be declared as a component by adding `:component true` to the schema declaration. See the [following example][component-skeleton-example].
+
+Our contract system does not yet support more than 1 level of component entities. In other words, if your entity contains a component entity, that component entity cannot itself have a component entity.
+
+#### Component entities with 1:N cardinality relationships
 
 Our contract system does not yet support component entities that are used as [part of 1:N relationships][one-many-cardinality-example]. If you encounter this limitation, work around it using the steps that follow. We'll be using Ouroboros as an example, but the steps should be the same.
 
