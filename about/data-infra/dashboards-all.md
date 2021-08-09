@@ -40,7 +40,7 @@ The following are the dashboards available on Looker, and the data source for th
     <td>spark_op_types & spark_ops_summary</td>
 </tr>
 <tr>
-     <td><a href="https://nubank.looker.com/dashboards/4240">Dataset Lifecycle</a>
+     <td><a href="https://nubank.looker.com/dashboards/4488">Dataset Lifecycle</a>
     </td>
     <td>The purpose of this dashboard is to provide a glimpse of the happy path of a given dataset's lifecycle by enabling the comparison of a given dataset lifecycle between different daily runs; or by comparing different datasets lifecycle within a given daily run.</td>
     <td>sparkop_evaluation_events, aurora_pipeline_events, data_infra_serving_layer_sla_monitoring, spark_op_types, and metapod__transactions</td>
