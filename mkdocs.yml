@@ -180,6 +180,7 @@ nav:
       - Tekton Deep-dive: "how-tos/itaipu/tekton/deep-dive.md"
       - Itaipu states: "services/data-processing/itaipu/itaipu_states.md"
       - Change continuous deployment pipeline: "how-tos/itaipu/change-continuous-deployment-pipeline.md"
+      - Implementing Tests in Itaipu continuous deployment pipeline: "how-tos/itaipu/change-continuous-deployment-pipeline-details.md"
       - Migrate SparkOps to Subproject: "how-tos/itaipu/migrate-sparkop-to-subproject.md"
       - Remove subproject: "how-tos/itaipu/remove-a-subproject.md"
     - Metapod: "how-tos/metapod.md"
