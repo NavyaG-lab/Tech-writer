@@ -154,6 +154,7 @@ nav:
         - Mergulho: "services/data-processing/itaipu/mergulho.md"
         - Dratini POC: "experiments/dratini.md"
         - Metadata POC: "experiments/metadata_testing.md"
+        - Dataset usage slack bot POC: "experiments/dataset_usage_test.md"
         - Experiments: "home/experiment_description.md"
       - Metapod: "services/data-processing/metapod.md"
     - Data serving: "services/data-serving/serving-layer.md"
