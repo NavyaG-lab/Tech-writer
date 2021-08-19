@@ -19,8 +19,8 @@ It is important to highlight that there is a need of creating TWO files:
 
 You can add unit tests in Itaipu in 3 different ways:
 
-1. Create 2 objects inside the `itaipu/src/it/scala/etl/itaipu`.
-
+1. Create two objects inside the `itaipu/src/it/scala/etl/itaipu`.
+  
     * The Downside is: the test becomes part of the object that already exists,
       and therefore becomes a required unit test (non-desirable effect).
 
@@ -28,21 +28,16 @@ You can add unit tests in Itaipu in 3 different ways:
 
     * [definitions-in-tektdoncd](https://github.com/nubank/tektoncd/pull/337)
 
-    * The good side is:
-      * Already integrated in `tektoncd pipeline` and is already how things has been done.
+      * The good side is - already integrated in `tektoncd pipeline` and is already how things has been done.
 
     * The downside is:
 
       * Might break something and crash itaipu's run.
-      * According to tekton principles,  once a task fails, then all the tests running
-        on respective itaipu branch will stop. So, even in the case of a non-required unit test,
-        the entire branch could potentially fail.
+      * According to tekton principles,  once a task fails, then all the tests  running on respective itaipu branch will stop. So, even in the case of a non-required unit test, the entire branch could potentially fail.
 
 1. Implement the unit test using [Workflows](https://playbooks.nubank.com.br/cicd/workflows/quickstart/#introduction)
 
-    * The good side is:
-
-      * Already integrated in `tektoncd pipeline` and is already how things has been done.
+    * The good side is - already integrated in `tektoncd pipeline` and is already how things has been done.
 
     * The downside is:
 
