@@ -28,16 +28,21 @@ You can add unit tests in Itaipu in 3 different ways:
     - [definitions-in-tektdoncd](https://github.com/nubank/tektoncd/pull/337)
     - The good side is:
       - Already integrated in `tektoncd pipeline` and is already how things has been done.
+
     - The downside is:
+
       - Might break something and crash itaipu's run.
       - According to tekton principles,  once a task fails, then all the tests running
         on respective itaipu branch will stop. So, even in the case of a non-required unit test,
         the entire branch could potentially fail.
 
 1. Implement the unit test using [Workflows](https://playbooks.nubank.com.br/cicd/workflows/quickstart/#introduction)
+
     - The good side is:
       - Already integrated in `tektoncd pipeline` and is already how things has been done.
+
     - The downside is:
+
       - If itaipu's build is inexistent, all should be built before one can only use them.
 
 ## Detailing the implementation of TektonCD and Workflows
@@ -181,11 +186,11 @@ Check the following example below, changing `{RANDOM_NUMBER => FOR_SOME_ACTUAL_N
 
 #### How does it work?
 
-1. Calling the current API `apiVersion: workflows.dev/v1alpha1`, builds a pipeline with 2 tasks:
+1. Calling the current API `apiVersion: workflows.dev/v1alpha1`, builds a pipeline with 2 tasks:<br>
 
-    i. dataconsumption-build
+      i. dataconsumption-build
 
-    ii. dataconsumption-test
+      ii. dataconsumption-test
 
 1. Each task had to get the aws credentials, so they were set using the step `init-aws-credentials`.
 1. One can also notice that each of the tasks had their own resources explicitly declared,
