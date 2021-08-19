@@ -18,14 +18,15 @@ The following pieces play an important role in Itaipu's continuous deployment pi
 
 - [TektonCD](https://github.com/nubank/tektoncd), for defining the CD pipeline along with the indivual task that
   compose it.
-    - [definitions-in-tektoncd]: https://github.com/nubank/tektoncd/pull/337
+  - [definitions-in-tektoncd]: https://github.com/nubank/tektoncd/pull/337
 
 - GitHub, for defining the branch protection rules that ensure what tasks need
     to run before merging is allowed.
-    - [branch-protection-rules]: https://github.com/nubank/itaipu/settings/branch_protection_rules/505139
+  - [branch-protection-rules]: https://github.com/nubank/itaipu/settings/branch_protection_rules/505139
 
 - Bors, to manage the process of integrating changes in Itaipu.
-    - [bors-config]: https://github.com/nubank/itaipu/blob/master/bors.toml 
+
+  - [bors-config]: https://github.com/nubank/itaipu/blob/master/bors.toml
 
 It's worth noting that TektonCD, is still in early development and undergoing
 constant change, so the aspects connected to it might get outdated rapidly.
