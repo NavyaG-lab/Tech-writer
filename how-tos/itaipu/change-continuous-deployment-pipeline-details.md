@@ -14,13 +14,13 @@ It is important to highlight that there is a need of creating TWO files:
 
 * OBJECT Scala (i.e.: `DatasetMetadataValidator.Scala`)
 * CLASS Scala  (i.e.: `DatasetMetadataValidatorSpec.Scala`)
-  
-## Test Implementation
+
+### Test Implementation
 
 You can add unit tests in Itaipu in 3 different ways:
 
 1. Create two objects inside the `itaipu/src/it/scala/etl/itaipu`.
-  
+
     * The Downside is: the test becomes part of the object that already exists,
       and therefore becomes a required unit test (non-desirable effect).
 
@@ -38,10 +38,7 @@ You can add unit tests in Itaipu in 3 different ways:
 1. Implement the unit test using [Workflows](https://playbooks.nubank.com.br/cicd/workflows/quickstart/#introduction)
 
     * The good side is - already integrated in `tektoncd pipeline` and is already how things has been done.
-
-    * The downside is:
-
-      * If itaipu's build is inexistent, all should be built before one can only use them.
+    * The downside is - If itaipu's build is inexistent, all should be built before one can only use them.
 
 ## Detailing the implementation of TektonCD and Workflows
 
