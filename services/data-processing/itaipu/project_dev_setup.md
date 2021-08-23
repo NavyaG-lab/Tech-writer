@@ -60,7 +60,7 @@ Typically users prefer to use sbt from the terminal and not from IntelliJ, but s
 
 2. Select the Java SDK that is installed on your machine. If you don't have one, click on **NEW** and select from your local machine.
 
-3. On **General settings**, change **Maximum heap size, MB** to `8192`.
+3. On **General settings**, change **Maximum heap size, GB** to at least `9`.
 
 4. Uncheck **Allow overwriting sbt version**, this way the IDE runs sbt with the project version.
 
@@ -74,7 +74,7 @@ Typically users prefer to use sbt from the terminal and not from IntelliJ, but s
 1. Start sbt.
 
 ```bash
-export SBT_OPTS="-Xms512M -Xmx8192M" sbt
+export SBT_OPTS="-Xms512M -Xmx9G" sbt
 ```
 
 2. Once SBT has started, compile the code.
