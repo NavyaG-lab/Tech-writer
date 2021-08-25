@@ -92,8 +92,7 @@ itaipu's pipeline.
 
 Check the following example below, changing `{RANDOM_NUMBER => FOR_SOME_ACTUAL_NUMBER}`:
 
-    ```
-      yaml
+```yaml
 
       apiVersion: workflows.dev/v1alpha1
       kind: Workflow
@@ -176,7 +175,7 @@ Check the following example below, changing `{RANDOM_NUMBER => FOR_SOME_ACTUAL_N
               - name: subproject-unit-tests
                 image: 193814090748.dkr.ecr.us-east-1.amazonaws.com/cicd/scala-builder
                 run: sbt dataconsumption/test
-    ```
+```
 
 #### How does it work?
 
