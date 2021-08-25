@@ -76,7 +76,7 @@ using the `scope` above:
 
 1. Your default text editor will pop up (probably Sublime or Vim) and you should put your secret there directly and save (remember that any trailing new line will be stripped):
 
-   ```txt
+   ```shell
    mytokenhere
    
    #-----------

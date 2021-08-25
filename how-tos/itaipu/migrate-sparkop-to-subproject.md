@@ -88,7 +88,7 @@ We have a nucli-command for creating the folders of your new subproject in the
 right place. As many nucli commands do, this also assumes you have `itaipu` in
 `$NU_HOME/itaipu`.
 
-```sh
+```shell
 nu etl subproject --dry-run [your-project-name-with-dashes]
 ```
 

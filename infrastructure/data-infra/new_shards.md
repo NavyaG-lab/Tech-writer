@@ -32,7 +32,7 @@ Prerequisites:
 #### Security group
 
 Create the security group.
-```{.shell}
+```shell
 aws --profile $country-$env \
     ec2 create-security-group \
     --group-name $env-$prototype-barragem-aurora \
@@ -44,7 +44,7 @@ The command will return the ID of the security group, which you can
 then use for the next step. You will also need to look up the security group id for
 `prod-long-lived-resources-kubernetes-nodes-sg` in the AWS console and pass it in as the source-group option:
 
-```{.shell}
+```shell
 aws --profile $country-$env \
     authorize-security-group-ingress \
     --group-id <sg-id> \
@@ -56,13 +56,13 @@ aws --profile $country-$env \
 
 Get the DB password using the following command:
 
-```{.shell}
+```shell
 export DB_PASSWORD=$(nu-br aws ctl -- s3 cp s3://nu-secrets-br-prod/barragem_secret_config.json - | jq -r '.["rdb-password"]')
 ```
 We can now create both the cluster and the instance. Set the db password obtained from the previous step. 
 Use the security group id of the  security group that you created :
 
-```{.shell}
+```shell
 aws --profile $country-$env \
     rds create-db-cluster \
     --backup-retention-period 7 \
@@ -86,7 +86,7 @@ Lookup the monitoring-role-arn using the AWS console. Look under IAM, roles for
 `rds-barragem-aurora-enhanced-monitoring` for the arn. It should read something like this
 `arn:aws:iam::XXXXXXXXXXXX:role/rds-barragem-aurora-enhanced-monitoring`
 
-```{.shell}
+```shell
 aws --profile $country-$env \
     rds create-db-instance \
     --db-cluster-identifier $env-$prototype-barragem-aurora \
@@ -110,6 +110,6 @@ Once the RDS is created on the prototype/shard start the _Barragem_ service usin
 Check the status of the  service and the connectivity to database using the health check endpoint. You should see 
 `"postgresql_db":{"healthy":true,"checks":{}}` being reported.
 
-```{.shell}
+```shell
 nu-$country ser curl get $prototype barragem /api/version
 ```

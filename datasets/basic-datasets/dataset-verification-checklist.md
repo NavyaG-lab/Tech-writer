@@ -1,5 +1,5 @@
 ---
-owner: "#data-infra" "#Squad-Analytics"
+owner: ["#data-infra", "#Squad-Analytics"]
 ---
 
 # Mandatory Verification Checklist before creating a PR

@@ -46,7 +46,7 @@ The policies are additive in nature so keep no overlap between general and pii p
 nu serverless invoke okta-aws-databricks-create-role --env prod --invoke-type sync --payload-file edn-path
 ```
 Payload containing the edn:
-```edn
+```clojure
 {
   :role-name "prod-[general/pii]-[country]"
 }
@@ -59,7 +59,7 @@ nu serverless invoke okta-aws-databricks-attach-policy --env prod --invoke-type 
 ```
 
 Payload containing the edn:
-```edn
+```clojure
 {
   :role-name "prod-[general/pii]-[country]"
   :policy-name "[policy-name-as-in-step-one]"
@@ -74,7 +74,7 @@ nu serverless invoke okta-aws-databricks-update-trust --env prod --invoke-type s
 ```
 
 Payload containig the edn:
-```edn
+```clojure
 {
   :role-name "prod-[general/pii]-[country]"
   :meta-role-arn "arn:aws:iam::[account-id]:role/databricks-jobs-meta-role"

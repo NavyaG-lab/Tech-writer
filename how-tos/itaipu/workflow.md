@@ -460,7 +460,7 @@ You can follow [these instructions](../../onboarding/data-infra/dataset-exercise
 1. Follow the steps written out in the section [On GoCD](#on-gocd)
 2. Then use `sabesp` to run a build with your image:
 
-```sh
+```shell
 nu datainfra sabesp -- --aurora-stack=cantareira-dev jobs itaipu prod ARBITRARY_NAME s3a://nu-spark-metapod-ephemeral-1 s3a://nu-spark-metapod-ephemeral-1 10 --itaipu=YOUR_IMAGE_ID --scale=MOST_RECENT_SCALE_ID --filter-by-prefix=contract-aloka
 ```
 
@@ -483,7 +483,7 @@ Parquet files are mainly used for accessing data from Spark / Databricks. Avro f
 The dependencies are listed [here](https://github.com/nubank/itaipu/blob/2977173662217daee58adb75356834f20d215d89/build.sbt#L39). They typically follow the [format](https://www.scala-sbt.org/1.x/docs/Library-Dependencies.html#The++key) `groupID % artifactID % revision`.
 
 To compile the main sources (in `src/main/scala` and `src/main/java` directories) and download the dependencies:
-```sh
+```shell
 sbt compile
 ```
 Reference: https://www.scala-sbt.org/1.x/docs/Running.html#Common+commands
@@ -495,7 +495,7 @@ To check the latest versions:
 
     * Go to the Advanced Search and use the GroupId and ArtifactId. It's possible that you need to append the Scala version to the `artifactID` (e.g., `_2.11` for Scala 2.11). For example: `g:"org.typelevel" AND a:"cats_2.11"`.
 * In nu-maven:
-    ```sh
+    ```shell
     aws s3 ls s3://nu-maven/snapshots/common-etl/
     ```
 

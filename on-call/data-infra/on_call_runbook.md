@@ -4,8 +4,6 @@ owner: "#data-infra"
 
 # Data Infra On-call runbook
 
-[TOC]
-
 This document is a resource for engineers *on-call*.
 
 The general layout of the Alerts part is “alert, reason, action”. All the alert entries here should be linked with the alerts being dispatched from our alerting platform. The "ALERT" string should be verbatim the same string that is dispatched.

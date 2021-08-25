@@ -1,5 +1,5 @@
 ---
-owner: "#data-infra" "#Analytics-productivity"
+owner: ["#data-infra", "#Analytics-productivity"]
 ---
 
 <!-- markdownlint-disable-file -->

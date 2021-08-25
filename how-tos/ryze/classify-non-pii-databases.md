@@ -62,7 +62,7 @@ match: false
 Finishing the parameterization of the prefixes of the data sources we are ready to execute the classification command.
 We need to execute the command by country, as shown below:
 
-```clj
+```clojure
 lein classify-non-pii {country}
 ```
 
@@ -76,7 +76,7 @@ Is good to know that all the attributes already classified do not have any effec
 
 All databases automatically classified will generate an output log in the console:
 
-```clj
+```clojure
 Country: br Datasource: dataset-series Database: dataset-continuous-auditing-evidence-collector-atento-skipped-jobs
 ```
 
@@ -85,7 +85,7 @@ Country: br Datasource: dataset-series Database: dataset-continuous-auditing-evi
 For tips on candidate databases that are unlikely to store PII data and do not have the classification done,
 you can run this command:
 
-```clj
+```clojure
 lein classify-non-pii-hints {country}
 ```
 
@@ -97,7 +97,7 @@ This process is based on a static prefixed list containing keywords that we thin
 
 This command will generate a log with the path of the candidate database schemas found:
 
-```clj
+```clojure
 resources/br/dataset-series/bigquery-logs-test-3/schema-5e98a306-0326-4206-b408-750455919842.edn
 resources/br/dataset-series/bigquery-logs-test-2/schema-5e975eb4-4f43-47a6-ad4e-2f63cd35fcee.edn
 resources/br/dataset-series/internal-audit-jira-work-logs/schema-60357c95-966a-4f41-99dd-74ac8308908a.edn

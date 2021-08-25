@@ -69,7 +69,7 @@ group. To add an engineer to this role you need to raise a ticket to
 From the git revision we can determine all the pods which are running the
 individual build steps:
 
-```terminal
+```shell
 > kubectl --context cicd-prod-a-context -n pipelines get pods -l nu/revision=65c2f1a458ba755217cb5e748d7142ad6e9d5d65
 
 NAME                                                READY   STATUS      RESTARTS   AGE
@@ -83,7 +83,7 @@ itaipu-run-ftkqx-static-validator-25kzx-pod-9db52   0/3     Completed   0       
 Alternatively when you have the task id from Tekton (e.g.
 `itaipu-run-ftkqx-build-dcgrh`) you can use the task id to find the pod:
 
-```terminal
+```shell
 > kubectl --context cicd-prod-a-context -n pipelines get pods -l tekton.dev/taskRun=itaipu-run-ftkqx-build-dcgrh
 
 NAME                                     READY   STATUS      RESTARTS   AGE
@@ -92,7 +92,7 @@ itaipu-run-ftkqx-build-dcgrh-pod-djztq   0/5     Completed   0          32m
 
 You can also list all running containers for the pods for a revision:
 
-```terminal
+```shell
 > kubectl --context cicd-prod-a-context -n pipelines get pods -l nu/revision=65c2f1a458ba755217cb5e748d7142ad6e9d5d65 -o jsonpath='{range .items[*]}{"\n"}{.metadata.name}{":\t"}{range .status.containerStatuses[?(.state.running.startedAt!="")]}{.name}{", "}{end}{end}'
 
 itaipu-run-2ck9f-build-common-etl-unit-tests-mt88b-pod-s62g6:
@@ -113,7 +113,7 @@ The first expression is the pod name, the list after the `:` is the running step
 Once we know the pod name and the tekton step which we want to inspect we can "shell"
 into the pod and use the standard java tools to collect a thread dump:
 
-``` terminal
+```shell
 > kubectl -n pipelines --context cicd-prod-a-context exec -it <pod-name> -c step-<step-name> -- bash
 > jcmd -l # list all running java processes
 

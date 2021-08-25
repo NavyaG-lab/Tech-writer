@@ -2,10 +2,10 @@
 
 all_files_with_owner() {
   cd $PROJ_HOME
-  local -r incorrect_files=$(grep -r --include='*.md' --exclude-dir='.build' -L '^owner: "[#@].*"$' .)
+  local -r incorrect_files=$(grep --recursive --include='*.md' --exclude-dir='.build' --files-without-match '^owner:' .)
 
   if [ -n "$incorrect_files" ]; then
-    echo "All files should have a owner defined. Violations in:"
+    echo "All files should have at least one owner defined. Violations in:"
     for file in $incorrect_files; do
       echo ${file}
     done

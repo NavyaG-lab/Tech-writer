@@ -77,7 +77,7 @@ that contain the transactions that happened at the database times
 `95599,95764` from the `customers` database on the prototype `s0` in
 the `staging` environment.
 
-``` shell
+```shell
 export ENV="staging"
 export DATABASE="customers"
 export PROTOTYPE="s0"

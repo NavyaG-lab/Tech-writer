@@ -117,7 +117,7 @@ country and create appropriate “variation” of it. Once this is
 done, merge your policies in the `iam-policies` repository, and
 then apply them with:
 
-```{.shell}
+```shell
 nu-<data or country> serverless invoke iam-policies-put-bucket-policy \
     --account-alias $country \
     --env prod \
@@ -135,7 +135,7 @@ country, is to modify the list of countries in the
 [common-etl-spec](https://github.com/nubank/common-etl-spec) project as
 :
 
-``` {.clojure}
+```clojure
 (def country #{:metapod.dataset.country/br
                :metapod.dataset.country/mx
                :metapod.dataset.country/co
@@ -170,7 +170,7 @@ try to execute jobs that depend on the `common-finance` library in order to doub
 that everything is still working. One example of those jobs is `dataset/credit-card-financeira-ledger`
 which can be launched as follows:
 
-```{.shell}
+```shell
 nu datainfra sabesp -- --aurora-stack=staging-foz jobs itaipu staging nu-finance-bump-test s3a://nu-spark-metapod-ephemeral-1 s3a://nu-spark-metapod-ephemeral-1 15 --itaipu=$YOUR_ITAIPU_VERSION --scale=$SCALE_VERSION --filter dataset/credit-card-financeira-ledger
 ```
 
@@ -196,13 +196,13 @@ In order to start a _Nimbus_ console to launch the data infrastructure deploymen
 using the target country environment, please run the following command on the _Nimbus_
 project root folder:
 
-```{.shell}
+```shell
 ./nimbus-deploy/bin/console $env-$country  # Where ENV in (staging|prod)
 ```
 
 Example:
 
-```{.shell}
+```shell
 ./nimbus-deploy/bin/console staging-co  # Starts nimbus console for the staging environment in CO country
 ```
 
@@ -226,7 +226,7 @@ After creating the new definition, launch the following commands on the **stagin
 _Nimbus_ console to spin the service on the `:global` prototype only since _Veiga_
 is not sharded:
 
-```{.clojure}
+```clojure
 (app/create! :global "blue" :veiga "<image-version-as-string>")
 ```
 
@@ -236,14 +236,14 @@ command.
 Once those pods are successfully created, you will need to upsert DNS aliases for
 this service in the new country. You can do it by using the following command:
 
-```{.shell}
+```shell
 nu serverless invoke update-canonical-dns --invoke-type sync --account-alias $country --env staging --payload '{"prototype":"global","stack-id":"blue","service":"veiga"}'
 ```
 
 After running the command above, check if the new service is healthy by running the
 following command:
 
-```{.shell}
+```shell
 nu-$country ser curl get global veiga /api/version --env staging
 ```
 
@@ -267,7 +267,7 @@ URLs declared on the `services` list on the __Metapod_ initialization
 logs. You should find an entry correspondent to this specific instance
 of __Veiga_. An example for __Veiga_ in **MX** would be:
 
-```{.json}
+```json
     NU_ENV_CONFIG: {
         ...
         "services" : {
@@ -282,7 +282,7 @@ of __Veiga_. An example for __Veiga_ in **MX** would be:
 On the Metapod root folder, please run the following command in order to
 update the contracts with the modifications related to the new country:
 
-``` {.shell}
+```shell
 lein gen-contracts data
 ```
 
@@ -304,7 +304,7 @@ this dataset is small and it doesn't have any upstream dependencies. We
 would then launch a job on the **DATA** account containing your new
 country-specific dataset using the following command:
 
-``` {.shell}
+```shell
 nu-data datainfra sabesp -- --aurora-stack=staging-foz jobs itaipu staging new-country-metapod-test s3a://nu-spark-metapod-ephemeral-1 s3a://nu-spark-metapod-ephemeral-1 1 --itaipu=$YOUR_ITAIPU_VERSION --scale=$SCALE_VERSION --transaction-type hotfix --filter-by-prefix=nu-$country/dataset/date
 ```
 
@@ -362,12 +362,12 @@ service and its data storage:
 Knowing that this datastore is required to exist prior to starting the service, we
 will need to create it first, using the following command on the **staging** _Nimbus_ console:
 
-```{.clojure}
+```clojure
 (doseq [prototype ["global" "s0"]] ; use more prototypes if needed
     (dynamodb/create-table! (keyword prototype) "correnteza"))
 ```
 
-```{.clojure}
+```clojure
 (doseq [prototype ["global" "s0"]] ; use more prototypes if needed
     (dynamodb/create-table! (keyword prototype) "correnteza-datomic-extraction-attempts"))
 ```
@@ -375,7 +375,7 @@ will need to create it first, using the following command on the **staging** _Ni
 If the commands above finished successfully, you can try to spin the service, on all
 available prototypes (_s0_, _s1_ ... + __global_), using the given command:
 
-```{.clojure}
+```clojure
 (doseq [prototype ["global" "s0"]] ; use more prototypes if needed
   (app/create! (keyword prototype) "blue" :correnteza "<image-version-as-string>"))
 ```
@@ -386,14 +386,14 @@ command.
 Once those pods are successfully created, you will need to upsert DNS aliases for
 this service on the new country. You can do it by using the following command:
 
-```{.shell}
+```shell
 nu serverless invoke update-canonical-dns --invoke-type sync --account-alias <country> --env staging --payload '{"prototype":"<prototype>","stack-id":"blue","service":"correnteza"}'
 ```
 
 After running the command above, check if the new service is healthy by running the
 following command (also, on all prototypes):
 
-```{.shell}
+```shell
 nu-<country> ser curl get <prototypes> correnteza /api/version --env staging
 ```
 
@@ -421,7 +421,7 @@ case of Colombia, we first test it by using the `acquisition` contract, which wa
 added to the `nu.data.co.dbcontracts.aquisition` package. We test it using the
 following command:
 
-```{.shell}
+```shell
 nu-data datainfra sabesp -- --aurora-stack=staging-foz jobs itaipu staging contract-test s3a://nu-spark-metapod-ephemeral-1 s3a://nu-spark-metapod-ephemeral-1 3 --itaipu=$YOUR_ITAIPU_VERSION --scale=$SCALE_VERSION --transaction-type hotfix --filter-by-prefix=nu-co/raw/acquisition-s0/log
 ```
 
@@ -443,7 +443,7 @@ In order to deploy it, please copy and adapt the following definition for the ne
 After creating the new definitions, launch the following commands on the **staging**
 _Nimbus_ console to spin the service on all necessary shards, using the given command:
 
-```{.clojure}
+```clojure
 (doseq [prototype ["global" "s0"]] ; use more prototypes if needed
   (app/create! (keyword prototype) "blue" :alph "<image-version-as-string>"))
 ```
@@ -454,14 +454,14 @@ command.
 Once those pods are successfully created, you will need to upsert DNS aliases for
 this service on the new country. You can do it by using the following command:
 
-```{.shell}
+```shell
 nu serverless invoke update-canonical-dns --invoke-type sync --account-alias $country --env staging --payload '{"prototype":"<prototype>","stack-id":"blue","service":"alph"}'
 ```
 
 After running the command above, check if the new service is healthy by running the
 following command (for all existing prototypes):
 
-```{.shell}
+```shell
 nu-$country ser curl get $prototype alph /api/version --env staging
 ```
 
@@ -482,7 +482,7 @@ We also need to specialize _Ouroboros_'s configuration in order for it to access
 the correct bucket for the given country. On the _Ouroboros_'s `config` branch,
 copy and adapt the correspondent configuration file as such:}
 
-```{.json}
+```json
     {"valid_input_path_buckets": [
         "nu-spark-metapod-manual-dataset-series-<country>-<env>"
         ]
@@ -497,7 +497,7 @@ If the _definition_ pipeline finishes successfully, you can try to spin the serv
 `:global` prototype only since _Ouroboros_ is not sharded, using the given command on the
 **staging** _Nimbus_ console:
 
-```{.clojure}
+```clojure
 (app/create! :global "blue" :ouroboros "<image-version-as-string>")
 ```
 
@@ -507,14 +507,14 @@ command.
 Once those pods are successfully created, you will need to upsert DNS aliases for
 this service in the new country. You can do it by using the following command:
 
-```{.shell}
+```shell
 nu serverless invoke update-canonical-dns --invoke-type sync --account-alias $country --env staging --payload '{"prototype":"global","stack-id":"blue","service":"ouroboros"}'
 ```
 
 After running the command above, check if the new service is healthy by running the
 following command:
 
-```{.shell}
+```shell
 nu-$country ser curl get global ouroboros /api/version --env staging
 ```
 
@@ -543,19 +543,19 @@ country, append it, and delete it just afterward.
 Supposing that you copied a manual dataset series from another country, and generated
 an itaipu version containing this change, run the following command to append it:
 
-```{.shell}
+```shell
 nu-$country> dataset-series --env staging append my-series-name s3://nu-tmp-new-country/myfolder/file.parquet
 ```
 
 Check if it was correctly appended using the following command:
 
-```{.shell}
+```shell
 nu-$country dataset-series --env staging info my-series-name
 ```
 
 In order to delete it, please run the following command:
 
-```{.shell}
+```shell
 nu-$country ser curl POST --env staging global ouroboros /api/admin/migrations/delete-record-series -d'{"series-name": "series/my-series-name"}'
 ```
 
@@ -582,12 +582,12 @@ please copy and adapt the following definitions:
 After creating the new definitions, launch the following commands on the
 **staging** _Nimbus_ console to spin all the required data storage:
 
-```{.clojure}
+```clojure
 (doseq [prototype ["global" "s0"]] ; use more prototypes if needed
     (dynamodb/create-table! (keyword prototype) "conrado"))
 ```
 
-```{.clojure}
+```clojure
 (doseq [prototype ["global" "s0"]] ; use more prototypes if needed
     (dynamodb/create-table! (keyword prototype) "serving-layer-schemas"))
 ```
@@ -595,7 +595,7 @@ After creating the new definitions, launch the following commands on the
 If the commands above finished successfully, you can try to spin the service, on all
 available prototypes (_s0_, _s1_ ... + __global_), using the given command:
 
-```{.clojure}
+```clojure
 (doseq [prototype ["global" "s0"]] ; use more prototypes if needed
   (app/create! (keyword prototype) "blue" :conrado "<image-version-as-string>"))
 ```
@@ -606,14 +606,14 @@ command.
 Once those pods are successfully created, you will need to upsert DNS aliases for
 this service in the new country. You can do it by using the following command:
 
-```{.shell}
+```shell
 nu serverless invoke update-canonical-dns --invoke-type sync --account-alias $country --env staging --payload '{"prototype":"<prototype>","stack-id":"blue","service":"conrado"}'
 ```
 
 After running the command above, check if the new service is healthy by running the
 following command (also, on all prototypes):
 
-```{.shell}
+```shell
 nu-$country> ser curl get $prototypes conrado /api/version --env staging
 ```
 
@@ -633,7 +633,7 @@ We also need to specialize _Tapir_'s configuration in order for it to access
 the correct bucket for the given country. On the _Tapir_'s `config` branch,
 copy and adapt the correspondent configuration file as such:
 
-```{.json}
+```json
 
     {
        "partitions-bucket": "nu-spark-metapod-ephemeral-pii-<country>-<env>"
@@ -644,14 +644,14 @@ After creating the new definitions and setting the country-specific configuratio
 launch the following commands on the **staging** _Nimbus_ console to spin
 the required data storage:
 
-```{.clojure}
+```clojure
 (dynamodb/create-table! :global "tapir")
 ```
 
 If the commands above finished successfully, you can try to spin the service on the
 `:global` prototype only since _Tapir_ is not sharded, using the given command:
 
-```{.clojure}
+```clojure
 (app/create! :global "blue" :tapir "<image-version-as-string>")
 ```
 
@@ -661,14 +661,14 @@ command.
 Once those pods are successfully created, you will need to upsert DNS aliases for
 this service in the new country. You can do it by using the following command:
 
-```{.shell}
+```shell
 nu serverless invoke update-canonical-dns --invoke-type sync --account-alias $country --env staging --payload '{"prototype":"global","stack-id":"blue","service":"tapir"}'
 ```
 
 After running the command above, check if the new service is healthy by running the
 following command:
 
-```{.shell}
+```shell
 nu-$country ser curl get global tapir /api/version --env staging
 ```
 
@@ -691,7 +691,7 @@ In order to test this, in the case of Colombia, we copied tested by copying
 `dataset/dummy-tapir` into `nu.data.co.datasets.infra.DummyServingLayerDataset`.
 We then executed the following command to compute and propagate this dataset:
 
-```{.shell}
+```shell
 nu-data datainfra sabesp -- --aurora-stack=staging-foz jobs itaipu staging serving-layer-test s3a://nu-spark-metapod-ephemeral-1 s3a://nu-spark-metapod-ephemeral-1 1 --itaipu=$YOUR_ITAIPU_VERSION --scale=$SCALE_VERSION --transaction-type hotfix --filter-by-prefix=nu-co/dataset/dummy-tapir
 ```
 
@@ -701,7 +701,7 @@ indicated on the `nu.data.co.datasets.infra.DummyServingLayerDataset` file.
 **NOTE:**
 * The id used on this request must be in lowercase!
 
-```{.shell}
+```shell
 nu-$country k8s curl GET global conrado --accept application/edn /api/dataset/dummy-tapir/row/d0fe8a94-6375-44df-88ef-b37e0b2ed8d4
 ```
 
@@ -737,7 +737,7 @@ Prerequisites:
 
 #### Security group
 
-```{.shell}
+```shell
 aws --profile $country-$env \
     ec2 create-security-group \
     --group-name $env-$prototype-barragem-aurora \
@@ -754,7 +754,7 @@ The command will return the ID of the security group, which you can
 then use for the next step. You will also need to look up the security group id for
 `prod-long-lived-resources-kubernetes-nodes-sg` in the AWS console and pass it in as the source-group option:
 
-```{.shell}
+```shell
 aws --profile $country-$env \
     authorize-security-group-ingress \
     --group-id <sg-id> \
@@ -775,7 +775,7 @@ aws --profile $country-$env \
 RDS, i.e. the managed database service, adds an additional grouping
 mechanism on top of subnets, so we need to create one:
 
-```{.shell}
+```shell
 aws --profile $country-$env \
     rds create-db-subnet-group \
     --db-subnet-group-name barragem-$env \
@@ -793,7 +793,7 @@ aws --profile $country-$env \
 
 Create the parameter groups, for both the cluster and the single instance:
 
-```{.shell}
+```shell
 aws --profile $country-$env \
     rds create-db-cluster-parameter-group \
     --db-cluster-parameter-group-name $env-barragem-aurora-postgres10-cluster \
@@ -811,7 +811,7 @@ aws --profile $country-$env \
 
 We can now create both the cluster and the instance:
 
-```{.shell}
+```shell
 aws --profile $country-$env \
     rds create-db-cluster \
     --backup-retention-period 7 \
@@ -831,7 +831,7 @@ aws --profile $country-$env \
     --engine-mode provisioned
 ```
 
-```{.shell}
+```shell
 aws --profile $country-$env \
     rds create-db-instance \
     --db-cluster-identifier $env-$prototype-barragem-aurora \
@@ -872,7 +872,7 @@ We also need to specialize _Barragem_'s configuration in order for it to access
 the correct bucket and RDS for the given country. On the _Barragem_'s `config`
 branch, copy and adapt the correspondent configuration file as such:
 
-```{.json}
+```json
 
     {
        "datomic-logs-bucket": "nu-spark-datomic-logs-<country>-<env>",
@@ -884,7 +884,7 @@ After creating the new definitions and the country specific configuration,
 launch the following commands on the **staging** _Nimbus_ console to spin
 all the service on all available prototypes (_s0_, _s1_ ... + __global_):
 
-```{.clojure}
+```clojure
 (doseq [prototype ["global" "s0"]] ; use more prototypes if needed
   (app/create! (keyword prototype) "blue" :barragem "<image-version-as-string>"))
 ```
@@ -895,14 +895,14 @@ command.
 Once those pods are successfully created, you will need to upsert DNS aliases for
 this service in the new country. You can do it by using the following command:
 
-```{.shell}
+```shell
 nu serverless invoke update-canonical-dns --invoke-type sync --account-alias $country --env staging --payload '{"prototype":"<prototype>","stack-id":"blue","service":"barragem"}'
 ```
 
 After running the command above, check if the new service is healthy by running the
 following command (also, on all prototypes):
 
-```{.shell}
+```shell
 nu-$country ser curl get $prototype barragem /api/version --env staging
 ```
 
@@ -955,7 +955,7 @@ If any similar error occurs, please contact the _Foundation_ tribe to make sure
 of the playbook was executed for the new country. In case of doubt, ask them to
 re-execute the following command:
 
-```{.shell}
+```shell
 aws s3 cp --profile sec-$env --recursive /tmp/keysets/$env/pub/auth/sign-pem/ s3://nu-keysets-master-$env/all/pub/auth/sign-pem/
 ```
 
