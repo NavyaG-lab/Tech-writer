@@ -26,3 +26,35 @@ spec:
           run: |
             cp -r $(workspaces.projects.path)/data-platform-docs/. /nu-docs/docs
             npm run build
+
+    run-tests:
+      resources:
+        memory: 4Gi
+        cpu: 2
+      steps:
+        - uses: checkout
+
+        - name: run-tests
+          image: 193814090748.dkr.ecr.us-east-1.amazonaws.com/cicd/cache
+          workingDir: $(workspaces.projects.path)/data-platform-docs
+          run: |
+            ./bin/run-tests
+
+    run-lint:
+      resources:
+        memory: 4Gi
+        cpu: 2
+      steps:
+        - uses: checkout
+
+        - name: link-validation
+          image: 193814090748.dkr.ecr.us-east-1.amazonaws.com/cicd/markdown-linters
+          workingDir: $(workspaces.projects.path)/data-platform-docs
+          run: |
+            sh /builder.d/link-validation
+
+        - name: run-lint
+          image: 193814090748.dkr.ecr.us-east-1.amazonaws.com/cicd/markdown-linters
+          workingDir: $(workspaces.projects.path)/data-platform-docs
+          run: |
+            sh /builder.d/markdown-lint
