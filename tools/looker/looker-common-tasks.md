@@ -70,7 +70,7 @@ Bilbo, the service which generates the LookML for the ETL datasets always looks 
 10. Create a PR that add the explore, view and datagroup declaritions that you copied in steps 6,7,8. Feel free to add the view in any `partition_<number>.view.lkml` files. The PR should target the `validation` branch, not `master`. Here's the PR for this example: https://github.com/nubank/baggins/pull/52
 11. After the PR is merged, go to Looker and check the `belomonte` project while in development mode: https://nubank.looker.com/projects/belomonte
 12. Change from your personal branch to the `validation` branch: https://docs.looker.com/data-modeling/getting-started/version-control-and-deploying-changes#switching_to_another_git_branch
-13. Pull the remote changes to your local env. This will make sure that your local env has the changes done in step 11.
+13. Pull the remote changes to your local env (Go to `Pull from...` > `Pull from Remote (validation)`). This will make sure that your local env has the changes done in step 11.
 14. Validate the LookML: https://docs.looker.com/data-modeling/getting-started/lookml-validation#running_validation
 15. If the tests fail, repeat the steps from 10 onwards, fixing the lookml issues. If the tests pass, deploy the LookML to production: https://docs.looker.com/data-modeling/getting-started/lookml-validation#deploying_your_changes
 16. Once the LookML has been deployed, exit the development mode and confirm that the explore exists
