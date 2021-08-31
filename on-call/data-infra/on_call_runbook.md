@@ -1180,3 +1180,39 @@ Mode: follower
 
 At the moment, the best thing to do is to [escalate the problem to
 Foundation](../data-infra/getting_help_from_other_squads.md).
+
+
+### `scale-ec2-<name of job>` failed
+
+The job responsible to spin up EC2 instances for a particular job
+encountered an error. Possible reasons:
+
+* We got less cores than what we needed.
+* The request timed out.
+
+The first case can be confirmed by looking at the `stderr` logs in
+Aurora. Here’s an example of what you could see:
+
+```
+Exception: Insufficient number of cores. Wanted: 1024. Got: 0. From []
+```
+
+If the `stderr` logs are empty it’s most likely a timeout.
+
+Given that the job gets retried, the two behaviours can be seen with
+_different_ retries.
+
+#### Solution
+
+If the lack of capacity is _not_ transient, there is not much we can
+other than try to understand if there are more widespread issues with
+AWS. You can [this Slack
+channel](https://nubank.slack.com/archives/C2Z6HMZHD) to see what’s
+going on.
+
+Repeated timeouts are most likely due with problems with Spot’s
+Elastigroups. At the moment, the best course of action is:
+
+* Delete the Elastigroup in
+  [Spot](https://console.spotinst.com/spt/dashboard)
+* Restart the job, i.e. clear the node inside the subDAG in Airflow
