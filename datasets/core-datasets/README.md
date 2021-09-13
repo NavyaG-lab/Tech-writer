@@ -26,6 +26,7 @@ owner: "#Analytics-productivity"
             * [Steps to move a dataset to core](#steps-to-move-a-dataset-to-core)
         * [Creating a dataset in the core layer from scratch](#creating-a-dataset-in-the-core-layer-from-scratch)
     * [Additional rules to contributing](#additional-rules-to-contributing)
+* [Troubleshooting](#troubleshooting)
 * [Is there any documentation with further details than this one?](#is-there-any-documentation-with-further-details-than-this-one)
 <!--te-->
 
@@ -169,6 +170,10 @@ Examples of good documentation:
 ### Additional rules to contributing
 
 One must keep in mind that If any data schema and value changes are made, the stakeholders and consumers should be alerted. It is recommended that the owner announces those changes in #data-announcements, and also the Analytics Productivity team will be responsible for reviewing and helping to guarantee a safe process.
+
+## Troubleshooting
+
+If you are experiencing Out of Memory (OOM) errors with your dataset, check out [our documentation](../../tools/frozen_suite/iglu/troubleshooting.md) for dealing with it.
 
 ## Is there any documentation with further details than this one?
 
