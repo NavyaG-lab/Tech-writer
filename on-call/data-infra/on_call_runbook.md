@@ -101,14 +101,14 @@ Let's focus on the first point from the section above: Data Skew. Assuming you w
 
 1. Understand how critical the dataset is by checking how many and which successors it has.
 1. Check if the dataset has already been committed by a different node `nu-br etl info <dataset-name> --n 2`
-1. If the dataset hasn't been committed: let the users know (#data-tribe) that said dataset is failing, communicate that we are considering [committing empty](ops_how_to.md#manually-commit-a-dataset-to-metapod); If possible let the users comeback to you, in rare occurrences we might need to revert a PR and hot-deploy Itaipu, this might happen if the dataset is critical for business operations. Commit empty or revert PR.
+1. If the dataset hasn't been committed: let the users know (#data-tribe) that said dataset is failing, communicate that we are considering [aborting](ops_how_to.md#manually-abort-a-dataset-to-metapod); If possible let the users comeback to you, in rare occurrences we might need to revert a PR and hot-deploy Itaipu, this might happen if the dataset is critical for business operations. Abort dataset or revert PR.
 1. Restart the Job.
 
 Extra, but complementary steps:
 
 1. Check if recent changes were made to the dataset you just identified
 1. Let's assume it is Saturday, you identified a broken dataset, it has thousands of successors, and you've also identified a PR from the day before changing said dataset. Reverting the PR and hot-deploying Itaipu might be the way to go.
-1. Reverting but not hot-deploying Itaipu. Remember that this will only apply from next day run onwards. This is usually helpful so you don't have to commit datasets empty through the weekend.
+1. Reverting but not hot-deploying Itaipu. Remember that this will only apply from next day run onwards. This is usually helpful so you don't have to abort datasets through the weekend.
 
 **Remember. Use your best judgement. Escalate when unsure.**
 
@@ -120,9 +120,9 @@ Extra, but complementary steps:
 
 * What you should do
 
-A dataset is broken. Committing empty is the way. You must let the users know.
-Although committing empty is the default approach, we might need to revert a PR and hot-deploy Itaipu.
-Always commit empty if this is blocking critical jobs, e.g, serving or archives, from starting (or finish).
+A dataset is broken. Aborting dataset is the way. You must let the users know.
+Although aborting is the default approach, we might need to revert a PR and hot-deploy Itaipu.
+Always abort if this is blocking critical jobs, e.g, serving or archives, from starting (or finish).
 Integrity check failures are usually sent to #etl-integrity-checks. Restart the job.
 
 ###### Manual dataset series contract broken due to schema mismatch
@@ -187,7 +187,7 @@ WHERE name LIKE "contract-rewards-ledger/%"
 ```
 2. Retract all contracts + raws for the database using the list of contracts obtained in the previous step.
 ```
-nu-br datainfra hausmeister dataset-uncommit --include-predecessors today contract-rewards-ledger/purchase-metas contract-rewards-ledger/event-metas contract-rewards-ledger/attribute-schema contract-rewards-ledger/partner-ref-metas contract-rewards-ledger/movements contract-rewards-ledger/book-accounts contract-rewards-ledger/entries
+nu-br datainfra hausmeister dataset-reset --include-predecessors today contract-rewards-ledger/purchase-metas contract-rewards-ledger/event-metas contract-rewards-ledger/attribute-schema contract-rewards-ledger/partner-ref-metas contract-rewards-ledger/movements contract-rewards-ledger/book-accounts contract-rewards-ledger/entries
 ```
 
 Once the retraction is completed, restart the node, and normally the job should succeed.
@@ -621,7 +621,7 @@ First things first, we are going to need to understand which dataset has failed,
 And now, it is time to understand if said dataset was already committed (potentially in different node), by running, for example, `nu-br etl info <dataset-name>`, e.g., `nu-br etl info nu-br/dataset/customer-eavt-pivotted`; if yes, you should still warn the users (see the Escalation section), informing them that the dataset failed, and that its stability might not be the best.
 
 #### Solution
-Even though sometimes no action needs to be taken (as the dataset often succeeds in a different node), **you should consider committing the faulty dataset empty if it keeps failing, and a critical part of the run is getting blocked by it.**
+Even though sometimes no action needs to be taken (as the dataset often succeeds in a different node), **you should consider aborting the faulty dataset if it keeps failing, and a critical part of the run is getting blocked by it.**
 Something else worth trying is to isolate the faulty dataset in a different node, i.e., `itaipu-other-flaky-datasets`, and see if its behaviour changes during the next run.
 
 Most of the time, our users are the ones coming up with the long term solutions for these kind of problems, and it usually involves them optimizing their SparkOP or even breaking it down in multiple ones.

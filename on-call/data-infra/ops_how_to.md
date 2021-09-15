@@ -28,7 +28,7 @@ This is a guide where each section contains the steps required (how-to-do-it) to
     - [Using `spark_ops.json`](#using-spark_opsjson)
 * [Keep machines up after a model fails](#keep-machines-up-after-a-model-fails)
 * [Check if a dataset was loaded into the warehouse](#check-if-a-dataset-was-loaded-into-the-warehouse)
-* [Manually commit a dataset to metapod](#manually-commit-a-dataset-to-metapod)
+* [Manually abort a dataset to metapod](#manually-abort-a-dataset-to-metapod)
 * [Removing bad data from Metapod](#removing-bad-data-from-metapod)
   + [Retracting datasets in bulk](#retracting-datasets-in-bulk)
 * [Starting a run from scratch with a fresh `metapod` transaction](#starting-a-run-from-scratch-with-a-fresh-metapod-transaction)
@@ -203,12 +203,50 @@ If the model is a [`policy model`](https://github.com/nubank/aurora-jobs/blob/00
 ### Determining if it was the dataset or model that failed
 
 1. Get the transaction id for the run ([here is how](https://github.com/nubank/data-infra-docs/blob/master/monitoring_nightly_run.md#finding-the-transaction-id)).
-1. Find uncommitted "`datasets`" for that transaction by using [sonar](https://backoffice.nubank.com.br/sonar-js/#/sonar-js/graphiql) run this GraphQL query:
+2. Find uncommitted "`datasets`" for that transaction by using [sonar](https://backoffice.nubank.com.br/sonar-js/#/sonar-js/graphiql) run this GraphQL query:
 
 ```
 {
   transaction(transactionId: "f7832a01-001b-56f7-a4fe-b3a417f8f654") {
     datasets(committed: ONLY_UNCOMMITTED) {
+      name
+    }
+  }
+}
+```
+
+Which will output something like this:
+
+```
+{
+  "data": {
+    "transaction": {
+      "datasets": [
+        ...
+        if the run is still going there will be lots of other entries here
+        ...
+        {
+          "name": "model/fx-model-avro"
+        },
+        {
+          "name": "dataset/fx-model"
+        },
+        {
+          "name": "model/fx-model"
+        },
+        {
+          "name": "dataset/fx-model-csv-gz"
+        }
+      ]
+    }
+  }
+}
+```
+3. If you donot find the dataset in uncommitted, try looking if the dataset is aborted by using [sonar](https://backoffice.nubank.com.br/sonar-js/#/sonar-js/graphiql) run this GraphQL query:
+```
+{
+  transaction(transactionId: "f7832a01-001b-56f7-a4fe-b3a417f8f654") {
+    datasets(committed: ONLY_ABORTED) {
       name
     }
   }
@@ -273,7 +311,7 @@ Removed model will only take affect the next day, when the run is triggered. Hen
 
 - To get downstream jobs to build on current day, we can do some Airflow manipulations. Note that the failing model will show up as empty in those downstream jobs.
 
-- If there are no downstream dependencies for a dataset, you can [manually commit an empty dataset for a specific dataset id](#manually-commit-a-dataset-to-metapod).
+- If there are no downstream dependencies for a dataset, you can [manually abort dataset for a specific dataset id](#manually-abort-a-dataset-to-metapod).
 
   **Important**: Lastly, be sure to [deploy job changes to airflow](../../tools/airflow.md#deploying-job-changes-to-airflow) once the current run finishes.
 
@@ -360,14 +398,14 @@ Note: this tactic mostly applies to models. For Spark, most of the interesting l
 
 When datasets are loaded into BigQuery the load is logged in the `meta.itaipu_loads` table.
 
-## Manually commit a dataset to metapod
+## Manually abort a dataset to metapod
 
-In specific cases, when a dataset that doesn't have downstream dependencies fails, you can commit an empty parquet file to the dataset.
+In specific cases, when a dataset that doesn't have downstream dependencies fails, you can abort the dataset.
 This allows buggy datasets to be skipped so that they don't affect the stability of ETL runs.
 
 1. Get the `metapod-transaction-id` from [`#etl-updates`](https://nubank.slack.com/messages/CCYJHJHR9/) or via `nu datainfra sabesp -- utils tx-id`
 1. Find the name of the failing dataset (`dataset-name`) from the SparkUI page.
-1. Double check if the dataset has successors using the following BigQuery query. If there are successors, they will also need to be comitted empty (check this possibility directly with the owners of those successors in this case).
+1. Double check if the dataset has successors using the following BigQuery query. If there are successors, they will also be aborted automatically by itaipu if any of their precessors are aborted(check this possibility directly with the owners of those successors in this case).
 
 ```
 select name, ops.successors
@@ -391,17 +429,10 @@ where name = '<dataset-name>'
 }
 ```
 
-1. For each dataset, run the following `sabesp` command to commit a blank dataset in a given run:
+1. For each dataset, you can run the [dataset-abort](./tools/on-call-engineer-tool.md) command on the Hausmeister tooling with the `metapod-transaction-id` and `dataset-name`.
 
 ```shell
-nu datainfra sabesp -- metapod --token --env prod dataset commit <metapod-transaction-id> <dataset-id> PARQUET s3://nu-spark-static/empty/materialized/empty.gz.parquet
-```
-
-Alternatively, you can run the [dataset-commit-empty](./tools/on-call-engineer-tool.md) command on the Hausmeister tooling with the `metapod-transaction-id` and
-`dataset-name` and the switch `--include-successors`.
-
-```shell
-nu datainfra hausmeister dataset-commit-empty --include-successors <metapod-transaction-id> <dataset-name>
+nu datainfra hausmeister dataset-abort <metapod-transaction-id> <dataset-name>
 ```
 
 ## Removing bad data from Metapod
@@ -728,10 +759,11 @@ _
 
   `nu ser curl POST --env prod global ouroboros /api/admin/migrations/delete-resource -d'{"resource-id": "<resource-id>"}'`
 
-3. Uncommit manual dataset and its raw datasets (parent datasets) in case of the following scenarios:
+3. Reset manual dataset and its raw datasets (parent datasets) in case of the following scenarios:
 
 - Manual dataset was committed to a transaction and is causing issues to the node in which this dataset runs
 - Manual dataset failed to be processed and it caused a node to fail
+- Manual dataset failed to be processed and got aborted
 
 For the deletion requests from users, retracting the dataset from Ouroboros should suffice.
 
@@ -743,9 +775,9 @@ The raw datasets have a naming convention: `series-raw/{dataset-series-name}-*` 
 - "series-raw/direct-mail-alt-version-0-avro"
 - "series-raw/direct-mail-alt-version-0-parquet"
 
-To uncommit the manual dataset and its predecessors:
+To reset the manual dataset and its predecessors:
 
-`nu datainfra hausmeister dataset-uncommit <transaction-id> <dataset-series-name> --include-predecessors`
+`nu datainfra hausmeister dataset-reset <transaction-id> <dataset-series-name> --include-predecessors`
 
 ## Replaying Deadletters
 

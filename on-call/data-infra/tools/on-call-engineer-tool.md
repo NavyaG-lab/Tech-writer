@@ -22,15 +22,14 @@ After `gcloud` SDK is installed, run the following to setup your Google Account 
 
 ## Use Cases ##
 
-### Committing a dataset empty along with its successors ###
+### Aborting a dataset ###
 
-The command `dataset-commit-empty` can be used to commit-empty a dataset given a transaction ID and the 
-dataset name, thus preventing the re-computation of this dataset for the duration of this transaction. To include 
-its successors, use the `--include-successors` switch in the command.
+The command `dataset-abort` can be used to abort a dataset given a transaction ID and the 
+dataset name, thus preventing the re-computation of this dataset for the duration of this transaction. The suceesors of this dataset will be automatically skipped by itaipu and have them aborted in metapod as well.
 
 Example:
 ```
-nu datainfra hausmeister dataset-commit-empty --include-successors a374ea98-d7c3-4a4d-b18f-4b83c1c9dfd9 dataset/spark-ops
+nu datainfra hausmeister dataset-abort a374ea98-d7c3-4a4d-b18f-4b83c1c9dfd9 dataset/spark-ops
 ```
 
 ### Uncommitting a dataset along with its predecessors ###
@@ -42,6 +41,18 @@ its predecessors, use the `--include-predecessors` switch in the command.
 Example:
 ```
 nu datainfra hausmeister dataset-uncommit --include-predecessors a374ea98-d7c3-4a4d-b18f-4b83c1c9dfd9 dataset/spark-ops
+```
+
+### Resetting a dataset along with its predecessors ###
+
+The command `dataset-reset` can be used to reset a dataset from a transaction given the transaction ID and the
+dataset name, in order to allow a further attempt to recompute this dataset after fixing its definition. To include
+its predecessors, use the `--include-predecessors` switch in the command. This command has similar functionality to
+`dataset-uncommit` but much faster because it performs operations in bulk
+
+Example:
+```
+nu datainfra hausmeister dataset-reset --include-predecessors a374ea98-d7c3-4a4d-b18f-4b83c1c9dfd9 dataset/spark-ops --reset-batch-size 100
 ```
 
 ## CLI Commands ##
@@ -81,14 +92,25 @@ Example:
 nu datainfra hausmeister dataset-uncommit -q --metapod-max-attempts 50 a374ea98-d7c3-4a4d-b18f-4b83c1c9dfd9 dataset/spark-ops
 ```
 
-### `dataset-commit-empty [options] <tx-id> <dataset-name>` ###
-[[source](https://github.com/nubank/nucli.py/blob/master/src/nucli/datainfra/hausmeister/dataset_commit_empty.py)]
+### `dataset-reset [options] <tx-id> <dataset-name>` ###
 
-Commit a dataset empty in a transaction.
+[[source](https://github.com/nubank/nucli.py/blob/master/src/nucli/datainfra/hausmeister/dataset_reset.py)]
+
+Reset a dataset from a transaction idempotently. This is a replacement for `dataset-uncommit` and it performs faster due to bulk operations
 
 Example:
 ```
-nu datainfra hausmeister dataset-commit-empty --uncommit-first a374ea98-d7c3-4a4d-b18f-4b83c1c9dfd9 dataset/spark-ops
+nu datainfra hausmeister dataset-reset -q --metapod-max-attempts 50 a374ea98-d7c3-4a4d-b18f-4b83c1c9dfd9 dataset/spark-ops
+```
+
+### `dataset-abort [options] <tx-id> <dataset-name>` ###
+[[source](https://github.com/nubank/nucli.py/blob/master/src/nucli/datainfra/hausmeister/dataset_abort.py)]
+
+Abort a dataset in a transaction.
+
+Example:
+```
+nu datainfra hausmeister dataset-abort a374ea98-d7c3-4a4d-b18f-4b83c1c9dfd9 dataset/spark-ops
 ```
 
 ### `dataset-successors [options] <tx-id> <dataset-name>` ###

@@ -79,8 +79,8 @@ Sabesp is a CLI to interact with anything in our environment:
       transformations
    Subsequently, the runner creates transaction information and finally an
    `ETLExecutor`, injected with the transaction information and all the created
-   services to the executor. It then lets the executor run and raises if the
-   results are not all successes.
+   services to the executor. It then lets the executor run and raises an exception if any of the
+   results is a failure (`success`, `aborted` or `upstreamAborted` are fine).
 
 
 ## common-etl
@@ -95,7 +95,13 @@ Sabesp is a CLI to interact with anything in our environment:
    1. Does a topological sort on the `opsToRun` (see details
       [here](#graphops)). Parallelizes execution into futures (dependencies are
       futures within futures and so forth).
-   2. Runs them all using the `SparkPipelineEvaluator.evaluator` function.
+   2. Runs them all using the `SparkPipelineEvaluator.evaluator` function only if
+      none of the inputs to the op are aborted.
+   3. it calls metapod to abort the dataset of the op in either of the below cases
+      1. The result of the op is Aborted.
+      2. Any of the inputs to the op are already aborted.
+      Aborting a dataset instead of failing the op enables the job to complete
+      successfully without the job failing in Airflow.
 
 
 ## How the opsToRun are created
@@ -123,6 +129,21 @@ Step 1 in [itaipu](#itaipu).
    multiple sub-dags (see airflow for definition of those) in order to
    parallelize or split the entire huge dag sensibly.
 
+## Evaluator
+
+Before a op is fed to the steps builder, the evaluator verifies if the
+dataset is already committed or aborted. In either case, it skips the re-evaluation
+and returns the appropriate result. If any of the steps result in a failure, it
+checks the tier of the dataset. Tier defines the importance/criticality of a dataset and,    
+based on the tier of a dataset, we decide what to do in case the dataset fails
+
+A Tier 0 dataset's failure will result in the faiure of a job and
+require manual intervention of the Hausmeister to fix the job.
+
+Any Tier 1 dataset that fails in CheckIntegrity step will be aborted and the job
+will move on to the next op
+
+Any Tier 2 dataset that fails will be automatically aborted and job will move on to the next op
 
 ## Evaluator steps
 

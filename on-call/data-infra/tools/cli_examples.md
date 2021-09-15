@@ -165,13 +165,13 @@ e.g:
 nu datainfra sabesp -- --aurora-stack=cantareira-stable jobs create staging downscale-ec2-itaipu-leo-test NODE_COUNT=20 SLAVE_TYPE=itaipu-leo-test --filename scale-ec2 --job-version="scale_cluster=74e5894"
  ```
 
-### Manually commit a dataset to metapod
+### Manually abort a dataset to metapod
 
 ```shell
-nu datainfra sabesp -- metapod --token --env prod dataset commit <metapod-transaction-id> <dataset-id> parquet s3://nu-spark-us-east-1/non-datomic/static-datasets/empty-materialized/empty.gz.parquet
+nu datainfra hausmeister dataset-abort <metapod-transaction-id> <dataset-name>
 ```
 
-See the entry in [Ops How-To](/on-call/data-infra/ops_how_to.md#manually-commit-a-dataset-to-metapod) for more details
+See the entry in [Ops How-To](/on-call/data-infra/ops_how_to.md#manually-abort-a-dataset-to-metapod) for more details
 
 ## Troubleshooting
 

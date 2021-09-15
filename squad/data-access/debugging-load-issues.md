@@ -10,7 +10,7 @@ The first step in debugging a missing dataset is to determine if the dataset has
 
 `nu etl info <dataset-name> --n=5`
 
-which will get you information on the dataset in the last few transactions. You can also check if the dataset has been committed empty by looking at the path of the dataset. This way you can know if it has been calculated and simply hasn't been loaded yet, or if it hasn't been calculated at all (meaning it is a problem in the etl and there is not much we can do).
+which will get you information on the dataset in the last few transactions. You can also check if the dataset has been aborted. This way you can know if it has been calculated and simply hasn't been loaded yet, or if it hasn't been calculated at all (meaning it is a problem in the etl and there is not much we can do).
 
 
 ## Checking Loads on Databricks

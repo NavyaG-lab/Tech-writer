@@ -50,9 +50,9 @@ If you want to check if your dataset is committed in yesterday's run, append the
 
 `nu etl info dataset/xguide-xgalaxy-grades --n=2`
 
-When you run this you will get your dataset committed time and path to S3. If your dataset failed to run, it then shows "Dataset was not committed yet on this transaction".
+Running this command will give you the times when the dataset got committed for the last n daily transactions, as well as the S3 paths of the dataset. If the dataset didn't get computed, you'll get a "Dataset was not committed yet..." and if it got aborted you'll get "Dataset was aborted..."
 
-If your dataset failed to commit, it could mean that your dataset has as an input dataset that failed to run somewhere on its lineage and as a consequence your dataset didn’t run.
+A dataset can get aborted either if there's an issue with it and it's failing to compute or if one of its inputs already got aborted. A dataset not being committed could simply mean that the daily ETL job didn't get to it yet (in which case it will get committed later in the day), but could also have several other causes, e.g. a job that was supposed to compute it failed non-gracefully, the dataset didn't make it into the version of Itaipu being run for that day etc.
 
 **Note that your dataset will be affected by not only changes on the direct predecessors and also changes in the whole lineage, that could be inputs of your inputs and so on.**
 
