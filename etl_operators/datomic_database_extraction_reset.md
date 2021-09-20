@@ -6,6 +6,8 @@ owner: "#data-infra"
 
 This documents describes how to reset the extracted state of a database in the Analytical Environment. Typical cases when one would wish to do this are when the database in question is rebuilt in some way, whether by having it use a blank new transactor/ddb table, or by migrating its existing data to a different transactor/ddb table. As a rule of thumb, any time a migration is performed on a Datomic database which risks changing the entity ids or t values of its tuples, a full reset should be done for its data in the analytical environment to ensure continued computation of the contracts of this database.
 
+**WARNING: PERFORMING THESE STEPS HAS HIGH POTENTIAL FOR CAUSING A CRASH. THIS SHOULD ONLY BE ATTEMPTED WHEN ABSOLUTELY NECESSARY. IF YOU DO ATTEMPT IT, BE SURE TO REFRESH CACHES FIRST SO THAT THE RUN HAS STALE DATA INSTEAD OF INCOMPLETE DATA.**
+
 ## Quick Architecture Primer
 
 In order to understand the process, it's useful to understand, at a high level, what the different components are:
