@@ -103,10 +103,31 @@ spilling data from memory to disk.
 #### What have we tried?
 
 ##### Reproduce pipeline in databricks
+
+###### Reproduction of the SparkOp that activated the error
 [Databricks notebook](https://nubank.cloud.databricks.com/#notebook/14006441/command/14434927)
 
 **Result:** All eavt-denormalized tasks have succeeded, so no conclusions here. Also, the databricks spark configs 
 in databricks are different from Itaipu's.
+
+##### Analysis of the effectiveness of increasing partitions to mitigate Skew and Spill (drivers of OOM)
+
+It is known that OOM errors are heavily influenced by the spark performance metrics of a dataset, specially [skew](../../../data-users/etl_users/optimizing_skew.md) and spill. [An analysis was conducted](https://nubank.cloud.databricks.com/#notebook/15068529/command/15068562) to generate the performance metrics for the Core Datasets that had different spill and skew patterns. We generated those metrics using a [query in BQ](https://console.cloud.google.com/bigquery?sq=1018206206706:90d4822a8bbb460b8de034db30d54277), calculated the metrics using itaipu_spark_stage_metrics metadata and set up the following experiments:
+
+1. Analyse the materialization of a dataset with skew but no spill (nu-br/core/credit-card-line-items) using 3 partition numbers (1000, 2000, 3000)
+2. Analyse the materialization of a dataset with spill but no skew (nu-br/dataset/credit-card-account-eavt-denormalized) using 3 partition numbers (1000, 2000, 3000)
+3. Analyse the materialization of a dataset with both skew and spill (nu-br/dataset/customer-eavt-denormalized) using 3 partition numbers (1000, 2000, 3000)
+
+We generated those metrics using the [TaskMetricsExplorer library](https://github.com/zheyuan28/SparkTaskMetrics) in Scala, which is also the source for the metrics calculated in our metadata table.
+
+Unfortunately, we had limited time for analysing the results and some roadblocks regarding the way spark runs in databricks prevented us from correctly running the experiments. The commands below that are used to change the amount of partitions spark uses do work in General Purpose clusters, but that doesn't apply to SU clusters.
+
+```scala
+spark.conf.set("spark.sql.shuffle.partitions", 1000) 
+sqlContext.setConf("spark.sql.shuffle.partitions", "1000")
+```
+
+As the TaskMetricsExplorer library requires to be installed in a SU cluster, and we cannot properly set the experiment partitions on these clusters, we decided to stop the discovery here. In the following sections, we document what we achieved experimentally by increasing the partition multiplier directly in itaipu.
 
 ##### Change number of partitions in Itaipu
 This has required:
