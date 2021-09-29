@@ -321,6 +321,18 @@ Run the command `nu-br sec scope show <username> --env prod` to check if you hav
 
 The command should return the result -  `Current scopes for <username> "admin manual-dataset-series-user"`. If you don't have all the required scopes, refer to the _*[Required access permissions](#required-access-permissions-before-appending-your-dataset)*_ section.
 
+
+### 403 Forbidden
+
+#### Reason
+
+When you run the append command, if the response you encounter includes a 403 status code linked to the schema.json file and it was verified that the user has the expected scope `manual-dataset-series-user` , this means that the file has an owner that is not possible to access with the user credentials that is trying to make the append operation.
+
+#### Solution
+
+Upload the schema.json file again and verify that the file description indicates that the owner is `tech`. This information can be verfied in aws s3 console, search for by folder name and file name.
+After the file was uploaded try again the append operation.
+
 ### 504 Endpoint request timed out error
 
 #### Reason
