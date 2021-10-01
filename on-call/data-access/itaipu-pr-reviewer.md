@@ -6,7 +6,7 @@ owner: "#data-infra"
 
 The Itaipu PR Reviewer helps Reviewing PRs on [Itaipu](https://github.com/nubank/itaipu) and is rotated daily through Opsgenie.
 
-Anyone in our Data Tribe or anyone from [Itaipu Committers](https://github.com/nubank/data-platform-docs/blob/master/how-tos/itaipu/itaipu_reviewer.md#itaipu-committers) can enter this rotation.
+Anyone in our Data Tribe or anyone from [Itaipu Reviewers](https://github.com/nubank/data-platform-docs/blob/master/how-tos/itaipu/itaipu_reviewers.md#itaipu-reviewers) can enter this rotation.
 
 ## Rotation
 

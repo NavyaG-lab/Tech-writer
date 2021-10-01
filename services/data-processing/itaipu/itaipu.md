@@ -104,6 +104,6 @@ Via `SparkOp`. It's a function over some data. Itaipu allows a declarative defin
 - [Datasetseries compaction](../../../how-tos/itaipu/dataset_series_compaction.md)
 - [Datomic raw cache](../../../how-tos/itaipu/datomic-raw-cache.md)
 - [Deploying new DAG](../../../how-tos/itaipu/deploying_new_dag.md)
-- [Reviewing and merging a PR on Itaipu](../../../how-tos/itaipu/itaipu_reviewer.md)
-- [Pii and personal data](../../../how-tos/itaipu/itaipu_reviewer.md)
+- [Reviewing and merging a PR on Itaipu](../../../how-tos/itaipu/itaipu_reviewers.md)
+- [Pii and personal data](../../../how-tos/itaipu/itaipu_reviewers.md)
 - [Pororoca](../../../how-tos/itaipu/pororoca.md)

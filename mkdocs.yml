@@ -168,7 +168,7 @@ nav:
       - Datomic raw caches: "how-tos/itaipu/datomic-raw-cache.md"
       - Deploying new DAG: "how-tos/itaipu/deploying_new_dag.md"
       - Flow of Itaipu run: "how-tos/itaipu/flow_of_control.md"
-      - Reviewing and merging a PR: "how-tos/itaipu/itaipu_reviewer.md"
+      - Reviewing and merging a PR: "how-tos/itaipu/itaipu_reviewers.md"
       - Updating the log cache: "how-tos/itaipu/log_cache_update.md"
       - Opening PRs: "how-tos/itaipu/opening_prs.md"
       - Pororoca: "how-tos/itaipu/pororoca.md"

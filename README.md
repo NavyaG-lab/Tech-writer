@@ -20,7 +20,7 @@ The knowledge base comprises a comprehensive list of all microservices and its d
 |[Services](services/data-ingestion/intro.md)|[Frozen Suite](https://docs.google.com/document/d/1tJx9ifOhscM7P4MtFifblbtDUoGTk-JqkDN9DXCqPsI/edit#heading=h.h1dr4jt5gg6g)|
 |[Overview of Itaipu](services/data-processing/itaipu/itaipu.md)|[Iglu](tools/frozen_suite/iglu/README.md)|
 |[Opening PRs on Itaipu](how-tos/itaipu/opening_prs.md)|[Ice mold](https://github.com/nubank/itaipu/tree/master/src/main/scala/etl/warehouse/ice_mold)|
-|[Reviewing and merging PR on Itaipu](how-tos/itaipu/itaipu_reviewer.md)|[IceQL](tools/frozen_suite/iceql/README.md)|
+|[Reviewing and merging PR on Itaipu](how-tos/itaipu/itaipu_reviewers.md)|[IceQL](tools/frozen_suite/iceql/README.md)|
 
 
 <br/>

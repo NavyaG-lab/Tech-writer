@@ -21,7 +21,7 @@ owner: "#data-infra"
     * [Contract Migration to V1](#contract-migration-to-v1)
     * [Check for Global Services on Contracts](#check-for-global-services-on-contracts)
     * [PRs without Tags](#prs-without-tags)
-    * [PR tagged with Ready For Merge, not reviewed by Committer](#pr-tagged-with-ready-for-merge-not-reviewed-by-committer)
+    * [PR tagged with Ready For Merge, not reviewed by a Reviewer](#pr-tagged-with-ready-for-merge-not-reviewed-by-a-reviewer)
     * [Check if using current_date, current_timestamp](#check-if-using-current_date-current_timestamp)
     * [A new subproject is created](#new-subproject-created)
 * [bors](#bors)
@@ -34,7 +34,7 @@ owner: "#data-infra"
     * [Commands](#commands)
     * [bors try](#bors-try)
 * [Code Owners](#code-owners)
-* [Itaipu Committers](#itaipu-committers)
+* [Itaipu Reviewers](#itaipu-reviewers)
 
 ## Workflow
 
@@ -42,8 +42,8 @@ The normal flow is:
 
 1. PR WIP -> "you finish pushing all the changes and making sure the tests are passing"
 1. PR Teammate Review Requested -> "teammate reviews"
-1. PR Review Requested -> "itaipu committer reviews"
-1. PR Ready For Merge -> "someone merges the PR (either bors or an itaipu committer)"
+1. PR Review Requested -> "itaipu reviewer reviews"
+1. PR Ready For Merge -> "someone triggers bors to merge the PR"
 1. PR Merged
 
 You can use [this link](https://github.com/nubank/itaipu/issues?q=is%3Aopen+label%3A%22-PR+Review+Requested%22+sort%3Aupdated-desc) to see PRs that are waiting for approval.
@@ -154,19 +154,10 @@ By our docs you need to add override val prototypes: Seq[Prototype] = Seq(Protot
 
 Can you add a tag to this PR? I will preemptively add it as -PR WIP for now. You can also create a PR as a [draft](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/about-pull-requests#draft-pull-requests), in case you are not done with it.
 
-### PR tagged with Ready For Merge, not reviewed by Committer
+### PR tagged with Ready For Merge, not reviewed by a Reviewer
 
-Can you please add the tag `-PR Review Requested` when you are waiting for an itaipu committer to review your PR?
+Can you please add the tag `-PR Review Requested` when you are waiting for an itaipu reviewer to review your PR?
 
-The normal flow is:
-PR WIP  -> "you finish pushing all the changes and making sure the tests are passing"
--> PR Teammate Review Requested -> "teammate reviews"
--> PR Review Requested  -> "itaipu committer reviews"
--> PR Ready For Merge -> "someone merges the PR (either bors or an itaipu committer)"
--> PR Merged
-
-You can read more about the tags here:
-<https://docs.google.com/document/d/1YRCKqAb0Zt0d_Hf5-xWxgNCXHi4Q5TtD1kMXlBe0pUY/edit?usp=sharing>
 
 ### Check if using current_date, current_timestamp
 
@@ -276,11 +267,11 @@ Ask #squad-data-access for help if you can't be added to reviewers list.
 
 Itaipu uses a [CODEOWNERS](https://github.com/nubank/itaipu/blob/master/.github/CODEOWNERS) file to validate if a user can approve a PR or not . The later entries have precedence over the ones inserted first. You can check more about Code Owners [here](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/about-code-owners).
 
-## Itaipu Committers
+## Itaipu Reviewers
 
-[Itaipu committer](https://github.com/orgs/nubank/teams/itaipu-committer) is a group of people with merge rights on Itaipu. Currently, they are able to merge PRs involving files inside the folders dataset and dataset_series, as seen in [CODEOWNERS](https://github.com/nubank/itaipu/blob/master/.github/CODEOWNERS).
+[Itaipu reviewers](https://github.com/orgs/nubank/teams/itaipu-reviewers) is a group of people with merge rights on Itaipu. Currently, they are able to merge PRs involving files inside the folders dataset and dataset_series, as seen in [CODEOWNERS](https://github.com/nubank/itaipu/blob/master/.github/CODEOWNERS).
 
-If you want to become an itaipu committer, the steps you must follow are:
+If you want to become an itaipu reviewer, the steps you must follow are:
 
 * Do a self-assessment about how much you feel comfortable reviewing a PR by filling up some questions in this forms (https://forms.gle/ptkK1ByKpjRChMSKA)
 * Pair up with another reviewer for one session of the daily PR review rotation
@@ -302,4 +293,4 @@ This form will be regularly reviewed by either [#itaipu-reviewers](https://app.s
   * [SparkOp](https://github.com/nubank/data-platform-docs/blob/master/how-tos/itaipu/create_basic_dataset.md#3---understanding-the-sparkop-class)
   * [Bors](https://github.com/bors-ng/bors-ng)
   * [Serving Layer](https://github.com/nubank/data-platform-docs/blob/master/infrastructure/data-infra/serving_layer.md)
-  * [GitHub tags](https://github.com/nubank/data-platform-docs/blob/master/how-tos/itaipu/itaipu_reviewer.md#workflow)
+  * [GitHub tags](https://github.com/nubank/data-platform-docs/blob/master/how-tos/itaipu/itaipu_reviewers.md#workflow)
