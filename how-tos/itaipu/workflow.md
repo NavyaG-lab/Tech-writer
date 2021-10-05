@@ -53,7 +53,9 @@ Creating a new contract is different than updating an existing contract because 
                 table with columns `audit__cid`, `audit__tags`, `audit__user`, `audit__version`, `db__tx_instant`)
                 - `:contract/clearance :pii` when the attribute is PII ([for more info](../data-deletion/pii_and_personal_data.md))
             - [Example](https://github.com/nubank/metapod/blob/master/src/metapod/models/transaction.clj#L13)
-        - `test/[SERVICE-NAME]/db/datomic/config_test.clj`:
+        - `test/unit/[SERVICE-NAME]/db/datomic/config_test.clj`
+        or for old services
+        `test/[SERVICE-NAME]/db/datomic/config_test.clj`:
             1. [if you are using midje] Add a call to function `common-datomic.contract.test-helpers/enforce-contracts! <country>` for each country that needs to have contracts. [Example](https://github.com/nubank/metapod/blob/master/test/unit/metapod/db/datomic/config_test.clj).
             2. [if you are using clojure.test] Add a deftest calling `common-datomic.contract.new-test-helpers/broken-contracts <db-name> <contract-skeletons> <country>` for each country that needs to have contracts. [Example](https://github.com/nubank/cerberus/blob/master/test/unit/cerberus/db/datomic/config_test.clj).
     1. Run `$ lein gen-contracts <country>` (for all countries) to generate the initial contracts in
@@ -61,14 +63,12 @@ Creating a new contract is different than updating an existing contract because 
         - If you receive the following error:
     
           ```
-      java.lang.AssertionError: Assert failed: Either `:contract/ref-ids` or `:skeleton` must explicitly specified as metadata on a schema.
+          java.lang.AssertionError: Assert failed: Either `:contract/ref-ids` or `:skeleton` must explicitly specified as metadata on a schema.
           ```
-    
+
           It is probably because it cannot infer some references inside your skeletons. You can fix it by explicitly declaring it in your schema.
           Look at the file `src/tyriel/models/payment_source.clj` from this PR as a reference: <https://github.com/nubank/tyrael/pull/54>.
-1. Open a pull request adding the generated files. 
-       
-       - [Example](https://github.com/nubank/escafandro/pull/37/files)
+1. Open a pull request adding the generated files. [Example](https://github.com/nubank/escafandro/pull/37/files)
     
 1. **Before Itaipu**
     1. Make sure that the database exists in prod and is being extracted before adding the contract to Itaipu.
@@ -79,7 +79,7 @@ Creating a new contract is different than updating an existing contract because 
    
     1. If this is the first contract for this database: 
        1. _Create a new package_ (aka folder) under
-    [itaipu/src/main/scala/nu/data/<country>/dbcontracts/<database>](https://github.com/nubank/itaipu/tree/master/src/main/scala/nu/data/br/dbcontracts) named
+    [itaipu/src/main/scala/nu/data/\<country\>/dbcontracts/\<database\>](https://github.com/nubank/itaipu/tree/master/src/main/scala/nu/data/br/dbcontracts) named
     after the new database. If the relevant folder already exists, proceed to the next step.
        1. _Create a Scala object for the database_ (using PascalCase, aka upper camel case) that will reference each of the
     contract entities - similar to [itaipu/blob/master/src/main/scala/nu/data/br/dbcontracts/metapod/Metapod.scala](https://github.com/nubank/itaipu/blob/master/src/main/scala/nu/data/br/dbcontracts/metapod/Metapod.scala).
