@@ -1,5 +1,5 @@
 ---
-owner: "#Analytics-productivity"
+owner: "#analytics-productivity"
 ---
 
 # Core Datasets Documentation
@@ -19,15 +19,16 @@ owner: "#Analytics-productivity"
   * [What are the advantages of creating a core dataset?](#what-are-the-advantages-of-creating-a-core-dataset)
     * [When/why should I create a core dataset?](#whenwhy-should-i-create-a-core-dataset)
     * [How can I contribute to core?](#how-can-i-contribute-to-core)
+      * [Contribution guidelines](framework/contribution-workflow.md).
       * [Possible scenarios before going to core](#possible-scenarios-before-going-to-core)
         * [Moving an existing dataset to core](#moving-an-existing-dataset-to-core)
           * [What is a shim?](#what-is-a-shim)
             * [How do I know if I need a shim?](#how-do-i-know-if-i-need-a-shim)
             * [Steps to move a dataset to core](#steps-to-move-a-dataset-to-core)
+            * [Detailed FAQ](framework/FAQ.md) and [other docs](https://drive.google.com/file/d/1z0adUG6lqGqkBZX8sbyz17rCVB-90QaQ/view?usp=sharing)
         * [Creating a dataset in the core layer from scratch](#creating-a-dataset-in-the-core-layer-from-scratch)
     * [Additional rules to contributing](#additional-rules-to-contributing)
 * [Troubleshooting](#troubleshooting)
-* [Is there any documentation with further details than this one?](#is-there-any-documentation-with-further-details-than-this-one)
 <!--te-->
 
 ## Context
@@ -74,7 +75,7 @@ The following rules should be followed in order for a dataset to become core:
 7. Difference Analysis between core candidate and old dataset (in case of a core candidate replacing an old common dataset). See [difizinho](https://github.com/nubank/difizinho)
 8. Roll-out plan (in case of a core candidate replacing a old common dataset)
 
-For further details, one can find [this documentation](https://github.com/nubank/playbooks/blob/master/core-datasets/framework/contribution-workflow.md) useful.
+For further details, one can find [this documentation](framework/contribution-workflow.md) useful.
 
 ## For producers
 
@@ -118,7 +119,7 @@ Also, the process of moving a dataset to core consists of 2 phases:
   * Advisable for bigger datasets that may have performance issues or when feedback regarding business rules is required from stakeholders
 - General release
 
-These steps are planned as such to provide a smooth rollout and prevent any issues on sharing new data. Each phase has its own requirements. For more information on that, one can find [this documentation](https://github.com/nubank/playbooks/blob/master/core-datasets/framework/contribution-workflow.md) useful.
+These steps are planned as such to provide a smooth rollout and prevent any issues on sharing new data. Each phase has its own requirements. For more information on that, one can find [this documentation](framework/contribution-workflow.md) useful.
 
 #### Moving an existing dataset to core
 
@@ -174,7 +175,3 @@ One must keep in mind that If any data schema and value changes are made, the st
 ## Troubleshooting
 
 If you are experiencing Out of Memory (OOM) errors with your dataset, check out [our documentation](../../tools/frozen_suite/iglu/troubleshooting.md) for dealing with it.
-
-## Is there any documentation with further details than this one?
-
-Yes. It's in this [playbooks repository](https://github.com/nubank/playbooks/tree/master/core-datasets). Here is a [detailed FAQ](https://github.com/nubank/playbooks/blob/master/core-datasets/framework/FAQ.md) and [contribution guidelines](https://github.com/nubank/playbooks/blob/master/core-datasets/framework/contribution-workflow.md). And [here](https://drive.google.com/file/d/1z0adUG6lqGqkBZX8sbyz17rCVB-90QaQ/view?usp=sharing) you can find an Analytics Engineering recording about core datasets.

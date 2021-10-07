@@ -1,0 +1,50 @@
+@startuml
+skinparam shadowing false
+skinparam linetype ortho
+hide circle
+
+entity "Customer" as customer {
+  * ** customer__id **
+  --
+  * account_request__id
+  * credit_card_account__id
+  * prospect__id
+  * savings_account__id
+}
+
+entity "Credit Card Account" as cca {
+  *  ** credit_card_account__id **
+  --
+  * customer__id
+  * savings_account__id
+}
+
+entity "Savings Account" as savings {
+  * ** savings_account__id **
+  --
+  * credit_card_account__id
+  * customer__id
+}
+
+entity "Prospect" as prospect {
+  * ** prospect__id **
+  --
+  * account_request__id
+  * customer__id
+}
+
+entity "Account Requests" as accrequests {
+  * ** account_request__id **
+ --
+  * customer__id
+  * prospect__id
+
+}
+
+customer ||--o| cca
+customer ||--o| savings
+customer ||--|{ accrequests
+cca      |o--o| savings
+prospect ||--o| accrequests
+
+@enduml
