@@ -109,7 +109,7 @@ Since appending involves talking directly to `metapod`, you will need the `metap
 ## Running
 
 ```
-nu-<country> datainfra stage-serve my-dataset-name s3://nu-spark-metapod-ephemeral-staging/my-name/my-dataset
+nu-<country> datainfra stage-serve my-dataset-name s3://nu-spark-metapod-ephemeral-staging/my-name/my-dataset/my-avro-file.avro
 ```
 
 * If there is any error, follow the command instructions to find the error logs on Splunk
