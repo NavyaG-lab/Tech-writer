@@ -16,6 +16,7 @@ We'll commit content from the linked Google Docs/Sheets to this repository durin
     - [Simplified proposal and team boundaries](https://docs.google.com/document/d/1qxG90DgmHQlEuA6IO8eiv6-jgJBP_OxcD2JjbPfvuq0/edit)
         - [Companion system context diagram](https://miro.com/app/board/o9J_lUxZkV4=/)
     - [Data BU All-hands 2021-03-05](https://docs.google.com/presentation/d/12n7-VGYP6FjfpEA-PYHrS5fCr5SANty1s0nxKVQ3ZSE/edit#slide=id.g98f941548a_0_2)
+    - [Common Tech Platforms All Hands 2021-05-12](https://honey.is//home/#post/888944)
 - Metadata and rollout
     - [GAC metadata propagation specification](https://docs.google.com/document/d/1wtsdZM557suAt2kZouXTPOeq30h8nhnCpm5smA6fE1A/edit)
 - Approval flow
