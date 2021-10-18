@@ -23,7 +23,7 @@
 !endprocedure
 
 !unquoted procedure $addIAMPolicies($symbol)
-  System($symbol, "Nubank IAM", "IAM related containers such as nubank/iam-policies and AWS IAM itself")
+  System_Ext($symbol, "Nubank IAM", "IAM related containers such as nubank/iam-policies and AWS IAM itself")
 !endprocedure
 
 !unquoted procedure $addGovernanceOps($symbol)
@@ -55,7 +55,7 @@
 !endprocedure
 
 !unquoted procedure $addGovMetadata($symbol)
-  System($symbol, "Governance Metadata", "Includes a library that generates S3 prefixes base clearance, restriction, owner squad, etc.")
+  System($symbol, "access-control-metadata", "Itaipu subproject that contains ACGs.")
 !endprocedure
 
 !unquoted procedure $addIAM($symbol)
@@ -67,37 +67,23 @@
 !endprocedure
 
 !unquoted procedure $addRequisitionSystem($symbol)
-  System($symbol, "Requisition System", "Request access to ACG and interface for approvers (based on Jira).")
+  System($symbol, "Requisition System", "Find (Google Data Studio dashboard) and request access (through Jiraya) to ACG(s) and interface for approvers (Jira).")
 !endprocedure
 
 !unquoted procedure $addSub1($itaipuDatasets, $govMeta, $dataConsumer)
-  Boundary(tbdOwner, "TBD owner") {
-    System(catalog, "ACG Catalog.", "Documentation. TBD, maybe Looker dashboard or CLI")
-  }
   System_Ext(s3, "AWS S3")
   $addDataInfra(dataInfra) {
     $addItaipuRuntime(itaipuRuntime)
   }
-  Boundary(dsProd, "DS Prod") {
-      System_Ext(kubeFlow, "Kubeflow", "Already operates using personal IAM roles. No changes necessary.")
-    }
   $addDataAccess(dataAccess) {
     $addDatabricks(databricks)
-    System_Ext(bigQuery, "BigQuery", "Will be integrated after Databricks.")
   }
 
-  System_Ext(sts, "AWS STS")
-
   Rel(dataConsumer, databricks, "Run queries")
-  Rel(dataConsumer, kubeFlow, "Run queries")
-  Rel(dataConsumer, bigQuery, "Run queries")
-  Rel(dataConsumer, catalog, "Find the right ACGs to request access to (e.g. based on a dataset they need), and show ACGs currently associated with Nubanker")
-  Rel(databricks, sts, "Get token to assume DATA account role")
   Rel(databricks, s3, "Read data")
   Rel(itaipuRuntime, s3, "Write data")
   Rel(itaipuRuntime, $itaipuDatasets, "Get queries to run")
-  Rel(kubeFlow, s3, "Read data")
-  Rel(itaipuRuntime, govMeta, "Library dependency: get deterministic S3 prefix for PII data assets")
+  Rel(itaipuDatasets, govMeta, "Link to ACG")
 !endprocedure
 
 
@@ -106,28 +92,21 @@
   $addDecisionMakers(decMakers)
 
   $addInfoSec(infoSec) {
-      System(maat, "'maat' Service", "Business agnostic approval system")
       $addIAMPolicies(iam)
   }
 
   $addITOps(itOps) {
-    $addOkta(okta)
-  }
-
-  Boundary(itRisk, "IT Risk") {
+    System_Ext(maat, "Authorization System", "Primarily the 'scooby' service with auto approvals through access matrix, and manual approvals using the maat service.")
   }
 
   Rel(dataConsumer, reqSystem, "Request access")
-  Rel_Up(itRisk, govOps, "Help with building and maintaining the access matrix (using AE domain knowledge)")
-  Rel_Up(maat, govOps, "Approve/deny manually if outside of access matrix or other edge case")
+  Rel(maat, govOps, "Ask for approve/deny if outside of access matrix")
   Rel(piiMonitoring, iam, "Extract ACGs per user for PII exposure OKR")
-  Rel(govOps, govMeta, "Add/remove clearances")
+  Rel(govOps, govMeta, "Add/remove ACGs")
 
   Rel(piiMonitoring, itaipuDatasets, "Get enumerator for PII OKR by counting datasets per clearance/restriction")
-  Rel_Down(decMakers, piiMonitoring, "Monitor")
-  Rel(reqSystem, iam, "Trigger processes that associate (automatically expiring) ACG policies to data account roles of the Nubanker in IAM")
-  Rel(itRisk, reqSystem, "Maintain access matrix")
-  Rel(iam, govMeta, "Build policies based on clearances")
-  Rel(reqSystem, maat, "Fallback of access matrix")
-  Rel(dataProtection, itOps, "Ask for help with Jira")
+  Rel(decMakers, piiMonitoring, "Monitor")
+  Rel(reqSystem, iam, "Attach and revoke ACG policies to data account roles of the Nubanker in IAM")
+  Rel(dataProtection, maat, "Maintain access matrix")
+  BiRel(reqSystem, maat, "Jiraya => scooby (Kafka); scooby => Requisition System (AWS SQS)")
 !endprocedure

@@ -54,7 +54,7 @@ They access systems owned by many different squads for their PII data needs.
 ### Subgraph 2: ACG Governance & Access Flows
 
 This subgraph contains four squads and two people.
-Three squads are part of the Engineering Horizontals BU, while IT Risk is not.
+Three squads are part of the Common Tech Platforms (CTP) BU.
 Just like in the other subgraph, we find the (any) Nubanker. 
 Also, take note of the Analytics Engineering (AE) Chapter.
 Since the AE take cares Data Governance tasks, they will also play an important role in Granular Access Controls.
@@ -64,13 +64,8 @@ They interact with systems owned by all aforementioned squads in this subgraph.
 
 #### Requisition System
 
-The following sequence diagram zooms in on the requisition flow.
-
-The dependency of the 'Requisition System' and the  `maat` service above is the desired final state.
-Since the endpoint on `maat` is not yet implemented, however, we need an alternative.
-In the sequence diagram below you can see that alternative.
-
-![Sequence Diagram](architecture/requisition.png)
+We are currently migration the requisition system from Okta Workflows to AWS Step Functions.
+More documentation about this follows as soon as this work is in progress.
 
 #### Guidelines to validade a new ACG policy
 
@@ -85,6 +80,10 @@ Since the command is in early stages there's a few manual steps that you need to
 You can do that locally on your machine. No need to submit a PR.
 
 ### Changelog
+
+#### 2021-10-18
+
+- Reflecting the state of the GAC system as of today (after the deployment of the first iteration).
 
 #### 2021-05-06
 
