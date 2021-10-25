@@ -85,7 +85,7 @@ This is an example of the necessary files to support reading and writting to the
 
 ##### Step 1
 
-This bucket policy grants both the BR and the DATA account read, write and delete permissions on the nu-risk-br bucket.
+This bucket policy grants both the BR and the DATA account read, write and delete permissions on the `nu-risk-br` bucket.
 
 ```
 {
@@ -128,6 +128,9 @@ This bucket policy grants both the BR and the DATA account read, write and delet
   ]
 }
 ```
+
+The bucket policies are at <https://github.com/nubank/iam-policies/tree/master/bucket-policies>. Remember to [run the lambda](https://github.com/nubank/iam-policies#s3-bucket-policies) to update the policy.
+
 It's important that the Data Account, account number `877163210394`, has the right permissions. Depending on your bucket requirements, like versioning, you might need to grant extra permissions. For a full list of actions check the [AWS documentation](https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazons3.html)
 
 ##### Step 2
