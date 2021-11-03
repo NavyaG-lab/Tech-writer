@@ -1,0 +1,29 @@
+@startuml
+
+!include includes/C4_Container.puml
+!include includes/shared.puml
+
+System_Boundary(reqSystem, $requisitionSystemName) {
+  Container(jirayaFlow, "#acg-access-request", "Jiraya Flow", "Slack channel where Nubankers to go to request access to Access Control Groups (ACGs).")
+  Container(acgMap, "Dataset => ACG map", "Google Data Studio Dashboard", "Search for your dataset and find the ACG you need.")
+  Container(jira, "Data Support (DATASUP)", "Jira Project", "All ACG requests are stored in this Jira project. Designated approvers review the issue and either approve or deny it.")
+  Container(jiraAutomation, "Issue Observer", "Jira Automation", "This Jira automation triggers when an ACG request is approved and kicks off the request lifecycle state machine.")
+  Container(proxyLambda, "ACG Grant Lifecycle Bootstrap", "AWS Lambda", "This lambda starts the state machine through the API.")
+  Container(stepFunction, "ACG Request Lifecycle", "AWS Step Function State machine", "This state machine contains all the logic for granting access and automatic expiry. It also sends monitoring data to the ETL.")
+
+}
+
+$addItaipuDatasets(itaipuDatasets)
+$addIAMPolicies(iam)
+$addDataConsumer(dataConsumer)
+
+Rel(dataConsumer, jirayaFlow, "Request access", "Slack")
+Rel(dataConsumer, acgMap, "Find ACGs", "Browser")
+Rel(acgMap, itaipuDatasets, "Queries", "BigQuery")
+Rel(jirayaFlow, jira, "Create issue")
+Rel(jiraAutomation, jira, "Observe ticket approval")
+Rel(jiraAutomation, proxyLambda, "Invoke", "HTTP")
+Rel(proxyLambda, stepFunction, "Create execution", "AWS API")
+Rel(stepFunction, iam, "Attach policies to", "Lambda Invocation")
+
+@enduml

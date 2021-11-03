@@ -66,8 +66,10 @@
   System($symbol, "Itaipu Datasets", "Inside itaipu monorepo. Every dataset has ACG-related metadata such as clearance and restriction.")
 !endprocedure
 
+!$requisitionSystemName = "Requisition System"
+
 !unquoted procedure $addRequisitionSystem($symbol)
-  System($symbol, "Requisition System", "Find (Google Data Studio dashboard) and request access (through Jiraya) to ACG(s) and interface for approvers (Jira).")
+  System($symbol, $requisitionSystemName, "Find (Google Data Studio dashboard) and request access (through Jiraya) to ACG(s) and interface for approvers (Jira).")
 !endprocedure
 
 !unquoted procedure $addSub1($itaipuDatasets, $govMeta, $dataConsumer)

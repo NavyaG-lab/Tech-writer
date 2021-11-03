@@ -64,8 +64,9 @@ They interact with systems owned by all aforementioned squads in this subgraph.
 
 #### Requisition System
 
-We are currently migration the requisition system from Okta Workflows to AWS Step Functions.
-More documentation about this follows as soon as this work is in progress.
+We are currently migrating the requisition system from Okta Workflows to AWS Step Functions.
+
+![Requisition System Container Diagram](architecture/requisition_system.png)
 
 #### Guidelines to validade a new ACG policy
 
@@ -80,6 +81,10 @@ Since the command is in early stages there's a few manual steps that you need to
 You can do that locally on your machine. No need to submit a PR.
 
 ### Changelog
+
+#### 2021-10-29
+
+- Add the container diagram for the requisition system 
 
 #### 2021-10-18
 
