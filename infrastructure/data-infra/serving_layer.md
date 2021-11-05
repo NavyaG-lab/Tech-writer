@@ -43,6 +43,22 @@ Make sure your dataset's primary key ([for example](https://github.com/nubank/it
 
 With serving layer data that is loaded into the serving layer table (`LoadedAndPropagated` or `LoadedOnly` modes), you must also specify when you would like that data to be wiped from the docstore and hence no longer retrievable via `conrado`. The options are `ServingLayerExpiration.NeverExpires` ([example](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/dataset/batch_models/fraud_daily/collisions/ServingAddressCollisions.scala#L45)) and `ServingLayerExpiration.ExpiresIn(days=5)` ([example](https://github.com/nubank/itaipu/blob/master/src/main/scala/nu/data/br/datasets/data_infra/DummyServedDataset.scala#L30)]. For `ServingLayerExpiration.ExpiresIn(days=X)`, the data will be wiped at the end of day of the `targetDay + X`, so if the target day is `2020-02-02` and `days` is `2`, the data will be wiped at `2020-02-04 23:59:59`.
 
+#### integrity checks
+
+Itaipu requires at least two `IntegrityCheck`s to be added to your dataset in order for it to be served in the serving layer: `UniqueColumn` and `NonBlankColumn` on the dataset's primary key. To do so, check your primary key name according to the dataset's `attributes` field and then declare the integrity checks like so:
+
+```scala
+// other imports and package
+
+import common_etl.operator.IntegrityCheck.{NonBlankColumn, UniqueColumn}
+
+object YourDataset extends SparkOp with DeclaredSchema {
+  //...
+  override def integrityChecks: Set[IntegrityCheck] = Set(UniqueColumn("your_primary_key"), NonBlankColumn("your_primary_key"))
+  //...
+}
+```
+
 ## Tapir
 
 `tapir` is a service that runs in the prod environment and listens to datasets being ready in the datalake using a list of dataset names, loading those datasets from s3 into a single DynamoDB table, and also making each row available as Kafka messages.
