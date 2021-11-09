@@ -104,7 +104,7 @@ nu-<country> auth get-refresh-token
 nu-<country> auth get-access-token
 ```
 
-Secondly, you can run the console, `./console`. Creating/upserting mesos-master on both environments in cantareira would look as follows: 
+Secondly, you can run the console, `./console`. Creating/upserting mesos-master on both environments in cantareira would look as follows:
 ```
 [1] STAGING> MesosMaster.create!('stable')
 [1] STAGING> MesosMaster.create!('dev')
@@ -620,32 +620,23 @@ NB: one thing to be aware of is that, given an instance type with N cores and M 
 
 ## Deploy a hot-fix to itaipu
 
-- Merge a PR into the `release` branch of `itaipu`. Aside from hotfixes, the `release` branch should only be updated once a day right before the `dagao` is automatically deployed ([see here for details](../../how-tos/itaipu/workflow.md#how-itaipu-is-deployed-to-the-dagao)).
-- This triggers a build of [`itaipu-stable`](https://go.nubank.com.br/go/tab/pipeline/history/itaipu-stable) on GoCD.
-- When this build finishes, and the downstream `dagao` pipeline is built, run the `publish` stage of of that task.
-
-Note that when `itaipu-release-refresh` runs at `23h20 UTC`, any changes merged into `release` will be wiped and replaced by `master`.
-If you have a fix that needs to persisted past today, you will need to open another PR targeting `master` with the fix.
-
-Note:
-
-- If `itaipu-stable` fails to build, due to flaky dependency downloads and such, it might be the case that nobody is able to fix it before the dag is deployed
-
-**After hot-deploying Dagao**
-
-1. After you hot deploy dagao, by triggering the Publish step on GoCD, you **must** re-run the Airflow task named **etl_run_versions** available at the very beginning of the DAG next to **itaipu-the-first**
-
-![etl-run-versions](../../images/airflow_etl_run_versions.png)
-
-The **etl_run_versions** task creates (or updates) an Airflow Variable that gets used by every node during the run. This variable is a key-value pair whose key is in the format **prod____etl_run_versions__{target_date}**. The value, in Json format, contains the ETL run versions (such as Itaipu and scale_cluster). The task reads the run versions from the 'DAS' file, present on disk, and creates (or updates) the Variable accordingly.
-
-2. To re-run the Airflow task, click on **etl_run_versions** and then click Clear.
-3. Double-check to ensure that we are clearing the correct task and click OK. This updates a Variable whose key should be in the **prod____etl_run_versions__{target_date}** format.
-
-**Tip:** You can also verify if the above process has worked by navigating to Admin->Variables. Look for the current variable (the one that corresponds to the target_date), and check that the Itaipu version is not the same as the one found in #etl-updates for the given day.
-As the number of Variables grow, it might be difficult to find the current one. So, you can either use the search bar and pass the target date as your search criteria, or you can sort all Variables by key.
-
-**Note:** This  task does not depend on anything; Restarting it won't affect any other running tasks.
+- Identify the version used in production for the current target date
+  by navigating to Admin->Variables inside Airflow’s UI. Look for the
+  entry `prod____etl_run_versions__{target_date}`. The version is the
+  SHA of the corresponding commit in the `master` branch.
+- Create a branch, named `hot-fix`, from that commit and apply the
+  desired changes.
+- Open a PR from that branch or at least push it[^1]. This will
+  trigger the standard set of checks and two additional Tekton tasks:
+  `publish-itaipu-hot-fix` and `publish-jirau-hot-fix`. Depending on
+  the level of confidence in your changes and their urgency you can
+  either wait until all the checks are completed or go to the next
+  step as soon as the aforementioned tasks are done. _NB: These tasks
+  are not bulletproof. Even though we retry them three times there is
+  still a non-zero chance to fail. If you hit this problem re-run the
+  task._
+- Trigger the DAG `hot_deploy_itaipu` in Airflow.
+- Merge the PR to be include in the next run.
 
 ## Checks before old prod-stack teardown
 
@@ -828,3 +819,9 @@ In case we need to open a ticket with Inter-Services Communications team, please
 3. Choose Platform - ISC - API in API integration
 4. Describe the problem and environment in the alert description
 5. Choose P1-Critical for the priority
+
+[^1]: Given the nature of the branch, it could be you’ll have to force
+    push your changes. Just double check with your colleagues, if you
+    can, before proceeding. Also, even though it should be obvious
+    from the context, you don’t have to open a formal PR if you don’t
+    plan merge it back to `master`.

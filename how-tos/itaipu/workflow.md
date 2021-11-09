@@ -35,14 +35,14 @@ Creating a new contract is different than updating an existing contract because 
 1. **On the relevant Clojure service**
     1. Create or edit the following files:
         - `contract/contract_main.clj`:
-            
+
             1. Create it, if it doesn't exist, with the same content as [here](https://github.com/nubank/metapod/blob/master/contract/contract_main.clj))
         - `project.clj`:
             1. Add `:contract` to the `:profiles` ([example](https://github.com/nubank/metapod/blob/a889decd116c284e22692b2d492f134bb65effcf/project.clj#L63)), and `"gen-contracts"` to the `:aliases` ([example](https://github.com/nubank/metapod/blob/a889decd116c284e22692b2d492f134bb65effcf/project.clj#L79))
             1. Ensure the project is using the latest version of
             [`common-datomic`](https://github.com/nubank/common-datomic/blob/master/project.clj).
         - `src/[SERVICE-NAME]/db/datomic/config.clj`:
-            
+
             1. Add the desired skeletons to `contract-skeletons` ([example](https://github.com/nubank/metapod/blob/a889decd116c284e22692b2d492f134bb65effcf/src/metapod/db/datomic/config.clj#L29)).
         - `src/[SERVICE-NAME]/models/*.clj`:
             1. Ensure every attribute in the `skeleton` has documentation (`:doc`)
@@ -61,7 +61,7 @@ Creating a new contract is different than updating an existing contract because 
     1. Run `$ lein gen-contracts <country>` (for all countries) to generate the initial contracts in
 `resources/nu/data/<country>/dbcontracts/<DB-NAME>/entities`.
         - If you receive the following error:
-    
+
           ```
           java.lang.AssertionError: Assert failed: Either `:contract/ref-ids` or `:skeleton` must explicitly specified as metadata on a schema.
           ```
@@ -69,15 +69,15 @@ Creating a new contract is different than updating an existing contract because 
           It is probably because it cannot infer some references inside your skeletons. You can fix it by explicitly declaring it in your schema.
           Look at the file `src/tyriel/models/payment_source.clj` from this PR as a reference: <https://github.com/nubank/tyrael/pull/54>.
 1. Open a pull request adding the generated files. [Example](https://github.com/nubank/escafandro/pull/37/files)
-    
+
 1. **Before Itaipu**
     1. Make sure that the database exists in prod and is being extracted before adding the contract to Itaipu.
 
     - [Example query of this on Thanos](https://prod-thanos.nubank.com.br/graph?g0.range_input=1h&g0.expr=max(datomic_extractor_basis_t%7Bdatabase%3D~%22metapod%22%7D)&g0.tab=0) You should see line chart showing the growing amount of data extracted with time. _NB. In this example we are referring to the `metapod` service. You have to replace it with the name of your service._
 
-1. **On Itaipu** 
-   
-    1. If this is the first contract for this database: 
+1. **On Itaipu**
+
+    1. If this is the first contract for this database:
        1. _Create a new package_ (aka folder) under
     [itaipu/src/main/scala/nu/data/\<country\>/dbcontracts/\<database\>](https://github.com/nubank/itaipu/tree/master/src/main/scala/nu/data/br/dbcontracts) named
     after the new database. If the relevant folder already exists, proceed to the next step.
@@ -87,24 +87,24 @@ Creating a new contract is different than updating an existing contract because 
     `override val prototypes: Seq[Prototype] = Seq(Prototypes.global)`. Otherwise, leave only the attributes `name`,
     `entities` and `qualityAssessment`.
        1. _Modify_ the `nu/data/<country>/dbcontracts/V1.scala` [file](https://github.com/nubank/itaipu/blob/master/src/main/scala/nu/data/br/dbcontracts/V1.scala)
-          by adding a reference to the database in the val `all` inside the V1 object and importing the DatabaseContract 
+          by adding a reference to the database in the val `all` inside the V1 object and importing the DatabaseContract
           `import nu.data.br.dbcontracts.<dbcontract-name>.<database-object>`, eg:
           ```scala
             import nu.data.br.dbcontracts.metapod.Metapod
             import nu.data.br.dbcontracts.papers_please.PapersPlease
           ```
-       1.  _Create a Scala object for each new contract entity you are adding_ 
-            - The code should be a direct copy & paste from the contract Scala file(s) generated (with `lein gen-contracts`) 
-               in the Clojure project into `itaipu/src/main/scala/nu/data/<country>/dbcontracts/<DB-NAME>/entities/`.               
+       1.  _Create a Scala object for each new contract entity you are adding_
+            - The code should be a direct copy & paste from the contract Scala file(s) generated (with `lein gen-contracts`)
+               in the Clojure project into `itaipu/src/main/scala/nu/data/<country>/dbcontracts/<DB-NAME>/entities/`.
                 - The files are found in `resources/nu/data/<country>/<DB-NAME>/entities/*.scala` at the service repo.
-       
+
     1. If this is not the first contract for this database:
        1. _Create a Scala object for the contract entity_
             - Follow step 3.i.d.
-       1. _Ensure_ all objects are referenced by the `entities` [val](https://github.com/nubank/itaipu/blob/master/src/main/scala/nu/data/br/dbcontracts/metapod/Metapod.scala#L13) in the database object.  
+       1. _Ensure_ all objects are referenced by the `entities` [val](https://github.com/nubank/itaipu/blob/master/src/main/scala/nu/data/br/dbcontracts/metapod/Metapod.scala#L13) in the database object.
 
     1. Follow the instructions about [running tests](#running-tests)
-    
+
     1. Open a pull request. There’s no need to ask for reviews on Itaipu, we monitor new PRs multiple times a day as the repo is very active.
 
     1. Follow the instructions about [merging pull requests](./opening_prs.md)
@@ -395,53 +395,7 @@ Running the tests:
 
 ## How Itaipu is deployed to the Dagao
 
-One of the main tenets of this deployment process is: ensure we use
-the same version of Itaipu for a given transaction. There are several
-reasons for that:
-
-  * Usually different versions have different graph topologies and
-    changing it after it has started isn't really possible.
-  * New versions may change dataset relationships in ways not covered
-    by the integration tests.
-  * Downstream services such as databricks-loading assume a single tx
-    per day.
-
-So how do we ensure this strict constraint? We cut new releases from, well, Itaipu’s `release` branch, which is derived from `master`. This
-allows us to keep merging new PR in the `master` branch without impacting production. Briefly:
-
-  * Pull requests generally target that branch, i.e. `master`. Once
-    they are merged, circleci tests and builds the repo.
-  * Every day, at `21h00 UTC`, `22h00 UTC` and `23h00 UTC`, the
-    [`itaipu-release-refresh` GoCD
-    pipeline](https://go.nubank.com.br/go/tab/pipeline/history/itaipu-release-refresh)
-    updates the `release` branch to point to `master`.
-  * This change triggers a build of
-    [`itaipu-stable`](https://go.nubank.com.br/go/tab/pipeline/history/itaipu-stable),
-    which builds off the `release` branch.
-
-
-Additional notes:
-
-  * The update of the `master` branch is scheduled three times a day
-    because the resulting build of `itaipu-stable` sometimes fails
-    (e.g. if it fails to download dependencies).
-  * The[`dagao`](https://go.nubank.com.br/go/tab/pipeline/history/dagao)
-    pipeline depends on `itaipu-stable`, so `itaipu-stable` and the
-    subsequent `itaipu-stable-publish` must finish before the `dagao`
-    and the subsequent `dagao-deploy` pipelines run to deploy the new
-    version of the dag.
-      * More precisely, `itaipu-stable` -> `itaipu-stable-publish` ->
-        `dagao` (steps 1-3) must finish before `23h45 UTC`, which is
-        when `dagao-deploy` automatically gets triggered every day.
-      * Steps 4-6 of `dagao` do the same thing as `dagao-deploy`, but
-        when triggering them manually it's possible to select which
-        version of the dag to deploy.
-  * In case all the build attempts fail, the `dagao` pipeline will
-    deploy the version of `itaipu` for which it last successfully
-    built.
-  * Note that the build attempts are triggered in times between the
-    daily runs, as building a new version in the middle of the run
-    would change the code in the middle of the run.
+Please see [Data Infra release engineering](../../infrastructure/data-infra/releng.md).
 
 ## Publishing an itaipu build
 
