@@ -53,7 +53,6 @@ Idealized version:
   * After that we read the contents from that file and create the
     corresponding Airflow variable for that specific run.
 
-
 Current reality. Even though the steps above are really happening,
 there are several nasty and important details worth mentioning:
 
@@ -63,6 +62,39 @@ there are several nasty and important details worth mentioning:
     approprietly.
   * The versions are “overlayed” with the contents from
     `custom_itaipu_versions`
+
+
+## About “namespaced” Docker images
+
+This is not strictly something specific to Data Infra, but it’s still
+good background information. By default images to pulled are referred
+to with `193814090748.dkr.ecr.us-east-1.amazonaws.com/<img name>:<git sha>`
+where image name is, say, `nu-itaipu` and the like. As long as the SHA
+of the commit is different there are no conflicts and so, in theory,
+you can push images built from completely different branches. In
+practice, though, this makes it impossible to distinguish between images
+built for special purposes and those that are not meant to be used in
+production.
+
+Fortunately, we can segregate them in different namespaces with
+something like `<ecr host>/<namespace>/<img name>:<git sha>`.
+Conceptually the process to create a new namespace is straightforward:
+
+  * Run `nu registry create "<my namespace>/<my image>"`
+  * Define a Tekton workflow with a step like the following
+    ```
+        - uses: kaniko
+          options:
+            destination:
+          193814090748.dkr.ecr.us-east-1.amazonaws.com/<my namespace>/<my image>:$(workflow.head-commit)
+            flags: |
+              --label
+              name=<my image>
+              --label
+              version=$(workflow.head-commit)
+              --dockerfile
+              <my dockerfile>
+    ```
 
 ## About `hot_deploy_itaipu`
 
