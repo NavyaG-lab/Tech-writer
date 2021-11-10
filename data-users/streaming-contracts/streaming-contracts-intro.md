@@ -77,3 +77,8 @@ All Nubankers should have general access to streaming contracts:
 
 
 For PII access fill out this [forms](https://nubank.atlassian.net/servicedesk/customer/portal/53/group/246/create/920).
+
+## Next steps
+
+- [How fresh data is processed and transformed](data-freshness.md)
+- [View data in Google BigQuery](views-bigquery.md)
