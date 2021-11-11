@@ -621,7 +621,9 @@ NB: one thing to be aware of is that, given an instance type with N cores and M 
 ## Deploy a hot-fix to itaipu
 
 - Identify the version used in production for the current target date
-  by navigating to Admin->Variables inside Airflow’s UI. Look for the
+  by navigating to Admin->Variables inside Airflow’s UI
+  ([cantareira](https://airflow.nubank.com.br/admin/variable/),
+  [foz](https://airflow.nubank.world/admin/variable/)). Look for the
   entry `prod____etl_run_versions__{target_date}`. The version is the
   SHA of the corresponding commit in the `master` branch.
 - Create a branch, named `hot-fix`, from that commit and apply the
@@ -636,7 +638,7 @@ NB: one thing to be aware of is that, given an instance type with N cores and M 
   still a non-zero chance to fail. If you hit this problem re-run the
   task._
 - Trigger the DAG `hot_deploy_itaipu` in Airflow.
-- Merge the PR to be include in the next run.
+- Merge the PR, if needed[^1], to be include in the next run.
 
 ## Checks before old prod-stack teardown
 

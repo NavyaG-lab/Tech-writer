@@ -77,7 +77,7 @@ built for special purposes and those that are not meant to be used in
 production.
 
 Fortunately, we can segregate them in different namespaces with
-something like `<ecr host>/<namespace>/<img name>:<git sha>`.
+something like `<ecr host>/<namespace>/<img name>:<tag>`.
 Conceptually the process to create a new namespace is straightforward:
 
   * Run `nu registry create "<my namespace>/<my image>"`
@@ -86,7 +86,7 @@ Conceptually the process to create a new namespace is straightforward:
         - uses: kaniko
           options:
             destination:
-          193814090748.dkr.ecr.us-east-1.amazonaws.com/<my namespace>/<my image>:$(workflow.head-commit)
+          193814090748.dkr.ecr.us-east-1.amazonaws.com/<my namespace>/<my image>:<tag>
             flags: |
               --label
               name=<my image>
@@ -95,6 +95,9 @@ Conceptually the process to create a new namespace is straightforward:
               --dockerfile
               <my dockerfile>
     ```
+
+Where `<tag>` is almost always the SHA of the commit, but sometimes
+can be something else. See the section about `custom_itaipu_versions`.
 
 ## About `hot_deploy_itaipu`
 
@@ -111,14 +114,17 @@ we can use to specify a custom Docker image for Itaipu. It’s map with
 the following shape: `{ <itaipu_job_name>: <image version> }`.
 
 To enable the feature, you simply add the name of the node as it
-appears in the DAG and the desired version.
+appears in the DAG and the desired version. Usually the version is the
+SHA of the commit, but any valid tag will work. This can be especially
+useful if combined with namespaced images and the appropriate ECR
+settings, so that you can declare something like:
 
-**IMPORTANT** At the moment this feature is mainly for testing
-purposes because once a given override is in place, every subsequent
-run will use it, eventually breaking the node because it will drift
-from the new builds used for the rest of the nodes in the run. At the
-moment, there are no plans to have proper support to keep a custom
-version -- a fork, really -- aligned with the official one.
+```
+{ <itaipu_job_name>: <my namespace>/latest }
+```
+
+and keep using the latest build image for that namespace without
+having to change SHA every time.
 
 [1]: https://nubank.atlassian.net/browse/DIEP-2330
 
