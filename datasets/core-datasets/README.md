@@ -8,8 +8,6 @@ toc: false
 ## Table of contents
 
 <!--ts-->
-* [Core Datasets Documentation](#core-datasets-documentation)
-* [Table of contents](#table-of-contents)
 * [Context](#context)
 * [For consumers](#for-consumers)
   * [What is a core dataset?](#what-is-a-core-dataset)
