@@ -46,7 +46,7 @@ then use for the next step. You will also need to look up the security group id 
 
 ```shell
 aws --profile $country-$env \
-    authorize-security-group-ingress \
+    ec2 authorize-security-group-ingress \
     --group-id <sg-id> \
     --protocol tcp \
     --port 5432 \
