@@ -55,3 +55,14 @@ You'll need to [update the primary keys](#how-can-i-change-the-primary-key) to e
 ## How can I change the primary key?
 
 You may have realised that the primary key assigned to a field in your dataset is not unique and needs to be changed. To do so, you can remove the flag `isPrimaryKey = true` from the `DatasetSeriesAttribute` corresponding to this field in the `contractSchema` of the `DatasetSeriesContract`. For more information on primary keys, refer to the documentation on [Dataset series](https://github.com/nubank/data-platform-docs/blob/e17ce316f92d0fb5078325387e3d007119bdabad/data-users/etl_users/dataset_series.md#rename-attributes).
+
+## Missing specific records in the Dataset series
+
+This case assumes that the issue you have at hand is not due to [missing partial data of an append](#missing-partial-data-of-an-append-in-the-dataset-series) neither due to [missing all data of an append](#missing-all-data-of-an-append-in-the-dataset-series) i.e. this is not a schema nor a deduplication problem. For such cases, please make sure you get a hold of the following data:
+- The series name.
+- The name of the service that produced the lost message.
+- The date of when the missing message was produced to the ETL
+- The CID of the `:out-message` to `:topic "EVENT-TO-ETL"` of your lost message.
+- The `shard` on which this message was produced.
+
+Please reach out to data-infra in `#data-help` slack channel for support and share the data above as part of your request.
