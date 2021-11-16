@@ -25,7 +25,7 @@ After `gcloud` SDK is installed, run the following to setup your Google Account 
 ### Aborting a dataset ###
 
 The command `dataset-abort` can be used to abort a dataset given a transaction ID and the 
-dataset name, thus preventing the re-computation of this dataset for the duration of this transaction. The suceesors of this dataset will be automatically skipped by itaipu and have them aborted in metapod as well.
+dataset name, thus preventing the re-computation of this dataset for the duration of this transaction. The successors of this dataset will be automatically skipped by itaipu and have them aborted in metapod as well.
 
 Example:
 ```
@@ -53,6 +53,20 @@ its predecessors, use the `--include-predecessors` switch in the command. This c
 Example:
 ```
 nu datainfra hausmeister dataset-reset --include-predecessors a374ea98-d7c3-4a4d-b18f-4b83c1c9dfd9 dataset/spark-ops --reset-batch-size 100
+```
+
+### Flagging a dataset to get automatically aborted every day ###
+
+The commands `dataset-flag` and `dataset-unflag` can be used to manage which dataset runs get aborted automatically in future transactions. By flagging a dataset, we are putting it on a list of datasets that get aborted automatically. This is useful when a dataset is broken or too heavy and we know it will take some time to fix - rather than removing it from Itaipu temporarily or aborting it manually every day, we can add it to the list of flagged datasets. Similarly, once we think it is fixed and should stop getting aborted automatically, we can remove it from the list by unflagging it.
+To check what is currently on the list, the `dataset-flagged-list` command can be used.
+
+Example:
+```
+nu datainfra hausmeister dataset-flag --flagging-reason-details "Is too heavy" dataset/spark-ops
+
+nu datainfra hausmeister dataset-flagged-list
+
+nu datainfra hausmeister dataset-unflag dataset/spark-ops
 ```
 
 ## CLI Commands ##
@@ -133,4 +147,37 @@ Get the predecessor datasets to a given dataset in a transaction.
 Example:
 ```
 nu datainfra hausmeister dataset-predecessors a374ea98-d7c3-4a4d-b18f-4b83c1c9dfd9 dataset/spark-op
+```
+
+### `dataset-flag [options] <dataset-names>...` ###
+
+[[source](https://github.com/nubank/nucli.py/blob/master/src/nucli/datainfra/hausmeister/dataset_flag.py)]
+
+Flag a dataset to get automatically aborted every day.
+
+Example:
+```
+nu datainfra hausmeister dataset-flag --flagging-reason-details "Is broken" dataset/spark-ops
+```
+
+### `dataset-unflag [options] <dataset-names>...` ###
+
+[[source](https://github.com/nubank/nucli.py/blob/master/src/nucli/datainfra/hausmeister/dataset_unflag.py)]
+
+Remove a dataset from the list of datasets to get automatically aborted every day.
+
+Example:
+```
+nu datainfra hausmeister dataset-unflag dataset/spark-ops
+```
+
+### `dataset-flagged-list [options] <dataset-names>...` ###
+
+[[source](https://github.com/nubank/nucli.py/blob/master/src/nucli/datainfra/hausmeister/dataset_flagged_list.py)]
+
+List all datasets that are getting automatically aborted every day. 
+
+Example:
+```
+nu datainfra hausmeister dataset-flagged-list --as-of 2021-11-12T00:00:00Z
 ```

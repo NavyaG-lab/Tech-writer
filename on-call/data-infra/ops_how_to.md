@@ -29,6 +29,7 @@ This is a guide where each section contains the steps required (how-to-do-it) to
 * [Keep machines up after a model fails](#keep-machines-up-after-a-model-fails)
 * [Check if a dataset was loaded into the warehouse](#check-if-a-dataset-was-loaded-into-the-warehouse)
 * [Manually abort a dataset to metapod](#manually-abort-a-dataset-to-metapod)
+* [Flagging datasets to get automatically aborted](#flagging-datasets-to-get-automatically-aborted)
 * [Removing bad data from Metapod](#removing-bad-data-from-metapod)
   + [Retracting datasets in bulk](#retracting-datasets-in-bulk)
 * [Starting a run from scratch with a fresh `metapod` transaction](#starting-a-run-from-scratch-with-a-fresh-metapod-transaction)
@@ -434,6 +435,14 @@ where name = '<dataset-name>'
 ```shell
 nu datainfra hausmeister dataset-abort <metapod-transaction-id> <dataset-name>
 ```
+
+## Flagging datasets to get automatically aborted
+
+If a dataset is broken or too heavy and you anticipate the need to abort it every run until it gets fixed, you can flag it for automatic abort using the `dataset-flag` command from the Hausmeister tooling CLI. 
+
+For details, see [flagging datasets to get aborted](./tools/on-call-engineer-tool.md#flagging-a-dataset-to-get-automatically-aborted-every-day).
+
+Please note that flagging a dataset will not have an effect on the runs that are already in progress. If we want the dataset to get aborted in those runs as well, we need to do it manually by invoking the dataset-abort command. 
 
 ## Removing bad data from Metapod
 
