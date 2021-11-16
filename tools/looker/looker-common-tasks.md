@@ -48,7 +48,7 @@ Ask @leonardo.matsuura for help.
 
 This process is done to free up Looker licenses, as disabled users do not count as used licenses.
 
-To disable users refer to this notebook [this notebook](https://github.com/nubank/data-access/blob/master/looker-migration/not-nubanker-disabler.ipynb).
+To disable users refer to this notebook [this notebook](https://github.com/nubank/data-access/blob/master/looker-migration/disable-all-deactivated-nubankers.ipynb).
 
 ## Dashboard doesn't show any results
 
