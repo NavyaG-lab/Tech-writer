@@ -62,6 +62,8 @@ export DB_PASSWORD=$(nu-br aws ctl -- s3 cp s3://nu-secrets-br-prod/barragem_sec
 We can now create both the cluster and the instance. Set the db password obtained from the previous step. 
 Use the security group id of the  security group that you created :
 
+*REMEMBER to update the engine-version and db-cluster-parameter-group-name to the version running in production*
+
 ```shell
 aws --profile $country-$env \
     rds create-db-cluster \
@@ -73,7 +75,7 @@ aws --profile $country-$env \
     --no-enable-iam-database-authentication \
     --master-username postgres \
     --master-user-password $DB_PASSWORD \
-    --db-subnet-group-name $env \
+    --db-subnet-group-name barragem-$env \
     --db-cluster-parameter-group-name $env-barragem-aurora-postgres10-cluster \
     --deletion-protection \
     --vpc-security-group-ids <sg-id> \
@@ -93,7 +95,7 @@ aws --profile $country-$env \
     --engine aurora-postgresql \
     --db-instance-identifier $env-$prototype-barragem-aurora-instance \
     --db-instance-class <instance-type> \
-    --db-subnet-group-name $env \
+    --db-subnet-group-name barragem-$env \
     --db-parameter-group-name $env-barragem-aurora-postgres10-instance \
     --auto-minor-version-upgrade \
     --no-publicly-accessible \
