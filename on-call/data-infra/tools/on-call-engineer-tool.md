@@ -160,6 +160,10 @@ Example:
 nu datainfra hausmeister dataset-flag --flagging-reason-details "Is broken" dataset/spark-ops
 ```
 
+Note: Using `--flagging-reason-details` is optional but highly encouraged. 
+
+You can fill it with a description of what's wrong with the dataset and/or links to relevant Slack threads.
+
 ### `dataset-unflag [options] <dataset-names>...` ###
 
 [[source](https://github.com/nubank/nucli.py/blob/master/src/nucli/datainfra/hausmeister/dataset_unflag.py)]
