@@ -2,5 +2,6 @@
 	"name": "Data Platform Docs",
 	"repo": "data-platform-docs",
 	"esindex": "data-platform-docs",
+        "search_url": "https://vpc-prod-global-b-docs-es-xzeygqiyqkzbdxwdqegtrft6pe.sa-east-1.es.amazonaws.com/data-platform-docs/_search",
 	"googleTagManagerCode": "GTM-54NPJ5H"
 }
