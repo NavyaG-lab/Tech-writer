@@ -74,6 +74,10 @@ owner: "#data-access"
 
 177.71.243.245 // NAT gateway of AWS Workspaces
 
+204.199.102.106/29 // Colombia VPN
+
+181.78.5.66/29 // Colombia VPN
+
 ## NAT gateways
 
 54.175.68.95
