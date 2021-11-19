@@ -81,12 +81,12 @@ nav:
       - Testing models: "infrastructure/data-infra/testing-models.md"
       - Test custom images with ECR: "infrastructure/data-infra/test-images.md"
       - New shards: "infrastructure/data-infra/new_shards.md"
-      - Granular access architecture: "infrastructure/granular-access-controls/architecture/README.md"
     - Data Access:
       - Setup a new country in Looker : "tools/looker/looker-country-setup.md"
       - Deploying Anduin in new country: "squad/data-access/deploying-multicountry-anduin.md"
     - Granular Access Controls:
       - Index: "infrastructure/granular-access-controls/index.md"
+      - Playbook: "infrastructure/granular-access-controls/playbook.md"
   - Data users:
     - FAQs:
       - All Dataplatform FAQs: "data-users/FAQs/README.md"
@@ -257,4 +257,3 @@ nav:
       - Getting started: "writing/templates/getting-started.md"
       - Service Playbook: "writing/templates/service-playbook.md"
   - Datomic data deletion: "etl_operators/datomic_data_deletion.md" 
-  
