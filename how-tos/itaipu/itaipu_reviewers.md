@@ -35,6 +35,7 @@ owner: "#data-infra"
     * [bors try](#bors-try)
 * [Code Owners](#code-owners)
 * [Itaipu Reviewers](#itaipu-reviewers)
+  * [Itaipu Reviewers admission process](#itaipu-reviewers-admission-process)
 
 ## Workflow
 
@@ -294,3 +295,111 @@ This form will be regularly reviewed by either [#itaipu-reviewers](https://app.s
   * [Bors](https://github.com/bors-ng/bors-ng)
   * [Serving Layer](https://github.com/nubank/data-platform-docs/blob/master/infrastructure/data-infra/serving_layer.md)
   * [GitHub tags](https://github.com/nubank/data-platform-docs/blob/master/how-tos/itaipu/itaipu_reviewers.md#workflow)
+
+### Itaipu Reviewers admission process
+
+Nubank’s current PR evaluation pipeline occurs into two stages:
+
+1. Peer review focused on business logic;
+2. Itaipu Committers review focused on code good practices and scalability.
+
+As Nubank grows exponentially, it’s expected that the amount of technical work and consequently PRs, are expected to increase as well. Thus, we must ensure the Itaipu Reviewing process is not hindered, as to negatively effect the Reviewers.
+
+#### 0. Overview
+
+**User journey and responsibilities**
+
+![](../../images/itaipu-reviewers-admission-process.png)
+
+#### 1. Gathering Interested Nubankers as Itaipu Reviewer Candidates
+
+A message was widely broadcasted in #data-announcement, in which ~1k people are included (as of September/21).
+
+Nubankers interested were expected to fill a forms with their intent;
+
+[Forms to September/21 cohort application](https://forms.gle/NuoUzS7jr5m3Bbe67).
+
+The amount of people that became interested in the process were **18 nubankers**;
+
+In accordance to the number of people, Data Consumption requested some of the current Reviewers to aid in the process  - 8 reviewers.
+
+#### 2. Qualifying those who become Itaipu Reviewer Candidates
+
+* Identification - The candidates applications were collected through a formulary simply collecting simply the nubanker’s company e-mail and the GitHub username that should receive the reviewer’s scope;
+
+* Requirements - We required that each candidate should have at least 6 months of Nubank so they would have context on Itaipu’s usage. 
+  Next, we analysed the candidate's contributions to the repository, ie. **amount of PRs opened and reviews made**: candidates should have more than a total of 100 contributions; 
+  In case candidates do not make the 100 cut, we request for a vouch in the #itaipu-reviewers slack channel.
+
+* Responsibility - The responsibility of an Itaipu Reviewer as shared with the candidates, stating that:
+
+    - They will be required to be on-call to review cross-company PRs and help keep the code quality in Itaipu;
+
+    - Itaipu Reviewers are also expected, but not obligated to instruct new reviewers in present and future cohorts - just as this one was applied.
+
+* Powers - As Itaipu Reviewers are responsible, they also have powers:
+  be able to review PRs following the practices described in Reviewing and Merging a PR on Itaipu doc. Reviewers can also review PRs outside of the on-call rotation. This can help speed up the time to merge PRs in their BU.
+
+* Amount - The amount of Itaipu Reviewer candidates were 15 nubankers.
+
+#### 3. Training Itaipu Reviewer Candidates
+
+The training was composed by 2 mentoring sessions focused on how to review Itaipu’s pull requests (PRs) and when to request changes with the candidate’s buddy.
+
+In the first session, the mentor will guide the session walking through the PR reviewing process; 
+the second session is guided by the reviewer candidate, where they have the chance to debate cases with their mentor and act as a reviewer. 
+
+Obs: In this step, only the mentor has the Itaipu Reviewer scope; with that, in the second session, the candidate's PR approval is still not official, so the mentor should approve/disapprove the PR as well.
+
+**Support material** 
+
+* [A guide to Itaipu Reviewers Buddies](https://nubank.atlassian.net/wiki/spaces/DC/pages/13717340213)
+
+* [Reviewing and Merging a PR on Itaipu in Data Platform Docs](https://data-platform-docs.nubank.com.br/how-tos/itaipu/itaipu_reviewer/) (requires VPN).
+
+#### 4. Evaluating Itaipu Reviewer Candidates
+
+After the training sessions, we request that mentors to evaluate candidates in 5 dimensions, with grades ranging from 1 to 5:
+- Code best practices;
+- Itaipu ecosystem;
+- CI/CD;
+- Data Protection and Stewardship;
+- Communication and PR review process;
+
+#### 5. Providing feedback for Itaipu Reviewer Candidates
+
+For not approved candidates - Those were communicated, after careful review of the buddy’s written evaluation, verbal understanding and finally, a next-steps/improvement agenda has been structured for the candidate;
+
+For approved candidates - They were communicated of their admission, and the planning for the onboarding process.
+
+#### 6. Onboarding New Itaipu Reviewers
+
+After concluding all the steps in the admission process, the candidates [requested to create an account in OpsGenie](https://nubank.atlassian.net/servicedesk/customer/portal/53/group/238/create/1421) and were added to:
+
+* Itaipu Reviewers team by the group’s administrators
+
+* PR Review Hero Daily rotation to become an on-call reviewer
+
+### Next-Steps as a Itaipu Reviewer:
+
+The on call rotation schedule is organized using the Ops Genie App. The reviewers save approximately 2 hours to review PRs. The frequency varies according to the number of reviewers active in the on-call PR Review Hero Daily rotation and it usually ranges from once every 3 to 4 weeks.
+
+All folks in the Itaipu Reviewers GitHub group are expected to take part in the rotation.
+
+### Itaipu Reviewers FAQ
+
+* Is there an exact time when I should review PRs?
+
+No. You are on-call for the day, and you can choose the time you have available to review PRs.
+
+* How many PR reviews should I review in each day?
+
+There is no pre-established amount, we require users to spend from 1h30min to 2 hours reviewing PRs tagged with the PR Review Requested label.
+
+* What if I need to skip my on-call rotation day? What do I do when I go on vacations?
+
+Send a message in the #itaipu-reviewers group to check if other people can switch with you and ask the rotation administrator to override your schedule.
+
+* Can I review PRs outside my on call turn?
+
+Yes, with that you remove PRs from the on-call reviewer of the day. Remember you should help keep code quality in Itaipu!
