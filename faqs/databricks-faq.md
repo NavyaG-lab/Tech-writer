@@ -1,5 +1,5 @@
 ---
-Owner: "#bi-platform-squad"
+owner: "#bi-platform-squad"
 ---
 
 # Databricks FAQs
