@@ -1,8 +1,8 @@
 ---
-owner: "#data-access"
+owner: "#data-customer-success"
 ---
 
-# Itaipu FAQ
+# Itaipu FAQs
 
 ## [Setup](https://docs.google.com/document/d/1vVKkviKdpz3iVZB_cpoWEnZ-BGq7PRjjLruMM1YESPw/edit#heading=h.5hclzup9d6w9)
 

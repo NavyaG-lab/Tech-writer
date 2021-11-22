@@ -1,8 +1,8 @@
 ---
-Owner: "BI-platform-squad"
+Owner: "#bi-platform-squad"
 ---
 
-# Databricks FAQ
+# Databricks FAQs
 
 ## [General use](https://docs.google.com/document/d/1u25N1zjsxrffLN5-Ea21tNzpKy7GBg9O36lhImRwQ_4/edit#heading=h.5x1hofl2adjp)
 

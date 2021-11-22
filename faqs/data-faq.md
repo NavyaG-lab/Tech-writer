@@ -1,8 +1,8 @@
 ---
-owner: "data-customer-success"
+owner: "#data-customer-success"
 ---
 
-# Data FAQ
+# Data FAQs
 
 ## [IntelliJ + itaipu](https://docs.google.com/document/d/1By4GjD9jIw---S61Xfz_T740t1ibOAfM4kOgRcW1Pxk/edit#heading=h.avmfqeo5pce8)
 
