@@ -17,6 +17,10 @@ See the topics below to find what you are looking for.
 - [Databricks FAQs](faqs/databricks-faq.md)
 - [PII Data FAQs](faqs/pii-data.md)
 
-:question-mark: Can’t find what you’re looking for? 
+!!! question
 
-Please reach out for help at **#data-help** slack channel.
+ Can’t find what you’re looking for?
+
+ Please reach out for help at **#data-help** slack channel.
+
+!!!
