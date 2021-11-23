@@ -157,6 +157,38 @@ This will make the materialized table inaccessible to those without the clearanc
 
 Once the data is processed through Malzahar for deletion, it is guaranteed that the data is no longer available for services. If you would like to double check, you can query your service DB.
 
+### What is and how to fill Datomic metadata?
+
+Metadata defines how we reach the data we need to do some action, for Datomic it means define how we build a datlog . For more details take a look at: https://github.com/nubank/playbooks/blob/master/squads/data-protection/ryze/classification-datomic.md
+
+### What is and how to fill Dataset series metadata?
+
+Metadata defines how we reach the data we need to do some action, for Dataset Series it means define which columns are key to reach the required row. For more details take a look at:
+
+https://github.com/nubank/playbooks/blob/master/squads/data-protection/ryze/classification-dataset-series.md
+
+### Which server-side encryption configuration to use when storing PII data in S3?
+
+Data protection laws as LGPD does not specify how to store personal data, but we must have some security procedures to protect the data.
+
+From LGPD:
+
+"Art. 46. Os agentes de tratamento devem adotar medidas de segurança, técnicas e administrativas aptas a proteger os dados pessoais de acessos não autorizados e de situações acidentais ou ilícitas de destruição, perda, alteração, comunicação ou qualquer forma de tratamento inadequado ou ilícito.
+
+§ 1º A autoridade nacional poderá dispor sobre padrões técnicos mínimos para tornar aplicável o disposto no caput deste artigo, considerados a natureza das informações tratadas, as características específicas do tratamento e o estado atual da tecnologia, especialmente no caso de dados pessoais sensíveis, assim como os princípios previstos no caput do art. 6º desta Lei."
+
+Currently, we can use SSE-KMS with AWS managed key.
+
+SSE-KMS because KMS is integrated with Cloudtrail with SSE-KMS we can also audit the usage of the key like when, by whom, for what purpose the key was used.
+
+AWS managed key because currently we do not have have well defined internal policies for keys access and rotation. This is done by AWS.
+
+Bucket Key must be disabled default, but if there is a high throughput it can be enabled.
+
+This is general suggestion, but we may have specific business requirements that we do not have knowledge and must be in mind to defined the best configuration.
+
+![](../images/pii-data-encryption.png)
+
 ## Need more help?
 
 If you still have questions or need additional information, please reach out to [#data-privacy](https://app.slack.com/client/T024U97V8/CLLFJMEBZ) or [#squad-data-access](https://app.slack.com/client/T024U97V8/C84FAS7L6) and we will provide appropriate support.
