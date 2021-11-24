@@ -11,11 +11,11 @@ See the topics below to find what you are looking for.
 
 ## What you'll find in this guide
 
-- [Data FAQs](faqs/data-faq.md)
-- [Itaipu FAQs](faqs/itaipu-faq.md)
-- [Looker FAQs](faqs/looker-faq.md)
-- [Databricks FAQs](faqs/databricks-faq.md)
-- [PII Data FAQs](faqs/pii-data.md)
+- [Data FAQs](data-faq.md)
+- [Itaipu FAQs](itaipu-faq.md)
+- [Looker FAQs](looker-faq.md)
+- [Databricks FAQs](databricks-faq.md)
+- [PII Data FAQs](pii-data.md)
 
 !!! question
 
