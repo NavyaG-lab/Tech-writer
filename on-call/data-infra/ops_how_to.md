@@ -57,13 +57,15 @@ This is a guide where each section contains the steps required (how-to-do-it) to
 * [Open an ISC incident](#open-an-isc-incident)
 
 ### SSH to a service
+
 To be able to debug / interact with services running on ec2 / k8s, use the `nu ser ssh` command. Please note that syntax for `br` and `data` differs.
 
 Find out the current `suffix` (can be found on the AWS EC2 console, search for instances by name) - `suffix` is usually a color, like 'white', 'yellow', 'liquorice' etc.
 
 ssh into the instance (ex for airflow):
-  - BR: `nu-br ser ssh airflow --env cantareira --suffix $SUFFIX` (here, the value of $SUFFIX can be `stable`)
-  - Data: `nu-data ser ssh foz airflow --env prod --suffix $SUFFIX`
+
+- BR: `nu-br ser ssh airflow --env cantareira --suffix $SUFFIX` (here, the value of $SUFFIX can be `stable`)
+- Data: `nu-data ser ssh foz airflow --env prod --suffix $SUFFIX`
 
 Other services include `zookeeper`, `mesos-master`, `mesos-on-demand`, `mesos-fixed`, `aurora-scheduler`.
 
@@ -72,9 +74,11 @@ The above command will pick an instance (if there are several) randomly. To spec
 > Note: in order to SSH into the BR instances of Airflow, you may need to manually add a `br-cantareira` profile in your `~/.aws/config` and `~/.aws/credentials` file. The credentials entry should be identical to `br-prod` and the config file entry should use `us-east-1` as a region
 
 ### Restart a service
+
 If it is a k8s service, please use the `nu ser cycle` command
 
 If it is a deployed service (mesos, airflow, aurora) - please do as follows:
+
 - [ssh](#ssh-to-a-service) into the instance
 - Check current systemd unit status: `sudo systemctl status <unit>`
 - Start the unit: `sudo systemctl restart <unit>`
@@ -90,6 +94,7 @@ You can restart mesos using `systemd`, having [ssh-ed](#ssh-to-a-service) to the
 Once inside, [restart](#restart-a-service) the `mesos-master` service
 
 ### Redeploy Mesos
+
 !Note please check if you indeed need to redeploy mesos, or a [restart](#restart-mesos) is enough. Usually, to go for a redeploy you need a strong reason
 
 There are three types of nodes that make up a mesos cluster: mesos-master, mesos-fixed (and mesos-on-demand which is not covered here, see scale-cluster repo for details). In case you need to redeploy any of two, please use the [deploy](https://github.com/nubank/deploy) repository.
@@ -99,6 +104,7 @@ The `deploy` repo works on CloudFormation level, either creating a new stack, or
 Currently, for the two stacks, the deployment must be done with separate branches: `cantareira` must be deployed with `master` and `data` must be deployed with `giorgio-valoti/ch125837/spin-new-airflow-from-deploy` (many moving things, to be consolidated later).
 
 First, update all tokens you have:
+
 ```
 nu-<country> aws credentials refresh
 nu-<country> auth get-refresh-token
@@ -106,13 +112,16 @@ nu-<country> auth get-access-token
 ```
 
 Secondly, you can run the console, `./console`. Creating/upserting mesos-master on both environments in cantareira would look as follows:
+
 ```
 [1] STAGING> MesosMaster.create!('stable')
 [1] STAGING> MesosMaster.create!('dev')
 ```
+
 !Note if at some point you are getting the `Aws::Route53::Errors::ExpiredToken` error, feel free to comment out the internals of `self.resolve_dns_with_nubank_delegation_set!`.
 
 For `data` environments, you must connect by specifying the env first: `./console prod` or `./console staging`. When running the commands, pls specify the color of the stack. The colors of existing stacks can be found in the aws console in the node names. If you are creating a stack that does not exist, use a new color. If you are upserting an existing stack, use that color (ex., `liquorice`)
+
 ```
 MesosMaster.create!(ENVIRONMENT, 'foz', 'liquorice')
 ```
@@ -243,7 +252,9 @@ Which will output something like this:
   }
 }
 ```
+
 3. If you donot find the dataset in uncommitted, try looking if the dataset is aborted by using [sonar](https://backoffice.nubank.com.br/sonar-js/#/sonar-js/graphiql) run this GraphQL query:
+
 ```
 {
   transaction(transactionId: "f7832a01-001b-56f7-a4fe-b3a417f8f654") {
@@ -337,6 +348,7 @@ Removed model will only take affect the next day, when the run is triggered. Hen
 There are three ways to determine downstream datasets/models to a given dataset.
 
 #### Using BigQuery Console
+
 Use a query similar to the following on the [BigQuery console](https://console.cloud.google.com/bigquery?project=nu-br-data)
 
 ```
@@ -370,6 +382,7 @@ val successors = node.withSubgraph().toSet - op
 ```
 
 #### Using `spark_ops.json`
+
 `spark_ops.json` is generated as part of the integration tests which run on CircleCI. You will have to navigate to the integration tests run against the specific version of `release` branch. Download `spark_ops.json` by clicking on the link, as shown below.
 
 ![spark_ops_json](../../images/spark_ops_json.png)
@@ -438,11 +451,11 @@ nu datainfra hausmeister dataset-abort <metapod-transaction-id> <dataset-name>
 
 ## Flagging datasets to get automatically aborted
 
-If a dataset is broken or too heavy and you anticipate the need to abort it every run until it gets fixed, you can flag it for automatic abort using the `dataset-flag` command from the Hausmeister tooling CLI. 
+If a dataset is broken or too heavy and you anticipate the need to abort it every run until it gets fixed, you can flag it for automatic abort using the `dataset-flag` command from the Hausmeister tooling CLI.
 
 For details, see [flagging datasets to get aborted](./tools/on-call-engineer-tool.md#flagging-a-dataset-to-get-automatically-aborted-every-day).
 
-Please note that flagging a dataset will not have an effect on the runs that are already in progress. If we want the dataset to get aborted in those runs as well, we need to do it manually by invoking the dataset-abort command. 
+Please note that flagging a dataset will not have an effect on the runs that are already in progress. If we want the dataset to get aborted in those runs as well, we need to do it manually by invoking the dataset-abort command.
 
 ## Removing bad data from Metapod
 
@@ -818,13 +831,15 @@ rm aurora.p12
 ```
 
 ## Rebalancing Contract Nodes
+
 We have documented the steps required to do this operation in the following honey post: [Rebalancing the Load for Contracts Nodes](https://honey.is/home/#post/872465)
 
-
 ## Open an ISC incident
+
 Concacting the Inter-Services Communications (ISC) team might be useful, in case we run into critical issues with our Zookeeper cluster. ZK maintenance lies primarily on us, but they will temporarily continue to provide us with support.
 
 In case we need to open a ticket with Inter-Services Communications team, please follow these steps:
+
 1. Login to OpsGenie
 2. Click on create alert
 3. Choose Platform - ISC - API in API integration

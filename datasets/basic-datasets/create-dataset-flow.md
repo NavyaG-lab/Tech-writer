@@ -20,9 +20,7 @@ There are many steps involved in creating a dataset, but the high-level steps ar
 
 ![](../../images/create-dataset-highlevel.png)
 
-
 You can find the detailed steps involved in creating a dataset in the following section, [Dataset creation Flow](#dataset-creation-flow) .
-
 
 ### Prerequisites
 

@@ -26,7 +26,7 @@ One way to get a JAR is through Circle CI. Circle CI packages
 its tests.
 
 1. Generally you want to grab the JAR from the last successful master build, which you can find
-here: https://circleci.com/gh/nubank/itaipu/tree/master
+here: <https://circleci.com/gh/nubank/itaipu/tree/master>
 1. Click on `build_test_package` (in the column on the right side) of the most recent build; or
 click on the build number, then on `build_test_package` under "Workflow" (in the top of the page).
 1. Click on the `package` step in the workflow (it should be green). You
@@ -69,13 +69,11 @@ Databricks already contains these dependencies in separate JAR files.
 
 Assuming it's being compiled against the `2.11` scala version, replace `VERSION` with what's in the `build.sbt` in the root of the `common-etl` repo, to download the jar in a folder (using `~/Downloads` as an example):
 
-
-
 ```
 aws s3 cp s3://nu-maven/releases/common-etl/common-etl_2.11/VERSION/common-etl_2.11-VERSION.jar ~/Downloads
 ```
 
-Another way to check what is the exact location of the jar is by looking at the log output in the `common-etl-release` pipeline in GoCD: https://go.nubank.com.br/go/tab/pipeline/history/common-etl-release
+Another way to check what is the exact location of the jar is by looking at the log output in the `common-etl-release` pipeline in GoCD: <https://go.nubank.com.br/go/tab/pipeline/history/common-etl-release>
 
 - Click the Info icon for details of the pipeline run
 

@@ -5,6 +5,7 @@ owner: "#squad-analytics-productivity"
 # Contribution Workflow
 
 ## How to create a core dataset
+
 > The general workflow for contributing to Itaipu can be found [here](https://data-platform-docs.nubank.com.br/how-tos/itaipu/workflow/). The
 following workflow has complementary information specific to core datasets.
 
@@ -24,6 +25,7 @@ All core datasets should follow a release processes of: <br />
 In order to have your PR merged on the core namespace, you should follow this checklist:
 
 **Alpha Release**
+
 - [ ] Core dataset candidate only depends on contracts/other core datasets
 - [ ] No core dataset with the same grain <sup>1</sup>
 - [ ] At least 2 teammate reviews, preferably from the dataset stakeholders
@@ -33,6 +35,7 @@ In order to have your PR merged on the core namespace, you should follow this ch
 - [ ] Dataset is NOT loaded into Data Warehouse (BigQuery)
 
 **General Release**
+
 - [ ] Core dataset candidate only depends on contracts/other core datasets
 - [ ] No core dataset with the same grain <sup>1</sup>
 - [ ] Dataset documentation updated (in case of modifications) / created (in case of new dataset). See [example](https://github.com/nubank/itaipu/blob/master/src/main/scala/nu/data/br/core/docs/account-requests.md)
@@ -53,6 +56,7 @@ Keep this checklist in your pull requests. After gathering the necessary teammat
 ## Design Recommendations
 
 Besides the requirements on the checklist, you should also follow this design recommendations for your core dataset:
+
 - Add as many columns as you can. We should thrive for **denormalization** in the core namespace, meaning that you should add all columns that could be used for analysis
   - For instance, if you are joining account information with something else, bring all account related columns as well
   - Denormalization helps with query performance on ad-hoc analysis through tools such as Databricks, BigQuery and Looker. Also, it facilitates analysis hence it avoids the need of joins by the end user

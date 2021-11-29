@@ -40,6 +40,7 @@ possible to periodically update the fallback static cache in Itaipu.
 ## Components of the System ##
 
 ### Castor ###
+
 A Clojure service, backed by Datomic for persistence. It owns instances of cache snapshots called `Snapshot`s and the
 business logic for manipulating them. It exposes
 [HTTP API](https://github.com/nubank/castor/blob/master/src/castor/service.clj) that facilitates manipulating
@@ -55,6 +56,7 @@ While Itaipu is building the intermediary datasets for a Datomic contract, it qu
 each database instance it's building the contract for.
 
 ### Pollux ###
+
 A CLI in Itaipu. It re-uses the same logic for building the Raw Cache datasets from the daily runs in order to build
 fresh cache snapshots that Itaipu can use later to speed up its Datomic Contract runs.
 
@@ -75,7 +77,6 @@ would consult its database and its configuration parameters and decide on which 
 cache snapshots created for them. Pollux would use this information and create new cache snapshots for the exact
 database instances and submit them to Castor.
 
-
 ## The Moving Parts ##
 
 ### Due-database Selection ##
@@ -92,10 +93,10 @@ Castor's due-database selection logic is controlled by:
      configuration parameter
 
 ### Handling of Orphaned Datasets ###
+
 Castor contains the logic of scanning its own S3 buckets for datasets partitions that are not owned by any of
 its cache snapshots. There's an HTTP endpoint that triggers this logic, and it's set-up to be
 [triggered periodically](https://github.com/nubank/definition/blob/master/resources/br/tasks/castor-delete-orphaned-datasets.edn).
-
 
 The orphaned dataset partition deletion logic is set-up to be automatically followed by an integrity checker that
 asserts that the datasets from each Snapshot exist on their respective bucket. Once a Snapshot is found to have a
@@ -105,19 +106,23 @@ effectively promotes the second-to-most recent Snapshot to become the new active
 ## FAQ ##
 
 ### Corrupted/missing dataset from a Snapshot, how to recover from it ###
+
 You can ommit the CLI flag `--use-cache` from Itaipu in order to prevent it form making use of the problematic dataset
 at the cost of taking the extra time to run the datasets from scratch.
 
 ### How can I run Itaipu without Castor integration ###
+
 There's a global `--disable-castor` CLI flag that disables communication with Castor entirely. Bear in mind that this
 wouldn't uncommit/retract any Datomic Raw datasets that have been pre-committed to a Metapod Transaction.
 
-### How can I run Pollux manually? ###
+### How can I run Pollux manually ###
 
 You can run Pollux manually on Aurora using Sabesp as follows:
+
 ```
 nu datainfra sabesp -- --aurora-stack=<AURORA-STACK> jobs pollux-manual prod <NUM-MACHINES> <DATABASE> <PROTOTYPE> <COUNTRY> --itaipu=<ITAIPU-VERSION> --scale <SCALE-VERSION>
 ```
+
 - AURORA-STACK controls which Aurora environment will be used to run the job. Options are `cantareira-dev` or `cantareira-stable`.
 - NUM-MACHINES is the number of machines which will be used for the job.
 - DATABASE is the name of the database for which the cache is to be generated.
@@ -127,11 +132,13 @@ nu datainfra sabesp -- --aurora-stack=<AURORA-STACK> jobs pollux-manual prod <NU
 - SCALE-VERSION is the version of scale-cluster to be used for the job.
 
 An example is as follows:
+
 ```
 nu datainfra sabesp -- --aurora-stack=cantareira-dev jobs pollux-manual prod 100 customers s0,s1,s2,s3,s4 br --itaipu=ccf481f --scale=fcb9196
 ```
 
 For a complete list of flags available for `pollux-manual`, you can use:
+
 ```
 nu datainfra sabesp -- jobs pollux-manual
 ```
@@ -139,6 +146,7 @@ nu datainfra sabesp -- jobs pollux-manual
 ## Alert Playbook ##
 
 ### Itaipu <-> Castor failure ###
+
 Itaipu failed to communicate with Castor while fetching information about the active snapshots. It should be a benign
 alert, since Itaipu should use its own static cache as a fall back, but bear in mind that if this alert was raised
 by an Itaipu job running Datomic Contracts and the static cache is fairly old then this run might take longer than
@@ -147,6 +155,7 @@ usual.
 Please notify Data Infra (Runtime Pack) for investigation.
 
 ### Pollux Auto hasn't ran or finished running today yet ###
+
 Either Pollux Auto hasn't run today or it has run but hasn't finished yet. You should check on the `pollux-auto` job
 on Aurora to distinguish between the two cases.
 
@@ -157,9 +166,11 @@ allocate EC2 instances when this is the case. If you notice problems with the ET
 pollux-auto job might be necessary.
 
 ### Castor (Orphaned Dataset Partitions) ###
+
 An orphaned dataset partition has been detected and deleted. Not necessarily actionable but good to be aware of in case
 other suspicious problems arise.
 
 ### Castor (Corrupted Snapshot) ###
+
 A corrupted Snapshot has been detected and deleted. Not necessarily actionable but good to be aware of in case other
 suspicious problems arise.

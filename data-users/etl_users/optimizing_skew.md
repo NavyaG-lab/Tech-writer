@@ -4,7 +4,8 @@ owner: "#data-infra"
 
 # Optimizing Skews on SparkOps
 
-## What is a skewed Spark job?
+## What is a skewed Spark job
+
 In simple terms,
 a skewed job means that one task is taking a lot longer than its "neighbours" in the stage.
 This is bad because Spark relies heavily on **parallelization**.
@@ -14,7 +15,8 @@ but when we have a skewed task,
 it means that it finishes most of the work and keeps waiting until this task is finally done.
 We should avoid skews because they hurt the performance of our spark jobs.
 
-## How do we monitor it?
+## How do we monitor it
+
 We have a dataset called `dataset/spark-op-skew-monitoring`
 that basically looks into the spark metrics collected from the run
 and flag SparkOps that have any stage where
@@ -23,7 +25,8 @@ the `task_max_time` is 50 times greater than the `task_median_time`
 
 Also, a message with the 20 heaviest datasets with skew is sent every monday on #etl-updates
 
-## What causes a skewed job?
+## What causes a skewed job
+
 There are a lot of reasons why a Spark Job can be skewed,
 but we mainly encounter 2 cases when dealing with SparkOps on Itaipu:
 
@@ -70,6 +73,7 @@ for this cases of skew, you can find it on
 Using this function is enough for most cases.
 
 ## 2. Skewed Data
+
 What if I have an unbalance on my join/grouping keys, but it comes from the data itself?
 Imagine a dataset that you are joining where a single value represents 30% of all values?
 This will also cause the same kind of skew we saw before, but it's harder to solve
@@ -81,10 +85,13 @@ you can check
 about `key salting`, one of the techniques used to overcome skew problems.
 
 ## Resources
+
 Handling Skewed Data in Spark SQL using key salting (by @joao.risso)
+
 - [Presentation](https://docs.google.com/presentation/d/1uEOnJoPrQ16rmafG0tZt9l92j7kohpcL2oNfEB7cORg)
 - [Recording](https://honey.is/home/#post/883257)
 
 Articles
+
 - [Tamming data skew](https://coxautomotivedatasolutions.github.io/datadriven/spark/data%20skew/joins/data_skew/)
 - [Handling data skew in Apache Spark](https://itnext.io/handling-data-skew-in-apache-spark-9f56343e58e8)

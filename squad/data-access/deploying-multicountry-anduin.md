@@ -29,7 +29,7 @@ You can follow [these steps](https://cloud.google.com/billing/docs/how-to/modify
 
 ### Setup Project IAM
 
-The IAM for the whole project can be setup by entering the project, clicking the hamburger menu on the top left, and going to IAM & Admin > IAM. An alternative is going into this link, but replacing `nu-br-streaming` with your desired project: https://console.cloud.google.com/iam-admin/iam?project=nu-br-streaming
+The IAM for the whole project can be setup by entering the project, clicking the hamburger menu on the top left, and going to IAM & Admin > IAM. An alternative is going into this link, but replacing `nu-br-streaming` with your desired project: <https://console.cloud.google.com/iam-admin/iam?project=nu-br-streaming>
 
 - (Prod and Staging) Grant the following roles at the Project Level for data-access@nubank.com.br: BigQuery Data Editor, BigQuery Resource Admin, Private Logs Viewer, Viewer
 - (Prod Only) Create the `Custom BigQuery User` Role: use [this](https://console.cloud.google.com/iam-admin/roles/details/projects%3Cnu-co-streaming%3Croles%3CCustomRole368?project=nu-co-streaming) role as base. Grant this role at the project level to everyone@nubank.com.br
@@ -49,7 +49,7 @@ Look for the values inside the *dataset-names keys* in [Anduin's config](https:/
 
 ### Setup Service Accounts
 
-Create service accounts by entering the project, clicking the hamburger menu on the top left, and going to IAM & Admin > Service Accounts. An alternative is going into this link, but replacing `nu-br-streaming` with your desired project: https://console.cloud.google.com/iam-admin/serviceaccounts?project=nu-br-streaming
+Create service accounts by entering the project, clicking the hamburger menu on the top left, and going to IAM & Admin > Service Accounts. An alternative is going into this link, but replacing `nu-br-streaming` with your desired project: <https://console.cloud.google.com/iam-admin/serviceaccounts?project=nu-br-streaming>
 
 - Name: anduin-\<country-code\> for Prod, anduin-\<country-code\>-staging for staging. The service accounts should be created *in the project they will act on*.
 - Create the Anduin Role: use [this](https://console.cloud.google.com/iam-admin/roles/details/projects%3Cnu-co-streaming%3Croles%3CCustomRole?project=nu-co-streaming) role as base. Grant the role to the service account at both the project level on the streaming project and on the batch project.

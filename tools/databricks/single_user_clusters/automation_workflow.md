@@ -4,6 +4,7 @@ owner: "#data-access"
 # Automated Cluster Creation Workflow
 
 The cluster creation process involves the following steps:
+
 1. People requesting for PII access on Databricks through #access-request forms.
 1. PII access being approved by the system.
 1. On Access approval, this [okta workflow](https://nubank.workflows.okta.com/app/folders/1779/flows/20413) is triggered which adds people to the okta groups.
@@ -21,7 +22,7 @@ In case of a failure, a message is posted on #data-access-alarms from the Slack 
 
 The lambda lives [here](https://github.com/nubank/databricks-lambdas)
 
-To look at the logs, you can check the Flow history of the lambda here - https://nubank.workflows.okta.com/app/folders/6526/flows/38807/history
+To look at the logs, you can check the Flow history of the lambda here - <https://nubank.workflows.okta.com/app/folders/6526/flows/38807/history>
 
 And for the lambda execution logs, check the [Cloudwatch logs](https://sa-east-1.console.aws.amazon.com/cloudwatch/home?region=sa-east-1#logsV2:log-groups/log-group/$252Faws$252Flambda$252Fnu-lambda-prod-databricks-lambdas-create-sucluster) or [Splunk logs](https://nubank.splunkcloud.com/en-US/app/search/search?q=search%20index%3Dlambdas%20source%3D%22sa-east-1%3A%2Faws%2Flambda%2Fnu-lambda-prod-databricks-lambdas-create-sucluster*%22&display.page.search.mode=fast&dispatch.sample_ratio=1&earliest=-7d%40d&latest=now&sid=1606763458.1306313_441E883E-2B06-437D-97A4-B78C146189E2)
 
@@ -41,7 +42,7 @@ The error will say that the user does not exist. This happens when the user requ
 
 In this case, ask the person to login to Databricks once, which will create the user on Databricks. Ask them to let you know when they did that, so you can trigger the cluster creation process manually afterwards. In the meantime, make sure to remove the existing unusable cluster:
 
-1. Go to the Clusters page: https://nubank.cloud.databricks.com/#setting/clusters
+1. Go to the Clusters page: <https://nubank.cloud.databricks.com/#setting/clusters>
 2. Search for the cluster named after the user. You can use the search bar and type the user name in the e-mail, including the dot since it's a fuzzy search (in this example e-mail, search for "roberta.zaviolo" until you see "roberta_zaviolo_su_cluster")
 3. Delete the cluster by clicking the X icon, last one to the right side of the cluster row.
 

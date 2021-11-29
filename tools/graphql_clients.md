@@ -38,8 +38,8 @@ For instance, you can setup a `prod` environment such as:
 
 ```
 {
-	"metapod_base_url": "https://prod-global-metapod.nubank.com.br/api",
-	"token": "EbDJHf45kj3b45..."
+ "metapod_base_url": "https://prod-global-metapod.nubank.com.br/api",
+ "token": "EbDJHf45kj3b45..."
 }
 ```
 
@@ -55,7 +55,6 @@ And in the URL field change it to `{{metapod_base_url}}/graphql/query`.
     - a `CRT` set to the file `$NU_HOME/.nu/certificates/br/prod/cert.pem`
     - a `KEY` set to the file `$NU_HOME/.nu/certificates/br/prod/key.pem`
     - no `passphrase` or `PFX` are needed
-
 
 ### example query
 
@@ -111,13 +110,13 @@ query GetTransactionWithDatasets($transactionId: ID) {
 
 ```json
 {
-	"input": {
-		"type": "CUSTOM",
-		"datasetNames": [
-			"dataset/archived",
-			"dataset/not-archived"
-		]
-	}
+ "input": {
+  "type": "CUSTOM",
+  "datasetNames": [
+   "dataset/archived",
+   "dataset/not-archived"
+  ]
+ }
 }
 ```
 
@@ -138,22 +137,22 @@ mutation CommitDataset($input: CommitDatasetInput) {
 
 ```json
 {
-	"input": {
-		"transactionId": "{% response 'body', 'req_46dbb5d3f9bb4625a2f11d1dd13f8e70', '$.data.createTransaction.id' %}",
-		"datasetId": "{% response 'body', 'req_46dbb5d3f9bb4625a2f11d1dd13f8e70', '$.data.createTransaction.datasets[?(@.name==\"dataset/archived\")].id' %}",
-		"format": "PARQUET",
-		"actions": [
-			"CREATE_ARCHIVE"
-		],
-		"schema": {
-			"attributes": [
-				{
-					"name": "attr1",
-					"logicalType": "INTEGER"
-				}
-			]
-		}
-	}
+ "input": {
+  "transactionId": "{% response 'body', 'req_46dbb5d3f9bb4625a2f11d1dd13f8e70', '$.data.createTransaction.id' %}",
+  "datasetId": "{% response 'body', 'req_46dbb5d3f9bb4625a2f11d1dd13f8e70', '$.data.createTransaction.datasets[?(@.name==\"dataset/archived\")].id' %}",
+  "format": "PARQUET",
+  "actions": [
+   "CREATE_ARCHIVE"
+  ],
+  "schema": {
+   "attributes": [
+    {
+     "name": "attr1",
+     "logicalType": "INTEGER"
+    }
+   ]
+  }
+ }
 }
 ```
 
@@ -174,11 +173,11 @@ mutation CommitDataset($input: CommitDatasetInput) {
 
 ```json
 {
-	"input": {
-		"transactionId": "{% response 'body', 'req_46dbb5d3f9bb4625a2f11d1dd13f8e70', '$.data.createTransaction.id' %}",
-		"datasetId": "{% response 'body', 'req_46dbb5d3f9bb4625a2f11d1dd13f8e70', '$.data.createTransaction.datasets[?(@.name==\"dataset/not-archived\")].id' %}",
-		"format": "PARQUET"
-	}
+ "input": {
+  "transactionId": "{% response 'body', 'req_46dbb5d3f9bb4625a2f11d1dd13f8e70', '$.data.createTransaction.id' %}",
+  "datasetId": "{% response 'body', 'req_46dbb5d3f9bb4625a2f11d1dd13f8e70', '$.data.createTransaction.datasets[?(@.name==\"dataset/not-archived\")].id' %}",
+  "format": "PARQUET"
+ }
 }
 ```
 
@@ -213,7 +212,7 @@ query GetTransactionWithDatasets($transactionId: ID) {
 
 ```json
 {
-	"transactionId": "{% response 'body', 'req_46dbb5d3f9bb4625a2f11d1dd13f8e70', '$.data.createTransaction.id' %}"
+ "transactionId": "{% response 'body', 'req_46dbb5d3f9bb4625a2f11d1dd13f8e70', '$.data.createTransaction.id' %}"
 }
 ```
 

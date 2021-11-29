@@ -78,7 +78,7 @@ using the `scope` above:
 
    ```shell
    mytokenhere
-   
+
    #-----------
    # Do not edit...
    ```

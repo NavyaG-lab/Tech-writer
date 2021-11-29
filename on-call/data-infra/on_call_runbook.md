@@ -128,6 +128,7 @@ Integrity check failures are usually sent to #etl-integrity-checks. Restart the 
 ###### Manual dataset series contract broken due to schema mismatch
 
 In case logs point out to
+
 ```
 Caused by: org.apache.spark.SparkException: Failed merging schema:
 root
@@ -141,7 +142,6 @@ Caused by: org.apache.spark.SparkException: Failed to merge fields 'current_max_
 1. Datasets with this failures typically are manual dataset series, this is caused by recent manual appends with data that is not compliant with the schema. Confirm the failed dataset is a manual dataset series type and follow [Instrunctions in how to retract manual dataset series](ops_how_to.md#retracting-manual-appends-to-dataset-series)
 2. Once the manual dataset series was retracted, go to airflow and clear the failed node, typically those errors happen in `itaipu-manual-dataset-series`, the job will be queued to start again.
 
-
 ##### Other, not so common reasons, why jobs fail
 
 ###### Dataset partition not found on s3
@@ -151,10 +151,9 @@ The partition file in question is accounted for in the mentioned bucket via the 
 
 Some instances of this happening include:
 
-- https://nubank.slack.com/archives/CE98NE603/p1566893108104300
-  - https://nubank.slack.com/archives/CE98NE603/p1566115955069000?thread_ts=1566105267.068700&cid=CE98NE603
-  - https://nubank.slack.com/archives/CE98NE603/p1573363471193700
-
+- <https://nubank.slack.com/archives/CE98NE603/p1566893108104300>
+  - <https://nubank.slack.com/archives/CE98NE603/p1566115955069000?thread_ts=1566105267.068700&cid=CE98NE603>
+  - <https://nubank.slack.com/archives/CE98NE603/p1573363471193700>
 
   1. [Retracting](ops_how_to.md#retracting-datasets-in-bulk) the inputs for the failing datasets in order to recompute the inputs and re-store them on s3 usually fixes it.
 
@@ -169,23 +168,27 @@ In case the log points out to the error `Resiliently getOrCreate transaction fai
 - [Metapod GraphQL metrics, particularly the query response time of `GetTransactionsWithDatasets`](https://prod-grafana.nubank.com.br/d/000000260/graphql-monitoring?orgId=1&from=now-1h&to=now&var-PROMETHEUS=prod-thanos&var-prototype=global&var-service=metapod&var-resolver=All&var-stack=blue&var-percentile=0.95&var-interval=$__auto_interval_interval)
   - [JVM metrics](https://prod-grafana.nubank.com.br/d/000000276/jvm-by-service?orgId=1&from=now-1h&to=now&var-ENVIRONMENT=prod&var-PROMETHEUS=prod-thanos&var-SERVICE=metapod&var-PROTOTYPE=global&var-STACK_ID=All&var-POD=All)
 
-
 ###### Raw contract job fails for inexplicable reason
 
 There is a known, very rarely occurring bug, where the data from the `unified-materialized-entities` (e.g. `raw-metapod/materialized-entities`) dataset created as part of contract generation is corrupted on disc. This usually results in the raw contract tables (e.g. `raw-metapod/partitions`) failing with obscure errors, such as:
- - failure to coerce a field to its datatype due to its value being unparseable for that data type (e.g. `Caused by: java.time.format.DateTimeParseException: Text '2021o@nubank.com.br' could not be parsed at index 4`)
- - job failing due to losing too many executors (this should never happen in normal circumstances as the raw contract jobs merely filter data and perform some light, highly parallelisable transformations)
+
+- failure to coerce a field to its datatype due to its value being unparseable for that data type (e.g. `Caused by: java.time.format.DateTimeParseException: Text '2021o@nubank.com.br' could not be parsed at index 4`)
+- job failing due to losing too many executors (this should never happen in normal circumstances as the raw contract jobs merely filter data and perform some light, highly parallelisable transformations)
 
 In both cases, investigation of the `unified-materialized-entities` table will reveal either a field with very strange looking data (which would lead to the data type coercion error) or a field with an abnormally big value on one of its attributes (which would lead to losing executors which cannot hold this value in memory while attempting to parse it). The investigation is usually done via Databricks (see the end of the entry).
 
 It is not currently known what causes this bug. The only known guaranteed remediation is to retract all its contracts and raws, and compute it again.
+
 1. Using BigQuery or a tool of your choice, query for the names of the contract datasets for the affected contract database, for example if `rewards-ledger` is affected:
+
 ```
 SELECT name
 FROM `nu-br-data.dataset.spark_ops`
 WHERE name LIKE "contract-rewards-ledger/%"
 ```
+
 2. Retract all contracts + raws for the database using the list of contracts obtained in the previous step.
+
 ```
 nu-br datainfra hausmeister dataset-reset --include-predecessors today contract-rewards-ledger/purchase-metas contract-rewards-ledger/event-metas contract-rewards-ledger/attribute-schema contract-rewards-ledger/partner-ref-metas contract-rewards-ledger/movements contract-rewards-ledger/book-accounts contract-rewards-ledger/entries
 ```
@@ -193,6 +196,7 @@ nu-br datainfra hausmeister dataset-reset --include-predecessors today contract-
 Once the retraction is completed, restart the node, and normally the job should succeed.
 
 **Note**: the reason we retract everything is that while the transition from `unified-materialized-entities` to raw contract is where the symptoms appear, the corruption can sometimes be coming from one of of the prototype-specific materialized-entities tables. For most databases, it's probably quicker to just retract and recompute everything. However, for bigger databases (such as `ledger` or `double-entry`), you may want to try to dig into the data so that you may retract only the materialized-entities table that contains the corrupt field. One approach, using Databricks, is to isolate the faulty rows so that you may find which prototype they're coming from, and only retract the materialized-entities table of that prototype. Below is an example taken from a crash where the issue was manifesting for `raw-sr-barriga/tx`, when coercing the `db__tx_instant` field:
+
 ```scala
 import org.apache.spark.sql.functions._
 import java.math.BigDecimal
@@ -219,7 +223,6 @@ val faultyRows = unifiedMaterializedEntitiesTable
 display(faultyRows) // for parsing failures, this will allow you to see specifically what is wrong
 display(faultyRows.drop($"attributes")) // for executor failures, you should first drop the attributes column, as otherwise the Databricks executors will also fail when trying to display it to you
 ```
-
 
 ### Restart an Airflow task
 
@@ -424,8 +427,7 @@ No need to escalate.
 
 #### Related Links
 
-How to replay deadletters: https://github.com/nubank/data-platform-docs/blob/master/on-call/data-infra/ops_how_to.md#replaying-deadletters
-
+How to replay deadletters: <https://github.com/nubank/data-platform-docs/blob/master/on-call/data-infra/ops_how_to.md#replaying-deadletters>
 
 ### Warning: [PROD] correnteza_last_t_greater_than_basis_t
 
@@ -441,6 +443,7 @@ The condition described above seems impossible to reach, and so far, it has only
 people destroy and re-create databases for the production services.
 
 #### Solution
+
 Note that this solution only applies for the cases described above, **so please confirm
 with the service owners that the database was re-created**.
 
@@ -566,7 +569,6 @@ and [Kafka rebalancing dashboard in Grafana](https://prod-grafana.nubank.com.br/
 Finally, [check Ouroboros
 dashboard](https://prod-grafana.nubank.com.br/d/XEIhxKHMz/ouroboros-monitoring?orgId=1)
 
-
 #### Solution
 
 The following list is just a suggestion, since the set of potential
@@ -598,7 +600,6 @@ successful, you want to change [the
 definition](https://github.com/nubank/definition/blob/master/resources/br/services/ouroboros.edn)
 for the country (here, Brasil).
 
-
 ### Itaipu OutOfMemory error
 
 #### Alert Severity
@@ -621,6 +622,7 @@ First things first, we are going to need to understand which dataset has failed,
 And now, it is time to understand if said dataset was already committed (potentially in different node), by running, for example, `nu-br etl info <dataset-name>`, e.g., `nu-br etl info nu-br/dataset/customer-eavt-pivotted`; if yes, you should still warn the users (see the Escalation section), informing them that the dataset failed, and that its stability might not be the best.
 
 #### Solution
+
 Even though sometimes no action needs to be taken (as the dataset often succeeds in a different node), **you should consider aborting the faulty dataset if it keeps failing, and a critical part of the run is getting blocked by it.**
 Something else worth trying is to isolate the faulty dataset in a different node, i.e., `itaipu-other-flaky-datasets`, and see if its behaviour changes during the next run.
 
@@ -629,11 +631,12 @@ Most of the time, our users are the ones coming up with the long term solutions 
 We do have one known event that can cause these issues, and that we can try to solve on our side: a combination of a Spark listener event queue being too big (we control their size) for a given job, and an issue with a Dataset - user behaviour, this can cause the node to OOM and we can try to fix it by reducing the size of the queue. We do this by changing a variable called `spark_listener_bus_capacity` inside `dagao.py`. You can set a smaller value in the order of tens of thousands. The default set by Spark is 10k. You must hot deploy `dagao` if you want these changes to take effect right away.
 
 #### Escalation
-If the problem is found to originate from user behaviour, we should leave a message in #dataset-crash, informing our users that a specific dataset(s) is having OOM issues. We should inform them that the dataset succeeded on a different node, but that we are concerned about its long term stability. Please follow our [communication templates](https://docs.google.com/document/d/1L5MwBH2OZ0uvr5sTHG-LrLQTFRtx44Az8HyeN46rnc8/edit). They should investigate.
+
+If the problem is found to originate from user behaviour, we should leave a message in #data-tribe, informing our users that a specific dataset(s) is having OOM issues. We should inform them that the dataset succeeded on a different node, but that we are concerned about its long term stability. Please follow our [communication templates](https://docs.google.com/document/d/1L5MwBH2OZ0uvr5sTHG-LrLQTFRtx44Az8HyeN46rnc8/edit). They should investigate.
 
 #### Relevant links
 
-* https://spark.apache.org/docs/latest/configuration.html, `spark.scheduler.listenerbus.eventqueue.capacity` field.
+* <https://spark.apache.org/docs/latest/configuration.html>, `spark.scheduler.listenerbus.eventqueue.capacity` field.
 
 ### No space left on device
 
@@ -727,6 +730,7 @@ So, look for possibly big gaps in the metrics creation over the past days. If th
 It's also possible to use Splunk to assert [Escafandro](https://github.com/nubank/escafandro/)'s behavior from the perspective of the consumer of the API, in this case [Itaipu/Mergulho](https://github.com/nubank/itaipu/). [This link](https://nubank.splunkcloud.com/en-US/app/search/search?q=search%20index%3Dcantareira%20step%3DCheckAnomaliesUsingMetricValues&display.page.search.mode=verbose&dispatch.sample_ratio=1&earliest=-24h%40h&latest=now&sid=1602083082.13899927_441E883E-2B06-437D-97A4-B78C146189E2) should take you to Splunk with the following initial search query `index=cantareira step=CheckAnomaliesUsingMetricValues`. From there, one can refine the search to validate potential hypothesis. E.g. Is the anomaly check being correctly performed over the critical dataset `xyz`? If not, it's worth escalate to the owners of the datasets. (see: [Escalation](#escalation-2) section)
 
 #### Solution
+
 As mentioned above, there might be cases where too many new datasets might have been added on the same day, and therefore there is nothing to worry about.
 
 In case this alert is firing too ofen throughout the days, It could mean that the threshold set for this alert is too low and we should consider increasing it.
@@ -791,7 +795,6 @@ Alternatively, one can also perform the same through Spotinst UI by accessing th
 
 Whenever you find yourself in doubt, escalating to the L1 or L2 Engineer should be your first step.
 
-
 ### Airflow: Dagão run failed
 
 #### Diagnosis
@@ -808,7 +811,6 @@ Whenever you find yourself in doubt, escalating to the L1 or L2 Engineer should 
  4. If that fails, increase the cluster size (eg `sabesp --aurora-stack=cantareira-stable jobs create prod scale  --job-version "scale_cluster=4945885" MODE=on-demand N_NODES=$nodes SCALE_TIMEOUT=0`)
  5. Retry dagão.
  6. If it still doesn't work, rollback to a version that worked and retry dagão.
-
 
 ### Airflow more than one instance
 
@@ -897,23 +899,30 @@ In case the cache creation time in Pollux happens simultaneously at the same tim
 To avoid the problem that arises due to time overlap, Pollux's cache creation time is changed to 1 pm UTC, whereas the computation of all the contracts is done by 12 pm UTC usually.
 
 ### Host alerts
+
 #### Overview
+
 A number of alerts is set to go off if anything looks weird on the OS level. Most of the alerts are safe to postpone to a later date for investigation. The exception is the alerts that tell you the disk will fill soon.
 
 #### Troubleshooting
+
 The disk issue indicates that Spark is creating too many temporary files and is not able to clean them up in timely manner (although it [shoud](https://spark.apache.org/docs/latest/rdd-programming-guide.html#removing-data)).
 
 Most probably the error messages will therefore be on Spark level (log messages in Aurora), but you can also investigate the syslog messages in [Splunk](https://nubank.splunkcloud.com/en-US/app/search), by checking the host msg in format `host=ip-10-130-0-80.ec2.internal`
 
 #### Solution
+
 If error messages do not yield meaningful results on which we can act upon, it should be relatively safe to plain drop the node through AWS UI. The Spotinst autoscaling group should take care of spinning up a new node and connecting to the cluster.
 
 ### OOM kill detected
+
 This is not a critical issue and you can allow the job to restart and finish(even though it may restart several times).
 In the context of itaipu, OOM tends to happen when the memory allocated to a process is not enough. So far this has only been the case for driver processes, which run on `mesos-fixed` nodes. You can search for these in [Splunk](https://nubank.splunkcloud.com/en-US/app/search/search) using the query `KILLED .*slave-type:mesos-on-demand-itaipu`. Default driver size (currently 20G) is not enough, so another option is 50G for bigger loads.
 
 ### Mesos master is down
-#### What is the impact?
+
+#### What is the impact
+
 Existing itaipu jobs will continue to run, but no more will be accepted for processing.
 
 #### How to fix
@@ -922,33 +931,38 @@ Simply [restart the Mesos master](ops_how_to.md#restart-mesos).
 
 If, for some reason, you cannot use the method above, you can use the [deploy repository](https://github.com/nubank/deploy) and re-deploy the master with current configuration.
 
-
 ### Mesos master cannot select a leader
+
 #### How to investigate
 
 A good first step is to ssh into the mesos-master or a mesos-fixed instance: see steps [here](ops_how_to.md#ssh-to-a-service)
 
 Once on the machine, the logs can be accessed with:
+
 ```
 journalctl -u mesos-master ### You can add `-f` to tail the logs as they are produced
 ```
 
 If you can't see anything obviously wrong in the logs, you can try the following:
+
 - while still ssh'd into the instance, restart the mesos process with `systemctl restart mesos-master`
 - if the above doesn't work, consider cycling the master node. The quickest way to do this is to go to the AWS console and terminate the instance. The auto-scaling group will take care of creating a new one.
 
 Note that these actions may cause instabilities on currently running jobs.
 
 Possible things that can be affecting the connection:
+
 - Misconfigured security group/firewall rules.
 - Issues with the Zookeeper cluster
 
 Mesos is generally supposed to be fairly stable, so if the problems aren't fixed by restarting/cycling and the logs don't give you any clear way forward, consider escalating.
 
 ### Other mesos alerts
+
 Other mesos alerts are aimed at investigation, rather than urgent issues to be fixed.
 
 #### How to debug
+
 Most of the alerts are associated with a specific job and you can get logs for this job either by looking in Aurora UI, or by querying Splunk,
 ex `job=aurora/prod/jobs/itaipu-without-models`
 
@@ -965,18 +979,18 @@ not from Mesos exporter, which runs in a container.
 _NB These debug instructions assume you have the time and the need to
 understand what’s going on, otherwise you can skip to the solution._
 
-  * Log into [Spot console](https://console.spotinst.com)
-  * Search for the corresponding Elastigroup: it has the same name as
+* Log into [Spot console](https://console.spotinst.com)
+* Search for the corresponding Elastigroup: it has the same name as
     the job
-  * Once you found it, select it and click on the “INSTANCES” tab
-  * Now you need to select an instance showing the problem. Most of
+* Once you found it, select it and click on the “INSTANCES” tab
+* Now you need to select an instance showing the problem. Most of
     the times it is widespread enough that you can pick any instance
     at random. If that’s _not_ the case, you then have to select all
     of them so that you can find a faulty one.
-  * Note their IDs. You will need them to avoid terminating the
+* Note their IDs. You will need them to avoid terminating the
     instance you are going to detach.
-  * Execute `Detach` from the `Actions` menu (the one above the list).
-  * SSH into the instance(s) and check what’s going on: after you
+* Execute `Detach` from the `Actions` menu (the one above the list).
+* SSH into the instance(s) and check what’s going on: after you
     login, systemd should greet you with the list of faulty units.
     Start from there.
 
@@ -990,6 +1004,7 @@ whole run, you have two choices.
 
 If you detached some instances for debugging purposes you cannot use
 the command showed below, instead, you need to
+
 - Log into AWS with account tied to the origin of the alert: if it’s
   `cantareira` it’s Brazil, if it’s `foz` it’s `nu-data`.
 - Navigate to the EC2 section of the console.
@@ -1054,7 +1069,6 @@ sure _new_ jobs are scheduled.
 
 ## Issues related to services
 
-
 ### Queued Jobs in PENDING state - [aurora web UI](https://cantareira-stable-aurora-scheduler.nubank.com.br:8080)
 
 #### Symptom
@@ -1097,7 +1111,6 @@ Every once in a while, Aurora goes down. `sabesp` commands, such as ones involve
 These jobs are critical and if they are not started at 18:00UTC, yet,
 something is really broken.
 
-
 #### Verification and diagnosis
 
 1. Check all the jobs with the name starting with `itaipu-serving` in
@@ -1119,14 +1132,14 @@ something is really broken.
   considering the mitigations listed in the next entry.
 - In the second case, we have different options, depending on the
   actual state of the upstream node.
-    - Failed :: Check the actual extent of the failure. If negligible,
+  - Failed :: Check the actual extent of the failure. If negligible,
       see below; if not, you need to first fix the problem with the
       upstream node and then [clear its
       state](../../tools/airflow.md#triggering-a-dag-vs-clearing-a-dag-and-its-tasks)
       _without_ the `Dowstream`.
-    - Successful :: Check if it’s really safe to manually start the
+  - Successful :: Check if it’s really safe to manually start the
       downstream nodes and, if so, see below.
-    - Once the state of the upstream has been verified and reached a
+  - Once the state of the upstream has been verified and reached a
       stable state, you need to manually start only the Airflow nodes
       that are really critical, because at this point we are already
       so late that we need to be selective and compute only what’s
@@ -1180,7 +1193,6 @@ Mode: follower
 
 At the moment, the best thing to do is to [escalate the problem to
 Foundation](../data-infra/getting_help_from_other_squads.md).
-
 
 ### `scale-ec2-<name of job>` failed
 

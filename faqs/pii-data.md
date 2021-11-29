@@ -6,11 +6,11 @@ owner: "#data-protection"
 
 Any dataset or data source that has personal and/or PII information has the need to delete data. The logic to define what is PII and personal data there is a document made by compliance.
 
-## How do I raise a PII or personal data deletion request?
+## How do I raise a PII or personal data deletion request
 
 For internal service teams at Nubank - You can either raise a request using [#lgpd-cx](https://nubank.slack.com/archives/C016VJ42ZT6to) for data deletion, or reach out for help at [#data-privacy](https://nubank.slack.com/archives/CLLFJMEBZ) slack channel and [provide necessary details](./pii-data.md#how-can-i-excise-the-data).
 
-## How are the PII or personal data deletion requests (excision) handled?
+## How are the PII or personal data deletion requests (excision) handled
 
 Upon receiving the deletion request, the Data Protection squad (Xpeer) will check for the requests everyday and confirms the deletion on Slack in order to update customers / prospects.
 
@@ -24,7 +24,7 @@ Upon validation by Legal,
 
 The Xpeer will confirm deletion to the data subject and close the ticket.
 
-## What is considered as Pii and Personal Data?
+## What is considered as Pii and Personal Data
 
 A definition of what is Pii and personal data can be found [here](../how-tos/data-deletion/pii_and_personal_data.md).
 
@@ -64,7 +64,7 @@ After you have a better understanding of the data that is considered as PII and 
                  :external-bank-account-name}}
 ```
 
-## How do I identify and set attributes as Pii in Itaipu?
+## How do I identify and set attributes as Pii in Itaipu
 
 - One of the ways for identifying Pii in a dataset is by checking column names and their contents for information that could potentially identify a specific individual, such as CPF, Name, precise geolocation, etc.
 - Once you have identified that the SparkOp you are working on contains Pii, you should categorize it as Pii by **setting the clearance attribute to PII**.
@@ -123,7 +123,7 @@ This will make the materialized table inaccessible to those without the clearanc
 
 ![](../images/databricks_pii_error.png)
 
-## How do I classify PII data on Ryze?
+## How do I classify PII data on Ryze
 
 - For classifying Dataset series data on Ryze, refer to the documentation on [Data classification of dataset series](https://github.com/nubank/playbooks/blob/master/squads/data-protection/ryze/classification-dataset-series.md).
 
@@ -131,7 +131,7 @@ This will make the materialized table inaccessible to those without the clearanc
 
 ### I (internal Nubank services) may have stored PII data on Datomic unintentionally and that data is available in ETL environment already
 
-### How can I excise the data?
+### How can I excise the data
 
  Follow the steps below:
 
@@ -149,25 +149,25 @@ This will make the materialized table inaccessible to those without the clearanc
 
     - use Malzahar to excise the data. Malzahar can connect to all your service Datomic DBs and shards in Br and MX environments.
 
-    - create new identifiers and resolvers for the database on Ryze (example, https://github.com/nubank/ryze/blob/master/resources/br/datomic/dealer/_metadata.edn and https://github.com/nubank/ryze/blob/master/resources/br/datomic/portiolli/_metadata.edn), as Malzahar datalog is based on it, and then update Ryze.
+    - create new identifiers and resolvers for the database on Ryze (example, <https://github.com/nubank/ryze/blob/master/resources/br/datomic/dealer/_metadata.edn> and <https://github.com/nubank/ryze/blob/master/resources/br/datomic/portiolli/_metadata.edn>), as Malzahar datalog is based on it, and then update Ryze.
 
-  **Example** - https://github.com/nubank/portiolli/pull/137/commits/4205970f991daaaed2d79d79f85d249181a75a18
+  **Example** - <https://github.com/nubank/portiolli/pull/137/commits/4205970f991daaaed2d79d79f85d249181a75a18>
 
-### How do I check if the data is deleted?
+### How do I check if the data is deleted
 
 Once the data is processed through Malzahar for deletion, it is guaranteed that the data is no longer available for services. If you would like to double check, you can query your service DB.
 
-### What is and how to fill Datomic metadata?
+### What is and how to fill Datomic metadata
 
-Metadata defines how we reach the data we need to do some action, for Datomic it means define how we build a datlog . For more details take a look at: https://github.com/nubank/playbooks/blob/master/squads/data-protection/ryze/classification-datomic.md
+Metadata defines how we reach the data we need to do some action, for Datomic it means define how we build a datlog . For more details take a look at: <https://github.com/nubank/playbooks/blob/master/squads/data-protection/ryze/classification-datomic.md>
 
-### What is and how to fill Dataset series metadata?
+### What is and how to fill Dataset series metadata
 
 Metadata defines how we reach the data we need to do some action, for Dataset Series it means define which columns are key to reach the required row. For more details take a look at:
 
-https://github.com/nubank/playbooks/blob/master/squads/data-protection/ryze/classification-dataset-series.md
+<https://github.com/nubank/playbooks/blob/master/squads/data-protection/ryze/classification-dataset-series.md>
 
-### Which server-side encryption configuration to use when storing PII data in S3?
+### Which server-side encryption configuration to use when storing PII data in S3
 
 Data protection laws as LGPD does not specify how to store personal data, but we must have some security procedures to protect the data.
 
@@ -189,7 +189,7 @@ This is general suggestion, but we may have specific business requirements that 
 
 ![](../images/pii-data-encryption.png)
 
-## Need more help?
+## Need more help
 
 If you still have questions or need additional information, please reach out to [#data-privacy](https://app.slack.com/client/T024U97V8/CLLFJMEBZ) or [#squad-data-access](https://app.slack.com/client/T024U97V8/C84FAS7L6) and we will provide appropriate support.
 !!! question

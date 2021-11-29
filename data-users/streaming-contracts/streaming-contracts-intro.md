@@ -75,7 +75,6 @@ All Nubankers should have general access to streaming contracts:
 - 🇲🇽 Mexico: [nu-mx-streaming](https://console.cloud.google.com/bigquery?project=nu-mx-streaming)
 - 🇨🇴 Colombia: [nu-co-streaming](https://console.cloud.google.com/bigquery?project=nu-co-streaming)
 
-
 For PII access fill out this [forms](https://nubank.atlassian.net/servicedesk/customer/portal/53/group/246/create/920).
 
 ## Next steps

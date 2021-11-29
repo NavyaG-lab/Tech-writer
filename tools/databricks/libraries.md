@@ -4,7 +4,7 @@ owner: "#data-infra"
 
 # Libraries
 
-https://nubank.cloud.databricks.com/ --> `Workspace` --> `Libraries`
+<https://nubank.cloud.databricks.com/> --> `Workspace` --> `Libraries`
 
 Folder organization:
 
@@ -22,6 +22,5 @@ Folder organization:
         1. ...
     1. `00_python`: unused Python libraries
         1. `00_nubank`: unused Nubank Python libraries
-
 
 Obs.: Using the prefix `00_` to make the folders appear in the beginning of the list.

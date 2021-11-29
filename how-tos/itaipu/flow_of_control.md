@@ -21,7 +21,6 @@ grand scheme of things.
 * **aurora-jobs-path**: `github.com/nubank/aurora-jobs`
 * **sabesp-path**: `github.com/nubank/sabesp`
 
-
 ## The outside world
 
 ### Airflow
@@ -58,7 +57,6 @@ Sabesp is a CLI to interact with anything in our environment:
 
 `[sabesp-path]/context/jobs/itaipu.py` holds the job definition for an itaipu job.
 
-
 ## itaipu
 
 1. `[itaipu-path]/itaipu/Itaipu.scala`: `main` is the entry-point and it calls
@@ -82,7 +80,6 @@ Sabesp is a CLI to interact with anything in our environment:
    services to the executor. It then lets the executor run and raises an exception if any of the
    results is a failure (`success`, `aborted` or `upstreamAborted` are fine).
 
-
 ## common-etl
 
 3. `[common-etl-path]/operator/ETLExecutor.scala`:
@@ -102,7 +99,6 @@ Sabesp is a CLI to interact with anything in our environment:
       2. Any of the inputs to the op are already aborted.
       Aborting a dataset instead of failing the op enables the job to complete
       successfully without the job failing in Airflow.
-
 
 ## How the opsToRun are created
 
@@ -134,7 +130,7 @@ Step 1 in [itaipu](#itaipu).
 Before a op is fed to the steps builder, the evaluator verifies if the
 dataset is already committed or aborted. In either case, it skips the re-evaluation
 and returns the appropriate result. If any of the steps result in a failure, it
-checks the tier of the dataset. Tier defines the importance/criticality of a dataset and,    
+checks the tier of the dataset. Tier defines the importance/criticality of a dataset and,
 based on the tier of a dataset, we decide what to do in case the dataset fails
 
 A Tier 0 dataset's failure will result in the faiure of a job and
@@ -185,7 +181,6 @@ to do. The steps are as follows:
     `None`.
 15. Commit - Commit in metapod. Schema info, storage location, transaction
     id...
-
 
 ## GraphOps
 

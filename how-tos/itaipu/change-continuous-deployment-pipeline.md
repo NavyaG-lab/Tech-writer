@@ -36,11 +36,11 @@ should become simpler.
 
 ## Process
 
-1. Update the [pipeline, task definitions and customize config in TektonCD][definitions-in-tektoncd](https://github.com/nubank/tektoncd/pull/337).
-2. Update the status list in [the Bors configuration file][bors-config](https://github.com/nubank/itaipu/blob/master/bors.toml) to include the
+1. Update the [pipeline, task definitions and customize config in TektonCD][definitions-in-tektoncd](<https://github.com/nubank/tektoncd/pull/337>).
+2. Update the status list in [the Bors configuration file][bors-config](<https://github.com/nubank/itaipu/blob/master/bors.toml>) to include the
    added/changed tasks
 3. If any of the added/changed tasks is required, update [the branch protection rules for
-   Itaipu][branch-protection-rules](https://github.com/nubank/itaipu/settings/branch_protection_rules/505139 ), in GitHub.
+   Itaipu][branch-protection-rules](<https://github.com/nubank/itaipu/settings/branch_protection_rules/505139> ), in GitHub.
 
 After performing these changes, new PRs on Itaipu should include the new task
 defintion and work without problems. In the case of PRs that were already open

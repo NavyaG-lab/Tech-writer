@@ -1,7 +1,7 @@
 ---
 owner: "#data-protection"
 ---
-# How do I classify PII data on Ryze?
+# How do I classify PII data on Ryze
 
 - For classifying Dataset series data on Ryze, refer to the documentation on [Data classification of dataset series](https://github.com/nubank/playbooks/blob/master/squads/data-protection/ryze/classification-dataset-series.md).
 
@@ -13,20 +13,19 @@ This section consolidates all relevant information in order to classify PII data
 
 ### Relevant links
 
-- Dataset Series Missing Classification - https://bit.ly/30hWaJa
-- Github - to classify data, you will need to access Ryze repository on github: https://github.com/nubank/ryze/
+- Dataset Series Missing Classification - <https://bit.ly/30hWaJa>
+- Github - to classify data, you will need to access Ryze repository on github: <https://github.com/nubank/ryze/>
 - Data Regulatory Map - a spreadsheet containing the main regulations in Brazil about data and the retention period requirements:
-https://docs.google.com/spreadsheets/d/10ADfKA55TYGv03YQTw_TCQp3F9GSst9Cf00W_IiZtIE/edit#gid=91415254
-- Playbook Metadata -  this a playbook to explain what is metadata and how to add it to the classification https://playbooks.nubank.com.br/squads/data-protection/ryze/add-metadata/
-
+<https://docs.google.com/spreadsheets/d/10ADfKA55TYGv03YQTw_TCQp3F9GSst9Cf00W_IiZtIE/edit#gid=91415254>
+- Playbook Metadata -  this a playbook to explain what is metadata and how to add it to the classification <https://playbooks.nubank.com.br/squads/data-protection/ryze/add-metadata/>
 
 ### Steps to follow for datomic data Classification
 
 1. Access the folder in Github containing the Datomic schemas:
     - Access the folder for the county you will work on the classification
-    https://github.com/nubank/ryze/tree/master/resources/br
+    <https://github.com/nubank/ryze/tree/master/resources/br>
     or
-    https://github.com/nubank/ryze/tree/master/resources/mx
+    <https://github.com/nubank/ryze/tree/master/resources/mx>
 
 1. Select the folder for Datomic. This folder is organized as Database > edn > attributes.
 
@@ -63,9 +62,9 @@ The tags must follow some standards:
 - No spaces
 - Always start with ":" (an example is  :tax-id)
 - Be aware that several tags were already created in
-    BR = https://github.com/nubank/ryze/blob/master/resources/br/compliance/tags.edn
+    BR = <https://github.com/nubank/ryze/blob/master/resources/br/compliance/tags.edn>
     and
-    MX = https://github.com/nubank/ryze/blob/master/resources/mx/compliance/tags.edn
+    MX = <https://github.com/nubank/ryze/blob/master/resources/mx/compliance/tags.edn>
 - they must be reused as possible.
 
 #### An example of a classified attribute is as followed
@@ -91,13 +90,13 @@ The tags must follow some standards:
     - Marital status
 
 1. If a database/dataset has at least one attribute classified as PII, you must check if it has identifiers and resolvers. If not, you should add the information similar to the one in this link:
-https://playbooks.nubank.com.br/squads/data-protection/ryze/add-metadata/
+<https://playbooks.nubank.com.br/squads/data-protection/ryze/add-metadata/>
 
 1. Tags
 
     In the folders:
-    Br - https://github.com/nubank/ryze/blob/master/resources/br/compliance/tags.edn
-    MX - https://github.com/nubank/ryze/blob/master/resources/mx/compliance/tags.edn
+    Br - <https://github.com/nubank/ryze/blob/master/resources/br/compliance/tags.edn>
+    MX - <https://github.com/nubank/ryze/blob/master/resources/mx/compliance/tags.edn>
 
     - We have all tags created during the classification. If you have an attribute that requires creation of a new tag, you should create it there.
 
@@ -119,12 +118,11 @@ https://playbooks.nubank.com.br/squads/data-protection/ryze/add-metadata/
 1. A bi-weekly meeting to be set up for alignments
 1. In case of doubts, the person who is classifying should:
     - Look for the attribute  in dataset or contracts or common-datomic
-        - Adhoc - https://github.com/nubank/common-datomic#ad-hoc-queries
+        - Adhoc - <https://github.com/nubank/common-datomic#ad-hoc-queries>
 
     - Identify the engineers that have more commits in that service and ask for clarification
         - `nu ser owner <SERVICO>`
     - In case there are still doubts, share them in **#data-classification-taskforce**
-
 
 ### PR Review
 
@@ -139,7 +137,6 @@ This is done by
 
 - Classifying all personal data with the right tag and
 - Not tagging no-personal data as PII
-
 
 #### Steps for PR review request creation
 
@@ -182,6 +179,6 @@ It is important to mark the PR as recommended because this PR could be from Data
 
 **Important**: Note that the classification only works with the identifiers:
 
-https://github.com/nubank/playbooks/blob/master/squads/data-protection/ryze/update-data-sources.md#datomic
+<https://github.com/nubank/playbooks/blob/master/squads/data-protection/ryze/update-data-sources.md#datomic>
 
 For information on adding metadata on Ryze and identifiers refer to the [Ryze Metadata](https://playbooks.nubank.com.br/squads/data-protection/ryze/add-metadata/) documentation.

@@ -9,7 +9,6 @@ owner: "#data-infra"
 - Make sure you have completed the general Nu [dev setup](https://github.com/nubank/nu-setup)
 - Install [SBT and scala](https://www.scala-lang.org/download/)
 
-
 ### Configure IntelliJ
 
 * IntelliJ should be installed if you followed the Nu dev setup
@@ -68,7 +67,6 @@ Typically users prefer to use sbt from the terminal and not from IntelliJ, but s
 
 - If you get errors related to dependencies of the project, force IntelliJ to reload sbt Project: Go to menu **View --> Tool Windows --> sbt** and click on the button to Refresh (arrows in a circle).
 
-
 ### Setup Itaipu with SBT from the terminal
 
 1. Start sbt.
@@ -97,7 +95,6 @@ tasks
 
 ### Troubleshooting
 
-
 #### SBT startup error
 
 ```bash error while loading String, class file '/modules/java.base/java/lang/String.class' is broken
@@ -109,7 +106,6 @@ tasks
 - Check the sbt version you have installed in your local setup compared to the sbt version in the sbt file from Itaipu
 
 #### Build error GC overhead
-
 
 ```java
 java.lang.OutOfMemoryError: GC overhead limit exceeded

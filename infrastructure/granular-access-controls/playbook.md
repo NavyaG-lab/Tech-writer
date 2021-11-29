@@ -22,6 +22,7 @@ For more information about the architecture, go [here](/infrastructure/granular-
 - 'Chinese Wall' information barrier within an organization to prevent exchanges or communication that could lead to conflicts of interest.
 
 ## Current limitations
+
 - A dataset can be part of at most one ACG.
 - ACG name changes are not graceful: everyone with access to the old name needs to request access again for the new name.
   Get in touch with Privacy Tech squad to coordinate this if necessary.
@@ -48,7 +49,7 @@ Alternatively, if you start using an ACG that hasn't been used before, begin wit
     (TODO GAC team: move allowlist to a separate file to avoid frequent git hash changes affecting all the ACG policies).
     1. Generate the IAM policies by running `sbt access-control-metadata/run` within itaipu's working directory.\
     This will generate the files in the `iam-policies` repo, so make sure you have a branch there and it's up to date.
-    1. Open a PR in https://github.com/nubank/iam-policies.
+    1. Open a PR in <https://github.com/nubank/iam-policies>.
     1. Privacy Tech needs to update the list with ACGs in Jiraya to make your ACG show up in the Slack request flow.\
     Get in touch with us for this (see instructions above).
     1. Once the Jiraya list is updated, request access in #acg-access-request on Slack.

@@ -18,7 +18,6 @@ anything with it, not even read it.
 It is possible to allow access to account **B** by simply uploading the
 object with the ***bucket-owner-full-control*** ACL:
 
-  
 ```bash
 aws s3 cp s3://source/myobject s3://destination/ --acl bucket-owner-full-control
 ```
@@ -62,8 +61,6 @@ We also need to change the Bucket Policy, otherwise it won't work. More
 info
 [here](https://docs.aws.amazon.com/AmazonS3/latest/dev/about-object-ownership.html).
 
-
-  
   ```json
   {
    "Version": "2012-10-17",

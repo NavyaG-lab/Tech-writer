@@ -6,14 +6,14 @@ owner: "#data-access"
 
 ## Table of Contents
 
-  - [Background](#background)
-  - [Requisites](#requisites)
-  - [Overview](#overview)
-  - [Caveats](#caveats)
-  - [Setup](#setup)
-    - [Bucket Permissions](#bucket-permissions)
-    - [Data Account permissions](#data-account-permissions)
-    - [Databricks](#databricks)
+- [Background](#background)
+- [Requisites](#requisites)
+- [Overview](#overview)
+- [Caveats](#caveats)
+- [Setup](#setup)
+  - [Bucket Permissions](#bucket-permissions)
+  - [Data Account permissions](#data-account-permissions)
+  - [Databricks](#databricks)
 
 ## Background
 
@@ -41,8 +41,8 @@ Before going any further make sure you have:
 - A data account IAM role. If you don't have one ask on [this Jira form](https://nubank.atlassian.net/servicedesk/customer/portal/53/group/241/create/880)
 - A data account IAM role that's part of the `databricks-general` group. If you are not in this group ask on [this Jira form](https://nubank.atlassian.net/servicedesk/customer/portal/53/group/241/create/882)
 - For Nubank owned custom buckets:
-    - The ability to sign commits on GitHub (verified tag). Check the [documentation](https://docs.github.com/en/github/authenticating-to-github/managing-commit-signature-verification) on how to configure it.
-    - Be part of the `prod-eng` IAM group. Ask for permission on #tribe-infosec that you need this permission to sync bucket policies.
+  - The ability to sign commits on GitHub (verified tag). Check the [documentation](https://docs.github.com/en/github/authenticating-to-github/managing-commit-signature-verification) on how to configure it.
+  - Be part of the `prod-eng` IAM group. Ask for permission on #tribe-infosec that you need this permission to sync bucket policies.
 
 ## Overview
 
@@ -62,7 +62,6 @@ Non supported commands:
 - Installing internal python packages from mounts. To install python packages you'll need to move the files to `/mnt/nu-tmp/` or [make the package available in Nubank's PyPi](https://github.com/nubank/playbooks/blob/master/data-science/guides/python-projects/README.md)
 - Opening files like there were from the local file system, like Python's `open()` command. For a workaround check [this notebook](https://nubank.cloud.databricks.com/#notebook/11642152/command/11642244)
 
-
 ## Setup
 
 ### Bucket Permissions
@@ -77,7 +76,6 @@ If the custom bucket is owned by Nubank, a PR on [iam-policies](https://github.c
 The choice between inline policy or group depends on the access patterns of the bucket. If people need only temporary permissions on Databricks prefer using inline policies, as those are automatically revoked after a certain amount of time. If people need permanent access to the bucket consider using groups.
 
 If the bucket is not owned by Nubank, you'll need to implement bucket policies similar to the one below on the AWS account that owns the bucket.
-
 
 #### Example
 
@@ -139,7 +137,6 @@ IAM Group
 
 This grants members of the risk-management group read and write permissions to the nu-risk-br bucket:
 
-
 ```
 {
   "PolicyName": "risk-management",
@@ -170,7 +167,7 @@ This grants members of the risk-management group read and write permissions to t
         "Resource": [
           "arn:aws:s3:::nu-risk-br/*"
         ]
-      }    
+      }
     ]
   }
 }
@@ -205,10 +202,11 @@ Inline Policy. This grants roles with this policy attached read and write permis
       "Resource": [
         "arn:aws:s3:::nu-risk-br/*"
       ]
-    }    
+    }
   ]
 }
 ```
+
 **Important**: The file path where the policy is written will affect who's able to grant it.
 If the policy is written at `inline-policies/<squad-name>/policy.json`, only members of the squad's IAM group and the `permissions-admin` group will be able to grant this policy. To find out the IAM group for a certain squad look at [iam_policies/ownership/squads.clj](https://github.com/nubank/iam-policies/blob/master/src/iam_policies/ownership/squads.clj#L3)
 
@@ -330,7 +328,7 @@ Choose the `<ACCOUNT-ALIAS>` that is the AWS account owner of the `<BUCKET-NAME>
 
 The next step is to grant the Data Account IAM role the necessary permissions to access the custom bucket. How the access is given depends on how the permissions were created in the Bucket Permissions section.
 
-#### Group 
+#### Group
 
 Ask on [Jira](https://nubank.atlassian.net/servicedesk/customer/portal/53/group/241/create/882) for your Data role to be added to the group.
 
@@ -359,7 +357,7 @@ To schedule jobs using these credentials check [this documentation](https://docs
 
 #### Writing files
 
-If you are writing files from Databricks and desire to access these files outside of Databricks you'll need to pass the `bucket-owner-full-control` ACL flag everytime you write files. For Spark commands such as `sparkDataFrame.write.parquet("s3://custom-bucket/path/")` nothing needs to be done, as at the time Single User clusters are created, this is configured as a Spark setting. 
+If you are writing files from Databricks and desire to access these files outside of Databricks you'll need to pass the `bucket-owner-full-control` ACL flag everytime you write files. For Spark commands such as `sparkDataFrame.write.parquet("s3://custom-bucket/path/")` nothing needs to be done, as at the time Single User clusters are created, this is configured as a Spark setting.
 
 If you are not using Spark to interact with S3 you'll need to change your writing functions to pass this flag. You can do this by using the [boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3.html?highlight=put#S3.Object.put) python library with `acl="bucket-owner-full-control"`
 
@@ -376,4 +374,5 @@ If you have written a lot of files it's also possible to bulk change the ACLs fo
 %sh
 aws s3 cp --recursive --acl bucket-owner-full-control s3://<custom-bucket>/<folder-path> s3://<custom-bucket>/<folder-path> --metadata-directive REPLACE
 ```
+
 Note: This command might be slow to run depending on the number of files and their size, as this command needs to move data.

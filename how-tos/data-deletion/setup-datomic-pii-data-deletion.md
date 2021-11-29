@@ -43,7 +43,6 @@ Here is the flow:
     computed each day.
 * We get monitoring information about the entire process as described below.
 
-
 ## Getting ready
 
 This playbook assumes that:
@@ -71,7 +70,6 @@ Glossary of what needs to be known:
 7. _MonitoringOps_: Ops that combine info from the JoinOp, the JoinOpArchive,
    the ReextractionDSS and Malzahar contracts to see if everything is working
    as expected.
-
 
 ## How to do it
 
@@ -131,7 +129,6 @@ should find the examples from `br` in there already.
 
 In a future step we want to automate this as well but getting the names in
 here automatically isn't trivial for now.
-
 
 ## How it works
 

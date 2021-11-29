@@ -42,7 +42,6 @@ that incremental compilation has as little work to do as possible. However,
 with BORS (our merge tool) it is impossible to know the specific key of that
 last cache. So we create a cache key that can easily be found like so:
 
-
 ```
 --cache-key-template=v1-itaipu-dependencies-{% checksum build.sbt %}-{% checksum project/plugins.sbt %}-{% checksum project/build.properties %}-{% checksum .tekton/cache_version %}
 ```
@@ -114,7 +113,6 @@ When you load multiple tarballs from multiple caches, they 'merge' fine. File
 conflicts mean that the secondly unpacked version is taken but different files
 in the same folder structure are just combined. To me, at least, that was
 unexpected behavior.
-
 
 ## How the current structure looks
 
@@ -205,7 +203,6 @@ repo directly.
 
 We have a group of sachem schema checking tasks as well as a PII-checking task.
 Lastly, there is an `itaipu-package` job that assembles the uberjar for itaipu.
-
 
 ## Resources for tasks
 

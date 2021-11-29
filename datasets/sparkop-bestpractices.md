@@ -46,6 +46,7 @@ _*“If your SParkOp is slow on Databricks, it’ll almost always be slow on Ita
 - Reduce shuffle operations on large datasets - groupbykey(), reducebykey() and join().
 
 ### Inputs for your SparkOp
+
 You can create datasets using the following as inputs -
 
 - Contracts

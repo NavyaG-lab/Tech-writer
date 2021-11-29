@@ -28,7 +28,6 @@ The Dataset Series offers configuration for data to be deduplicated before being
 - Exact characteristics of missing rows, such as primary key values.
 - Confirmation that the `nu-<country> dataset-series diff <series-name>` command does not return any errors. This is to differentiate from a dataset series schema issue. For more information, refer to the documentation on [schema issues in dataset series](https://github.com/nubank/data-platform-docs/blob/master/data-users/etl_users/dataset_series.md#troubleshooting-dataset-series-schema-mismatches).
 
-
 ### How to determine the deduplication of rows issue in an append
 
 1. Check that the series contract was committed for the run using the following command:
@@ -62,12 +61,12 @@ If the dataset hasn’t been committed yet, and if the last append happened afte
     val appendPath = "s3://nu-spark-metapod-manual-dataset-series/pj-receita-socios/socios-2020-11-23_2021_02_09_14_39_08.parquet/".replace("s3://", "dbfs:/mnt")
 
     //provides the `appendPath` with the respective path with which you want to load data into databricks//
-    
-    val appendDf = spark.read.parquet(appendPath) 
+
+    val appendDf = spark.read.parquet(appendPath)
     //loads the Data frame corresponding to the append//
 ```
 
-1. From the respective dataset series, get the list of fields that are primary keys - https://github.com/nubank/itaipu/tree/master/src/main/scala/nu/data/br/dataset_series.
+1. From the respective dataset series, get the list of fields that are primary keys - <https://github.com/nubank/itaipu/tree/master/src/main/scala/nu/data/br/dataset_series>.
 
 1. In Databricks, run the following and you will find the rows missing, where these missing rows would be same as the ones in the primary keys in series contract.
 
@@ -87,13 +86,12 @@ If the dataset hasn’t been committed yet, and if the last append happened afte
         val ac = appendDf.count()
 
         val dedupedDf = appendDf.select($"as_of", $"cnpj", $"tipo_socio", $"cnpj_cpf_socio").distinct()
-    
+
         val dc = deduppedDf.count()
-        
+
     ```
 
     **Important**: If dedupedDf's count is lower than appendDf's, then the deduplication logic is masking some duplicated rows. Therefore, some part of the data in that series append is missing in the analytical environment.
-
 
 ### Deduplication of rows because of previously committed append
 

@@ -12,14 +12,13 @@ The first step in debugging a missing dataset is to determine if the dataset has
 
 which will get you information on the dataset in the last few transactions. You can also check if the dataset has been aborted. This way you can know if it has been calculated and simply hasn't been loaded yet, or if it hasn't been calculated at all (meaning it is a problem in the etl and there is not much we can do).
 
-
 ## Checking Loads on Databricks
 
 We can check if a table has been properly loaded by checking the table `meta.br_loads` (BR) or `meta.international_loads` (all other regions).
 
 ```sql
 %sql
-SELECT * FROM meta.br_loads 
+SELECT * FROM meta.br_loads
 WHERE datasetName = '<dataset-name>'
 ORDER BY loadTime
 limit 100

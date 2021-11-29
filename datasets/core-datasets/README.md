@@ -38,12 +38,11 @@ The following sessions are split into Consumer and Producer content to better su
 
 ## For consumers
 
-### What is a core dataset?
+### What is a core dataset
 
-Basically, it is a dataset that shares a common documentation format, design pattern and testing convention. By following core datasets design requirements,  it becomes more stable, reliable and traceable. Further details on how to reach these requirements can be found [here](#general-requirements-for-core-datasets). 
+Basically, it is a dataset that shares a common documentation format, design pattern and testing convention. By following core datasets design requirements,  it becomes more stable, reliable and traceable. Further details on how to reach these requirements can be found [here](#general-requirements-for-core-datasets).
 
-### What are the advantages of using a core dataset?
-
+### What are the advantages of using a core dataset
 
 On the consumer side, these are the advantages of using a core dataset:
 
@@ -52,7 +51,7 @@ On the consumer side, these are the advantages of using a core dataset:
 3. As all core datasets have an assigned ownership, consumers can refer to the person if the documentation isn't enough or if any issues are found
 4. The dataset is monitored by row count alerts, also any changes made must be communicated in #data-announcements
 
-### How do I discover a core dataset?
+### How do I discover a core dataset
 
 You can find released core datasets in Databricks, Compass and BigQuery, searching for the core namespace.
 
@@ -78,7 +77,7 @@ For further details, one can find [this documentation](framework/contribution-wo
 
 ## For producers
 
-### What are the advantages of creating a core dataset?
+### What are the advantages of creating a core dataset
 
 The advantages brought by moving a dataset to core are a consequence of following the guidelines the Analytics Productivity team defined to promote quality standards in a few topics. These advantages include:
 
@@ -87,7 +86,7 @@ The advantages brought by moving a dataset to core are a consequence of followin
 3. You get row count monitoring alerts that can give visibility and help the owner to react to any issues, in each and every run. More alerts can be implemented the same way
 4. The core namespace have a contribution flows that guarantees stability and reliability
 
-### When/why should I create a core dataset?
+### When/why should I create a core dataset
 
 First of all, it's important to clarify that not every dataset must become a core dataset. Eligible datasets are the ones that, for example, contain critical information that supports multiple business processes, products or financial reports.
 
@@ -100,8 +99,7 @@ Also, the following list contains some situations where one could benefit from m
 - When monitoring is needed. There is a compulsory row count monitoring for core and its possible to add other controls with controlinho
 - Too many datasets with the same grain, one should become "official"
 
-
-### How can I contribute to core?
+### How can I contribute to core
 
 #### Possible scenarios before going to core
 
@@ -124,13 +122,13 @@ These steps are planned as such to provide a smooth rollout and prevent any issu
 
 When moving an existing dataset to core, one must keep in mind that its successors should not be impacted by the change. Depending on the amount and importance of successors the dataset has, it may require a shim or not, in order to not break anything.
 
-##### What is a shim?
+##### What is a shim
 
 Basically, a shim is a term adapted to represent the process of integrating the old dataset with the new core version. It enables us to propagate the core data, without having to deal with the issue that successors would lose the reference to the original dataset. The sparkop of the original dataset then becomes a simple select and rename columns of the core version.
 
 ![Shim Picture](/images/shim-example-picture.png)
 
-##### How do I know if I need a shim?
+##### How do I know if I need a shim
 
 There is no hard rule, but the higher the amount of successors the dataset has the more likely you would think of shimming it, given that the impact of removing it increases. Shimming can be seen as a technical debt, you would only go for shimming if you want to move something to core but you are not willing to spend the time to migrate all successors.
 
@@ -146,7 +144,6 @@ Communicating with the stakeholders that consume from your dataset is recommende
 4. Migrate the unit tests to the core namespace or reimplement if necessary
 5. Add the new core dataset to the CoreData file as an userDefinedFactTable. In order to do this, the dataset needs to extend "DeclaredDimensionalModel", implement the "grain" field and the "factToDimensionConnections". See [example](https://github.com/nubank/itaipu/blob/master/src/main/scala/nu/data/br/core/crebito/CreditCards.scala)
 6. Before deleting the dataset from its original location, remember to communicate with stakeholders and migrate spreadsheets, notebooks and visualizations to the core dataset
-
 
 #### Creating a dataset in the core layer from scratch
 
@@ -165,7 +162,6 @@ These are the steps recommended to create a core dataset from scratch:
 Examples of good documentation:
 [customer_current_snapshot](https://console.cloud.google.com/bigquery?authuser=0&project=nu-mx-data&pli=1&d=core&p=nu-br-data&t=customer_current_snapshot&page=table)
 [credit_card_bills](https://console.cloud.google.com/bigquery?authuser=0&project=nu-mx-data&pli=1&d=core&p=nu-br-data&t=credit_card_bills&page=table)
-
 
 ### Additional rules to contributing
 

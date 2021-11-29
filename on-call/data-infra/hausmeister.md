@@ -131,7 +131,6 @@ The slack channels you should monitor for user questions are:
 |[#dataset-crash](https://nubank.slack.com/archives/C1SNEPL5P)|Use this channel to<ul><li>notify users about the datasets failure and follow-up on the same, or </li><li>skipping some datasets from the current run.</li> While posting a message, make sure you provide the list of datasets failing and provide reasons for skipping datasets from the current run.</ul>|Data users and Data Platform Operators|
 |[#data-announcements](https://nubank.slack.com/messages/C20GTK220/)|Use this channel to<ul><li>announce crashes in (#data-crash)</li><li>any new Data platform updates </li> This is to keep the more widespread audience well-informed of the crashes.</ul>|All Data users, Nubank Management|
 
-
 **Important**: As a Hausmeister, your role is to ensure user's problems are addressed, but this does not mean that you are responsible for fixing every single problem you encounter yourself; the reason being that you should always make sure you have the headspace necessary to tackle a hard alarm when it is notified. Do not hesitate to rope in other data infra engineers to help with user requests, and in particular to involve engineers closer to the context of the request who will be able to fix it quickly.
 
 ## See also

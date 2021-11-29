@@ -6,11 +6,11 @@ owner: "#data-infra"
 
 This playbook has data-infra as their primary audience. The goal here is to enable other engineers to debug potential data loss issues with the current DSS ingestion system. This playbook has been written to ease this debugging process with similar upcoming queries.
 
-[Here](https://nubank.slack.com/archives/C06F04CH1/p1633360516293500) is an example thread in `#data-help` slack  channel where the users were suspecting of DSS data loss. With this plabook, it should be easier and more straight forward to resolve such issues in the future. 
+[Here](https://nubank.slack.com/archives/C06F04CH1/p1633360516293500) is an example thread in `#data-help` slack  channel where the users were suspecting of DSS data loss. With this plabook, it should be easier and more straight forward to resolve such issues in the future.
 
-## Pre-requisites 
+## Pre-requisites
 
-- Make sure to get the following information: 
+- Make sure to get the following information:
   1. Confirm that there are no schema mismatches - [See DDS FAQ](../../data-users/FAQs/dataset-series.md)
   2. Confirm that there are no deduplication issues - [See DDS FAQ](../../data-users/FAQs/dataset-series.md)
   3. Make sure the series in question ingestion metadata turned on - Every event-based dataset series has additional ingestion-related metadata that can be made visible by overriding the flag `DatasetSeriesContract.addIngestionMetadata` and setting it to `true`.
@@ -45,6 +45,7 @@ If the date that the message was published matches with Alph being the current D
 ## Check the end-to-end flow of the message
 
 This playbook aims to validate the end-to-end of DSS messages through system logs. The log lines that have to be checked in order are as follows:
+
 1. From the origin system, the log line `:log :out-message` with `:topic "EVENT-TO-ETL"` attribute
 2. From [Alph](https://github.com/nubank/alph), the log line `:log :event-to-etl-handler` with `:topic "EVENT-TO-ETL"` and its associated `:batch-cid` asserts that Alph consumed the published message
 3. Still from Alph, the log line `:log :upload-to-s3` as well as another log line `:log :out-message` with `:topic "NEW-SERIES-PARTITIONS"` attribute along with its associated `:cid` asserts that Alph published the message to notify Ouroboros
@@ -53,6 +54,7 @@ This playbook aims to validate the end-to-end of DSS messages through system log
 This playbook will guide you through the steps to trace the end-to-end flow of DDS messages. While following these steps, in case you fail to assert the expected results described in each of the sections the owner of the system in check should review its codebase to identify possible reasons for the failure of the said flow.
 
 From this point of this playbook on, let's a situation where:
+
 1. `DEFAULT.XLLK2.AJYB6.4GSZK.MFPSB.XLRU6.D6XVH.35YY5.JS2DT.WZ46H.UEZ7Q.F6NN3.DWVWC.2021-06-12.personal-loan-policy.RSFSU.MAKYK.NAK3L.KLO34.KFR7P.44Z5Y.WCWD3` is the CID we're looking for
 2. `consigliere` is the name of the service which produced the missing records.
 3. `s2` is the prototype on which the records were produced.
@@ -67,6 +69,7 @@ For the purpose of this guide, we adopted a date that is too old and therefore n
 ### Get Splunk logs backup from S3
 
 Before anything, make sure you have access to the backup bucket you're interested in. Here is the list of backup bucket paths per countries:
+
 - br   -> `nu-log-bkp`
 - co   -> `nu-log-bkp-co`
 - data -> `nu-log-bkp-data`
@@ -78,7 +81,8 @@ Normally, as a data-infra engineer you can simply request to one of our `@data-i
 And, in case you are NOT a data-infra Engineer, you should reach out to InfoSec through [this form](https://nubank.atlassian.net/servicedesk/customer/portal/1/group/6/create/97) and request the following permission: `nu iam allow <user.name> read bucket <path>` - e.g. `nu iam allow john.doe read bucket nu-log-bkp-mx/prod/*`.
 
 For the purpose of this playbook example, the Splunk logs that we need to fetch from S3 are related to the year-month `2021-06` for the following services:
-- `consigliere` as the service owned by our users. 
+
+- `consigliere` as the service owned by our users.
 - `alph` and `ouroboros` being the services owned by data-infra.
 
 ```bash
@@ -110,9 +114,9 @@ aws s3 sync --profile br-prod \
 --include "*2021-06-12*.gz" \
 s3://nu-log-bkp/prod/2021/06/s2/blue/alph/ alph-logs
 
-# Also download for the 13th 
-# as it depends on the time that the message have been consumed 
-# by Alph. Think of possible lag that the service may have faced 
+# Also download for the 13th
+# as it depends on the time that the message have been consumed
+# by Alph. Think of possible lag that the service may have faced
 # at that day
 aws s3 sync --profile br-prod \
 --exclude "*" \
@@ -137,6 +141,7 @@ cd ../ouroboros-logs && gunzip -dk *.gz
 # and move the gz files elsewhere
 mv *.gz ../ouroboros-gzs
 ```
+
 From this point, Splunk logs from all the involved services, in their respective shards, and at certain dates are available locally.
 
 ### Trace the origin system by using the provided CID
@@ -154,6 +159,7 @@ rg "DEFAULT.XLLK2.AJYB6.4GSZK.MFPSB.XLRU6.D6XVH.35YY5.JS2DT.WZ46H.UEZ7Q.F6NN3.DW
 ```
 
 You should find a log line similar to this one:
+
 ```log
 311250:2021-06-13T03:44:08.105Z [consigliere:async-thread-macro-6] INFO  c.interceptors.observability - {:line 55, :cid "DEFAULT.XLLK2.AJYB6.4GSZK.MFPSB.XLRU6.D6XVH.35YY5.JS2DT.WZ46H.UEZ7Q.F6NN3.DWVWC.2021-06-12.personal-loan-policy.RSFSU.MAKYK.NAK3L.KLO34.KFR7P.44Z5Y.WCWD3.JMBOD", :topic "EVENT-TO-ETL", :log :out-message, :par 17, :offset 176346205}
 ```
@@ -185,6 +191,7 @@ If you didn't find similar log lines as the ones above, you will have to investi
 The `:event-to-etl-handler` log line confirms that Alph handled the message. This does not mean that the message was successfully processed, as messages are accumulated into a buffer in Alph which needs to be flushed for a message to be available in the ETL. `:batch-cid` is the CID of the batch accumulation and flushing process. We must use this new CID to follow up on what happened to our records after Alph received them as it enables use to correlate with Alph's action to upload a batch of messages to S3. And it also allows us to assert that a message to `NEW-SERIES-PARTITIONS` topic related to `:series-name "series/personal-loan-parameters"` has been published.
 
 To continue digging Alph's logs:
+
 ```bash
 rg "DEFAULT.XUNUQ" | rg "series/personal-loan-parameters"
 ```
@@ -200,8 +207,9 @@ prod-s2-blue-alph-deployment-797575b599-jt9qr_alph-application.log.2021-06-13-00
 This time around, if you didn't find similar log lines as the ones above, you will have to investigate whether there is something wrong with the [event-to-etl-pre-commit](https://github.com/nubank/alph/blob/master/src/alph/diplomat/consumer.clj#L26-L38) function.
 
 The two most important pieces of evidence that we found are:
+
 - The `:upload-to-s3` log. This line indicates that Alph has successfully uploaded a batch of messages to S3.
-- And the `:out-message` log indicates that Alph has successfully published a message to `NEW-SERIES-PARTITIONS`. 
+- And the `:out-message` log indicates that Alph has successfully published a message to `NEW-SERIES-PARTITIONS`.
   
 With the assert facts that Alph has indeed uploaded the file to S3 and that Alph has successfully published the message to `NEW-SERIES-PARTITIONS` topic. Alph's job is done here.
 

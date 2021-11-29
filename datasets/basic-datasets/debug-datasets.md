@@ -2,7 +2,7 @@
 owner: "#Analytics-productivity"
 ---
 
-# How to debug dataset issues using Databricks?
+# How to debug dataset issues using Databricks
 
 ### If you are creating a new dataset
 
@@ -45,4 +45,4 @@ If your notebook's execution goes out of memory or constantly has its job aborte
 
 If you have issues with Databricks
 
-If you are having trouble using the Databricks tool, refer to this doc https://docs.google.com/document/d/1u25N1zjsxrffLN5-Ea21tNzpKy7GBg9O36lhImRwQ_4/edit#heading=h.hy1tecvonb9f.
+If you are having trouble using the Databricks tool, refer to this doc <https://docs.google.com/document/d/1u25N1zjsxrffLN5-Ea21tNzpKy7GBg9O36lhImRwQ_4/edit#heading=h.hy1tecvonb9f>.

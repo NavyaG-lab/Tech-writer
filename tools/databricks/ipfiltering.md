@@ -5,9 +5,9 @@ owner: "#data-access"
 
 Before you proceed make sure you have a user with `mini-boss` group inside the `nubank-databricks` account.
 
-The link to login is https://nubank-databricks.signin.aws.amazon.com/console.
+The link to login is <https://nubank-databricks.signin.aws.amazon.com/console>.
 
-You can refer the AWS documentation here for more details - https://docs.aws.amazon.com/vpc/latest/userguide/working-with-vpcs.html
+You can refer the AWS documentation here for more details - <https://docs.aws.amazon.com/vpc/latest/userguide/working-with-vpcs.html>
 
 You need to execute these steps for each AZ (Availability Zone) that we have clusters running in.
 
@@ -18,7 +18,7 @@ First, it's good to have handy the **Accepted CIDRs** for the Peering Connection
 2. Create a new public subnet
 
     1. Select the Nubank VPC
- 
+
     2. Select the Availability Zone
 
     3. Associate CIDRs:

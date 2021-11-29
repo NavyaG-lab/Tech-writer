@@ -13,56 +13,55 @@ One of the main tenets of this deployment process is: ensure we use
 the same version of Itaipu for a given transaction. There are several
 reasons for that:
 
-  * Usually different versions have different graph topologies and
+* Usually different versions have different graph topologies and
     changing it after it has started isn't really possible.
-  * New versions may change dataset relationships in ways not covered
+* New versions may change dataset relationships in ways not covered
     by the integration tests.
-  * Downstream services such as databricks-loading assume a single tx
+* Downstream services such as databricks-loading assume a single tx
     per day.
 
 On the other hand, we also need to:
 
-  * Avoid blocking the PR workflow to apply changes and contributions
+* Avoid blocking the PR workflow to apply changes and contributions
     to `master`.
-  * Allow Data Infra operators to apply hot fixes to the version
+* Allow Data Infra operators to apply hot fixes to the version
     currently running in production, without including all the changes
     that have being landed on `master` in the meantime.
 
 So how do we fulfill these constraints?
 
-  * Each batch of pull requests landed on `master` by Bors triggers a
+* Each batch of pull requests landed on `master` by Bors triggers a
     build job that creates a new image. That same job makes also sure
     to publish this information on S3.
-  * The `config_poller` Airflow job, running at regular intervals,
+* The `config_poller` Airflow job, running at regular intervals,
     reads from the same S3 path and refreshes the version for the
     _next_ day.
-  * When the new run starts, the `etl_run_versions` node inside Dagao,
+* When the new run starts, the `etl_run_versions` node inside Dagao,
     will use the versions prepared by the `config_poller`.
 
 ## How Docker images are chosen for a given run
 
 Idealized version:
 
-  * At regular times, the DAG `config_poller` in Airflow updates a
+* At regular times, the DAG `config_poller` in Airflow updates a
     json file containing a map with the following shape `{ <image
     name>: <version> }`. This is the file that is going to be used in
     the _next_ run.
-  * When the ETL starts, i.e. when either `dagao` or `daguito` are
+* When the ETL starts, i.e. when either `dagao` or `daguito` are
     triggered at midnight UTC, we simply name-swap the current file
     with the new, maintained by the step above.
-  * After that we read the contents from that file and create the
+* After that we read the contents from that file and create the
     corresponding Airflow variable for that specific run.
 
 Current reality. Even though the steps above are really happening,
 there are several nasty and important details worth mentioning:
 
-  * Until the migration to Tekton is completed, we will actually have
+* Until the migration to Tekton is completed, we will actually have
     to maintain more than one “DAS file”[^1] -- one coming from GoCD
     and the other one built at run time -- and we need to merge them
     approprietly.
-  * The versions are “overlayed” with the contents from
+* The versions are “overlayed” with the contents from
     `custom_itaipu_versions`
-
 
 ## About “namespaced” Docker images
 
@@ -80,8 +79,9 @@ Fortunately, we can segregate them in different namespaces with
 something like `<ecr host>/<namespace>/<img name>:<tag>`.
 Conceptually the process to create a new namespace is straightforward:
 
-  * Run `nu registry create "<my namespace>/<my image>"`
-  * Define a Tekton workflow with a step like the following
+* Run `nu registry create "<my namespace>/<my image>"`
+* Define a Tekton workflow with a step like the following
+
     ```
         - uses: kaniko
           options:
@@ -105,7 +105,6 @@ The purpose of this DAG in Airflow is twofold:
 
 1. Update the contents of the `DAS.json` file
 2. Update the Airflow variable for the _current day_
-
 
 ## About `custom_itaipu_versions`
 

@@ -76,7 +76,7 @@ If you are in the middle of an incident go here for [common failure scenarios an
 
 Keep documentation up to date to help solve incidents:
 
-* [Data Platform Docs] (https://github.com/nubank/data-platform-docs>
+* [Data Platform Docs] (<https://github.com/nubank/data-platform-docs>>
 * [Common failures documentation](https://github.com/nubank/playbooks/tree/master/squads/data-access)
 * [Nubank wiki](https://wiki.nubank.com.br/)
 * [Data Access Playbooks](https://playbooks.nubank.com.br/squads/data-access/)

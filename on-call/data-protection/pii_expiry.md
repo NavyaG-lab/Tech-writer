@@ -13,9 +13,7 @@ Make sure to set the `OKTA_TOKEN` and `SLACK_TOKEN`:
 
     export SLACK_TOKEN="$(cat ~/dev/nu/slack_token.txt)"
 
-
 ## Steps
-
 
 ### Get group membership from Okta
 
@@ -23,17 +21,14 @@ Copy the output of the following command into the spreadsheet: <https://docs.goo
 
     nu data-protection okta memberships ls --output /dev/stdout --format csv databricks-pii_ds-ww-prod databricks-pii_su-br-prod databricks-pii_su-co-prod databricks-pii_su-mx-prod google-bigquery_pii-br-prod google-bigquery_pii-co-prod google-bigquery_pii-mx-prod
 
-
 ### Go to Splunk and copy the results into the spreadsheet
 
 Export the last PII object access by user from this dashboard: <https://nubank.splunkcloud.com/en-GB/app/search/data_platform_pii>
 And copy it into the spreadsheet under 'Databricks'.
 
-
 ### Analyze the spreadsheet
 
 Go to the sheet 'Action plan' and identify the users that we need to remove, by group.
-
 
 ### Copy users into the nucli command
 

@@ -13,10 +13,10 @@ The lambda will:
 - Fetch the slack token secret for sending a slack notification
 - Use the cluster default settings (JSON) from a separate file
 - Call the Databricks API endpoints to:
-    - Create a cluster if it does not exist
-    - Change permissions
-    - Warm up the cluster to install libraries
-    - Shutdown
+  - Create a cluster if it does not exist
+  - Change permissions
+  - Warm up the cluster to install libraries
+  - Shutdown
 - If a cluster does exist, perform no action
 - Send a slackbot message to the user with FAQ links
 - Return an explicit success/failure or no action state
@@ -65,12 +65,12 @@ request gets approved.
 #### Other approaches considered but will not be pursued
 
 - Daily job to create clusters based on the PII users table
-    - **Pro:** Low effort
-    - **Con:** There will still be a delay from access granted to cluster creation
-    - **Con:** Still not covering few cases for clusters without PII access (eg. experiments)
-    - **Con:** either job failing, alarms and maintenance
-    - **Con:** one more job in Databricks, harder to maintain than code
+  - **Pro:** Low effort
+  - **Con:** There will still be a delay from access granted to cluster creation
+  - **Con:** Still not covering few cases for clusters without PII access (eg. experiments)
+  - **Con:** either job failing, alarms and maintenance
+  - **Con:** one more job in Databricks, harder to maintain than code
 - Cluster policy + guide to create clusters (no automation)
-    - **Pro:** No development effort from our side
-    - **Con:** We will be maintaining the documentation
-    - **Con:** Much more toil for users to provision their machines
+  - **Pro:** No development effort from our side
+  - **Con:** We will be maintaining the documentation
+  - **Con:** Much more toil for users to provision their machines

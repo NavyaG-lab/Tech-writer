@@ -96,7 +96,7 @@ Variable | What it is | Example
 
 #### Checking whether the task was successful
 
-You can follow the task progress and success/failure status via the Aurora UI: https://cantareira-dev-aurora-scheduler.nubank.com.br:8080/scheduler/jobs
+You can follow the task progress and success/failure status via the Aurora UI: <https://cantareira-dev-aurora-scheduler.nubank.com.br:8080/scheduler/jobs>
 
 Search for your model name (e.g., `contextual-model`) and click it to go to the corresponding task page.
 There you will see two tabs: **Active Tasks**, and **Completed Tasks**. Depending on the progress, the task will be in one of the two tabs.

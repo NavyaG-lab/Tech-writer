@@ -42,6 +42,7 @@ You can add unit tests in Itaipu in 3 different ways:
 ## Detailing the implementation of TektonCD and Workflows
 
 ### TektonCD
+
 Edit the following files in the presented order:
 
 * [TektonCD](https://github.com/nubank/tektoncd):
@@ -177,7 +178,7 @@ Check the following example below, changing `{RANDOM_NUMBER => FOR_SOME_ACTUAL_N
                 run: sbt dataconsumption/test
 ```
 
-#### How does it work?
+#### How does it work
 
 1. Calling the current API `apiVersion: workflows.dev/v1alpha1`, builds a pipeline with 2 tasks:<br>
 

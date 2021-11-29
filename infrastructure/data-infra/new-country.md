@@ -10,10 +10,10 @@ data infrastructure in a new country.
 ## Glossary
 
 The following parameters are used through this document:
-  * `country`: the country where the data platform is being deployed
-  * `env`: the used environment. Normally `staging` or `prod`.
-  * `prototype`: logical groups of services that have similar security/deployment requirements. For instance, `global`, or shards (`s0` ... `s14`). Normally, new countries only have `global` and `s0`.
 
+* `country`: the country where the data platform is being deployed
+* `env`: the used environment. Normally `staging` or `prod`.
+* `prototype`: logical groups of services that have similar security/deployment requirements. For instance, `global`, or shards (`s0` ... `s14`). Normally, new countries only have `global` and `s0`.
 
 ## Permissions requirements
 
@@ -29,7 +29,8 @@ In addition to the above, the following scopes are also needed:
 - `data-infra-admin`
 
 **NOTE***
-  * Specific services may require special scopes such as `barragem-admin` or `ouroboros-admin`.
+
+* Specific services may require special scopes such as `barragem-admin` or `ouroboros-admin`.
 
 We assume throughout this document that you have the correct AWS IAM groups, scopes and
 have setup your AWS role-based authentication locally. For more information, see [multi-country-setup](./multi_country_setup.md).
@@ -46,6 +47,7 @@ This document briefly explains the ETL infrastructure and its main components.
 `aurora-scheduler` on the Data account is currently available at [https://prod-foz-aurora-scheduler.nubank.world/](https://prod-foz-aurora-scheduler.nubank.world/scheduler/jobs/)
 
 ### Mesos
+
 [Mesos (mesos-master)](https://github.com/nubank/data-platform-docs/blob/master/infrastructure/data-infra/guide-to-the-runtime-environment.md#mesos-overview) a cluster manager that provides access to the Mesos UI and allows you to see lower-level details of the jobs.
 It is usually recommended to interface directly with Aurora whenever possible.
 
@@ -63,8 +65,9 @@ Other DAGs also run in the data account, such as the DAG that sends progress ann
 Here is an [example of moving a DAG to run on the data account](https://github.com/nubank/aurora-jobs/pull/1125).
 
 **NOTES**:
-  * The mesos-master and aurora-scheduler are already isolated on the **DATA** account, and have distinct DNS addresses. Therefore, you don't need to specify the port in their URLs.
-  * In Brazil, though the mesos-master and aurora-scheduler are running in isolated instances, but for the time being, you still need to specify the port.```
+
+* The mesos-master and aurora-scheduler are already isolated on the **DATA** account, and have distinct DNS addresses. Therefore, you don't need to specify the port in their URLs.
+* In Brazil, though the mesos-master and aurora-scheduler are running in isolated instances, but for the time being, you still need to specify the port.```
 
 ## Preparing S3 buckets
 
@@ -91,7 +94,8 @@ Here’s the list of S3 buckets:
 | `nu-data`   | `nu-spark-tmp-raw-<country>-<env>`                       | `nu-data-<env>` equivalent |
 
 **NOTE***
-  * `data-<env>` equivalent states that the bucket should be created
+
+* `data-<env>` equivalent states that the bucket should be created
     in the same region buckets under the `nu-data` account for that
     environment: `us-east-1` for `prod` and `us-west-2` for `staging`.
 
@@ -107,7 +111,8 @@ Currently, the following Access control list (ACLs) are applied:
 ```
 
 **NOTE**
-  * We block everything except public buckets because we need to access them across different accounts.
+
+* We block everything except public buckets because we need to access them across different accounts.
 
 Policies that are to be associated with any given bucket are defined in
 [iam-policies](https://github.com/nubank/iam-policies) and they are
@@ -126,7 +131,8 @@ nu-<data or country> serverless invoke iam-policies-put-bucket-policy \
 ```
 
 **NOTE**
-  * `"data" or <country>` provided the correct one based on where the bucket is defined.
+
+* `"data" or <country>` provided the correct one based on where the bucket is defined.
 
 ## Preparing Services
 
@@ -151,7 +157,8 @@ All services that are to be deployed in the new country must be compatible with
 the newly provided version of **common-etl-spec**.
 
 **NOTE:**
-  * You will notice on the **sachem** tests, which are the services where this
+
+* You will notice on the **sachem** tests, which are the services where this
   dependency needs to be bumped due to this modification.
 
 ## Preparing Itaipu
@@ -249,7 +256,6 @@ nu-$country ser curl get global veiga /api/version --env staging
 
 If this deployment runs correctly on **staging**, repeat this operation using the
 **prod** environment.
-
 
 ### Metapod modifications
 
@@ -468,7 +474,6 @@ nu-$country ser curl get $prototype alph /api/version --env staging
 If this deployment runs correctly on **staging**, repeat this operation using the
 **prod** environment.
 
-
 ### Spin Ouroboros
 
 _Ouroboros_ will be needed to act as the metadata storage for dataset series in
@@ -565,6 +570,7 @@ This section describes the deployment of the serving layer components
 in a new country.
 
 ### Spin Conrado
+
 ------------
 
 _Conrado_ acts like a rest interface, backed by a data storage, of part of the
@@ -699,6 +705,7 @@ If everything is working correctly, you can query _Conrado_ by using the id
 indicated on the `nu.data.co.datasets.infra.DummyServingLayerDataset` file.
 
 **NOTE:**
+
 * The id used on this request must be in lowercase!
 
 ```shell
@@ -715,22 +722,23 @@ the data indicated on `nu.data.co.datasets.infra.DummyServingLayerDataset`.
 We are only in the first stages of automating this part. In
 particular:
 
-  * The following commands do not faithfully represent the _current_
+* The following commands do not faithfully represent the _current_
     state for two reasons:
-      * At the moment, nothing prevents manual changing and there is
+  * At the moment, nothing prevents manual changing and there is
         no easy way to detect them
-      * Some small details are different
-  * They are not complete, yet: The role
+  * Some small details are different
+* They are not complete, yet: The role
     `rds-barragem-aurora-enhanced-monitoring` has been created manually.
     This role contains _only_ the following policy:
     `AmazonRDSEnhancedMonitoringRole`
 
 Prerequisites:
-  * You need the following temporary permissions
-      * `nu-<country> iam allow <aws-name> generic data-infra barragem-aurora-spin --until=1week --env prod`
-      * `nu-<country> iam allow <aws-name> generic data-infra barragem-aurora-enhanced-monitoring --until=1week --env prod`
-      * `nu-<country> iam allow <aws-name> write bucket nu-secrets-<country>-prod/barragem_secret_config.json --until=1week`
-  * Your AWS profiles should be correctly set up. This is also why we
+
+* You need the following temporary permissions
+  * `nu-<country> iam allow <aws-name> generic data-infra barragem-aurora-spin --until=1week --env prod`
+  * `nu-<country> iam allow <aws-name> generic data-infra barragem-aurora-enhanced-monitoring --until=1week --env prod`
+  * `nu-<country> iam allow <aws-name> write bucket nu-secrets-<country>-prod/barragem_secret_config.json --until=1week`
+* Your AWS profiles should be correctly set up. This is also why we
     do not use something like `nu aws ctl`: with profiles in place
     there is no need to (plus `nucli` doesn’t actually play well with
     roles, at the moment, forcing you to hard code the region).
@@ -746,7 +754,8 @@ aws --profile $country-$env \
 ```
 
 **NOTES:**
-  * `<vpc id>` should not be difficult to find. Look for something
+
+* `<vpc id>` should not be difficult to find. Look for something
     called `<env>-<color>-vpc`. At the time of this writing,
     [2020-11-03 Tue], the color is `blue`.
 
@@ -784,7 +793,8 @@ aws --profile $country-$env \
 ```
 
 **NOTES:**
-  * '[<subnet ids commalist>]' is still poorly defined. In Brazil and
+
+* '[<subnet ids commalist>]' is still poorly defined. In Brazil and
     Colombia we included all the subnets, but it’s probably not
     needed. This shouldn’t be a big security problem, because of the
     security group, but still.
@@ -849,16 +859,17 @@ aws --profile $country-$env \
 ```
 
 **NOTES:**
-  * The password must be saved under
+
+* The password must be saved under
     `nu-secrets-<country>-<env>/barragem_secret_config.json`. The
     contents has the following shape: `{"rdb-password": "<pwd>"}`.
-  * `--no-enable-iam-database-authentication` is needed because
+* `--no-enable-iam-database-authentication` is needed because
     Barragem still doesn’t support using IAM as an authentication
     mechanism.
-  * Some of the flags are repeated with both `create-db-cluster` and
+* Some of the flags are repeated with both `create-db-cluster` and
     `create-db-instance` and it’s probably not needed, but it doesn’t
     break anything, either.
-  * `<instance-type>` in a production setting should be something
+* `<instance-type>` in a production setting should be something
     equivalent to `db.r5.large`.
 
 ### Spin Barragem
@@ -919,10 +930,10 @@ to set up tasks definitions as such:
 - [Schedule segments for sharded prototypes](https://github.com/nubank/definition/blob/master/resources/co/tasks/barragem-process-next-segment-shards.edn)
 
 **NOTES:**
+
 * _Barragem_ will receive one schedule request for each DB specified on the
 tasks.
 * Make sure _Tempo_ is cycled after the new tasks are merged.
-
 
 ## Troubleshooting
 
@@ -934,6 +945,7 @@ step on their installation playbooks, and thus, prone to error. In this case, yo
 are going to see the following errors when spinning the services:
 
 (On _Metapod_)
+
 ```
 Caused by:
 clojure.lang.ExceptionInfo: Object pub/auth/sign-pem/2020-06-05T14:39:10.187-skXzvxxdl_wAAAFyhOvfbQ not found on s3 env prod
@@ -943,6 +955,7 @@ clojure.lang.ExceptionInfo: Object pub/auth/sign-pem/2020-06-05T14:39:10.187-skX
 ```
 
 (On _Tapir_ or _Conrado_)
+
 ```
 Caused by:
 clojure.lang.ExceptionInfo: Object pub/auth/sign-pem/2019-08-08T11:29:17.127-_X3TGFOydo0AAAFscP1_Sg not found on s3 env prod {:type :not-found, :details {:bucket "nu-keysets-co-prod", :key "pub/auth/sign-pem/20

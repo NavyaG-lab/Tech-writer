@@ -21,7 +21,6 @@ Looker deployment is managed by Looker folks, so in this case reach out to them 
 
 Also for the hourly alert, there’s a good possibility that this is temporary due to too many queries being run at that point and the error should go away by itself.
 
-
 ## Critical System Errors Alert
 
 System Alerts happen all the time but if this alert is fired there may be some deeper problems. Check if users are also reporting Looker issues on #data-help.

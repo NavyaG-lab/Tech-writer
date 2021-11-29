@@ -112,6 +112,7 @@ When your dataset series' schema has changed over time, you'll have to add metad
 3. Coerce values
 
 #### Transform values of existing attributes
+
 The engine looks for attributes with `transform` fields and applies
 the transforms to these fields.
 
@@ -129,6 +130,7 @@ purpose is to reconcile versions. Other logic can be implemented with
 a normal SparkOp consuming [one of the datasets output](#accessing-the-output-dataframes) from your `DatasetSeriesContract`
 
 #### Rename attributes
+
 The engine looks for attributes that can be renamed using their `as`
 field. In this example `ndex` becomes `index`, `user_id` becomes
 `user__id`, so that they match an attribute from the `contractSchema`:
@@ -268,7 +270,6 @@ Once all versions (including the contract) have been processed, the engine union
       }
     ```
 
-
 **NB: The deduplication step can be skipped by using `override val deduplicate = false` in the `DatasetSeriesContractOp` declaration**
 
 ### Final renaming
@@ -282,14 +283,13 @@ import common_etl.operator.dataset_series.DatasetSeriesAttribute
 // final dataframe
 val contractSchema = Set(
     DatasetSeriesAttribute("customer_id", LogicalType.UUIDType, isPrimaryKey = true)
-    	.as("customer__id"),
+     .as("customer__id"),
     DatasetSeriesAttribute("cpf", LogicalType.StringType)
-    	.as("id_number"),
+     .as("id_number"),
     DatasetSeriesAttribute("customer_name",
                            LogicalType.StringType)
 )
 ```
-
 
 ### `droppedSchemas`
 
@@ -411,7 +411,6 @@ If you want to identity schema mismatches for `alternativeSchemas`, specify your
 
 This will list the schema that Ouroboros has for each version of your dataset series.
 
-
 ### Troubleshooting dropped schemas
 
 Ideally, you'd want all datasets to be either processed normally, or intentionally dropped through the `droppedSchemas` attribute described above. If Itaipu is unable to match a given dataset against one of the schemas defined in the op, it will log a warning and ignore the dataset.
@@ -443,7 +442,6 @@ val contractSchema = Set(
                            isPii = true)
 )
 ```
-
 
 #### Definition of PII contract
 
@@ -487,8 +485,8 @@ object `MyOp` extends SparkOp {
   def inputs: Set[String] = Set(contractOpName)
 
   def definition(datasets: Map[String, DataFrame]): DataFrame = {
-  	datasets(contractOpName)
-    	.someOperation
+   datasets(contractOpName)
+     .someOperation
   }
 
 }

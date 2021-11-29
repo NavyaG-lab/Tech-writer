@@ -159,7 +159,6 @@ Can you add a tag to this PR? I will preemptively add it as -PR WIP for now. You
 
 Can you please add the tag `-PR Review Requested` when you are waiting for an itaipu reviewer to review your PR?
 
-
 ### Check if using current_date, current_timestamp
 
 Please don’t use current\_timestamp, current_date or any other non deterministic function in Itaipu. It breaks the assumption that sparkOps are pure functions and when there are errors and we need to reprocess something you will have wrong data.
@@ -238,9 +237,9 @@ Any user that has access to Itaipu, should be able to interact with `bors`. If y
 Existing reviewers: click here to make <user_name> a reviewer
 ```
 
-This will redirect, to a page: <https://bors.nubank.com.br/repositories/8/add-reviewer/<user_name>where> you can just hit `ok` to add the user.
+This will redirect, to a page: <<https://bors.nubank.com.br/repositories/8/add-reviewer/<user_name>where>> you can just hit `ok` to add the user.
 
-The user can also be added to the Reviewers list in the settings: https://bors.nubank.com.br/repositories/8/settings
+The user can also be added to the Reviewers list in the settings: <https://bors.nubank.com.br/repositories/8/settings>
 
 Ask #squad-data-access for help if you can't be added to reviewers list.
 
@@ -274,7 +273,7 @@ Itaipu uses a [CODEOWNERS](https://github.com/nubank/itaipu/blob/master/.github/
 
 If you want to become an itaipu reviewer, the steps you must follow are:
 
-* Do a self-assessment about how much you feel comfortable reviewing a PR by filling up some questions in this forms (https://forms.gle/ptkK1ByKpjRChMSKA)
+* Do a self-assessment about how much you feel comfortable reviewing a PR by filling up some questions in this forms (<https://forms.gle/ptkK1ByKpjRChMSKA>)
 * Pair up with another reviewer for one session of the daily PR review rotation
 * Review PRs on your own for one session of the daily PR review rotation
 * Expect to be required to participate on the review rotation for at least a month
@@ -327,15 +326,15 @@ In accordance to the number of people, Data Consumption requested some of the cu
 
 * Identification - The candidates applications were collected through a formulary simply collecting simply the nubanker’s company e-mail and the GitHub username that should receive the reviewer’s scope;
 
-* Requirements - We required that each candidate should have at least 6 months of Nubank so they would have context on Itaipu’s usage. 
-  Next, we analysed the candidate's contributions to the repository, ie. **amount of PRs opened and reviews made**: candidates should have more than a total of 100 contributions; 
+* Requirements - We required that each candidate should have at least 6 months of Nubank so they would have context on Itaipu’s usage.
+  Next, we analysed the candidate's contributions to the repository, ie. **amount of PRs opened and reviews made**: candidates should have more than a total of 100 contributions;
   In case candidates do not make the 100 cut, we request for a vouch in the #itaipu-reviewers slack channel.
 
 * Responsibility - The responsibility of an Itaipu Reviewer as shared with the candidates, stating that:
 
-    - They will be required to be on-call to review cross-company PRs and help keep the code quality in Itaipu;
+  - They will be required to be on-call to review cross-company PRs and help keep the code quality in Itaipu;
 
-    - Itaipu Reviewers are also expected, but not obligated to instruct new reviewers in present and future cohorts - just as this one was applied.
+  - Itaipu Reviewers are also expected, but not obligated to instruct new reviewers in present and future cohorts - just as this one was applied.
 
 * Powers - As Itaipu Reviewers are responsible, they also have powers:
   be able to review PRs following the practices described in Reviewing and Merging a PR on Itaipu doc. Reviewers can also review PRs outside of the on-call rotation. This can help speed up the time to merge PRs in their BU.
@@ -346,12 +345,12 @@ In accordance to the number of people, Data Consumption requested some of the cu
 
 The training was composed by 2 mentoring sessions focused on how to review Itaipu’s pull requests (PRs) and when to request changes with the candidate’s buddy.
 
-In the first session, the mentor will guide the session walking through the PR reviewing process; 
-the second session is guided by the reviewer candidate, where they have the chance to debate cases with their mentor and act as a reviewer. 
+In the first session, the mentor will guide the session walking through the PR reviewing process;
+the second session is guided by the reviewer candidate, where they have the chance to debate cases with their mentor and act as a reviewer.
 
 Obs: In this step, only the mentor has the Itaipu Reviewer scope; with that, in the second session, the candidate's PR approval is still not official, so the mentor should approve/disapprove the PR as well.
 
-**Support material** 
+**Support material**
 
 * [A guide to Itaipu Reviewers Buddies](https://nubank.atlassian.net/wiki/spaces/DC/pages/13717340213)
 
@@ -360,6 +359,7 @@ Obs: In this step, only the mentor has the Itaipu Reviewer scope; with that, in 
 #### 4. Evaluating Itaipu Reviewer Candidates
 
 After the training sessions, we request that mentors to evaluate candidates in 5 dimensions, with grades ranging from 1 to 5:
+
 - Code best practices;
 - Itaipu ecosystem;
 - CI/CD;
@@ -380,7 +380,7 @@ After concluding all the steps in the admission process, the candidates [request
 
 * PR Review Hero Daily rotation to become an on-call reviewer
 
-### Next-Steps as a Itaipu Reviewer:
+### Next-Steps as a Itaipu Reviewer
 
 The on call rotation schedule is organized using the Ops Genie App. The reviewers save approximately 2 hours to review PRs. The frequency varies according to the number of reviewers active in the on-call PR Review Hero Daily rotation and it usually ranges from once every 3 to 4 weeks.
 

@@ -124,6 +124,7 @@ Note that while doing this you will probably want to keep the machine up by disa
 ### Updating Mesos IAM Roles
 
 IAM roles are stored in a separate project [iam-policies](https://github.com/nubank/iam-policies), to update them you need to change the file that corresponds the slave you want to change (or change all of them) files are:
+
 * [Mesos Fixed Role](https://github.com/nubank/iam-policies/blob/master/role-lists/mesos-fixed.json)
 * [Mesos On-Demand Role](https://github.com/nubank/iam-policies/blob/master/role-lists/mesos-on-demand.json)
 * [Mesos Master Role](https://github.com/nubank/iam-policies/blob/master/role-lists/mesos-master.json)
@@ -139,9 +140,11 @@ nu iam create roles stable mesos-fixed --env cantareira
 Done, now the iam-role for **mesos-fixed** in the stack **stable** is updated.
 
 ### Cycling a zookeeper instance
+
 Sometimes we might need to swap an instance in zookeeper cluster, without changing the configuration. This need can occur, for example, when we are notified AWS will retire a node.
 
 Zookeeper can handle node outages fairly well, so there should be no need to back up anything. The operation will be monitored through Exhibitor - a "co-process for instance monitoring, backup/recovery, cleanup and visualization". The order of operation is as follows (pls read through it all first to avoid confusion):
+
 1. Go to exhibitor UI ([link](http://cantareira-zookeeper.nubank.com.br:8080/exhibitor/v1/ui/index.html) to cantareira) - in the "Control Panel" you will see the list of cluster nodes. They should all be green and "serving". To the right the Hostname for each instance you'll see a link to the Exhibitor for that instance. For consistency's sake We advise you open Exhibitor for each instance and check that the "Config" part is the same. What is especially important is the "Automatic Server List Add/Remove" has to be _enabled_. This will allow the cluster to rebalance once the new node is added / old node is removed.
 2. In the Exhibitor, take note of what the current server list is: Config -> Ensemble -> Servers
 3. Once you've proved that all nodes are up and config is consistent across the cluster (step 1), _and_ you've checked that an autoscaling group is attahced to the Cloudformation config (for cantareira, the ASGroup should be [here](https://console.aws.amazon.com/ec2autoscaling/home?region=us-east-1#/details/cantareira-green-zookeeper-d-CantareiraGreenD-6F5BFD3DZ9HZ?view=details)) you can terminate the instance in question.

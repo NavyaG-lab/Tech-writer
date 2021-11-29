@@ -6,7 +6,7 @@ owner: "#data-infra"
 
 ## Context
 
-### Is immediate action required?
+### Is immediate action required
 
 First the good news: None of the alerts listed below require immediate action!
 There are no time-critical actions that need to be taken. Everything is
@@ -31,7 +31,6 @@ the datasets.
 NOTE: That means that old alerts stay around in those datasets.  Don't be
 overwhelmed by thousands of old alerts. Just query the data to get the newest
 alerts and check those out.
-
 
 ## Timing dataset fires
 
@@ -83,12 +82,14 @@ LIMIT 10000
       Note: This dataset has a different grain, and thus cannot be joined
       directly with the timing dataset. Comparing reextraction date, database
       and prototype should let you identify the corresponding extractions:
+
       ```sql
       SELECT *
       FROM `nu-br-data.series_contract.correnteza_reextractions`
       order by reextracted_at desc
       LIMIT 10000
       ```
+
    2. Check the `datomic-reextract-serve-data` dataset with databricks to see
       if the data was not served in cases where it wasn't reextracted. If it
       was served at an earlier point in time but wasn't reextracted, you know
@@ -97,7 +98,6 @@ LIMIT 10000
       with our joins in the base stage. This should show up in as a
       [completeness alert](#completeness-dataset-fires) already.
 3. Else: Escalate
-
 
 ## Duplication dataset fires
 
@@ -157,7 +157,6 @@ LIMIT 10000
 
 3. Else: Escalate
 
-
 ## Completeness dataset fires
 
 NOTE: The completeness alerts dataset (BR) always contains 944 rows from an excision
@@ -193,7 +192,6 @@ LIMIT 10000
    1. If you can find them, maybe the sparkOp logic to find them automatically
       needs an update.
    2. If you cannot find them, escalate
-
 
 ## Failures we had in the past (which might be recurring)
 

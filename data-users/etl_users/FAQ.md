@@ -4,7 +4,7 @@ owner: "#data-infra"
 
 # Frequently Asked Questions
 
-## Compilation failed due to something is missing from the classpath message. Why is this happening?
+## Compilation failed due to something is missing from the classpath message. Why is this happening
 
 When working with Itaipu, it's possible that you will stumble upon this message at some point.
 

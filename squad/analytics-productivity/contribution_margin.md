@@ -15,11 +15,9 @@ This is also known as "segmented profitability" and it is a very powerful tool a
 
 Because contribution margin incorporates data from sources that are infrequently updated (e.g., monthly cycle for Matera), it requires periodic maintenance to remain accurate.
 
-
 ## How to maintain on a monthly basis
 
 The contribution margin dataset requires the following steps to be performed after the accounting books are closed each month (typically after the 4th of the month).
-
 
 ### Matera Exports
 
@@ -41,7 +39,6 @@ The contribution margin dataset requires the following steps to be performed aft
   * You'll notice that this notebook prepares the actual parquet file as well as a test version.  The test version of the static file does not need to be updated with every Matera update.  
   * The AWS copy operations are commented because they should be run using the AWS command line interface from your terminal.
 
-
 ### HR Inputs
 
 Ask the People & Culture squad for these inputs (or get them from the VAMP excel file).
@@ -51,7 +48,6 @@ Ask the People & Culture squad for these inputs (or get them from the VAMP excel
 * Example: `s3://nu-spark-us-east-1/non-datomic/static-datasets/contribution-margin-hr-inputs-csv/hr_input.csv`
 * [Databricks Workbook](https://nubank.cloud.databricks.com/#notebook/152166)
 
-
 ### Contribution Margin Finance Inputs
 
 Get these inputs from the latest VAMP excel file.
@@ -59,7 +55,6 @@ Get these inputs from the latest VAMP excel file.
 * [Google sheet](https://docs.google.com/spreadsheets/d/17tDi9mdhn1cRH0PxpY6tvYi3LRkUZbfCEY6jX9AaTko)
 * [Format](https://github.com/nubank/itaipu/blob/master/src/main/scala/etl/static/package.scala#L234)
 * Example: `s3://nu-spark-us-east-1/non-datomic/static-datasets/contribution-margin-finance-inputs/report_date=2017-08-14/contribution_margin_finance_inputs.csv`
-
 
 ### Finance Chart of Accounts
 

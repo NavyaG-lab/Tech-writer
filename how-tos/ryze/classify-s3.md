@@ -61,13 +61,14 @@ The `classification.edn` will look like the following samples:
 - `:paths` - One bucket may store data with different use cases. To improve the classification granularity of a bucket, you are allowed to define the use cases based on the path. You can add paths of different folders within the bucket and also of specific files in it.
   - `:path` - path inside the bucket
     - `:description` - description about the data is being stored
-    - `:compliance :tags` - the classification itself, what kind of data (tags) we have, tags are defined for each country and you can find the tags for Brazil at https://github.com/nubank/ryze/blob/master/resources/br/compliance/tags.edn.
+    - `:compliance :tags` - the classification itself, what kind of data (tags) we have, tags are defined for each country and you can find the tags for Brazil at <https://github.com/nubank/ryze/blob/master/resources/br/compliance/tags.edn>.
 
 ### Bucket categories
 
-In order to be compliant with data protection laws, we must have a data inventory. We also need to provide some rights to the customers/prospects over their personal data, for instance, access to their data and deletion. Because S3 may store both structured and unstructured data, and Nubank has different use cases, we could not define a single solution to provide access and deletion for all the buckets. Therefore, we decided to break into different categories so that we could have a different solution for each one. 
+In order to be compliant with data protection laws, we must have a data inventory. We also need to provide some rights to the customers/prospects over their personal data, for instance, access to their data and deletion. Because S3 may store both structured and unstructured data, and Nubank has different use cases, we could not define a single solution to provide access and deletion for all the buckets. Therefore, we decided to break into different categories so that we could have a different solution for each one.
 
 Current categories:
+
 - `:backup` - buckets used for backup
 - `:etl` - buckets used by data-infra on our ETL/data lake
 - `:infra` - buckets that store data related to infrastructure
@@ -80,7 +81,6 @@ Current categories:
 - `:third-party-sharing` - buckets used for sharing/exchanging data with third-parties
 - `:ad-hoc` - other cases like buckets owned by squad to store/share some data in the squad
 
-
 Depending on the category, we'll have different processes for deleting the data if necessary. When we talk about deletion for the `:service` category, we will delegate the responsibility to the owner of the service and for the `:etl` category, data-infra has provided some solutions already.
 
 We may have different cases that are tricky, and we have some samples that may help yours:
@@ -92,45 +92,56 @@ If the bucket is being used by a service, you can probably categorize it with `:
 
 ### Tags
 
-Tags are used to classify the path in the bucket if it has [PII data](https://nubank.atlassian.net/wiki/spaces/DP/pages/1818132529/PII+at+Nubank) in it. We have a file that contains all available tags in each country([BR](https://github.com/nubank/ryze/blob/master/resources/br/compliance/tags.edn), [CO](https://github.com/nubank/ryze/blob/master/resources/co/compliance/tags.edn) and [MX](https://github.com/nubank/ryze/blob/master/resources/mx/compliance/tags.edn)). 
+Tags are used to classify the path in the bucket if it has [PII data](https://nubank.atlassian.net/wiki/spaces/DP/pages/1818132529/PII+at+Nubank) in it. We have a file that contains all available tags in each country([BR](https://github.com/nubank/ryze/blob/master/resources/br/compliance/tags.edn), [CO](https://github.com/nubank/ryze/blob/master/resources/co/compliance/tags.edn) and [MX](https://github.com/nubank/ryze/blob/master/resources/mx/compliance/tags.edn)).
 
 We recommend taking the time and try to identify what kind of PII data is on the bucket and then use one of the available tags for it, if there's not a appropriate tag, you can create one([check the rules here](#rules-to-follow-while-naming-tags)).
 
-If the above is not possible, since there maybe be ambigous tags(we're working on improving this) or it's too difficult to identify which kind of PII data is on the bucket, you can use the 
+If the above is not possible, since there maybe be ambigous tags(we're working on improving this) or it's too difficult to identify which kind of PII data is on the bucket, you can use the
 `:unknown-pii` tag.
 
 ## Step by step classification
 
 #### 1. Clone Ryze repository
+
 ```
 nu proj clone ryze
-or 
+or
 git clone git@github.com:nubank/ryze.git
 ```
+
 - If you've cloned the project before, make sure you executed the `git pull` in the `master` branch before creating the new one.
 
 #### 2. Create a new branch
+
 - Each branch should have the prefix identifying the person(username) who is classifying the database.
+
 ```
 git checkout -b {username}/customer-classification
 ```
+
 #### 3. Classifying the bucket
+
 - Locate the S3 bucket that needs to be classified.
-- Validate the values of the [keys](#details-about-each-key) in the edn file and correct them if necessary. 
+- Validate the values of the [keys](#details-about-each-key) in the edn file and correct them if necessary.
 - In `:paths`, we may have different folder/files with different classifications; it would be good to have a path here for each of them. If there is just one use case or you don't know which folder/file is PII, use the default `"*"` for the whole bucket. Keep in mind that the more specific you are on classifying, the better it will be to access or delete the file when required.
 - Check [here](#tags) if you have any questions about what tags to use in `:paths :compliance :tags`.
 - Make sure to update `:validated` to `true` once you have classified the bucket.
 
 #### 4. Make the Pull Request
+
 - Commit the changes:
+
 ```
 git add .
 git commit -m "write a message for the commit"
 ```
+
 - Push it to your branch:
+
 ```
 git push -u origin <branch-name>
 ```
+
 - Create the pull request.
 - When you finish, the pull request will be assigned to Ryze reviewers for some of them review your changes and approve it.
 
@@ -190,37 +201,41 @@ This is the view of the bucket on AWS S3:
 ```
 
 ---
+
 ## Rules to follow while naming tags
+
 - Lower case
 - No spaces
 - Always start with ":" (an example is :tax-id)
 - Be aware that several tags were already created, they must be reused as possible:
-    - BR - https://github.com/nubank/ryze/blob/master/resources/br/compliance/tags.edn
-    - MX - https://github.com/nubank/ryze/blob/master/resources/mx/compliance/tags.edn
-    - CO - https://github.com/nubank/ryze/blob/master/resources/co/compliance/tags.edn
+  - BR - <https://github.com/nubank/ryze/blob/master/resources/br/compliance/tags.edn>
+  - MX - <https://github.com/nubank/ryze/blob/master/resources/mx/compliance/tags.edn>
+  - CO - <https://github.com/nubank/ryze/blob/master/resources/co/compliance/tags.edn>
 - After the tag is created, add it in the `data-inventory` [action](https://github.com/nubank/ryze/blob/master/resources/br/compliance/actions.edn#L206)
 
 ## FAQ
 
-## What if the bucket is not from my squad?
+## What if the bucket is not from my squad
 
 We have tried to set the squad based on what was defined in iam-policies/definition, but we may have some errors. If you encounter any issues, please reach out to us at #s3-data-classification slack channel.
 
-## What if we do not use the bucket anymore?
+## What if we do not use the bucket anymore
 
 Currently we are not enforcing the deletion of buckets that are no longer used, but we plan to work on this in the future. If you are not using the bucket, delete it and then do not classify it. If you don't classify, then the bucket will be removed from Ryze. Incase you are not planning to delete it, please do the classification. In any case send us a message on #s3-data-classification Slack channel, so we can be aware of these cases :).
 
-## What if I have a use case that may have a different category?
+## What if I have a use case that may have a different category
 
 The categories were based on our current knowledge and discussions we had with some squads. If you have any special cases that require access, deletion or any security concern, please send us a message on #s3-data-classification Slack channel explaining your use case so that we can evaluate.
 
-## What if I have a bucket with multiple categories?
+## What if I have a bucket with multiple categories
 
 If your bucket has a service that is responsible to store/read data from a bucket, then the given bucket falls under `:service` category. If your bucket stores general data from `infra` and `secret` then the given bucket falls under  `:secret` category.
 If you're not finding the right category or have further questions, please send us a message on #s3-data-classification explaining your use case.
 
 ## Does the classification have any side effects on the bucket? (e.g. policy change)
+
 In the current version, the classification will not change the bucket settings.
 
 ## Help
-If you need some help about the classification that was not covered by the questions above, for instance "which tag should I use?", send a message on #data-classification Slack channel. 
+
+If you need some help about the classification that was not covered by the questions above, for instance "which tag should I use?", send a message on #data-classification Slack channel.

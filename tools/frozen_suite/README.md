@@ -4,10 +4,10 @@ owner: "#squad-analytics-productivity"
 
 # Frozen Suite
 
-Frozen Suite is a group of tools used to make the lives of Itaipu contributors easier and more productive, 
-by helping them on creating tables, 
-writing down complex queries, 
-cataloging attributes and 
+Frozen Suite is a group of tools used to make the lives of Itaipu contributors easier and more productive,
+by helping them on creating tables,
+writing down complex queries,
+cataloging attributes and
 defining attribute relationships.
 
 - **Ice Mold**: defining attributes and attribute relationships (**catalog**)

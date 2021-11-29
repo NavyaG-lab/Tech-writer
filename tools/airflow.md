@@ -26,11 +26,13 @@ Table of contents
 Airflow logs are exported to [Splunk](https://nubank.splunkcloud.com/en-US/app/search/search). They can be consulted with the following query:
 
 #### BR
+
 ```
 index=cantareira source=airflow
 ```
 
 #### Data
+
 ```
 index=prod-data source=airflow
 ```
@@ -40,6 +42,7 @@ index=prod-data source=airflow
 SSH into the instance using the docs [here](../on-call/data-infra/ops_how_to.md#ssh-to-a-service)
 
 Once you are logged into the instance you can run the following to inspect the logs:
+
 - Logs of the scheduler: `journalctl -u af-scheduler`
 - Logs of the webserver: `journalctl -u af-webserver`
 
@@ -101,7 +104,8 @@ When a DAG is deployed while another is running, airflow will use the current st
 To update Airflow you need to first bump the `base-airflow` [Dockerfile](https://github.com/nubank/dockerfiles/blob/master/base-airflow/Dockerfile), merge it and wait until the GoCD pipeline is done building and publishing it. Once it is done, you need to change its version on [deploy](https://github.com/nubank/deploy/blob/master/lib/recipes/airflow.rb#L21). You can find the latest tag by running `nu registry latest-tag nu-base-airflow`.
 
 *Before proceeding further*. A couple of things to remember:
-  * Airflow does not have any support for high availability nor it
+
+* Airflow does not have any support for high availability nor it
     handles the update process very well. In particular, the new
     version will retry the jobs that were already running and some of
     these jobs, like machine learning models, will start from zero and
@@ -109,7 +113,7 @@ To update Airflow you need to first bump the `base-airflow` [Dockerfile](https:/
     good time to update Airflow in order to minimize disruptions and
     delays. At the moment, a good moment is when `itaipu-serving` is
     running.
-  * We are updating Airflow _service_, not the database. This means
+* We are updating Airflow _service_, not the database. This means
     that, during the operations described below, at some point, there
     will be _two_ Airflow instances interacting with the same
     database. Nothing bad will happen, provided that you don’t keep
@@ -121,7 +125,7 @@ You can now open the `deploy` console in the cantareira environment (`cd $NU_HOM
 `Airflow.create!("x")`
 
 Wait until it's created, make sure you can access (might take a while given DNS propagation times)
-https://cantareira-x-airflow.nubank.com.br/admin/ and then you can:
+<https://cantareira-x-airflow.nubank.com.br/admin/> and then you can:
 
 * Test the new deployment by re-running one of the already finished nodes, but first, make sure you understand what the implications of re-running a DAG are: [triggering a DAG vs clearing a DAG and its tasks](#triggering-a-DAG-vs-clearing-a-DAG-and-its-tasks). **It is recommended to re-run a DAG that has minimal impact on the daily run**, but at the same time, we need to test the correctness of the new updated Airflow, and for that reason, it is important that this DAG is scheduled by Airflow (to verify Airflow correctness) and submits and waits for an Aurora job (to verify Aurora correctness). A DAG like `data-announcements` might be what you are looking for here.
 
@@ -211,7 +215,7 @@ Re-running a node by **clearing** its status represents a very different behavio
 
 As we covered before, triggering a DAG (**not** clearing a DAG), will create a totally new DAG run; We can think of this as creating a new *dagao* or a new *daguito* run. One of the first things we do during the first task in one of the DAGs is creating a new Metapod transaction, so yes, creating a new DAG run will result in creating a new transaction, which is something that we do not want, as it might confuse our users on why we have multiple production transactions for the same day.
 
-### What about the `Downstream` and `Recursive` options?
+### What about the `Downstream` and `Recursive` options
 
 - `Downstream` :: apply the same action to all the nodes downstream to
   the current one.

@@ -36,24 +36,31 @@ owner: "#data-infra"
 * Include time lag calculations for date/time columns
 
 ## Using strings vs. references to columns and datasets
+
 Because column names and dataset names are tested in the Itaipu integration test, always use the more readable string (e.g., `"dataset/prospect-key-integrity"`) rather than direct references between classes (e.g., `ProspectKeyIntegrity.name`). As an added bonus, this makes iteration in Databricks much easier.
 
 ## UDFs
+
 A UDF cannot depend on a `def` - it must always depend on a `val` (and this applies transitively). This is commonly the cause of "Task not serializable" on DataBricks. Alternatively, extending Serializable may fix this problem. You may get the same error message if you create a UDF that depends on Clojure libraries, such as [here](https://github.com/nubank/itaipu/blob/0a89b218ce894afd51dbd66f4184de846207a6f5/src/main/scala/etl/dataset/BillingCycles.scala#L113).
 
 ## Dot or not dot syntax
+
 Use the "SQL style" syntax with parentheses but no dots ONLY in the definition of a SparkOp. In small transformation defs, use the dot syntax.
 
 ## Pivots
+
 Pivoting without explicitly specifying the possible values of the pivot column cannot work in the context of the "fake" query plan test, because the test doesn't have any values. So downstream manipulation of the columns resulting from a pivot will appear to be invalid due to the "missing" columns.
 
 ## Structuring SparkOps
+
 Prefer a structure where definition contains minimal logic - just a simple pipeline of transforms with a select at the end which explicitly whitelists the expected output columns. Don't test the definition directly on a unit basis, but test it via a real DataBricks run. Test each transform function individually in unit tests.
 
 ## Transform Test Granularity
+
 Unit test every function that is explicitly called from a definition. Avoid transform functions for trivial joins. It's ok to have private defs that are not unit tested as long as they are not directly referenced from definition, and this is preferable to having a proliferation of trivial transforms (given the verbosity of unit tests is similar for trivial and non-trivial transformations).
 
 ## Unit Test Style
+
 Create each input dataframe using a `Seq` of tuples followed by a `.toDF` to provide column names. Create separate vals for `expected` and `result`. Prefer selecting only the relevant primary key column and new or modified columns from the result, so you only need to type these columns for the expected (this also helps with future test maintenance).
 
 ## Troubleshooting Tests

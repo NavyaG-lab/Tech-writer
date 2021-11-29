@@ -81,6 +81,7 @@ If you want to read more about inequality joins, check [here](https://medium.com
 Self joins (joining a table on itself) are innefficient in Spark, because contrary to the common sense, Spark ends up applying all transformations defined before the self join twice (redundant calculation).
 
 #### How to solve it
+
 Some considered approaches would be:
 
 - Replacing self join logic with window functions, when possible
@@ -107,9 +108,11 @@ The usual way to solve this is to put everything before the self-join into its o
 ### 4. UDFs
 
 #### Problem
+
 UDFs are not optimize-able by the Spark engine, and, if heavy, can lead to degradation on performance.
 
 #### Solution
+
 Use Spark standard functions (functions that live on `org.apache.spark.sql.functions._`) as much as possible. Spend some time rethinking your logic: could it be done without your UDF? Your SparkOp will certainly benefit from that.
 
 #### Wait, but why
@@ -119,6 +122,7 @@ Spark has a lot of stuff built-in that helps it to do things as efficiently as p
 ### 5. Spark Actions
 
 #### Problem
+
 This is tightly connected not to spark but to the way we run SparkOps on our ETL. One of the principles we follow is that SparkOps need to be lazily evaluated, meaning that from the beggining to the end of the code, no evaluation needs to be done (i. e., no references to the real data that is represented by a DataFrame). Some of the common Spark Actions are:
 
 - `.count` In order to get the number of rows of a DataFrame, you need to access the "real data"
@@ -127,7 +131,9 @@ This is tightly connected not to spark but to the way we run SparkOps on our ETL
 - `.pivot(...)` without passing a list of columns to be pivotted. If you don't pass this argument, Spark will try to access the "real data" in order to do the pivotting
 
 #### Solution
+
 This needs a case-by-case approach, because you need to understand why exactly you are relying on the real data to do whatever you are trying to do. In most of the cases this is avoidable, but you can always ask #data-help for guidance on how to achieve your objectives without violating this constraint
 
 #### Wait, but why
+
 Having lazily evaluated SparkOps reduces complexity on the ETL and increases reliability. By having this guarantee, the infrastructure can have total control on when the SparkOp is actually evaluated, guaranteeing that the whole environment is ready and correctly configured at the right time.

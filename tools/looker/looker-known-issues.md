@@ -4,7 +4,6 @@ owner: "#data-access"
 
 # Known Issues
 
-
 ## `aml_tintin__investigation_actions`
 
 Reported on [this](https://nubank.slack.com/archives/C06F04CH1/p1600982483038800) Slack thread on #data-help.

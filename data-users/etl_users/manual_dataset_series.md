@@ -6,7 +6,6 @@ owner: "#data-infra"
 
 Manual dataset series allows you to periodically ingest non-service (i.e data not originated on our services) generated data into ETL. Many users of Nubank's data platform need to get slowly changing adhoc data into the ETL.
 
-
 ---
 
 ## Manual dataset series ingestion - new feature release on 25/05/2021
@@ -117,7 +116,6 @@ The way you prepare data is same for both the workflows - new and old workflow.
 1. Place your parquet file on s3 (e.g., `s3://nu-tmp/your.name/my-dataset`) and place your logical type json schema in the same directory and name it `schema.json` (e.g., `s3://nu-tmp/your.name/schema.json`)
 
 2. Note that these files should be on a `nu-tmp` bucket of the country where you want to create the manual series. Examples of buckets: in BR `nu-tmp`, in MX `nu-tmp-mx`
-
 
 #### Creating the Parquet file
 
@@ -263,7 +261,6 @@ dbutils.fs.rm(schemaFilePath)
 
     - Run the info command again to see that your dataset was added `nu-<country> dataset-series info my-series`.
 
-
 ### Creating dataset series contract op for new dataset series
 
 [Follow these instructions](dataset_series.md#creating-a-new-dataset-series) but be sure it set the `seriesType` to `Manual` in the contract SparkOp (`override val seriesType: SeriesType = SeriesType.Manual). This step remains same for both the workflows i.e. new and old workflow.
@@ -295,17 +292,20 @@ Following are the possible issues you may encounter with the new workflow:
 ### Lambda execution time-out error
 
 #### Reason
+
 AWS lambdas have a known limitation, they can only run for 15 minutes. If the lambda execution time takes longer than 15 mins then there could be a timeout error.
 
 One possible reason for Lambda execution time-out is having a large dataset file, because of which an S3 file transfer takes more time to finish copying files.
 
 #### Logs
+
 You can view the lambda logs by running `nu-br serverless tail manual-dataset-series-ingestor` command in another terminal.
   
 #### Solution
+
 If your file size is too large, break your large file into smaller chunks of files.
 
-### How can I check if the append was successful?
+### How can I check if the append was successful
 
 To check if the append was successful, the user can use the `nu dataset-series info <series-name>`.
 
@@ -320,7 +320,6 @@ When you run the append command, if the response you encounter is 401 status cod
 Run the command `nu-br sec scope show <username> --env prod` to check if you have required scopes to append the data. For eg, `nu-br sec scope show shwetha.thammaiah --env prod`.
 
 The command should return the result -  `Current scopes for <username> "admin manual-dataset-series-user"`. If you don't have all the required scopes, refer to the _*[Required access permissions](#required-access-permissions-before-appending-your-dataset)*_ section.
-
 
 ### 403 Forbidden
 

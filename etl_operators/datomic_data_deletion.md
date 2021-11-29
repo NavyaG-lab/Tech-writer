@@ -54,7 +54,6 @@ A few notes:
    to take are documented within the notebook and need to be respected when
    executing it.
 
-
 ## Re-extract the Datomic log segments in Correnteza
 
 [Correnteza](https://github.com/nubank/correnteza) is the service at

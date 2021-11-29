@@ -12,7 +12,6 @@ owner: "#data-customer-success"
 
 ## [Looker](https://docs.google.com/document/d/1By4GjD9jIw---S61Xfz_T740t1ibOAfM4kOgRcW1Pxk/edit#heading=h.jjxrrjr7pytv)
 
-
 ## [AWS](https://docs.google.com/document/d/1By4GjD9jIw---S61Xfz_T740t1ibOAfM4kOgRcW1Pxk/edit#heading=h.y4tax24n4hlo)
 
 [What are the AWS accounts/countries?](https://docs.google.com/document/d/1By4GjD9jIw---S61Xfz_T740t1ibOAfM4kOgRcW1Pxk/edit#heading=h.y4tax24n4hlo)
@@ -31,6 +30,7 @@ owner: "#data-customer-success"
 [How do I use Cyberduck with AWS?](https://docs.google.com/document/d/1By4GjD9jIw---S61Xfz_T740t1ibOAfM4kOgRcW1Pxk/edit#heading=h.y4tax24n4hlo)
 
 ## [ETL](https://docs.google.com/document/d/1By4GjD9jIw---S61Xfz_T740t1ibOAfM4kOgRcW1Pxk/edit#heading=h.kwtxv0u2zcl5)
+
 [I created a dataset called dataset/my-dataset (MadrugaV1Dataset.scala). The PR was merged 2 days ago but I still can't find the dataset on Databricks. How can I trace what might have gone wrong?](https://docs.google.com/document/d/1By4GjD9jIw---S61Xfz_T740t1ibOAfM4kOgRcW1Pxk/edit#heading=h.kwtxv0u2zcl5)
 
 ## [Manual dataset series](https://docs.google.com/document/d/1By4GjD9jIw---S61Xfz_T740t1ibOAfM4kOgRcW1Pxk/edit#heading=h.x7zz0tk7dvhv)

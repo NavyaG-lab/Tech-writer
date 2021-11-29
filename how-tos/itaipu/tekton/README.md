@@ -25,7 +25,7 @@ As soon as the tasks start, they will be updated in the Checks tab on the Pull R
 
 On the Checks page (image above), we can navigate through the tasks and visualize the details for each one of them. The task's details contain the steps, params, and the configuration defined for it at the moment of the execution.
 
-## How to check the logs?
+## How to check the logs
 
 Logs are available for each step of each task. To access them, click on the link in step name, and it will redirect to the Splunk page with the query related to this specific step.
 
@@ -98,11 +98,11 @@ You can also list all running containers for the pods for a revision:
 itaipu-run-2ck9f-build-common-etl-unit-tests-mt88b-pod-s62g6:
 itaipu-run-2ck9f-build-sh7qz-pod-lvb5n:
 itaipu-run-2ck9f-build-unit-tests-2g45b-pod-gzb8t:
-itaipu-run-2ck9f-common-etl-integration-test-5cdc2-pod-l9sbk:	step-common-etl-integration-tests,
+itaipu-run-2ck9f-common-etl-integration-test-5cdc2-pod-l9sbk: step-common-etl-integration-tests,
 itaipu-run-2ck9f-common-etl-unit-tests-mpnwh-pod-wvn4t:
 itaipu-run-2ck9f-contracts-tests-9swnz-pod-f7xcj:
-itaipu-run-2ck9f-formatting-prggd-pod-znrqg:	step-formatting,
-itaipu-run-2ck9f-inop-lgpd-all-dataset-series-attributes--mwckp:	step-checkout, step-inop-lgpd-all-dataset-series-attributes-classified, step-restore-cache,
+itaipu-run-2ck9f-formatting-prggd-pod-znrqg: step-formatting,
+itaipu-run-2ck9f-inop-lgpd-all-dataset-series-attributes--mwckp: step-checkout, step-inop-lgpd-all-dataset-series-attributes-classified, step-restore-cache,
 [...]
 ```
 
@@ -125,7 +125,6 @@ into the pod and use the standard java tools to collect a thread dump:
 
 The thread dump file can then be inspected on the local machine to analyse the
 JVM situation.
-
 
 ## I have read the deep dive and still need more information
 

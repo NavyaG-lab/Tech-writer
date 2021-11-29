@@ -337,7 +337,6 @@ test too during local development to see if your changes check out.
 [See here how to do it](#sanity-checks-How-do-i-know-everything-worked)
 It will be quick, we promise!
 
-
 ### Set up the wiring
 
 **Bonus points**: If the package file listing your original SparkOp is under
@@ -396,7 +395,6 @@ contain ops from other squads. Again, we trust that users can make more
 well-informed decisions on what to group in a bundle than we can with top-down
 rules.
 
-
 ### Let itaipu know about your bundles
 
 In the same package file within itaipu, add a new attribute that works like
@@ -418,7 +416,7 @@ Lastly, remove the op from the `allOps` attribute. The compiler should already
 complain that it now doesn't contain only sparkOps anymore but also a bundleop.
 Make it happy again. [Example PR: Remove old op from old structure](https://github.com/nubank/itaipu/pull/21499/files#diff-20c1a8d741f0e436ff150c24c76d19bc2c05d566a02a523cd0d7337fb38a4413)
 
-### Sanity checks: How do i know everything worked?
+### Sanity checks: How do i know everything worked
 
 Here is a list of things to do/check:
 
@@ -449,7 +447,6 @@ You have two options:
 * From the itaipu root folder in your terminal, run
   `sbt "; project [your-project-name-with-dashes]; test; it:test"`
 
-
 If this works, you can push your PR. If the integration tests in itaipu work on
 the CICD during the PR you should be good to merge.
 
@@ -465,7 +462,7 @@ Dataset usage restriction rules depend on the name of the datasets and contracts
 
 In the case of the BundleOp abstraction, you usually define the `bundleOpName`, and the rest of the name of the dataset is built for you depending on the metadata of the `BundleOp` (e.g. country). However, the `BundleOp` abstraction also has a [`name` method](https://github.com/nubank/itaipu/blob/80a9a99397aeda2d2f5a417f13273690c1edd5f3/common-etl/src/main/scala/common_etl/operator/op.scala#L184), which is a dataset name on the Itaipu DAG. If you need to add your `BundleOp` to an allow list of a restricted `dataset/contract` or restrict your `BundleOp`, you can use the `name` method directly.
 
-Here is an example - https://github.com/nubank/itaipu/pull/22990/files#diff-8c6d39daeec552ef58ca82c8e692054f4c0168669574d883673092dd2997d54c
+Here is an example - <https://github.com/nubank/itaipu/pull/22990/files#diff-8c6d39daeec552ef58ca82c8e692054f4c0168669574d883673092dd2997d54c>
 
 #### DatasetUsageRestriction Fields
 
@@ -482,10 +479,9 @@ If the ownerSquad of the restricted dataset agrees that your use is valid, then 
 
 !!! **Important**: Create a dataset that contains the information you needed and add it to the `replacementDatasets` list.
 
-
 ## FAQ/ frequent problems
 
-### Can i see an example from which i can copy?
+### Can i see an example from which i can copy
 
 Sure. You can always check the [Example PR](https://github.com/nubank/itaipu/pull/21499)
 we have used in this document. If you want a more complex subproject structure,

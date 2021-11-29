@@ -4,9 +4,9 @@ owner: "#data-infra"
 
 # MDSS Alerts Playbook
 
-## Ouroboros - Number of newly created manual series resource groups higher than expected!
+## Ouroboros - Number of newly created manual series resource groups higher than expected
 
-## Number of newly created manual series resource groups higher than expected!
+## Number of newly created manual series resource groups higher than expected
 
 ### Overview
 
@@ -29,6 +29,7 @@ A series that is deny-listed doesn't get a new resource group for each new resou
 Using the [Manual Series Group Creation Monitoring](https://nubank.splunkcloud.com/en-US/app/search/manual_series_group_creation_monitoring) dashboard, identify the exact series for which a lot of resource groups have been created lately.
 
 What to do next with such series depends on a few things:
+
 * Is the increase in resource group creation a one-time thing (due to a backfill, for example) or something that will keep happening on a regular basis?
 
   This can possibly be deduced from some of the following:

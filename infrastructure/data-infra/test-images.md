@@ -36,16 +36,18 @@ Where `<docker image>` is either `itaipu` or `nu-scale-cluster`.
 
 The rest should be staightforward, just change any of the following
 arguments for `sabesp` by prepending the `test/` namespace:
-  * `--itaipu=test/<YOUR TAG>` or
-  * `--scale=test/<YOUR TAG>`
+
+* `--itaipu=test/<YOUR TAG>` or
+* `--scale=test/<YOUR TAG>`
 
 ## Examples
 
 Let’s give some examples for the two main use cases described above:
-  * **Testing a custom `itaipu` image**. Some of the changes you made
+
+* **Testing a custom `itaipu` image**. Some of the changes you made
     are not covered by automated tests. For example, you want to test
     an integration with an external service.
-  * **Testing a custom `scale-cluster` image**. Scaling machines is a
+* **Testing a custom `scale-cluster` image**. Scaling machines is a
     small, but crucial part of our infrastructure. Given that
     `scale-cluster`’s test coverage is rather inadequate and its core
     functionality is effectful, sometimes we need an end-to-end test
@@ -68,7 +70,6 @@ In both cases we’ll use Sabesp, with something like:[^1]
 Please note that you don’t have to change _both_ `--itaipu` and
 `--scale`. Usually, you are testing either a change in `itaipu` or
 `scale-cluster`, not both.[^2]
-
 
 [1]: https://playbooks.nubank.com.br/cicd/ecr/push-test-images-to-ecr/
 

@@ -13,7 +13,6 @@ The PoC concluded at the [Data BU All-Hands 2020-09-16](#orgc4c315d).
 3. [Results](#orgb57ce61)
 4. [Next Steps](#org18fb17d)
 
-
 <a id="orge62fea2"></a>
 
 ## Project Context
@@ -24,14 +23,12 @@ The PoC concluded at the [Data BU All-Hands 2020-09-16](#orgc4c315d).
 
 The project is related to the section on [Improvements to itaipu build times and Reliability of the Data BU 3 Year Strategy](https://docs.google.com/document/d/1mrNOS9PykTITC00iWFoCbyIISv71hpRpg32fDCVu6Fg/edit?ts=5f4d5641#heading=h.g07dcqtw46rg).
 
-
 <a id="org4af3e6f"></a>
 
-### Why is the Data BU looking at itaipu's build performance?
+### Why is the Data BU looking at itaipu's build performance
 
 The performance of builds and tests affects the productivity of itaipu contributors.
 Impacting not only those that are working on datasets, but also developers working on the platform (mostly inside the Data BU).
-
 
 <a id="org8a64994"></a>
 
@@ -46,9 +43,7 @@ The longer it takes before the contributor receives the automated feedback on th
 It can take minutes before the user receives the relatively simple formatting issue alerts.
 Worse, integration test failures can take more than 30 minutes to surface.
 
-
 ##### TODO add circle ci examples
-
 
 #### Cycle Time on Dev Machines
 
@@ -61,10 +56,9 @@ Not recompiling them.
 Thereby shortening the cycle time.
 Made possible by pulling a pre-compiled JAR from a hosted repository.
 
-
 <a id="org89ddcbe"></a>
 
-### How can the Data BU shorten the itaipu cycle time?
+### How can the Data BU shorten the itaipu cycle time
 
 As stated in the [last section](#org8a64994), one of the problems in itaipu's build pipeline is that we build all code and run all the tests every time someone commits to itaipu.
 We could slash cycle times by reusing compiled artifacts from prior builds.
@@ -73,7 +67,6 @@ No changes?
 We pull the previously cached artifact from a central server.
 Similarly with tests: we save money by skipping tests when the underlying source code didn't change.
 
-
 #### Simple downstream dataset change example
 
 What happens currently when a contributor commits and pushes a small change to a very downstream dataset?
@@ -81,16 +74,13 @@ We recompile and retest `common-etl`, the library that contains the interfaces u
 Additionally, we also recompile and retest all other subprojects, such as `iglu`, `ab-toner`, `squidward`, etc.
 We currently spend more than 5% of our Circle CI credits on these subproject tests, and even more on common-etl compilation and testing.
 
-
 ##### TODO we don't actually run all subproject tests on every commit
-
 
 ##### TODO add common-etl testing time
 
-
 <a id="orge045c51"></a>
 
-### What do we need to make shorter cycle times a reality?
+### What do we need to make shorter cycle times a reality
 
 We are currently not saving prior compilation results.
 Yes, Circle CI has caching, but so far we have been unable to make it work well.
@@ -101,11 +91,9 @@ We therefore set out to find a replacement of sbt&#x2014;one that supports a cac
 By the way, [many find sbt needlessly complicated](#org4b93871).
 Few Nubankers' tears will be shed should we move away from sbt.
 
-
 <a id="org3d8b909"></a>
 
 ## This PoC (Proof-of-Concept)
-
 
 ### Goals
 
@@ -119,7 +107,6 @@ By:
 As a bonus:
 
 - Clearing the road towards a better grasp of Itaipu build tooling across the company
-
 
 #### TODO Add details of the Circle CI benchmark
 
@@ -139,12 +126,10 @@ As a bonus:
     | 2020-08-12 |                                         0.07374194 |
     | 2020-08-13 |                                         0.07737678 |
 
-
 ### Non-Goals
 
 - Faster Scala compilation ([upgrading to Scala 2.12 seems to help with that](#org8571f78)).
 - Replacing the build tool&#x2014;the purpose is to inform the Data BU.
-
 
 ### Approach
 
@@ -152,11 +137,9 @@ As a bonus:
 - Run a caching server
 - Have successful builds of all itaipu subprojects
 
-
 ### Prior Work
 
 Ex-Nubanker Gustavo Mendonca opened a PR in which he tried to get Bazel to work with Itaipu: <https://github.com/nubank/itaipu/pull/8055/files>.
-
 
 <a id="orgb57ce61"></a>
 
@@ -181,22 +164,19 @@ Ex-Nubanker Gustavo Mendonca opened a PR in which he tried to get Bazel to work 
 
 <iframe src="<https://docs.google.com/spreadsheets/d/e/2PACX-1vSguoHTIUlXRcuP9T3NRmkiPiiC0SkidGfAFkZkEd0X-SXfe0rUruZ0ldl6V_vQ8SeM1TurP-UK1cnF/pubhtml?gid=0&amp;single=true&amp;widget=true&amp;headers=false>"></iframe>
 
-
 <a id="orgbeff82a"></a>
 
-### TODO What became faster?
+### TODO What became faster
 
 - Initial development workflow doesn't get faster, because compilation is still slow
 - Subsequent compilations or test runs are equal or slower in speed
 - CI response times are faster
-
 
 <a id="org56179b5"></a>
 
 ### Build tools considered
 
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-
 
 <colgroup>
 <col  class="org-left" />
@@ -236,7 +216,6 @@ Ex-Nubanker Gustavo Mendonca opened a PR in which he tried to get Bazel to work 
 <td class="org-left">Broad</td>
 </tr>
 
-
 <tr>
 <td class="org-left">Gradle</td>
 <td class="org-left">JVM</td>
@@ -246,7 +225,6 @@ Ex-Nubanker Gustavo Mendonca opened a PR in which he tried to get Bazel to work 
 <td class="org-left">Yes</td>
 <td class="org-left">Broad</td>
 </tr>
-
 
 <tr>
 <td class="org-left">Maven</td>
@@ -258,7 +236,6 @@ Ex-Nubanker Gustavo Mendonca opened a PR in which he tried to get Bazel to work 
 <td class="org-left">Broad</td>
 </tr>
 
-
 <tr>
 <td class="org-left">SBT</td>
 <td class="org-left">Scala</td>
@@ -268,7 +245,6 @@ Ex-Nubanker Gustavo Mendonca opened a PR in which he tried to get Bazel to work 
 <td class="org-left">Great</td>
 <td class="org-left">Broad</td>
 </tr>
-
 
 <tr>
 <td class="org-left">Pants</td>
@@ -280,7 +256,6 @@ Ex-Nubanker Gustavo Mendonca opened a PR in which he tried to get Bazel to work 
 <td class="org-left">Narrow</td>
 </tr>
 
-
 <tr>
 <td class="org-left">Mill</td>
 <td class="org-left">Scala</td>
@@ -290,7 +265,6 @@ Ex-Nubanker Gustavo Mendonca opened a PR in which he tried to get Bazel to work 
 <td class="org-left">Yes</td>
 <td class="org-left">Narrow</td>
 </tr>
-
 
 <tr>
 <td class="org-left">Fury</td>
@@ -304,11 +278,9 @@ Ex-Nubanker Gustavo Mendonca opened a PR in which he tried to get Bazel to work 
 </tbody>
 </table>
 
-
-##### TODO Why did Bazel not work out?
+##### TODO Why did Bazel not work out
 
 [Gradle vs Bazel for JVM Projects](#org796f1d0)
-
 
 ##### A Gradle vs Buck benchmark by Mobile Platform
 
@@ -320,13 +292,11 @@ Ex-Nubanker Gustavo Mendonca opened a PR in which he tried to get Bazel to work 
 
 (thanks to Miguel Lemos)
 
-
 <a id="org2ec16f5"></a>
 
 ### TODO Benchmark
 
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-
 
 <colgroup>
 <col  class="org-left" />
@@ -362,7 +332,6 @@ Ex-Nubanker Gustavo Mendonca opened a PR in which he tried to get Bazel to work 
 <td class="org-left">&#xa0;</td>
 </tr>
 
-
 <tr>
 <td class="org-left">all subproject tests</td>
 <td class="org-left">&#xa0;</td>
@@ -373,7 +342,6 @@ Ex-Nubanker Gustavo Mendonca opened a PR in which he tried to get Bazel to work 
 </tr>
 </tbody>
 </table>
-
 
 <a id="org759c1c7"></a>
 
@@ -395,7 +363,6 @@ Our working directory:
 
     /tmp/itaipu-gradle-2020-09-14
 
-
 <a id="org2d7edb3"></a>
 
 ### Diving in
@@ -410,7 +377,6 @@ What is the last commit?
     
         Merge branch 'master' into pepe/gradle
 
-
 <a id="orge48b859"></a>
 
 #### Subprojects in Gradle
@@ -420,7 +386,6 @@ What are the subprojects we have in Gradle?
     ./gradlew projects
 
 The same subprojects we currently have in sbt:
-
 
     > Task :projects
     
@@ -442,7 +407,6 @@ The same subprojects we currently have in sbt:
     
     BUILD SUCCESSFUL in 1s
     1 actionable task: 1 executed
-
 
 <a id="org8298aa9"></a>
 
@@ -466,7 +430,6 @@ It finishes in very little time, thanks to getting results from the cache:
     
     BUILD SUCCESSFUL in 11s
     6 actionable tasks: 2 executed, 4 from cache
-
 
 <a id="org960392e"></a>
 
@@ -605,7 +568,6 @@ This is the config for the remote caching server:
         }
     }
 
-
 <a id="org4115d28"></a>
 
 #### Final run, with all subproject tests
@@ -700,7 +662,6 @@ Please refer to Circle CI to see the actual build times for the steps this repla
 - `subproject-unit-tests`
 - some part of `build` (since it builds common-etl)
 
-
 <a id="org8fbfd94"></a>
 
 #### Parallel running with Gradle
@@ -717,23 +678,19 @@ Not supported by sbt today AFAIK, but [Bloop](#orgf514930) does.
     > :ab-toner:compileScala > Resolve files of :ab-toner:incrementalScalaAnalysisFormain
     > :reconciliation:compileScala > Resolve files of :reconciliation:incrementalScalaAnalysisFormain
 
-
 <a id="orgf3c552e"></a>
 
 #### TODO show what happens when you change a file
 
-
 <a id="orge487d2c"></a>
 
-#### TODO Does it support building uberjars?
+#### TODO Does it support building uberjars
 
 <https://docs.gradle.org/current/userguide/java_library_plugin.html>
-
 
 <a id="org5b8bf22"></a>
 
 ### The cache
-
 
 <a id="orgca3273a"></a>
 
@@ -745,11 +702,9 @@ Not supported by sbt today AFAIK, but [Bloop](#orgf514930) does.
 
 Not secure, internet facing, killed quickly after started.
 
-
 <a id="orgd20aa31"></a>
 
 #### Current server
-
 
 ##### Read permissions
 
@@ -758,11 +713,9 @@ Not secure, internet facing, killed quickly after started.
 
 <https://github.com/nubank/playbooks/blob/master/squads/mobile-platform/developer-environment/gradle-cache.md>
 
-
 ##### Write permissions
 
 Pepijn has the 'CI token' that has writing permissions. Ping him if you want.
-
 
 <a id="orgde585f0"></a>
 
@@ -772,16 +725,13 @@ Opening the project
 
 ![img](./dratini/ide.png)
 
-
 <a id="org18fb17d"></a>
 
 ## Next Steps
 
-
 ### TODO possible rollout scenarios
 
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-
 
 <colgroup>
 <col  class="org-left" />
@@ -817,7 +767,6 @@ Opening the project
 <td class="org-left">Faster clean build, slower incremental</td>
 </tr>
 
-
 <tr>
 <td class="org-left">Nested build tools</td>
 <td class="org-left">Small</td>
@@ -826,7 +775,6 @@ Opening the project
 <td class="org-left">Faster and cheaper</td>
 <td class="org-left">Faster clean build, fast incremental</td>
 </tr>
-
 
 <tr>
 <td class="org-left">CI only</td>
@@ -839,12 +787,10 @@ Opening the project
 </tbody>
 </table>
 
-
 #### "Cold turkey"
 
 Replace build tool completely.
 Contributors need to change their IDE settings.
-
 
 #### Nested build tools
 
@@ -852,17 +798,14 @@ Have SBT call Gradle&#x2014;installing it if missing&#x2014;and trigger builds o
 Subproject developers need to switch to Gradle/Bloop though.
 Itaipu main only contributors are unaffected.
 
-
 #### CI only
 
 Forget about changing local dev environments for now, but reap the CI speed/cost benefits.
 Requires work to keep sbt and Gradle configs in sync.
 
-
 #### There may be more options
 
 Suggestions?
-
 
 ### "Modularization Revolution"
 
@@ -870,7 +813,6 @@ In order to get to super fast builds we need to split the main project of itaipu
 For this, I'm envisioning us to take a similar path as the **Guild Mobile Dev**: <https://app.slack.com/client/T024U97V8/CH8PP85JQ/thread/D2EGF043Y-1599841453.011600>
 Analytics Engineers should take the lead in extracting their domain into subprojects.
 They get faster local builds and tests while the total CI time decreases, benefitting all Nubankers as well.
-
 
 <a id="org89e5fd1"></a>
 
@@ -884,50 +826,37 @@ As of writing during the development of the PoC, Gradle is not doing incremental
 The documentation of Gradle’s Scala plugin mentions this feature, albeit with Scala 2.12 (we are currently using 2.11).
 Whatever we do, it might be interesting to consider an actively developed and supported Scala-focused tool like [Bloop](#orgf514930) for the development workflow.
 
-
 ### Open Questions
 
-
-#### What is the team structure for the follow-up of this project, if any?
+#### What is the team structure for the follow-up of this project, if any
 
 TBD by Data BU.
 
-
-#### Do we, and how do we convert all of itaipu contributors’ dev setups to the new build tool?
+#### Do we, and how do we convert all of itaipu contributors’ dev setups to the new build tool
 
 People are used to using SBT, either through IntelliJ, the command-line, or another setup.
 
-
-#### Should we consider other build tools?
-
+#### Should we consider other build tools
 
 #### Integration test time still a problem
 
 The PoC work won't affect the integration test time.
 
+#### Worries about caching test results, will it not lead to problems
 
-#### Worries about caching test results, will it not lead to problems?
-
-
-##### TODO What happens in if you change a resources file in the project?
-
+##### TODO What happens in if you change a resources file in the project
 
 #### Bloop uses Coursier which has (had?) problems with private S3 maven repository
-
 
 #### How difficult is it to replicate our uberjar from a non-sbt build tool
 
 There were prior problems with replicating the current classpath when assembling the uberjar with a newer version of sbt.
 
-
 ##### TODO Replicate the uberjar from Gradle
-
 
 ## Appendix
 
-
 ### References
-
 
 <a id="org4b93871"></a>
 
@@ -936,29 +865,23 @@ There were prior problems with replicating the current classpath when assembling
 Haoyi is the author of many popular Scala projects, one of which is Ammonite.
 He's a respected figure in the Scala community and doesn't like SBT.
 
-
 <a id="org8571f78"></a>
 
 #### [Lightbend - Scala 2.12](https://www.lightbend.com/blog/scala-compile-faster)
 
 About Scala’s incremental Zinc compiler.
 
-
 <a id="org796f1d0"></a>
 
 #### [Gradle vs Bazel for JVM Projects](https://blog.gradle.org/gradle-vs-bazel-jvm)
 
-
 #### [Speedy Scala Builds with Bazel at Databricks](https://databricks.com/blog/2019/02/27/speedy-scala-builds-with-bazel-at-databricks.html)
 
-
 #### <https://www.archunit.org/>
-
 
 <a id="org9887811"></a>
 
 #### [Software Engineering Cycle Time](https://codeclimate.com/blog/software-engineering-cycle-time/)
-
 
 <a id="orgf514930"></a>
 
@@ -966,33 +889,27 @@ About Scala’s incremental Zinc compiler.
 
 Bloop is a build server that's great for Scala development and under heavy development.
 
-
 <a id="org7cc5b26"></a>
 
 #### [Data BU All-Hands 2020-08-19](https://docs.google.com/presentation/d/1JWPu5ioXaIBpm3H9o2sTm0Ejy_HrIbittmD6eNXPRHk/edit#slide=id.g9175273ba6_4_0)
-
 
 <a id="orgc4c315d"></a>
 
 #### [Data BU All-Hands 2020-09-16](https://docs.google.com/presentation/d/11CHvwkZZ8ZDsvYcxbZE9TCyEhRCue1Qb2XkFyAh7v5w/edit#slide=id.g98f941548a_0_14)
 
-
 ### Project Name
 
 By João Risso, Analytics Engineer.
 
-
 ### TODO Architecture diagram
 
 How do CI, sbt, gradle, local dev, github, interact?
-
 
 ### TODO "developer productivity for large teams becomes critical, not merely important"
 
 Add reference somewhere.
 
 <https://codesync.global/uploads/media/activity_slides/0001/03/f2292f201aa6b04db8c4e0b9cfa191dd07c9ee14.pdf>
-
 
 ## Footnotes
 

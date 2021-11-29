@@ -21,6 +21,7 @@ This is done by running a CLI command that takes an Avro file on s3 and the asso
 With the Avro file and the schema file, the CLI command validates the logical type schema against the Avro file, and tells our metadata store about your new dataset.
 
 ## Preparing the data
+
 In a nutshell, place your Avro file or directory on the s3 bucket for stage serving layer (`s3://nu-spark-metapod-ephemeral-staging/me/my-dataset.avro`) and place your logical type json schema in the same directory and name it `schema.json` (`s3://nu-spark-metapod-ephemeral-staging/me/schema.json`)
 
 **The data ingestion can only be made from this S3 bucket `s3://nu-spark-metapod-ephemeral-staging`.**

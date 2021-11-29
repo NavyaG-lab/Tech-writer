@@ -37,7 +37,7 @@ Alternatively, you can also check the Driver Logs tab, the “standard error” 
 
 ## Shared clusters are not stable (including shared job clusters)
 
-https://github.com/nubank/data-platform-docs/blob/master/tools/databricks/playbook.md#a-databricks-cluster-is-unhealthy
+<https://github.com/nubank/data-platform-docs/blob/master/tools/databricks/playbook.md#a-databricks-cluster-is-unhealthy>
 
 ## Single User clusters are not usable
 

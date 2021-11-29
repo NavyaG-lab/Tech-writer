@@ -35,9 +35,9 @@ This can all be done within a single PR:
 * Remove from the `bors.toml` file.
 * Remove the files and folders
 * Remove the project from the `build.sbt`:
-    * Remove the declaration of the project
-    * Remove it from itaipu's `dependsOn`
-    * Remove it from a `subproject-aggregator` project's `aggregates`
+  * Remove the declaration of the project
+  * Remove it from itaipu's `dependsOn`
+  * Remove it from a `subproject-aggregator` project's `aggregates`
         statement.
 
 Nothing to do in `tektoncd`?

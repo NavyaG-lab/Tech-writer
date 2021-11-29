@@ -4,7 +4,7 @@ owner: "#data-protection"
 
 # Classifying non PII data in bulk
 
-This process is based on a parameterized file placed on `resources/configs/non-pii-prefixes.edn`. 
+This process is based on a parameterized file placed on `resources/configs/non-pii-prefixes.edn`.
 There you can configure the prefixes of the databases that should be automatically classified without PII.
 
 The `non-pii-prefixes.edn` will look like the following sample:
@@ -37,16 +37,17 @@ The `non-pii-prefixes.edn` will look like the following sample:
 
 ```
 
-### Details about each key:
+### Details about each key
 
 - `:country`- The country where you want to find the databases
 - `:datasources` - The data sources where you want to find the databases (datomic, dataset-series, etc)
-    - `:prefix` - The name that will match with the start of the database name
-    - `:description` - Some description about the prefix
+  - `:prefix` - The name that will match with the start of the database name
+  - `:description` - Some description about the prefix
 
 It is important to emphasize that the prefixes correspond to the beginning of the database name and not to what is included in the name.
 
 **Example:**
+
 ```
 Prefix: test-
 database name: test-database
