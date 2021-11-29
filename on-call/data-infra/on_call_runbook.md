@@ -101,7 +101,7 @@ Let's focus on the first point from the section above: Data Skew. Assuming you w
 
 1. Understand how critical the dataset is by checking how many and which successors it has.
 1. Check if the dataset has already been committed by a different node `nu-br etl info <dataset-name> --n 2`
-1. If the dataset hasn't been committed: let the users know (#data-tribe) that said dataset is failing, communicate that we are considering [aborting](ops_how_to.md#manually-abort-a-dataset-to-metapod); If possible let the users comeback to you, in rare occurrences we might need to revert a PR and hot-deploy Itaipu, this might happen if the dataset is critical for business operations. Abort dataset or revert PR.
+1. If the dataset hasn't been committed: let the users know (#dataset-crash) that said dataset is failing, communicate that we are considering [aborting](ops_how_to.md#manually-abort-a-dataset-to-metapod); If possible let the users comeback to you, in rare occurrences we might need to revert a PR and hot-deploy Itaipu, this might happen if the dataset is critical for business operations. Abort dataset or revert PR.
 1. Restart the Job.
 
 Extra, but complementary steps:
@@ -629,7 +629,7 @@ Most of the time, our users are the ones coming up with the long term solutions 
 We do have one known event that can cause these issues, and that we can try to solve on our side: a combination of a Spark listener event queue being too big (we control their size) for a given job, and an issue with a Dataset - user behaviour, this can cause the node to OOM and we can try to fix it by reducing the size of the queue. We do this by changing a variable called `spark_listener_bus_capacity` inside `dagao.py`. You can set a smaller value in the order of tens of thousands. The default set by Spark is 10k. You must hot deploy `dagao` if you want these changes to take effect right away.
 
 #### Escalation
-If the problem is found to originate from user behaviour, we should leave a message in #data-tribe, informing our users that a specific dataset(s) is having OOM issues. We should inform them that the dataset succeeded on a different node, but that we are concerned about its long term stability. Please follow our [communication templates](https://docs.google.com/document/d/1L5MwBH2OZ0uvr5sTHG-LrLQTFRtx44Az8HyeN46rnc8/edit). They should investigate.
+If the problem is found to originate from user behaviour, we should leave a message in #dataset-crash, informing our users that a specific dataset(s) is having OOM issues. We should inform them that the dataset succeeded on a different node, but that we are concerned about its long term stability. Please follow our [communication templates](https://docs.google.com/document/d/1L5MwBH2OZ0uvr5sTHG-LrLQTFRtx44Az8HyeN46rnc8/edit). They should investigate.
 
 #### Relevant links
 
