@@ -64,3 +64,11 @@ owner: "#bi-platform-squad"
 - [How do I install internal Nubank libs in the SU cluster?](https://docs.google.com/document/d/1u25N1zjsxrffLN5-Ea21tNzpKy7GBg9O36lhImRwQ_4/edit#heading=h.5kflim80qwb3)
 - [Python libraries](https://docs.google.com/document/d/1u25N1zjsxrffLN5-Ea21tNzpKy7GBg9O36lhImRwQ_4/edit#heading=h.5kflim80qwb3)
 - [Libraries from JAR files](https://docs.google.com/document/d/1u25N1zjsxrffLN5-Ea21tNzpKy7GBg9O36lhImRwQ_4/edit#heading=h.5kflim80qwb3)
+
+!!! question
+
+ Can’t find what you’re looking for?
+
+ Please reach out for help at **[#data-help](https://nubank.slack.com/archives/C06F04CH1)** slack channel.
+
+!!!

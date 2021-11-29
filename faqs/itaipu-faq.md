@@ -63,3 +63,11 @@ owner: "#data-customer-success"
 - [IntelliJ shows this warning message multiple times: “WARNING: Your profile name includes a 'profile ' prefix. This is considered part of the profile name in the Java SDK, so you will need to include this prefix in your profile name when you reference this profile from your Java code.”](https://docs.google.com/document/d/1vVKkviKdpz3iVZB_cpoWEnZ-BGq7PRjjLruMM1YESPw/edit#heading=h.1b579l5oqc0s)
 - [IntelliJ shows this error message: “[error] Error downloading ...”](https://docs.google.com/document/d/1vVKkviKdpz3iVZB_cpoWEnZ-BGq7PRjjLruMM1YESPw/edit#heading=h.1b579l5oqc0s)
 - [IntelliJ keeps asking for SDK Module](https://docs.google.com/document/d/1vVKkviKdpz3iVZB_cpoWEnZ-BGq7PRjjLruMM1YESPw/edit#heading=h.1b579l5oqc0s[])
+
+!!! question
+
+ Can’t find what you’re looking for?
+
+ Please reach out for help at **[#data-help](https://nubank.slack.com/archives/C06F04CH1)** slack channel.
+
+!!!

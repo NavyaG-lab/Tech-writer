@@ -11,8 +11,6 @@ The knowledge base comprises a comprehensive list of all frequently asked questi
 
 ### Dataset series (DSS)
 - [Event, Manual, Archive dataset series](dataset-series.md)
-### Data Deletion
-- [PII data deletion](pii-data.md)
 ### Error messages
 - [Compilation, deprecation](../etl_users/FAQ.md)
 

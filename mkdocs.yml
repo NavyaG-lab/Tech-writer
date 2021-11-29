@@ -49,3 +49,4 @@ plugins:
   - mkdocs-jupyter
   - git-revision-date-localized
   - minify
+  

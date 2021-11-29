@@ -21,6 +21,6 @@ See the topics below to find what you are looking for.
 
  Can’t find what you’re looking for?
 
- Please reach out for help at **#data-help** slack channel.
+ Please reach out for help at **[#data-help](https://nubank.slack.com/archives/C06F04CH1)** slack channel.
 
 !!!

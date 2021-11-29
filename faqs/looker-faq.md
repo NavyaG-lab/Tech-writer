@@ -37,3 +37,11 @@ owner: "#bi-platform"
 - [I'm receiving this error: Looker is having trouble connecting to your database. What should I do?](https://docs.google.com/document/d/10JuF5LdAh86idkUvEIvxnM_lsGhLgk1uuKfxMaa3lkI/edit#heading=h.wn7d7t851es5)
 - [My dashboard is not displaying fresh data. What should I do?](https://docs.google.com/document/d/10JuF5LdAh86idkUvEIvxnM_lsGhLgk1uuKfxMaa3lkI/edit#heading=h.wn7d7t851es5)
 - [How do I know which datasets are being used in my dashboard?](https://docs.google.com/document/d/10JuF5LdAh86idkUvEIvxnM_lsGhLgk1uuKfxMaa3lkI/edit#heading=h.wn7d7t851es5)
+
+!!! question
+
+ Can’t find what you’re looking for?
+
+ Please reach out for help at **[#data-help](https://nubank.slack.com/archives/C06F04CH1)** slack channel.
+
+!!!

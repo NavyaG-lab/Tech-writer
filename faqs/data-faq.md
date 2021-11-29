@@ -74,3 +74,11 @@ owner: "#data-customer-success"
 [How can I drop an old dataset from BigQuery? It no longer exists in itaipu.](https://docs.google.com/document/d/1By4GjD9jIw---S61Xfz_T740t1ibOAfM4kOgRcW1Pxk/edit#heading=h.10c7u3yzei0d)
 
 [How do I access BigQuery audit logs?](https://docs.google.com/document/d/1By4GjD9jIw---S61Xfz_T740t1ibOAfM4kOgRcW1Pxk/edit#heading=h.10c7u3yzei0d)
+
+!!! question
+
+ Can’t find what you’re looking for?
+
+ Please reach out for help at **[#data-help](https://nubank.slack.com/archives/C06F04CH1)** slack channel.
+
+!!!

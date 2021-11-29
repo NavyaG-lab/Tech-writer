@@ -26,7 +26,7 @@ The Xpeer will confirm deletion to the data subject and close the ticket.
 
 ## What is considered as Pii and Personal Data?
 
-A definition of what is Pii and personal data can be found [here](../../how-tos/data-deletion/pii_and_personal_data.md).
+A definition of what is Pii and personal data can be found [here](../how-tos/data-deletion/pii_and_personal_data.md).
 
 **KEEP IN MIND THIS IS A NON EXHAUSTIVE LIST AND NEW Pii MAY APPEAR OVER TIME.**
 
@@ -75,7 +75,7 @@ override val clearance: ClearanceType = ClearanceType.PII
 
 In a more real case, the dataset "pj-waiting-list", contains Pii information, which we can identify by their column names and their contents:
 
-![](../../images/databricks_pii_dataset.png)
+![](../images/databricks_pii_dataset.png)
 
 This dataset should then be categorized as Pii, by setting the flag clearance to Pii, as in:
 
@@ -121,13 +121,13 @@ object PJWaitingList extends DatasetSeriesContractOp {
 
 This will make the materialized table inaccessible to those without the clearance needed, and avoid possible Pii leakage. In Databricks, for instance, this dataset would be made unavailable if you are trying to access it without proper permissions:
 
-![](../../images/databricks_pii_error.png)
+![](../images/databricks_pii_error.png)
 
 ## How do I classify PII data on Ryze?
 
 - For classifying Dataset series data on Ryze, refer to the documentation on [Data classification of dataset series](https://github.com/nubank/playbooks/blob/master/squads/data-protection/ryze/classification-dataset-series.md).
 
-- For classifying Datomic data on Ryze, refer to the documentation on [Data classification of datomic data](../../how-tos/data-deletion/pii-classification.md)
+- For classifying Datomic data on Ryze, refer to the documentation on [Data classification of datomic data](../how-tos/data-deletion/pii-classification.md)
 
 ### I (internal Nubank services) may have stored PII data on Datomic unintentionally and that data is available in ETL environment already
 
@@ -192,3 +192,10 @@ This is general suggestion, but we may have specific business requirements that 
 ## Need more help?
 
 If you still have questions or need additional information, please reach out to [#data-privacy](https://app.slack.com/client/T024U97V8/CLLFJMEBZ) or [#squad-data-access](https://app.slack.com/client/T024U97V8/C84FAS7L6) and we will provide appropriate support.
+!!! question
+
+ Can’t find what you’re looking for?
+
+ Please reach out for help at **[#data-help](https://nubank.slack.com/archives/C06F04CH1)** slack channel.
+
+!!!

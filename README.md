@@ -28,7 +28,7 @@ The knowledge base comprises a comprehensive list of all microservices and its d
 |![](images/data-users.png)Data Access|![](images/data-users.png)Data users - FAQs|
 |:----:|:---------------------------:|
 |[Databricks](tools/databricks/README.md)|[Dataset series](data-users/FAQs/dataset-series.md)|
-|[Looker](tools/looker/README.md)|[PII Data](data-users/FAQs/pii-data.md)|
+|[Looker](tools/looker/README.md)|[PII Data](faqs/pii-data.md)|
 |[Airflow](tools/airflow.md)|[Compilated failed - Itaipu](data-users/etl_users/FAQ.md)|
 
 <br/>
