@@ -60,6 +60,8 @@ From this point of this playbook on, let's a situation where:
 
 **Important note**: For cases where the missing records are fresh and their log lines are still available in Splunk, please skip to the [Trace the origin system by using the provided CID](#trace-the-origin-system-by-using-the-provided-cid) section. Make use of the search patterns in the follow-up sections to search for the log lines in Splunk. Adapting them to your needs should be straight forward.
 
+**Important note 2**: For cases where log lines are still available in Splunk and that the data is coming from `curva-de-rio`, you can use this [Splunk dashboard](https://nubank.splunkcloud.com/en-US/app/search/dssingestiondebug?form.global_time.earliest=-24h%40h&form.global_time.latest=now) to debug such cases.
+
 For the purpose of this guide, we adopted a date that is too old and therefore not available in Splunk. Because of this, the log lines for tracking the propagation of our records will not be available on Splunk anymore. In this case, we first need to download the relevant Splunk logs for our service and Alph.
 
 ### Get Splunk logs backup from S3
