@@ -54,15 +54,18 @@ The knowledge base comprises a comprehensive list of all microservices and its d
 If you are contributing to the data-platform-docs, please be mindful of the following things:
 
 * Make sure every .md file contains the owner on top and an empty line on bottom. Refer existing files.
-* If a new file is added, make sure its relative path is added in `mkdocs.yml`, under `nav`.
-* If a file is deleted make sure the relative path is deleted as well.
-* If a file is renamed, make sure it's updated in the `nav` in the `mkdocs.yml`.
 
-If you don't want to go through the above list, then before merging your PR,
-use the following commands to check if all the required tests are passed
+Before creating a PR, check locally if all the required tests are passed by running the following commands:
 
 - ./bin/run-tests
 - ./bin/local-build.sh
 - ./bin/run-lint.sh
+
+## Preview Data Platform Documentation
+
+1. If you want to render just a file or directory: `nu bookcase preview --path path/you/want/preview`.
+1. If you want to preview all the documentation, run `nu bookcase preview data-platform-docs`.
+1. Wait until the Serving on http://0.0.0.0:8000 message is displayed on Terminal. It is the confirmation that the playbooks have been rendered. Due to the large amount of documents to be loaded, this operation takes several minutes.
+1. On the browser, go to http://localhost:8000 to access the generated preview.
 
 <!-- markdownlint-disable-file -->
