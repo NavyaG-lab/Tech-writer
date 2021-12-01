@@ -229,6 +229,8 @@ request. The `:ids` will not show up in the logs, so it is also safe
 to use for PII data. This endpoint supports Sachem and schema
 coercion.
 
+:warning: This query only supports up to 100 ids in its body, and will return `422 Unprocessable Entity` otherwise.
+
 ```shell
 nu ser curl POST global conrado --accept application/edn /api/dataset/dummy-served/rows -d '{"ids": ["11111111-1111-1111-1111-111111111111", "22222222-2222-2222-2222-222222222222"]}' | zprint
 ```
