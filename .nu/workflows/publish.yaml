@@ -1,0 +1,13 @@
+###
+# For further details about this workflow, please refer to
+# https://github.com/nubank/cicd-catalog/blob/master/templates/doc-platform/doc-platform-publish.yaml
+###
+apiVersion: workflows.dev/v1alpha1
+kind: TemplateInstance
+metadata:
+  namespace: pipelines
+spec:
+  templateName: doc-platform-publish
+  input:
+    doc_platform_name: data-platform-docs
+    bucket_name: data-platform-docs.nubank.com.br
