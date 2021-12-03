@@ -1,10 +1,7 @@
 ---
-owner: "#privacy-tech-squad"
+owner: "#analytics-chapter-engineering"
 title: "Datasets Performance Rating System"
 toc: false
-eleventyNavigation:
-  key: Datasets Performance Rating System
-  order: 2
 ---
 
 **Audience**
