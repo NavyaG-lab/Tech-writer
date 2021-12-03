@@ -263,12 +263,17 @@ called `SERVING-<DATASET-SUFFIX>`. If the name of your dataset is
 `dataset/dummy-served`, the name of the Kafka topic would be
 `SERVING-DUMMY-SERVED`.
 
+There is also the possibility of defining a custom kafka topic name
+by overriding the `servingLayerTopic` member.
+With this option you can serve multiple SparkOps to the same topic
+as long as they have the exact same schema.
+
 The messages in the dedicated Kafka topics conform to an extended
 version of Tapir's dataset row schema. The row of a dataset lives
 under the `:value` key of Tapir's dataset `Row` schema and is coerced
 and checked against the schema declared in Itaipu.
 
-The `SERVING-<DATASET-NAME>` Kafka topics have Sachem integration and
+Both `SERVING-<DATASET-NAME>` and user defined Kafka topics have Sachem integration and
 data types are coerced to their schema types.
 
 ## Monitoring
